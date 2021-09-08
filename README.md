@@ -26,7 +26,7 @@ In addition to writing my own projects, I also contribute code to my favorite op
 
 - :man_scientist: Trying to become a programming master.
 - :books: Have been studying hard.
-- :thinking: Waiting to start a suitable career, maybe you can give me a chance?
+- :thinking: I am currently working as a database developer.
 - :computer: Thinking, Coding, Writing
 
 <p align="center">
