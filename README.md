@@ -21,6 +21,8 @@ Hi, I'm Chojan Shang, majoring in computer science and coding for my own interes
 
 In addition to writing my own projects, I also contribute code to my favorite open source community. In my spare time, I do some translation and writing work, and introduce technology to the Chinese community. 
 
+You can find some of my current personal projects at [@ritelabs](https://github.com/ritelabs/) and the archived projects at [@psiace-archive](https://github.com/psiace-archive) .
+
 <details open>
 <summary><strong>:label: Check my current status</strong></summary>
 
