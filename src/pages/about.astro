@@ -1,0 +1,35 @@
+---
+import { Image } from "astro:assets";
+
+import PageLayout from "@/layouts/Base";
+
+const meta = {
+	title: "About",
+	description: "Data Is Dead, Value Lives Forever.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="space-y-6">
+		<h1 class="title">About</h1>
+		<p class="mb-4">Hi, I’m Chojan Shang.</p>
+		<p class="mb-4">
+			Passionate about open source. Stay curious about knowledge. Build large-scale systems. Live
+			alongside data.
+		</p>
+		<p class="mb-4">
+			<li>I am currently pursuing a Master's degree in Applied Mathematics and Data Science.</li>
+			<li>
+				I am also working for <a href="https://github.com/datafuselabs/databend" target="_blank"
+					>Databend</a
+				> to build The Future of Cloud [Data + AI] Analytics.
+			</li>
+			<li>
+				I am also a PPMC member of <a
+					href="https://github.com/apache/incubator-opendal"
+					target="_blank">Apache OpenDAL (Incubating)</a
+				>, dedicated to creating a unified data access experience for developers.
+			</li>
+		</p>
+	</div>
+</PageLayout>

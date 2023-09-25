@@ -1,0 +1,79 @@
+---
+import PageLayout from "@/layouts/Base";
+import PostPreview from "@/components/blog/PostPreview";
+import SocialList from "@/components/SocialList";
+import { getAllPosts, sortMDByDate } from "@/utils";
+
+const MAX_POSTS = 10;
+const allPosts = await getAllPosts();
+const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
+
+const cactusTech: Array<{ title: string; desc: string; role: string; href: string }> = [
+	{
+		title: "Databend",
+		desc: "A modern cloud data warehouse focusing on reducing cost and complexity for your massive-scale analytics needs. Open source alternative to Snowflake.",
+		role: "Committer",
+		href: "https://github.com/datafuselabs/databend",
+	},
+	{
+		title: "Apache OpenDAL (Incubating)",
+		desc: "A data access layer that allows users to easily and efficiently retrieve data from various storage services in a unified way.",
+		role: "PPMC Member",
+		href: "https://github.com/apache/incubator-opendal",
+	},
+	{
+		title: "RiteRaft",
+		desc: "A raft framework, for regular people.",
+		role: "Owner",
+		href: "https://github.com/ritelabs/riteraft",
+	},
+];
+---
+
+<PageLayout meta={{ title: "Home" }}>
+	<section>
+		<h1 class="title mb-6">Hey, World!</h1>
+		<p class="mb-4">Hi, I’m Chojan Shang.</p>
+		<p class="mb-4">
+			Passionate about open source. Stay curious about knowledge. Build large-scale systems. Live
+			alongside data.
+		</p>
+		<br />
+		<SocialList />
+	</section>
+	<section aria-label="Blog post list" class="mt-16">
+		<h2 class="title mb-4 text-xl">Posts</h2>
+		<ul class="space-y-4 sm:space-y-2">
+			{
+				allPostsByDate.map((p) => (
+					<li class="flex flex-col gap-x-2 sm:flex-row">
+						<PostPreview post={p} />
+					</li>
+				))
+			}
+		</ul>
+	</section>
+	<section class="mt-16">
+		<h2 class="title mb-4 text-xl">Projects</h2>
+		<ul class="space-y-4 sm:space-y-2">
+			{
+				cactusTech.map(({ href, title, desc, role }) => (
+					<li>
+						<a
+							href={href}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="cactus-link inline-block"
+						>
+							{title}
+						</a>
+						:
+						<p class="inline-block sm:mt-2">
+							{desc} ( {role} )
+						</p>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</PageLayout>
