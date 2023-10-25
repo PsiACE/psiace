@@ -9,7 +9,7 @@
     <h1>
         Chojan Shang
         <br />
-        <sub>Data Is Dead, Value Lives Forever.</sub>
+        <sub>Data Is Dead, Long Live Value.</sub>
     </h1>
     <p>10 / 24 / 1998 - ?? / ?? / ????</p>
 </div>
