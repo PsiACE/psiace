@@ -1,7 +1,6 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/PsiACE/logo/main/logo_white.png">
-    <img src="https://raw.githubusercontent.com/PsiACE/logo/main/logo.png" height="256">
+    <img src="https://raw.githubusercontent.com/PsiACE/brand/main/logo/LOGO.jpg" height="256">
   </picture>
 </p>
 
