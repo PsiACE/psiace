@@ -23,7 +23,7 @@ Passionate about open source. Stay curious about knowledge. Build large-scale sy
 
 - I am currently pursuing a Master's degree in Applied Mathematics and Data Science.
 - I am also working for [Databend](https://github.com/datafuselabs/databend/) to build The Future of Cloud \[Data + AI\] Analytics.
-- I am also a PPMC member of [Apache OpenDAL (Incubating)](https://github.com/apache/incubator-opendal), dedicated to creating a unified data access experience for developers.
+- I am also a PMC Member of [Apache OpenDAL™](https://github.com/apache/incubator-opendal), dedicated to creating a unified data access experience for developers.
 
 ### Contact
 
