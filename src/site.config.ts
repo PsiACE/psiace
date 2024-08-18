@@ -21,6 +21,22 @@ export const siteConfig: SiteConfig = {
 			year: "numeric",
 		},
 	},
+	comments: {
+		giscus: {
+			repo: "PsiACE/psiace",
+			repoId: "R_kgDOKYGbpA",
+			category: "General",
+			categoryId: "DIC_kwDOKYGbpM4CZxPV",
+			mapping: "title",
+			strict: "0",
+			reactionsEnabled: "1",
+			emitMetadata: "1",
+			inputPosition: "top",
+			theme: "preferred_color_scheme",
+			lang: "en",
+			loading: "lazy",
+		},
+	},
 };
 
 // Used to generate links in both the Header & Footer.
