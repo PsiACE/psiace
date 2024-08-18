@@ -8,6 +8,9 @@ export type SiteConfig = {
 		locale: string | string[] | undefined;
 		options: Intl.DateTimeFormatOptions;
 	};
+	comments: {
+		giscus: object;
+	};
 };
 
 export type PaginationLink = {

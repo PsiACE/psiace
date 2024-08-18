@@ -2,6 +2,7 @@
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import PostLayout from "@/layouts/BlogPost";
 import { getAllPosts } from "@/utils";
+import Comments from "@/components/Comments";
 
 export const getStaticPaths = (async () => {
 	const blogEntries = await getAllPosts();
@@ -19,4 +20,5 @@ const { Content } = await entry.render();
 
 <PostLayout post={entry}>
 	<Content />
+	<Comments />
 </PostLayout>
