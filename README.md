@@ -21,15 +21,16 @@
 
 Passionate about open source. Stay curious about knowledge. Build large-scale systems. Live alongside data.
 
-- I am currently pursuing a Master's degree in Applied Mathematics and Data Science.
-- I am also working for [Databend](https://github.com/datafuselabs/databend/) to build The Future of Cloud \[Data + AI\] Analytics.
-- I am also a PMC Member of [Apache OpenDAL™](https://github.com/apache/incubator-opendal), dedicated to creating a unified data access experience for developers.
+- I'm currently a member of the GenAI Team at [Vesoft Inc. (NebulaGraph)](https://github.com/vesoft-inc/), exploring the infrastructure and applications of AI and Graph (Sep 2024 - Present).
+- I was a founding member of [Databend](https://github.com/datafuselabs/databend/) (early employee, core code/doc/community contributor) (Jul 2021 - Aug 2024), building the future of cloud [Data + AI] analytics.
+- I'm also a PMC Member of [Apache OpenDAL™](https://github.com/apache/incubator-opendal), dedicated to creating a unified data access experience for developers.
+- I hold a Master's degree in Applied Mathematics and Data Science (Sep 2022 - Aug 2024) and a Bachelor's degree in Computer Science and Technology (Sep 2017 - Jun 2021).
 
 ### Contact
 
 If you want to communicate with me, there's no problem at all. I am more than happy to share my knowledge, experience, and insights with you.
 
-<details open>
+<details close>
 <summary><strong>:eyes: See my contact information</strong></summary>
 
 - GitHub - [@PsiACE](https://github.com/psiace)
