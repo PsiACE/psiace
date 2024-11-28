@@ -31,4 +31,4 @@ python basic.py <image_path>
 
 ## Learn More
 
-- [A Dead Simple Way to VLM Parsing](https://psiace.me/posts/2024-11-28-a-dead-simple-way-to-vlm-parsing/)
+- [A Dead Simple Way to VLM Parsing](https://psiace.me/posts/a-dead-simple-way-to-vlm-parsing/)
