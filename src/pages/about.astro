@@ -8,37 +8,123 @@ const meta = {
 ---
 
 <PageLayout meta={meta}>
-	<div class="space-y-6">
-		<h1 class="title">About</h1>
-		<p class="mb-4">Hi, I’m Chojan Shang.</p>
-		<p class="mb-4">
-			Passionate about open source. Stay curious about knowledge. Build large-scale systems. Live
-			alongside data.
-		</p>
-		<p class="mb-4">
-			<li>
-				I'm currently a member of the GenAI Team at <a
-					href="https://github.com/vesoft-inc/"
-					target="_blank">Vesoft Inc. (NebulaGraph)</a
-				>, exploring the infrastructure and applications of AI and Graph (Sep 2024 - Present).
-			</li>
-			<li>
-				I was a founding member of <a
-					href="https://github.com/datafuselabs/databend/"
-					target="_blank">Databend</a
-				> (early employee, core code/doc/community contributor) (Jul 2021 - Aug 2024), building the
-				future of cloud [Data + AI] analytics.
-			</li>
-			<li>
-				I'm also a PMC Member of <a
-					href="https://github.com/apache/incubator-opendal"
-					target="_blank">Apache OpenDAL™</a
-				>, dedicated to creating a unified data access experience for developers.
-			</li>
-			<li>
-				I hold a Master's degree in Applied Mathematics and Data Science (Sep 2022 - Aug 2024) and a
-				Bachelor's degree in Computer Science and Technology (Sep 2017 - Jun 2021).
-			</li>
-		</p>
+	<div class="space-y-8">
+		<!-- Header Section -->
+		<header class="space-y-4">
+			<h1 class="title">About</h1>
+			<p class="text-lg font-medium">Hi, I'm Chojan Shang.</p>
+			<p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+				Passionate about open source, I thrive on building large-scale systems and exploring the intersection
+				of data and AI. My journey is driven by an insatiable curiosity for knowledge and innovation.
+			</p>
+		</header>
+
+		<!-- Experience Section -->
+		<section class="space-y-4">
+			<h2 class="text-xl font-bold">Current Role & Experience</h2>
+			<ul class="space-y-4 list-none">
+				<li class="group">
+					<div class="flex items-start gap-2">
+						<span class="mt-1 block w-2 h-2 rounded-full bg-accent shrink-0"></span>
+						<div>
+							<p class="font-medium">
+								GenAI Team Member at <a
+									href="https://github.com/vesoft-inc/"
+									target="_blank"
+									class="cactus-link inline-block">Vesoft Inc. (NebulaGraph)</a>
+							</p>
+							<p class="text-sm text-gray-600 dark:text-gray-400">
+								Exploring the infrastructure and applications of AI and Graph
+								<span class="text-accent">(Sep 2024 - Present)</span>
+							</p>
+						</div>
+					</div>
+				</li>
+				<li class="group">
+					<div class="flex items-start gap-2">
+						<span class="mt-1 block w-2 h-2 rounded-full bg-accent shrink-0"></span>
+						<div>
+							<p class="font-medium">
+								Founding Member at <a
+									href="https://github.com/datafuselabs/databend/"
+									target="_blank"
+									class="cactus-link inline-block">Databend</a>
+							</p>
+							<p class="text-sm text-gray-600 dark:text-gray-400">
+								Early employee and core contributor, building the future of cloud [Data + AI] analytics
+								<span class="text-accent">(Jun 2021 - Aug 2024)</span>
+							</p>
+						</div>
+					</div>
+				</li>
+				<li class="group">
+					<div class="flex items-start gap-2">
+						<span class="mt-1 block w-2 h-2 rounded-full bg-accent shrink-0"></span>
+						<div>
+							<p class="font-medium">
+								PMC Member at <a
+									href="https://github.com/apache/opendal"
+									target="_blank"
+									class="cactus-link inline-block">Apache OpenDAL™</a>
+							</p>
+							<p class="text-sm text-gray-600 dark:text-gray-400">
+								Dedicated to creating a unified data access experience for developers
+							</p>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</section>
+
+		<!-- Education Section -->
+		<section class="space-y-4">
+			<h2 class="text-xl font-bold">Education</h2>
+			<ul class="space-y-4 list-none">
+				<li>
+					<p class="text-sm text-gray-600 dark:text-gray-400">
+						Master's in Applied Mathematics and Data Science <span class="text-accent">(Sep 2022 - Aug 2024)</span>
+					</p>
+				</li>
+				<li>
+					<p class="text-sm text-gray-600 dark:text-gray-400">
+						Bachelor's in Computer Science and Technology <span class="text-accent">(Sep 2017 - Jun 2021)</span>
+					</p>
+				</li>
+			</ul>
+		</section>
+
+		<!-- Connect Section -->
+		<section class="space-y-4">
+			<h2 class="text-xl font-bold">Let's Connect</h2>
+			<p class="text-gray-600 dark:text-gray-300">
+				I'm always open to meaningful conversations and knowledge sharing. Feel free to reach out!
+			</p>
+			<ul class="flex flex-wrap gap-4">
+				<li>
+					<a href="https://github.com/psiace" target="_blank" class="inline-flex items-center gap-1 cactus-link">
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+							<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+						</svg>
+						<span>GitHub</span>
+					</a>
+				</li>
+				<li>
+					<a href="https://www.linkedin.com/in/psiace" target="_blank" class="inline-flex items-center gap-1 cactus-link">
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+							<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+						</svg>
+						<span>LinkedIn</span>
+					</a>
+				</li>
+				<li>
+					<a href="https://twitter.com/repsiace/" target="_blank" class="inline-flex items-center gap-1 cactus-link">
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+							<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+						</svg>
+						<span>Twitter</span>
+					</a>
+				</li>
+			</ul>
+		</section>
 	</div>
 </PageLayout>

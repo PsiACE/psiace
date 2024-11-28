@@ -9,10 +9,10 @@ const allPosts = await getAllPosts();
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
 
 const cactusTech: Array<{ title: string; desc: string; role: string; href: string }> = [
-	{
+{
 		title: "Databend",
 		desc: "A modern cloud data warehouse focusing on reducing cost and complexity for your massive-scale analytics needs. Open source alternative to Snowflake.",
-		role: "Committer",
+		role: "Founding Member",
 		href: "https://github.com/datafuselabs/databend",
 	},
 	{
@@ -35,14 +35,25 @@ const cactusTech: Array<{ title: string; desc: string; role: string; href: strin
 		<h1 class="title mb-6">Hey, World!</h1>
 		<p class="mb-4">Hi, I'm Chojan Shang.</p>
 		<p class="mb-4">
-			Passionate about open source. Stay curious about knowledge. Build large-scale systems. Live
-			alongside data.
+			Passionate about open source, I thrive on building large-scale systems and exploring the intersection
+			of data and AI. My journey is driven by an insatiable curiosity for knowledge and innovation.
+		</p>
+		<p class="mb-4">
+			Currently working on AI and Graph infrastructure at <a
+				href="https://github.com/vesoft-inc/"
+				target="_blank"
+				class="cactus-link inline-block">Vesoft Inc. (NebulaGraph)</a>. Previously helped shape the future
+			of cloud analytics at <a
+				href="https://github.com/datafuselabs/databend"
+				target="_blank"
+				class="cactus-link inline-block">Databend</a>.
 		</p>
 		<br />
 		<SocialList />
 	</section>
+
 	<section aria-label="Blog post list" class="mt-16">
-		<h2 class="title mb-4 text-xl">Posts</h2>
+		<h2 class="title mb-4 text-xl">Latest Posts</h2>
 		<ul class="space-y-4 sm:space-y-2">
 			{
 				allPostsByDate.map((p) => (
@@ -53,24 +64,25 @@ const cactusTech: Array<{ title: string; desc: string; role: string; href: strin
 			}
 		</ul>
 	</section>
+
 	<section class="mt-16">
 		<h2 class="title mb-4 text-xl">Projects</h2>
 		<ul class="space-y-4 sm:space-y-2">
 			{
 				cactusTech.map(({ href, title, desc, role }) => (
-					<li>
-						<a
-							href={href}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="cactus-link inline-block"
-						>
-							{title}
-						</a>
-						:
-						<p class="inline-block sm:mt-2">
-							{desc} - <i>{role}</i>
-						</p>
+					<li class="flex flex-col gap-2">
+						<div>
+							<a
+								href={href}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="cactus-link inline-block"
+							>
+								{title}
+							</a>
+							<span class="text-sm text-accent">({role})</span>
+						</div>
+						<p class="text-sm text-gray-600 dark:text-gray-400">{desc}</p>
 					</li>
 				))
 			}
