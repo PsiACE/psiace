@@ -12,7 +12,7 @@ This article mainly introduces how to convert MCP (Model Context Protocol) tools
 
 ### 1.1 What is MCP?
 
-MCP(Model Context Protocol, https://http://modelcontextprotocol.io) is a protocol for building services that interact with AI applications. It allows developers to build servers that expose features like data (resources), functions (tools), and prompts. For example, we can define a `fetch_ipinfo` tool that retrieves detailed information about a specified IP address (such as city and timezone). code here: [mcp_server.py](https://github.com/psiace/psiace/tree/main/demo/llamaindex-mcp-adapter/mcp_server.py)
+MCP(Model Context Protocol, https://modelcontextprotocol.io) is a protocol for building services that interact with AI applications. It allows developers to build servers that expose features like data (resources), functions (tools), and prompts. For example, we can define a `fetch_ipinfo` tool that retrieves detailed information about a specified IP address (such as city and timezone). code here: [mcp_server.py](https://github.com/psiace/psiace/tree/main/demo/llamaindex-mcp-adapter/mcp_server.py)
 
 ```python
 @mcp.tool()
