@@ -43,7 +43,7 @@ Currently, the NebulaGraph MCP Server is implemented based on **FastMCP**, adher
 3. **Built-in Operator Templates**:
    - Implements templates for common operations like path search and neighbor discovery, allowing language models to quickly call these tools as needed and gain initial insights into graph data.
 
-To demonstrate its effectiveness, I built a simple example using LlamaIndex’s McpToolSpec and ReActAgent. Below is a screenshot of the corresponding setup:
+To demonstrate its effectiveness, I built a simple example using LlamaIndex’s McpToolSpec and ReActAgent. Below is a screenshot:
 
 ![LlamaIndex with NebulaGraph MCP](../../../public/images/nebulagraph-mcp-server/llamaindex-with-nebulagraph-mcp.png)
 
