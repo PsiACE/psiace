@@ -23,6 +23,8 @@
 
 Passionate about open source, I thrive on building large-scale systems and exploring the intersection of data and AI. My journey is driven by an insatiable curiosity for knowledge and innovation.
 
+<a href="https://trendshift.io/developers/3326" target="_blank"><img src="https://trendshift.io/api/badge/developers/3326" alt="PsiACE | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+
 ### Current Role & Experience
 
 - 🚀 GenAI Team Member at [Vesoft Inc. (NebulaGraph)](https://github.com/vesoft-inc/) (Sep 2024 - Present)
