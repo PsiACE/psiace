@@ -1,16 +1,22 @@
 ---
-import type { Page, GetStaticPaths } from "astro";
 import type { CollectionEntry } from "astro:content";
-import PageLayout from "@/layouts/Base";
-import PostPreview from "@/components/blog/PostPreview";
-import Pagination from "@/components/Paginator";
-import { getAllPosts, getUniqueTags, sortMDByDate } from "@/utils";
+import Pagination from "@/components/Paginator.astro";
+import PostPreview from "@/components/blog/PostPreview.astro";
+import { getAllPosts, getUniqueTags, groupPostsByYear } from "@/data/post";
+import PageLayout from "@/layouts/Base.astro";
+import { collectionDateSort } from "@/utils/date";
+import type { GetStaticPaths, Page } from "astro";
+import { Icon } from "astro-icon/components";
 
 export const getStaticPaths = (async ({ paginate }) => {
+	const MAX_POSTS_PER_PAGE = 10;
+	const MAX_TAGS = 7;
 	const allPosts = await getAllPosts();
-	const allPostsByDate = sortMDByDate(allPosts);
-	const uniqueTags = getUniqueTags(allPosts);
-	return paginate(allPostsByDate, { props: { uniqueTags }, pageSize: 10 });
+	const uniqueTags = getUniqueTags(allPosts).slice(0, MAX_TAGS);
+	return paginate(allPosts.sort(collectionDateSort), {
+		pageSize: MAX_POSTS_PER_PAGE,
+		props: { uniqueTags },
+	});
 }) satisfies GetStaticPaths;
 
 interface Props {
@@ -21,79 +27,95 @@ interface Props {
 const { page, uniqueTags } = Astro.props;
 
 const meta = {
+	description: "Read my collection of posts and the things that interest me",
 	title: "Posts",
-	description: "Ready my collection of posts and the things that interest me",
 };
 
 const paginationProps = {
 	...(page.url.prev && {
 		prevUrl: {
+			text: "← Previous Page",
 			url: page.url.prev,
-			text: `← Previous Posts`,
 		},
 	}),
 	...(page.url.next && {
 		nextUrl: {
+			text: "Next Page →",
 			url: page.url.next,
-			text: `Next Posts →`,
 		},
 	}),
 };
+
+const groupedByYear = groupPostsByYear(page.data);
+const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 ---
 
 <PageLayout meta={meta}>
-	<h1 class="title mb-6">Posts</h1>
-	<div class="grid gap-y-16 sm:grid-cols-[3fr_1fr] sm:gap-x-8">
-		<section aria-label="Blog post list">
-			<ul class="space-y-8 text-start">
-				{
-					page.data.map((p) => (
-						<li class="flex flex-col flex-wrap gap-2 sm:flex-row [&_q]:basis-full">
-							<PostPreview post={p} as="h2" withDesc />
-						</li>
-					))
-				}
-			</ul>
+	<div class="mb-6 flex items-center gap-3">
+		<h1 class="title">Posts</h1>
+		<a class="text-accent" href="/rss.xml" target="_blank">
+			<span class="sr-only">RSS feed</span>
+			<Icon aria-hidden="true" class="h-6 w-6" focusable="false" name="mdi:rss" />
+		</a>
+	</div>
+	<div class="grid sm:grid-cols-[3fr_1fr] sm:gap-x-8 sm:gap-y-16">
+		<div>
+			{
+				descYearKeys.map((yearKey) => (
+					<section aria-labelledby={`year-${yearKey}`}>
+						<h2 id={`year-${yearKey}`} class="title text-lg">
+							<span class="sr-only">Posts in</span>
+							{yearKey}
+						</h2>
+						<ul class="mt-5 mb-16 space-y-6 text-start">
+							{groupedByYear[yearKey]?.map((p) => (
+								<li class="grid gap-2 sm:grid-cols-[auto_1fr] sm:[&_q]:col-start-2">
+									<PostPreview post={p} />
+								</li>
+							))}
+						</ul>
+					</section>
+				))
+			}
 			<Pagination {...paginationProps} />
-		</section>
+		</div>
 		{
 			!!uniqueTags.length && (
 				<aside>
-					<h2 class="mb-4 flex items-center text-lg font-semibold">
+					<h2 class="title mb-4 flex items-center gap-2 text-lg">
+						Tags
 						<svg
 							aria-hidden="true"
-							xmlns="http://www.w3.org/2000/svg"
 							class="h-6 w-6"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
 							fill="none"
+							stroke="currentColor"
 							stroke-linecap="round"
 							stroke-linejoin="round"
+							stroke-width="1.5"
+							viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg"
 						>
-							<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+							<path d="M0 0h24v24H0z" fill="none" stroke="none" />
 							<path d="M7.859 6h-2.834a2.025 2.025 0 0 0 -2.025 2.025v2.834c0 .537 .213 1.052 .593 1.432l6.116 6.116a2.025 2.025 0 0 0 2.864 0l2.834 -2.834a2.025 2.025 0 0 0 0 -2.864l-6.117 -6.116a2.025 2.025 0 0 0 -1.431 -.593z" />
 							<path d="M17.573 18.407l2.834 -2.834a2.025 2.025 0 0 0 0 -2.864l-7.117 -7.116" />
 							<path d="M6 9h-.01" />
 						</svg>
-						Tags
 					</h2>
-					<ul class="flex flex-wrap gap-2 text-bgColor">
+					<ul class="flex flex-wrap gap-2">
 						{uniqueTags.map((tag) => (
 							<li>
-								<a
-									class="flex items-center justify-center rounded-lg bg-accent p-1"
-									href={`/tags/${tag}/`}
-									aria-label={`View all posts with the tag: ${tag}`}
-								>
+								<a class="cactus-link flex items-center justify-center" href={`/tags/${tag}/`}>
+									<span aria-hidden="true">#</span>
+									<span class="sr-only">View all posts with the tag</span>
 									{tag}
 								</a>
 							</li>
 						))}
 					</ul>
 					<span class="mt-4 block sm:text-end">
-						<a class="sm:hover:text-accent" href="/tags/" aria-label="View all blog categories">
-							View all →
+						<a class="hover:text-link" href="/tags/">
+							View all <span aria-hidden="true">→</span>
+							<span class="sr-only">blog tags</span>
 						</a>
 					</span>
 				</aside>

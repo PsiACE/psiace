@@ -1,0 +1,47 @@
+---
+export interface Props {
+	title: string;
+	items: Array<{
+		title: string;
+		organization: string;
+		organizationUrl: string;
+		description: string;
+		period: string;
+	}>;
+}
+
+const { title, items } = Astro.props;
+---
+
+<section class="space-y-4">
+	<h2 class="text-xl font-bold">{title}</h2>
+	<ul class="space-y-4 list-none">
+		{
+			items.map(({ title: itemTitle, organization, organizationUrl, description, period }) => (
+				<li class="group">
+					<div class="flex items-start gap-2">
+						<span class="mt-1 block w-2 h-2 rounded-full bg-accent shrink-0" />
+						<div>
+							<p class="font-medium">
+								{itemTitle} at{" "}
+								<a
+									href={organizationUrl}
+									target="_blank"
+									class="cactus-link inline-block"
+								>
+									{organization}
+								</a>
+							</p>
+							<p class="text-sm text-gray-600 dark:text-gray-400">
+								{description}
+								{period && (
+									<span class="text-accent"> ({period})</span>
+								)}
+							</p>
+						</div>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+</section>

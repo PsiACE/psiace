@@ -1,11 +1,12 @@
 ---
+import { WEBMENTION_PINGBACK, WEBMENTION_URL } from "astro:env/client";
+import { siteConfig } from "@/site.config";
 import type { SiteMeta } from "@/types";
-import { siteConfig } from "@/site-config";
-import "../styles/global.css";
+import "@/styles/global.css";
 
 type Props = SiteMeta;
 
-const { title, description, ogImage, articleDate } = Astro.props;
+const { articleDate, description, ogImage, title } = Astro.props;
 
 const titleSeparator = "•";
 const siteTitle = `${title} ${titleSeparator} ${siteConfig.title}`;
@@ -14,53 +15,72 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 ---
 
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <title>{siteTitle}</title>
 
-<!-- Icons / Favicon -->
-<link rel="icon" href="/favicon.ico" sizes="any" />
-<link rel="icon" href="/icon.svg" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<link rel="manifest" href="/manifest.webmanifest" />
-<link rel="canonical" href={canonicalURL} />
-
-<!-- Primary Meta Tags -->
-<meta name="title" content={siteTitle} />
-<meta name="description" content={description} />
-<meta name="author" content={siteConfig.author} />
-
-<!-- Theme Colour -->
-<meta name="theme-color" content="" />
-
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content={articleDate ? "article" : "website"} />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-<meta property="og:url" content={canonicalURL} />
-<meta property="og:site_name" content={siteConfig.title} />
-<meta property="og:locale" content={siteConfig.ogLocale} />
-<meta property="og:image" content={socialImageURL} />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
+{/* Icons */}
+<link href="/icon.svg" rel="icon" type="image/svg+xml" />
 {
-	articleDate && (
+	import.meta.env.PROD && (
 		<>
-			<meta property="article:author" content={siteConfig.author} />
-			<meta property="article:published_time" content={articleDate} />
+			{/* Favicon & Apple Icon */}
+			<link rel="icon" href="/favicon-32x32.png" type="image/png" />
+			<link href="/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+			{/* Manifest */}
+			<link href="/manifest.webmanifest" rel="manifest" />
 		</>
 	)
 }
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={canonicalURL} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={socialImageURL} />
+{/* Canonical URL */}
+<link href={canonicalURL} rel="canonical" />
 
-<!-- Sitemap -->
-<link rel="sitemap" href="/sitemap-index.xml" />
+{/* Primary Meta Tags */}
+<meta content={siteTitle} name="title" />
+<meta content={description} name="description" />
+<meta content={siteConfig.author} name="author" />
 
-<!-- RSS auto-discovery -->
-<link rel="alternate" type="application/rss+xml" title={siteConfig.title} href="/rss.xml" />
+{/* Open Graph / Facebook */}
+<meta content={articleDate ? "article" : "website"} property="og:type" />
+<meta content={title} property="og:title" />
+<meta content={description} property="og:description" />
+<meta content={canonicalURL} property="og:url" />
+<meta content={siteConfig.title} property="og:site_name" />
+<meta content={siteConfig.ogLocale} property="og:locale" />
+<meta content={socialImageURL} property="og:image" />
+<meta content="1200" property="og:image:width" />
+<meta content="630" property="og:image:height" />
+{
+	articleDate && (
+		<>
+			<meta content={siteConfig.author} property="article:author" />
+			<meta content={articleDate} property="article:published_time" />
+		</>
+	)
+}
+
+{/* Twitter */}
+<meta content="summary_large_image" property="twitter:card" />
+<meta content={canonicalURL} property="twitter:url" />
+<meta content={title} property="twitter:title" />
+<meta content={description} property="twitter:description" />
+<meta content={socialImageURL} property="twitter:image" />
+
+{/* Sitemap */}
+<link href="/sitemap-index.xml" rel="sitemap" />
+
+{/* RSS auto-discovery */}
+<link href="/rss.xml" title="Blog" rel="alternate" type="application/rss+xml" />
+<link href="/notes/rss.xml" title="Notes" rel="alternate" type="application/rss+xml" />
+
+{/* Webmentions */}
+{
+	WEBMENTION_URL && (
+		<>
+			<link href={WEBMENTION_URL} rel="webmention" />
+			{WEBMENTION_PINGBACK && <link href={WEBMENTION_PINGBACK} rel="pingback" />}
+		</>
+	)
+}
+
+<meta content={Astro.generator} name="generator" />

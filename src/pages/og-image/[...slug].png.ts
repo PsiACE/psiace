@@ -1,32 +1,31 @@
-import type { APIContext, GetStaticPaths } from "astro";
-import { getEntryBySlug } from "astro:content";
+import RobotoMonoBold from "@/assets/roboto-mono-700.ttf";
+import RobotoMono from "@/assets/roboto-mono-regular.ttf";
+import { getAllPosts } from "@/data/post";
+import { siteConfig } from "@/site.config";
+import { getFormattedDate } from "@/utils/date";
+import { Resvg } from "@resvg/resvg-js";
+import type { APIContext, InferGetStaticPropsType } from "astro";
 import satori, { type SatoriOptions } from "satori";
 import { html } from "satori-html";
-import { Resvg } from "@resvg/resvg-js";
-import { siteConfig } from "@/site-config";
-import { getAllPosts, getFormattedDate } from "@/utils";
-
-import RobotoMono from "@/assets/roboto-mono-regular.ttf";
-import RobotoMonoBold from "@/assets/roboto-mono-700.ttf";
 
 const ogOptions: SatoriOptions = {
-	width: 1200,
-	height: 630,
 	// debug: true,
 	fonts: [
 		{
-			name: "Roboto Mono",
 			data: Buffer.from(RobotoMono),
-			weight: 400,
+			name: "Roboto Mono",
 			style: "normal",
+			weight: 400,
 		},
 		{
-			name: "Roboto Mono",
 			data: Buffer.from(RobotoMonoBold),
-			weight: 700,
+			name: "Roboto Mono",
 			style: "normal",
+			weight: 700,
 		},
 	],
+	height: 630,
+	width: 1200,
 };
 
 const markup = (title: string, pubDate: string) =>
@@ -58,27 +57,34 @@ const markup = (title: string, pubDate: string) =>
 		</div>
 	</div>`;
 
-export async function GET({ params: { slug } }: APIContext) {
-	const post = await getEntryBySlug("post", slug!);
-	const title = post?.data.title ?? siteConfig.title;
-	const postDate = getFormattedDate(
-		post?.data.updatedDate ?? post?.data.publishDate ?? Date.now(),
-		{
-			weekday: "long",
-			month: "long",
-		},
-	);
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+export async function GET(context: APIContext) {
+	const { pubDate, title } = context.props as Props;
+
+	const postDate = getFormattedDate(pubDate, {
+		month: "long",
+		weekday: "long",
+	});
 	const svg = await satori(markup(title, postDate), ogOptions);
 	const png = new Resvg(svg).render().asPng();
 	return new Response(png, {
 		headers: {
-			"Content-Type": "image/png",
 			"Cache-Control": "public, max-age=31536000, immutable",
+			"Content-Type": "image/png",
 		},
 	});
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
+export async function getStaticPaths() {
 	const posts = await getAllPosts();
-	return posts.filter(({ data }) => !data.ogImage).map(({ slug }) => ({ params: { slug } }));
-};
+	return posts
+		.filter(({ data }) => !data.ogImage)
+		.map((post) => ({
+			params: { slug: post.id },
+			props: {
+				pubDate: post.data.updatedDate ?? post.data.publishDate,
+				title: post.data.title,
+			},
+		}));
+}
