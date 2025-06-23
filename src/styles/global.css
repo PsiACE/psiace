@@ -127,6 +127,15 @@
 	.inverted {
 		filter: invert(100%);
 	}
+
+	/* Mermaid diagram styles */
+	.mermaid {
+		@apply my-6 flex justify-center;
+
+		svg {
+			@apply max-w-full h-auto;
+		}
+	}
 }
 
 @utility prose {
