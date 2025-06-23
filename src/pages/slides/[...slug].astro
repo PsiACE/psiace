@@ -1,0 +1,23 @@
+---
+import { getAllSlides } from "@/data/post";
+import SlideLayout from "@/layouts/SlideLayout.astro";
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+
+export const getStaticPaths = (async () => {
+  const slideEntries = await getAllSlides();
+  return slideEntries.map((slide) => ({
+    params: { slug: slide.id },
+    props: { slide },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { slide } = Astro.props;
+---
+
+<SlideLayout slide={slide}>
+  <section data-markdown data-separator="^---$" data-separator-vertical="^--$">
+    <script type="text/template" set:html={slide.body} />
+  </section>
+</SlideLayout>

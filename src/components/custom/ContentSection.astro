@@ -2,14 +2,15 @@
 import type { CollectionEntry } from "astro:content";
 import PostPreview from "@/components/blog/PostPreview.astro";
 import Note from "@/components/note/Note.astro";
+import SlidePreview from "@/components/slide/SlidePreview.astro";
 
 export interface Props {
-	title: string;
-	href: string;
-	items: any[];
-	maxItems: number;
-	totalItems: number;
-	type: "posts" | "notes";
+  title: string;
+  href: string;
+  items: any[];
+  maxItems: number;
+  totalItems: number;
+  type: "posts" | "notes" | "slides";
 }
 
 const { title, href, items, maxItems, totalItems, type } = Astro.props;
@@ -17,31 +18,37 @@ const showViewAll = totalItems > maxItems;
 ---
 
 <section class="mt-16">
-	<h2 class="title text-accent mb-6 text-xl">
-		<a href={href}>{title}</a>
-	</h2>
-	<ul class="space-y-6" role="list">
-		{
-			type === "posts"
-				? items.map((item) => (
-						<li class="grid gap-2 sm:grid-cols-[auto_1fr]">
-							<PostPreview post={item as CollectionEntry<"post">} />
-						</li>
-					))
-				: items.map((item) => (
-						<li>
-							<Note note={item as CollectionEntry<"note">} as="h3" isPreview />
-						</li>
-					))
-		}
-	</ul>
-	{
-		showViewAll && (
-			<div class="mt-4">
-				<a href={href} class="cactus-link">
-					View all {type}
-				</a>
-			</div>
-		)
-	}
+  <h2 class="title text-accent mb-6 text-xl">
+    <a href={href}>{title}</a>
+  </h2>
+  <ul class="space-y-6" role="list">
+    {
+      type === "posts"
+        ? items.map((item) => (
+            <li class="grid gap-2 sm:grid-cols-[auto_1fr]">
+              <PostPreview post={item as CollectionEntry<"post">} />
+            </li>
+          ))
+        : type === "notes"
+          ? items.map((item) => (
+              <li>
+                <Note note={item as CollectionEntry<"note">} as="h3" isPreview />
+              </li>
+            ))
+          : items.map((item) => (
+              <li class="grid gap-2 sm:grid-cols-[auto_1fr]">
+                <SlidePreview slide={item as CollectionEntry<"slide">} withDesc={true} />
+              </li>
+            ))
+    }
+  </ul>
+  {
+    showViewAll && (
+      <div class="mt-4">
+        <a href={href} class="cactus-link">
+          View all {type}
+        </a>
+      </div>
+    )
+  }
 </section>

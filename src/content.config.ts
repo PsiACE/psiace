@@ -55,4 +55,22 @@ const tag = defineCollection({
 	}),
 });
 
-export const collections = { post, note, tag };
+const slide = defineCollection({
+	loader: glob({ base: "./src/content/slide", pattern: "**/*.{md,mdx}" }),
+	schema: baseSchema.extend({
+		description: z.string(),
+		publishDate: z
+			.string()
+			.or(z.date())
+			.transform((val) => new Date(val)),
+		updatedDate: z
+			.string()
+			.optional()
+			.transform((str) => (str ? new Date(str) : undefined)),
+		theme: z.union([z.string(), z.array(z.string())]).optional().default("default"),
+		draft: z.boolean().default(false),
+		tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
+	}),
+});
+
+export const collections = { post, note, tag, slide };
