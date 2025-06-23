@@ -1,0 +1,21 @@
+---
+import SocialList from "@/components/SocialList.astro";
+
+export interface Props {
+	title: string | undefined;
+	subtitle?: string | undefined;
+	description: string | undefined;
+	showSocialLinks?: boolean | undefined;
+}
+
+const { title, subtitle, description, showSocialLinks = false } = Astro.props;
+---
+
+<header class="space-y-4">
+	<h1 class="title">{title}</h1>
+	{subtitle && <p class="text-lg font-medium">{subtitle}</p>}
+	<p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+		{description}
+	</p>
+	{showSocialLinks && <SocialList />}
+</header>

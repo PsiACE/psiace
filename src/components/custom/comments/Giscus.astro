@@ -1,10 +1,13 @@
 ---
-import { siteConfig } from "@/site-config";
+import { customConfig } from "@/custom.config";
 
-if (!siteConfig.comments) {
+const { comments } = customConfig;
+
+if (!comments.enabled || !comments.giscus) {
 	throw new Error("Giscus comments are not configured");
 }
-const giscus = siteConfig.comments.giscus;
+
+const giscus = comments.giscus;
 ---
 
 <giscus-widget
@@ -14,7 +17,6 @@ const giscus = siteConfig.comments.giscus;
 	category={giscus.category}
 	categoryId={giscus.categoryId}
 	mapping={giscus.mapping}
-	term={giscus.term}
 	strict={giscus.strict}
 	reactionsEnabled={giscus.reactionsEnabled}
 	emitMetadata={giscus.emitMetadata}

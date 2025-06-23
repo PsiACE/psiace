@@ -1,91 +1,59 @@
 ---
-import PageLayout from "@/layouts/Base";
-import PostPreview from "@/components/blog/PostPreview";
-import SocialList from "@/components/SocialList";
-import { getAllPosts, sortMDByDate } from "@/utils";
+import { type CollectionEntry, getCollection } from "astro:content";
 
-const MAX_POSTS = 10;
+import ContentSection from "@/components/custom/ContentSection.astro";
+import InfoSection from "@/components/custom/InfoSection.astro";
+import PageHeader from "@/components/custom/PageHeader.astro";
+import { getAllPosts } from "@/data/post";
+import PageLayout from "@/layouts/Base.astro";
+import { collectionDateSort } from "@/utils/date";
+import { customConfig } from "@/custom.config";
+
+// Posts
+const MAX_POSTS = 5;
 const allPosts = await getAllPosts();
-const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
+const allPostsByDate = allPosts
+	.sort(collectionDateSort)
+	.slice(0, MAX_POSTS) as CollectionEntry<"post">[];
 
-const cactusTech: Array<{ title: string; desc: string; role: string; href: string }> = [
-{
-		title: "Databend",
-		desc: "A modern cloud data warehouse focusing on reducing cost and complexity for your massive-scale analytics needs. Open source alternative to Snowflake.",
-		role: "Founding Member",
-		href: "https://github.com/datafuselabs/databend",
-	},
-	{
-		title: "Apache OpenDAL™",
-		desc: "A data access layer that allows users to easily and efficiently retrieve data from various storage services in a unified way.",
-		role: "PMC Member",
-		href: "https://github.com/apache/incubator-opendal",
-	},
-	{
-		title: "RiteRaft",
-		desc: "A raft framework, for regular people.",
-		role: "Owner",
-		href: "https://github.com/ritelabs/riteraft",
-	},
-];
+// Notes
+const MAX_NOTES = 1;
+const allNotes = await getCollection("note");
+const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
+
+const homeHeader = customConfig.pageHeaders.home!;
 ---
 
 <PageLayout meta={{ title: "Home" }}>
 	<section>
-		<h1 class="title mb-6">Hey, World!</h1>
-		<p class="mb-4">Hi, I'm Chojan Shang.</p>
-		<p class="mb-4">
-			Passionate about open source, I thrive on building large-scale systems and exploring the intersection
-			of data and AI. My journey is driven by an insatiable curiosity for knowledge and innovation.
-		</p>
-		<p class="mb-4">
-			Currently working on AI and Graph infrastructure at <a
-				href="https://github.com/vesoft-inc/"
-				target="_blank"
-				class="cactus-link inline-block">Vesoft Inc. (NebulaGraph)</a>. Previously helped shape the future
-			of cloud analytics at <a
-				href="https://github.com/datafuselabs/databend"
-				target="_blank"
-				class="cactus-link inline-block">Databend</a>.
-		</p>
-		<br />
-		<SocialList />
+		<PageHeader
+			title={homeHeader.title}
+			subtitle={homeHeader.subtitle}
+			description={homeHeader.description}
+			showSocialLinks={homeHeader.showSocialLinks}
+		/>
 	</section>
-
-	<section aria-label="Blog post list" class="mt-16">
-		<h2 class="title mb-4 text-xl">Latest Posts</h2>
-		<ul class="space-y-4 sm:space-y-2">
-			{
-				allPostsByDate.map((p) => (
-					<li class="flex flex-col gap-x-2 sm:flex-row">
-						<PostPreview post={p} />
-					</li>
-				))
-			}
-		</ul>
-	</section>
-
+	{
+		latestNotes.length > 0 && (
+			<ContentSection
+				title="Notes"
+				href="/notes/"
+				items={latestNotes}
+				maxItems={MAX_NOTES}
+				totalItems={latestNotes.length}
+				type="notes"
+			/>
+		)
+	}
+	<ContentSection
+		title="Posts"
+		href="/posts/"
+		items={allPostsByDate}
+		maxItems={MAX_POSTS}
+		totalItems={allPosts.length}
+		type="posts"
+	/>
 	<section class="mt-16">
-		<h2 class="title mb-4 text-xl">Projects</h2>
-		<ul class="space-y-4 sm:space-y-2">
-			{
-				cactusTech.map(({ href, title, desc, role }) => (
-					<li class="flex flex-col gap-2">
-						<div>
-							<a
-								href={href}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="cactus-link inline-block"
-							>
-								{title}
-							</a>
-							<span class="text-sm text-accent">({role})</span>
-						</div>
-						<p class="text-sm text-gray-600 dark:text-gray-400">{desc}</p>
-					</li>
-				))
-			}
-		</ul>
+		<InfoSection title="Projects" items={customConfig.projects} />
 	</section>
 </PageLayout>
