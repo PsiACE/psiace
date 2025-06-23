@@ -4,7 +4,7 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import ContentSection from "@/components/custom/ContentSection.astro";
 import InfoSection from "@/components/custom/InfoSection.astro";
 import PageHeader from "@/components/custom/PageHeader.astro";
-import { getAllPosts } from "@/data/post";
+import { getAllPosts, getAllSlides } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
 import { customConfig } from "@/custom.config";
@@ -13,47 +13,64 @@ import { customConfig } from "@/custom.config";
 const MAX_POSTS = 5;
 const allPosts = await getAllPosts();
 const allPostsByDate = allPosts
-	.sort(collectionDateSort)
-	.slice(0, MAX_POSTS) as CollectionEntry<"post">[];
+  .sort(collectionDateSort)
+  .slice(0, MAX_POSTS) as CollectionEntry<"post">[];
 
 // Notes
 const MAX_NOTES = 1;
 const allNotes = await getCollection("note");
 const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES);
 
+// Slides
+const MAX_SLIDES = 3;
+const allSlides = await getAllSlides();
+const latestSlides = allSlides.sort(collectionDateSort).slice(0, MAX_SLIDES);
+
 const homeHeader = customConfig.pageHeaders.home!;
 ---
 
 <PageLayout meta={{ title: "Home" }}>
-	<section>
-		<PageHeader
-			title={homeHeader.title}
-			subtitle={homeHeader.subtitle}
-			description={homeHeader.description}
-			showSocialLinks={homeHeader.showSocialLinks}
-		/>
-	</section>
-	{
-		latestNotes.length > 0 && (
-			<ContentSection
-				title="Notes"
-				href="/notes/"
-				items={latestNotes}
-				maxItems={MAX_NOTES}
-				totalItems={latestNotes.length}
-				type="notes"
-			/>
-		)
-	}
-	<ContentSection
-		title="Posts"
-		href="/posts/"
-		items={allPostsByDate}
-		maxItems={MAX_POSTS}
-		totalItems={allPosts.length}
-		type="posts"
-	/>
-	<section class="mt-16">
-		<InfoSection title="Projects" items={customConfig.projects} />
-	</section>
+  <section>
+    <PageHeader
+      title={homeHeader.title}
+      subtitle={homeHeader.subtitle}
+      description={homeHeader.description}
+      showSocialLinks={homeHeader.showSocialLinks}
+    />
+  </section>
+  {
+    latestNotes.length > 0 && (
+      <ContentSection
+        title="Notes"
+        href="/notes/"
+        items={latestNotes}
+        maxItems={MAX_NOTES}
+        totalItems={latestNotes.length}
+        type="notes"
+      />
+    )
+  }
+  {
+    latestSlides.length > 0 && (
+      <ContentSection
+        title="Slides"
+        href="/slides/"
+        items={latestSlides}
+        maxItems={MAX_SLIDES}
+        totalItems={allSlides.length}
+        type="slides"
+      />
+    )
+  }
+  <ContentSection
+    title="Posts"
+    href="/posts/"
+    items={allPostsByDate}
+    maxItems={MAX_POSTS}
+    totalItems={allPosts.length}
+    type="posts"
+  />
+  <section class="mt-16">
+    <InfoSection title="Projects" items={customConfig.projects} />
+  </section>
 </PageLayout>

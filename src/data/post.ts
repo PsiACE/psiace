@@ -7,6 +7,13 @@ export async function getAllPosts(): Promise<CollectionEntry<"post">[]> {
 	});
 }
 
+/** filter out draft slides based on the environment */
+export async function getAllSlides(): Promise<CollectionEntry<"slide">[]> {
+	return await getCollection("slide", ({ data }) => {
+		return import.meta.env.PROD ? !data.draft : true;
+	});
+}
+
 /** Get tag metadata by tag name */
 export async function getTagMeta(tag: string): Promise<CollectionEntry<"tag"> | undefined> {
 	const tagEntries = await getCollection("tag", (entry) => {

@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@/components/FormattedDate.astro";
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
+  slide: CollectionEntry<"slide">;
+  withDesc?: boolean;
+};
+
+const { as: Tag = "div", slide, withDesc = false } = Astro.props;
+
+// Extract first slide content as preview
+const firstSlideMatch = slide.body.match(/^#\s+(.+?)(?:\n|$)/m);
+const previewTitle = firstSlideMatch?.[1] || slide.data.title;
+---
+
+<FormattedDate
+  class="min-w-30 font-semibold text-gray-600 dark:text-gray-400"
+  date={slide.data.publishDate}
+/>
+<Tag>
+  {slide.data.draft && <span class="text-red-500">(Draft) </span>}
+  <a class="cactus-link" data-astro-prefetch href={`/slides/${slide.id}/`}>
+    {slide.data.title}
+  </a>
+</Tag>
+{withDesc && <q class="line-clamp-3 italic">{slide.data.description}</q>}
+{
+  previewTitle !== slide.data.title && (
+    <div class="mt-1 text-sm text-gray-500">First slide: {previewTitle}</div>
+  )
+}

@@ -1,0 +1,109 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "@/components/BaseHead.astro";
+import { siteConfig } from "@/site.config";
+
+interface Props {
+  slide: CollectionEntry<"slide">;
+}
+
+const { slide } = Astro.props;
+const { title, description, theme = "default" } = slide.data;
+const socialImage = `/og-image/${slide.id}.png`;
+
+// Handle both string and array theme formats
+const themeArray = Array.isArray(theme) ? theme : [theme];
+const baseTheme = themeArray[0] || "default";
+const customThemes = themeArray.slice(1);
+
+const meta = {
+  title,
+  description,
+  ogImage: socialImage,
+};
+---
+
+<!doctype html>
+<html lang={siteConfig.lang}>
+  <head>
+    <BaseHead {...meta} />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+    <link
+      rel="stylesheet"
+      href={`https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/${baseTheme}.css`}
+    />
+    {customThemes.map((customTheme) => <link rel="stylesheet" href={customTheme} />)}
+    <style>
+      .reveal .slides section {
+        text-align: left;
+      }
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4,
+      .reveal h5,
+      .reveal h6 {
+        text-transform: none;
+      }
+      .slide-controls {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        gap: 10px;
+      }
+      .slide-controls button {
+        padding: 8px 12px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .slide-controls button:hover {
+        background: rgba(0, 0, 0, 0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide-controls">
+      <button onclick="window.location.href='/slides/'">← Back to Slides</button>
+      <button onclick="Reveal.toggleOverview()">Overview</button>
+      <button onclick="Reveal.togglePause()">Pause</button>
+    </div>
+
+    <div class="reveal">
+      <div class="slides">
+        <slot />
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // @ts-ignore
+        window.Reveal.initialize({
+          hash: true,
+          controls: true,
+          progress: true,
+          center: false,
+          transition: "slide",
+          plugins: [
+            // @ts-ignore
+            window.RevealMarkdown,
+            // @ts-ignore
+            window.RevealHighlight,
+            // @ts-ignore
+            window.RevealNotes,
+          ],
+        });
+      });
+    </script>
+  </body>
+</html>
