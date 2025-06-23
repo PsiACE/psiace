@@ -6,8 +6,6 @@ description: "By combining retrieval and generation, it enables coding assistant
 tags: ["RAG", "Retrieval", "Agent", "Coding", "Programming"]
 ---
 
-# RAG in Coding Agents: Making Smarter Programming Assistants
-
 Programming can be tough. Whether you're debugging a tricky error, trying to understand a massive codebase, or figuring out how to use a new framework, there's always something that slows you down. Wouldn't it be great if there was a tool that could help you with all of this—something that could act like a super-smart assistant, guiding you through the process?
 
 That's where **RAG** (Retrieval-Augmented Generation) comes in. It's a fancy name for a simple idea: combining the ability to look things up (retrieval) with the ability to create new solutions (generation). In this article, we'll break down how RAG works, why it's useful for coding assistants, and how it can make your life as a developer easier.
