@@ -1,6 +1,6 @@
 ---
-title: "Sandboxed Code Agents: A WebAssembly Approach"
-description: "Why sandboxed environments are crucial for Code Agents and how WebAssembly provides a secure solution"
+title: "Sandboxed Python executor for AI agents using WebAssembly"
+description: "A weekend hack to explore different sandboxing approaches for Code Agents, using wasmtime-py and VMware's Python WASM binary to run Python code locally. Works with smolagents."
 publishDate: 2025-07-08
 tags: ["AI", "WebAssembly", "Security", "Code Agents", "Sandbox"]
 draft: false
@@ -29,7 +29,7 @@ WebAssembly's superpower isn't speed—it's **security by design**. Born from br
 3. **Deterministic execution**: Same code, same result every time
 4. **Language agnostic**: Python today, others tomorrow
 
-Simon Willison explored this in his [TIL post](https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox), and [Hacker News discussed it](https://news.ycombinator.com/item?id=34581487), but I couldn't find a simple proof-of-concept for existing agent frameworks.
+Simon Willison explored this in his [TIL post](https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox), and [Hacker News discussed it](https://news.ycombinator.com/item?id=34581487). While [Hugging Face smolagents](https://github.com/huggingface/smolagents) already has a `WasmExecutor` using Pyodide and Deno, I wanted to explore a different approach using wasmtime for local execution.
 
 ## A Weekend Hack
 
@@ -56,7 +56,7 @@ agent = WasmtimeCodeAgent(
 result = agent.run("Calculate the square root of 125")
 ```
 
-Implementation: grab VMware's Python WASM binary, wrap with wasmtime-py, make it compatible with smolagents.
+Implementation: grab VMware's Python WASM binary, wrap with wasmtime-py, make it compatible with smolagents. The key difference? **Local execution** without needing Deno runtime.
 
 ## What I Learned
 
@@ -66,12 +66,14 @@ Implementation: grab VMware's Python WASM binary, wrap with wasmtime-py, make it
 - Basic Python operations run fine
 - Error handling is robust
 - State persists between executions
+- **Local execution** without external dependencies
 
 **Trade-offs:**
 
 - Real isolation vs. limited Python ecosystem
 - Better security vs. worse performance
 - Deterministic vs. complex setup
+- **Local control** vs. remote calls
 
 ## Is This Production Ready?
 
@@ -83,7 +85,7 @@ But for experimenting? Understanding trade-offs? Having a concrete example? It w
 
 ## The Point
 
-The real value isn't this specific implementation—it's demonstrating that **sandboxed AI code execution is achievable today**. You can take an existing agent framework, add security boundaries, maintain functionality, and do it all in a weekend.
+The real value isn't this specific implementation—it's demonstrating that **different sandboxing approaches exist for AI code execution**. While smolagents offers Pyodide-based sandboxing with Deno, wasmtime provides an alternative for local execution. You can take an existing agent framework, add security boundaries, maintain functionality, and explore different trade-offs.
 
 ## Try It
 
