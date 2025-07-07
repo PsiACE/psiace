@@ -1,0 +1,34 @@
+[project]
+name = "wasmtime-executor"
+version = "0.1.0"
+description = "A WASMTIME-based Python code executor for smolagents with sandboxed execution"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["wasmtime>=24.0.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/wasmtime_executor"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"wasm-runtime" = "wasmtime_executor/wasm-runtime"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "examples/**/*",
+  "src/wasmtime_executor/**/*.py",
+  "wasm-runtime/**/*",
+  "README.md",
+  "pyproject.toml",
+]
+
+[dependency-groups]
+dev = [
+  "wasmtime-executor",
+  "smolagents>=1.19.0",
+  "pytest>=8.4.1",
+  "pytest-asyncio>=1.0.0",
+]

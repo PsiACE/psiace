@@ -23,3 +23,5 @@ pnpm-debug.log*
 *.pem
 .cache
 .astro
+
+references/
