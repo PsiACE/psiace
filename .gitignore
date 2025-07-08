@@ -25,3 +25,8 @@ pnpm-debug.log*
 .astro
 
 references/
+
+# python
+__pycache__/
+.python-version
+.pdm-python
