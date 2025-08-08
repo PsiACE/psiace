@@ -30,3 +30,8 @@ references/
 __pycache__/
 .python-version
 .pdm-python
+
+# slidev
+.slidev/
+.slidev-tmp/
+slides-embed/

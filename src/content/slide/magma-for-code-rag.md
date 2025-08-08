@@ -2,181 +2,105 @@
 title: "Magma RAG Service: Design & Implementation"
 description: "Building a minimal RAG service for codebase indexing and semantic search"
 publishDate: "28 July 2025"
-theme: ["default", "/styles/breve-theme.css"]
+theme: "@slidev/theme-default"
 tags: ["rag", "machine-learning", "code-search", "llamaindex"]
 draft: false
+aspectRatio: "16:9"
 ---
 
-<div class="title-slide">
-<div class="main-title">Magma RAG Service</div>
-<div class="subtitle">Design & Implementation Deep Dive</div>
-</div>
+## Magma RAG Service
 
-> **Note**: This project is closed source and no longer maintained
->
-> **Inspiration**: Based on rag-service from [avante.nvim](http://github.com/yetone/avante.nvim)
+### Design & Implementation Deep Dive
+
+> Note: This project is closed source and no longer maintained.
+> Inspiration: Based on rag-service from [avante.nvim](http://github.com/yetone/avante.nvim)
 
 ---
 
 # 1. Introduction
 
-<div class="section-outline">
-<div class="outline-item">What is Magma?</div>
-<div class="outline-item">The Problem</div>
-<div class="outline-item">Our Solution</div>
-</div>
+- What is Magma?
+- The Problem
+- Our Solution
 
 ---
 
 ## What is Magma?
 
-<div class="insight-box">
-<strong>Minimal RAG service for codebase indexing and semantic search</strong>
-</div>
+Minimal RAG service for codebase indexing and semantic search
 
-<div class="system-components">
-<div class="component-card">
-<h4>Natural Language → Code Search</h4>
-<p>Bridge queries and code with enhanced processing</p>
-</div>
-
-<div class="component-card">
-<h4>LlamaIndex + ChromaDB</h4>
-<p>Built on mature, proven technologies</p>
-</div>
-
-<div class="component-card">
-<h4>Specialized Pipeline</h4>
-<p>Code-aware processing and chunking</p>
-</div>
-
-<div class="component-card">
-<h4>Multi-Provider AI</h4>
-<p>Flexible AI integration with runtime switching</p>
-</div>
-</div>
+- Natural Language → Code Search: Bridge queries and code with enhanced processing
+- LlamaIndex + ChromaDB: Built on mature, proven technologies
+- Specialized Pipeline: Code-aware processing and chunking
+- Multi-Provider AI: Flexible AI integration with runtime switching
 
 ---
 
 ## The Problem
 
-<div class="problem-statement">
-<strong>Traditional RAG struggles with code</strong>
-</div>
-
-<div class="two-column">
-<div class="column-left">
+Traditional RAG struggles with code
 
 ### Raw Code
-
 ```python
+# example kept small for slide readability
+
 def authenticate_user(username, password):
     return verify_credentials(username, password)
 ```
 
 ### Poor Results
-
-- ❌ **Query**: "How to implement authentication?"
-- ❌ **Poor semantic similarity** between natural language and code
-- ❌ **Mixed results** with random code fragments
-
-</div>
-<div class="column-right">
+- ❌ Query: "How to implement authentication?"
+- ❌ Poor semantic similarity between natural language and code
+- ❌ Mixed results with random code fragments
 
 ### Enhanced Processing
-
-<div class="insight-card">
-<h4>Context Extraction</h4>
-<p>Functions, classes, imports, keywords</p>
-</div>
-
-<div class="insight-card">
-<h4>Domain Classification</h4>
-<p>auth, database, api, error handling</p>
-</div>
-
-<div class="insight-card">
-<h4>Natural Language Description</h4>
-<p>Bridge language gap</p>
-</div>
-
-</div>
-</div>
+- Context Extraction: Functions, classes, imports, keywords
+- Domain Classification: auth, database, api, error handling
+- Natural Language Description: Bridge language gap
 
 ---
 
 ## Our Solution: Dual Pipeline
 
-<div class="strategy-grid">
-<div class="strategy-card">
-<h4>Standard Pipeline</h4>
-<p>Documents → Validation → Cleaning → Chunking → Embedding → ChromaDB</p>
-</div>
-
-<div class="strategy-card">
-<h4>Enhanced Pipeline</h4>
-<p>Code Files → Language Detection → Context Extraction → Natural Language Description → Enhanced Embedding → ChromaDB</p>
-</div>
-</div>
+- Standard Pipeline: Documents → Validation → Cleaning → Chunking → Embedding → ChromaDB
+- Enhanced Pipeline: Code Files → Language Detection → Context Extraction → Natural Language Description → Enhanced Embedding → ChromaDB
 
 ---
 
 # 2. System Architecture
 
-<div class="section-outline">
-<div class="outline-item">Core Design</div>
-<div class="outline-item">API Layer</div>
-<div class="outline-item">Service Layer</div>
-<div class="outline-item">Storage Strategy</div>
-</div>
+- Core Design
+- API Layer
+- Service Layer
+- Storage Strategy
 
 ---
 
 ## Core Architecture
 
-<div class="level-details">
-<div class="level-card">
-<h4>API Layer (FastAPI)</h4>
-<ul>
-<li>RESTful endpoints</li>
-<li>OpenAPI documentation</li>
-<li>Health monitoring</li>
-</ul>
-</div>
+### API Layer (FastAPI)
+- RESTful endpoints
+- OpenAPI documentation
+- Health monitoring
 
-<div class="level-card">
-<h4>Service Layer</h4>
-<ul>
-<li>Business logic</li>
-<li>Resource management</li>
-<li>Indexing orchestration</li>
-</ul>
-</div>
+### Service Layer
+- Business logic
+- Resource management
+- Indexing orchestration
 
-<div class="level-card">
-<h4>Provider Layer</h4>
-<ul>
-<li>Multi-AI support</li>
-<li>Factory pattern</li>
-<li>Runtime switching</li>
-</ul>
-</div>
+### Provider Layer
+- Multi-AI support
+- Factory pattern
+- Runtime switching
 
-<div class="level-card">
-<h4>Storage Layer</h4>
-<ul>
-<li>ChromaDB vectors</li>
-<li>SQLite metadata</li>
-<li>Dual strategy</li>
-</ul>
-</div>
-</div>
+### Storage Layer
+- ChromaDB vectors
+- SQLite metadata
+- Dual strategy
 
 ---
 
 ## API Endpoints
-
-<div class="comparison-table">
 
 | Method   | Endpoint                   | Purpose                  |
 | :------- | :------------------------- | :----------------------- |
@@ -186,45 +110,20 @@ def authenticate_user(username, password):
 | **GET**  | `/api/v1/indexing_history` | Status monitoring        |
 | **GET**  | `/health`                  | Health check             |
 
-</div>
-
 ---
 
 ## Service Layer
 
-<div class="system-components">
-<div class="component-card">
-<h4>ResourceService</h4>
-<p>Manages indexed resources</p>
-</div>
-
-<div class="component-card">
-<h4>IndexingService</h4>
-<p>Orchestrates document processing</p>
-</div>
-
-<div class="component-card">
-<h4>CodeRetrievalService</h4>
-<p>Specialized code search</p>
-</div>
-
-<div class="component-card">
-<h4>IndexingHistoryService</h4>
-<p>Status tracking & monitoring</p>
-</div>
-</div>
+- ResourceService: Manages indexed resources
+- IndexingService: Orchestrates document processing
+- CodeRetrievalService: Specialized code search
+- IndexingHistoryService: Status tracking & monitoring
 
 ---
 
 ## Storage Strategy
 
-<div class="two-column">
-<div class="column-left">
-
 ### ChromaDB (Vector Store)
-
-<div class="formula-box">
-
 ```python
 self.chroma_client = chromadb.PersistentClient(
     path=str(settings.chroma_persist_dir)
@@ -232,57 +131,27 @@ self.chroma_client = chromadb.PersistentClient(
 vector_store = ChromaVectorStore(chroma_collection=collection)
 ```
 
-</div>
-
-</div>
-<div class="column-right">
-
 ### SQLite (Metadata)
-
-<div class="insight-card">
-<h4>Resource Management</h4>
-<p>name, URI, status</p>
-</div>
-
-<div class="insight-card">
-<h4>Indexing History</h4>
-<p>Status tracking</p>
-</div>
-
-<div class="insight-card">
-<h4>Document Status</h4>
-<p>Individual monitoring</p>
-</div>
-
-<div class="insight-card">
-<h4>Error Storage</h4>
-<p>Detailed error messages</p>
-</div>
-
-</div>
-</div>
+- Resource Management: name, URI, status
+- Indexing History: Status tracking
+- Document Status: Individual monitoring
+- Error Storage: Detailed error messages
 
 ---
 
 # 3. Core Implementation
 
-<div class="section-outline">
-<div class="outline-item">Code Processing</div>
-<div class="outline-item">Multi-AI Provider System</div>
-<div class="outline-item">Performance & Monitoring</div>
-</div>
+- Code Processing
+- Multi-AI Provider System
+- Performance & Monitoring
 
 ---
 
 ## Smart Code Processing
 
-<div class="insight-box">
-<strong>Language-Aware Chunking with Tree-sitter support for 15+ programming languages</strong>
-</div>
+Language-Aware Chunking with Tree-sitter support for 15+ programming languages
 
-<div class="formula-box">
-<strong>Code Splitter Configuration</strong>:
-
+### Code Splitter Configuration
 ```python
 language = self.code_ext_map.get(file_ext, "python")
 parser = get_parser(language)
@@ -295,15 +164,11 @@ code_splitter = CodeSplitter(
 )
 ```
 
-</div>
-
 ---
 
 ## Context Extraction
 
-<div class="formula-box">
-<strong>Enhanced Code Processing</strong>:
-
+### Enhanced Code Processing
 ```python
 def _extract_code_context(self, code_content: str, language: str):
     context = {
@@ -314,47 +179,24 @@ def _extract_code_context(self, code_content: str, language: str):
     }
 ```
 
-Also, to bridge some of the semantic gaps with natural language, we use LLM to generate some key descriptions for each snippet.
-
-</div>
+Also, to bridge some of the semantic gaps with natural language, we use LLM to generate key descriptions for each snippet.
 
 ---
 
 ## Domain Classification
 
-<div class="insights-grid">
-<div class="insight-card">
-<h4>auth</h4>
-<p>authentication, login, password, token</p>
-</div>
-
-<div class="insight-card">
-<h4>database</h4>
-<p>query, select, insert, update, connection</p>
-</div>
-
-<div class="insight-card">
-<h4>api</h4>
-<p>endpoint, route, request, response, handler</p>
-</div>
-
-<div class="insight-card">
-<h4>error</h4>
-<p>exception, try, catch, handle</p>
-</div>
-</div>
+- auth: authentication, login, password, token
+- database: query, select, insert, update, connection
+- api: endpoint, route, request, response, handler
+- error: exception, try, catch, handle
 
 ---
 
 ## Multi-AI Provider System
 
-<div class="definition-box">
-<strong>Factory Pattern Implementation</strong>: Runtime switching without code changes
-</div>
+**Factory Pattern Implementation**: Runtime switching without code changes
 
-<div class="formula-box">
-<strong>Provider Factory</strong>:
-
+### Provider Factory
 ```python
 class ProviderFactory:
     def create_embedding_model(self, provider_name, model, **kwargs):
@@ -363,23 +205,15 @@ class ProviderFactory:
         return provider.create_embedding_model()
 ```
 
-</div>
-
-<div class="efficiency-note">
-<strong>Supported Providers</strong>: OpenAI, Ollama, DashScope, OpenRouter
-</div>
+Supported Providers: OpenAI, Ollama, DashScope, OpenRouter
 
 ---
 
 ## Performance Optimizations
 
-<div class="performance-summary">
-<strong>Concurrent Processing with ThreadPoolExecutor</strong>
-</div>
+**Concurrent Processing with ThreadPoolExecutor**
 
-<div class="formula-box">
-<strong>Batch Processing</strong>:
-
+### Batch Processing
 ```python
 with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
     results = await loop.run_in_executor(
@@ -393,19 +227,13 @@ with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
     )
 ```
 
-</div>
-
-<div class="efficiency-note">
-<strong>Configurable</strong>: `document_batch_size`, `embed_batch_size`
-</div>
+Configurable: `document_batch_size`, `embed_batch_size`
 
 ---
 
 ## Real-Time File Monitoring
 
-<div class="formula-box">
-<strong>Watchdog Integration</strong>:
-
+**Watchdog Integration**
 ```python
 def start_watching_directory(self, directory: Path, uri: str):
     event_handler = FileSystemHandler(
@@ -417,36 +245,17 @@ def start_watching_directory(self, directory: Path, uri: str):
     observer.start()
 ```
 
-</div>
-
-<div class="insights-grid">
-<div class="insight-card">
-<h4>Smart Filtering</h4>
-<p>Respects .gitignore patterns</p>
-</div>
-
-<div class="insight-card">
-<h4>Binary Detection</h4>
-<p>Excludes encrypted files</p>
-</div>
-
-<div class="insight-card">
-<h4>Debounced Changes</h4>
-<p>Efficient change detection</p>
-</div>
-</div>
+- Smart Filtering: Respects .gitignore patterns
+- Binary Detection: Excludes encrypted files
+- Debounced Changes: Efficient change detection
 
 ---
 
 ## Error Handling & Resilience
 
-<div class="problem-statement">
-<strong>Retry Logic with Exponential Backoff</strong>
-</div>
+**Retry Logic with Exponential Backoff**
 
-<div class="formula-box">
-<strong>Graceful Error Handling</strong>:
-
+### Graceful Error Handling
 ```python
 max_retries = 3
 retry_count = 0
@@ -454,33 +263,25 @@ while retry_count < max_retries:
     try:
         index.refresh_ref_docs(valid_documents)
         break
-    except Exception as e:
+    except Exception:
         retry_count += 1
         if retry_count < max_retries:
-            time.sleep(2 ** retry_count)  # Exponential backoff
+            time.sleep(2 ** retry_count)
 ```
-
-</div>
 
 ---
 
 # 4. Configuration & Deployment
 
-<div class="section-outline">
-<div class="outline-item">Environment Configuration</div>
-<div class="outline-item">Enhanced Code Retrieval</div>
-<div class="outline-item">Design Decisions</div>
-</div>
+- Environment Configuration
+- Enhanced Code Retrieval
+- Design Decisions
 
 ---
 
 ## Environment Configuration
 
-<div class="definition-box">
-<strong>Runtime Configuration</strong>: Switch providers without code changes
-</div>
-
-<div class="comparison-table">
+**Runtime Configuration**: Switch providers without code changes
 
 | Category        | Variable              | Options                                     |
 | :-------------- | :-------------------- | :------------------------------------------ |
@@ -491,16 +292,11 @@ while retry_count < max_retries:
 | **Performance** | `DOCUMENT_BATCH_SIZE` | 10                                          |
 | **Performance** | `EMBED_BATCH_SIZE`    | 100                                         |
 
-</div>
-
 ---
 
 ## Enhanced Code Retrieval
 
-<div class="strategy-grid">
-<div class="strategy-card">
-<h4>Query Classification</h4>
-
+### Query Classification
 ```python
 code_keywords = [
     "implement", "function", "method", "code", "algorithm",
@@ -513,18 +309,14 @@ else:
     use_document_retrieve()
 ```
 
-</div>
-
-<div class="strategy-card">
-<h4>Structured Response</h4>
-
+### Structured Response
 ```python
 {
   "summary": "Found 3 error handling implementations...",
   "code_snippets": [
     {
       "uri": "file:///app/auth.rs",
-      "content": "fn authenticate_user(...) -> Result<User, AuthError>",
+      "content": "fn authenticate_user(...) -> Result",
       "language": "rust",
       "function_name": "authenticate_user",
       "score": 0.95
@@ -533,79 +325,31 @@ else:
 }
 ```
 
-</div>
-</div>
-
 ---
 
 ## Design Decisions
 
-<div class="two-column">
-<div class="column-left">
-
 ### Why LlamaIndex?
-
-<div class="benefit-item">
-<strong>Mature ecosystem</strong> with extensive integrations
-</div>
-
-<div class="benefit-item">
-<strong>Modular architecture</strong> allowing customization
-</div>
-
-<div class="benefit-item">
-<strong>Built-in support</strong> for multiple vector stores
-</div>
-
-<div class="benefit-item">
-<strong>Active development</strong> and community support
-</div>
-
-</div>
-<div class="column-right">
+- Mature ecosystem with extensive integrations
+- Modular architecture allowing customization
+- Built-in support for multiple vector stores
+- Active development and community support
 
 ### Why ChromaDB?
-
-<div class="benefit-item">
-<strong>Embeddable</strong> vector database (no external dependencies)
-</div>
-
-<div class="benefit-item">
-<strong>High performance</strong> with efficient indexing
-</div>
-
-<div class="benefit-item">
-<strong>Simple API</strong> with Python-first design
-</div>
-
-<div class="benefit-item">
-<strong>Persistent storage</strong> with automatic backups
-</div>
-
-</div>
-</div>
+- Embeddable vector database (no external dependencies)
+- High performance with efficient indexing
+- Simple API with Python-first design
+- Persistent storage with automatic backups
 
 ### Why SQLite for Metadata?
-
-<div class="benefit-item">
-<strong>Zero configuration</strong> embedded database
-</div>
-
-<div class="benefit-item">
-<strong>ACID transactions</strong> for data consistency
-</div>
-
-<div class="benefit-item">
-<strong>Excellent Python support</strong> via SQLModel
-</div>
-
-<div class="benefit-item">
-<strong>Reliable</strong> for metadata and small datasets
-</div>
+- Zero configuration embedded database
+- ACID transactions for data consistency
+- Excellent Python support via SQLModel
+- Reliable for metadata and small datasets
 
 ---
 
-<div class="title-slide">
-<div class="main-title">Thank You!</div>
-<div class="subtitle">Magma RAG Service: Design & Implementation</div>
-</div>
+## Thank You!
+
+Magma RAG Service: Design & Implementation
+

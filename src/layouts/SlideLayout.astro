@@ -8,13 +8,10 @@ interface Props {
 }
 
 const { slide } = Astro.props;
-const { title, description, theme = "default" } = slide.data;
+const { title, description } = slide.data;
+const urlObj = new URL(siteConfig.url);
+const basePath = urlObj.pathname && urlObj.pathname !== "/" ? urlObj.pathname.replace(/\/$/, "") : "";
 const socialImage = `/og-image/${slide.id}.png`;
-
-// Handle both string and array theme formats
-const themeArray = Array.isArray(theme) ? theme : [theme];
-const baseTheme = themeArray[0] || "default";
-const customThemes = themeArray.slice(1);
 
 const meta = {
   title,
@@ -27,24 +24,16 @@ const meta = {
 <html lang={siteConfig.lang}>
   <head>
     <BaseHead {...meta} />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
-    <link
-      rel="stylesheet"
-      href={`https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/${baseTheme}.css`}
-    />
-    {customThemes.map((customTheme) => <link rel="stylesheet" href={customTheme} />)}
     <style>
-      .reveal .slides section {
-        text-align: left;
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
       }
-      .reveal h1,
-      .reveal h2,
-      .reveal h3,
-      .reveal h4,
-      .reveal h5,
-      .reveal h6 {
-        text-transform: none;
-      }
+      /* Make iframe responsive and remove padding margins */
+      body { background: #111; }
+      .slidev-iframe { background: #111; }
       .slide-controls {
         position: fixed;
         top: 20px;
@@ -65,45 +54,24 @@ const meta = {
       .slide-controls button:hover {
         background: rgba(0, 0, 0, 0.9);
       }
+      .slidev-iframe {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        border: none;
+      }
     </style>
   </head>
   <body>
     <div class="slide-controls">
       <button onclick="window.location.href='/slides/'">← Back to Slides</button>
-      <button onclick="Reveal.toggleOverview()">Overview</button>
-      <button onclick="Reveal.togglePause()">Pause</button>
     </div>
-
-    <div class="reveal">
-      <div class="slides">
-        <slot />
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/markdown/markdown.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"
-    ></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // @ts-ignore
-        window.Reveal.initialize({
-          hash: true,
-          controls: true,
-          progress: true,
-          center: false,
-          transition: "slide",
-          plugins: [
-            // @ts-ignore
-            window.RevealMarkdown,
-            // @ts-ignore
-            window.RevealHighlight,
-            // @ts-ignore
-            window.RevealNotes,
-          ],
-        });
-      });
-    </script>
+    <iframe
+      class="slidev-iframe"
+      title={title}
+      src={`${basePath}/slides-embed/${slide.id}/index.html`}
+      allow="clipboard-write; clipboard-read;"
+    />
   </body>
 </html>

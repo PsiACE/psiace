@@ -16,8 +16,4 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { slide } = Astro.props;
 ---
 
-<SlideLayout slide={slide}>
-  <section data-markdown data-separator="^---$" data-separator-vertical="^--$">
-    <script type="text/template" set:html={slide.body} />
-  </section>
-</SlideLayout>
+<SlideLayout slide={slide} />
