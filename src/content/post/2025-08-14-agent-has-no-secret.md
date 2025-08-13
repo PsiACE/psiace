@@ -107,8 +107,8 @@ while True:
 
 ### Code Location
 
-- [agent_has_no_secret.py](file:///Users/psiace/MySelf/psiace/demo/agent-has-no-secret/agent_has_no_secret.py)
-- [README.md](file:///Users/psiace/MySelf/psiace/demo/agent-has-no-secret/README.md)
+- [agent_has_no_secret.py](https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/agent_has_no_secret.py)
+- [README.md](https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/README.md)
 
 ### Running Steps
 
