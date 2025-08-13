@@ -107,6 +107,8 @@ while True:
 
 ### Code Location
 
+Check the code at [PsiACE/psiace](https://github.com/PsiACE/psiace) to get the latest version in `demo` folder.
+
 - [agent_has_no_secret.py](https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/agent_has_no_secret.py)
 - [README.md](https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/README.md)
 
