@@ -1,7 +1,7 @@
 ---
 title: "Agent Has No Secret"
 publishDate: 2025-08-14
-slug: "agent-has-no-secret-en"
+slug: "agent-has-no-secret"
 description: "Events + Queues + CRUD, plus a layer of models. Getting the feedback loop working is more valuable than talking metaphysics."
 tags: ["agent", "event-driven", "huey", "eventure", "queue", "crud", "llm", "architecture"]
 ---
