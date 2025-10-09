@@ -24,9 +24,13 @@ pnpm-debug.log*
 .cache
 .astro
 
-references/
-
 # python
 __pycache__/
 .python-version
 .pdm-python
+
+# others
+references/
+backup/
+.vscode/
+.zed/
