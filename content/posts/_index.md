@@ -1,6 +1,6 @@
 +++
-title = "My Blog"
-description = "My blog site."
+title = "Writing"
+description = "Field notes on agent protocols, graph-native retrieval, and resilient data systems."
 sort_by = "date"
 template = "blog.html"
 page_template = "post.html"
@@ -10,8 +10,8 @@ generate_feeds = true
 [extra]
 lang = "en"
 
-title = "Posts"
-subtitle = "I write about ...."
+title = "Latest Posts"
+subtitle = "Long-form updates on building production AI platforms, agent tooling, and graph intelligence."
 
 date_format = "%b %-d, %Y"
 

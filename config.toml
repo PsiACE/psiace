@@ -6,8 +6,8 @@
 #=========================================================================================
 
 base_url = "https://psiace.me"
-title = "xxxx"
-description = "xxxx xxxx xxxx"
+title = "Chojan Shang · PsiACE"
+description = "Operator-minded systems engineer building resilient data & AI infrastructure."
 default_language = "en"
 theme = "serene"
 output_dir = "public"
@@ -43,16 +43,16 @@ anchors = "on"
 
 sections = [
   { name = "posts", path = "/posts", is_external = false },
-  { name = "about", path = "/about", is_external = false }
-  # { name = "tags", path = "/tags", is_external = false },
-  # { name = "github", path = "https://github.com/<your-username>", is_external = true },
+  { name = "about", path = "/about", is_external = false },
+  { name = "GitHub", path = "https://github.com/psiace", is_external = true },
+  { name = "X", path = "https://twitter.com/repsiace", is_external = true }
 ]
 blog_section_path = "/posts"
 
 back_link_text = "Back" # Text of the back button
 force_theme = false # false | "light" | "dark"
 
-footer_copyright = "© 2025 <your-name>"
+footer_copyright = "© 2025 Chojan Shang"
 footer_credits = true # Whether to show "Built with zola and serene" in footer
 
 not_found_error_text = "404 Not Found"
