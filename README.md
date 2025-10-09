@@ -1,55 +1,42 @@
+<h1 align="center">Chojan Shang</h1>
 <p align="center">
-  <picture>
-    <img src="https://raw.githubusercontent.com/PsiACE/brand/main/logo/LOGO.jpg" height="256">
-  </picture>
+  Operator-minded systems engineer building resilient data & AI infrastructure.<br/>
+  <a href="https://trendshift.io/developers/3326" target="_blank">
+    <img src="https://trendshift.io/api/badge/developers/3326" alt="PsiACE | Trendshift" width="250" height="55">
+  </a>
 </p>
 
-<div align="center">
-  <h1>
-    Chojan Shang
-    <br />
-    <em>Data Is Dead, Long Live Value.</em>
-  </h1>
-  <p>10 / 24 / 1998 - Present</p>
-</div>
+## Quick Snapshot
 
-> "Most of you are familiar with the virtues of a programmer. There are three, of course: laziness, impatience, and hubris." – Larry Wall
+- **GenAI Platform — Technical Owner @ Vesoft (NebulaGraph)**  
+  Built graph-native pipelines and **GraphRAG** patterns for production LLM workloads.
+- **Apache OpenDAL™ — PMC member**  
+  Driving a unified storage layer so multiple backends (S3/GCS/HDFS/local) feel native.
+- **Databend (2021–2024) — Founding Engineer & KOL/DevRel**  
+  Worked across query execution & storage I/O in a Rust cloud data engine; closed the loop with docs, tutorials, and community programs.
 
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=psiace" alt="profile views">
-</p>
+## What I Care About
 
-## About Me
+- **Enduring platforms** → predictable performance, clean contracts, strong observability.  
+- **Graph intelligence** → retrieval that respects structure, not just tokens.  
+- **Inclusive OSS** → documentation, examples, and review culture that scales contributors.
 
-Passionate about open source, I thrive on building large-scale systems and exploring the intersection of data and AI. My journey is driven by an insatiable curiosity for knowledge and innovation.
+## Selected Speaking & Writing
 
-<a href="https://trendshift.io/developers/3326" target="_blank"><img src="https://trendshift.io/api/badge/developers/3326" alt="PsiACE | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+- **Talks**: PyCon China · KCD Beijing · Rust China Conf · CommunityOverCode  
+- **Recent**: "Agent Has No Secret" (patterns for agents) · "Self-Bootstrapping Coding Agent in Python"  
+---
 
-### Current Role & Experience
+## Education
 
-- 🚀 GenAI Team Member at [Vesoft Inc. (NebulaGraph)](https://github.com/vesoft-inc/) (Sep 2024 - Present)
-  - Exploring AI and Graph infrastructure and applications
-- 🌟 Founding Member at [Databend](https://github.com/datafuselabs/databend/) (Jul 2021 - Aug 2024)
-  - Early employee and core contributor (code/documentation/community)
-  - Helped shape the future of cloud [Data + AI] analytics
-- 🔧 PMC Member at [Apache OpenDAL™](https://github.com/apache/opendal)
-  - Working on unified data access solutions for developers
-  - One Layer, All Storage.
+- **M.S. Applied Mathematics & Data Science** (2022–2024)  
+- **B.S. Computer Science & Technology** (2017–2021)
 
-### Education
+---
 
-- 📚 Master's in Applied Mathematics and Data Science (Sep 2022 - Aug 2024)
-- 💻 Bachelor's in Computer Science and Technology (Sep 2017 - Jun 2021)
+## Connect
 
-## Let's Connect
-
-I'm always open to meaningful conversations and knowledge sharing. Feel free to reach out!
-
-<details>
-<summary><strong>📫 Contact Information</strong></summary>
-
-- GitHub: [@PsiACE](https://github.com/psiace)
-- LinkedIn: [Chojan Shang](https://www.linkedin.com/in/psiace)
-- Twitter: [@repsiace](https://twitter.com/repsiace/)
-
-</details>
+- **GitHub**: <https://github.com/psiace>  
+- **Website**: <https://psiace.me>  
+- **X / Twitter**: <https://twitter.com/repsiace>  
+- **LinkedIn**: <https://www.linkedin.com/in/psiace>
