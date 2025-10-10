@@ -1,0 +1,27 @@
+{% import "macros/prose.html" as macros %}
+{% extends "serene/templates/tags/single.html" %}
+
+{% block content %}
+{% set blog_section_path = config.extra.blog_section_path | trim_start_matches(pat="/") %}
+{% set section_md_path = blog_section_path ~ "/_index.md"%}
+{% set blog_section = get_section(path=section_md_path, metadata_only=true) %}
+{% set section_lang = blog_section.extra.lang | default(value=blog_section.lang) %}
+
+<div id="wrapper">
+  {{ macros::back_link(path = get_url(path="/tags"), lang = section_lang) }}
+  <main class="layout-list">
+    <div class="title">
+      <span># {{ term.name }}</span>
+    </div>
+    <div class="post-list">
+      {% for post in term.pages %}
+      <a class="post instant {% if post.extra.featured %}featured{% endif %}" href="{{ post.permalink }}">
+        <span>{{ post.title }}</span>
+        <span class="date">{{ post.date | date(format=blog_section.extra.date_format) }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </main>
+  {% include "_footer.html" %}
+</div>
+{% endblock content %}

@@ -1,4 +1,21 @@
 {# Giscus comment system configuration #}
+{% set giscus_lang = config.default_language %}
+{% if page is defined %}
+  {% if page.extra.lang %}
+    {% set giscus_lang = page.extra.lang %}
+  {% else %}
+    {% set giscus_lang = page.lang %}
+  {% endif %}
+{% elif section is defined %}
+  {% if section.extra.lang %}
+    {% set giscus_lang = section.extra.lang %}
+  {% else %}
+    {% set giscus_lang = section.lang %}
+  {% endif %}
+{% endif %}
+{% if giscus_lang == "zh" %}
+  {% set giscus_lang = "zh-CN" %}
+{% endif %}
 <script
   src="https://giscus.app/client.js"
   data-repo="PsiACE/psiace"
@@ -10,8 +27,8 @@
   data-reactions-enabled="1"
   data-emit-metadata="0"
   data-input-position="top"
-  data-theme="{{ config.base_url }}/giscus_light.css"
-  data-lang="en"
+  data-theme="{{ config.base_url ~ '/giscus_light.css' }}"
+  data-lang="{{ giscus_lang }}"
   data-loading="lazy"
   crossorigin="anonymous"
   async

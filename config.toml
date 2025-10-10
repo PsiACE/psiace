@@ -18,6 +18,11 @@ generate_feeds = false # Whether to generate a feed file in root, read docs for 
 feed_filenames = ["feed.xml"] # "feed.xml" | "atom.xml" | "rss.xml", read docs for more info
 taxonomies = [{ name = "tags" }, { name = "categories" }]
 
+[languages.zh]
+title = "尚卓燃 · PsiACE"
+description = "偏爱面向工程的可控系统，专注于数据与 AI 基础设施的韧性与可观测性。"
+taxonomies = [{ name = "tags" }, { name = "categories" }]
+
 [markdown]
 highlight_code = true
 highlight_theme = "css"

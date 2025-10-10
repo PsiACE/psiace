@@ -1,0 +1,41 @@
+{% import "macros/prose.html" as macros %}
+{% extends "serene/templates/prose.html" %}
+
+{% block lang -%}
+{%- if section.extra.lang %}{{ section.extra.lang }}{% else %}{{ section.lang }}{% endif -%}
+{%- endblock lang %}
+
+{% block content %}
+{% set section_lang = section.extra.lang | default(value=section.lang) %}
+<div id="wrapper">
+  <main>
+    {{ macros::back_link(path = get_url(path="/"), lang = section_lang) }}
+    {% include "_section_title.html" %}
+    {% set translations = section.translations %}
+    {% set current_lang = section_lang %}
+    {% include "_language_switch.html" %}
+    <div>
+      {% if section.extra.copy %}
+      {% set copy_icon = load_data(path="icon/copy.svg") %}
+      {% set check_icon = load_data(path="icon/check.svg") %}
+      <div id="copy-cfg" style="display: none;" data-copy-icon="{{ copy_icon }}" data-check-icon="{{ check_icon }}"></div>
+      {% endif %}
+      <article class="prose">
+        {{ section.content | safe }}
+      </article>
+
+      {% if section.extra.reaction is defined %}{% set show_reaction = section.extra.reaction %}{% else %}{% set show_reaction = config.extra.reaction %}{% endif %}
+      {% if show_reaction %}
+      <div class="reaction {{ config.extra.reaction_align }}" data-endpoint="{{ config.extra.reaction_endpoint }}"></div>
+      {% endif %}
+
+      {% if section.extra.comment %}
+      <div class="giscus"></div>
+      {% include "_giscus_script.html" %}
+      {% endif %}
+    </div>
+
+    {% include "_footer.html" %}
+  </main>
+</div>
+{% endblock content %}

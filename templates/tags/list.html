@@ -1,0 +1,22 @@
+{% import "macros/prose.html" as macros %}
+{% extends "serene/templates/tags/list.html" %}
+
+{% block content %}
+{% set blog_section_path = config.extra.blog_section_path | trim_start_matches(pat="/") %}
+{% set section_md_path = blog_section_path ~ "/_index.md"%}
+{% set blog_section = get_section(path=section_md_path, metadata_only=true) %}
+{% set section_lang = blog_section.extra.lang | default(value=blog_section.lang) %}
+
+<div id="wrapper">
+  {{ macros::back_link(path = get_url(path="/"), lang = section_lang) }}
+  <main>
+    <h1 class="title">{% if section_lang == "zh" %}标签{% else %}Tags{% endif %}</h1>
+    <div class="tags">
+      {% for tag in terms -%}
+      <a class="instant" href="{{ tag.permalink }}"># {{ tag.name | lower }}</a>
+      {% endfor %}
+    </div>
+  </main>
+  {% include "_footer.html" %}
+</div>
+{% endblock content %}
