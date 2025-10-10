@@ -1,6 +1,6 @@
 +++
-title = "A Dead Simple Way to VLM Parsing"
-description = "Learn how to use Visual Language Models (VLMs) to parse unstructured data from images and other media in a straightforward way."
+title = "用 VLM 做图像解析的轻量套路"
+description = "把多模态模型当小工，用几十行代码把图片里的结构化信息扒出来。"
 date = 2024-11-28
 slug = "a-dead-simple-way-to-vlm-parsing"
 
@@ -11,89 +11,34 @@ tags = ["VLM", "Parsing", "OpenAI", "Unstructured Data", "MultiModal", "llama-in
 lang = "zh"
 +++
 
-> _中文翻译正在整理，以下为英文原文。_
+## 需求是什么？
 
-This post demonstrates a straightforward approach to using VLMs for parsing unstructured data from images. While simple, this method can be easily extended to handle more complex scenarios, such as extracting information from PDFs. If you want, you can built a more complex parser as [llamaparse](https://www.llamaindex.ai/llamaparse) with more steps, like OCR, table parsing, etc.
+公司内部常见的诉求：有一堆截图、报表、仪表盘，需要自动提取文本、结构化信息；或者想让搜索可以命中图片内容。传统做法是 OCR + 手搓解析器，维护成本高得吓人。多模态模型（VLM）已经足够靠谱，不如直接让它干这类“看图说话”的重活。
 
-Let's consider a common scenario: you have a collection of images and need to extract text from them. Or perhaps you want to generate descriptions from pictures to enable full-text search capabilities. It's time to hire a VLM (Visual Language Models or MultiModal Models) to work for you.
+## 最小工作流长什么样
 
-Since I work extensively with [llama-index](https://github.com/run-llama/llama-index), I'll be using it in the examples. However, the core concepts remain the same, and you can adapt them to work with any tools or clients of your choice.
+1. 选一个 VLM（我用 `llama-index` 的封装 + OpenAI GPT-4o mini，换 Claude、Gemini 也一样）。
+2. 准备一个提示词，告诉模型我们要哪些信息：概览、文字、表格、图表、补充细节。
+3. 把图片转成 base64，作为 `data:image/png` 发送。
+4. 接收结果，按需落地到终端、JSON 或数据库。
 
-## Show Me The Code
-
-At first, we need to define a prompt for the VLM to follow, to help it understand what we need.
-
-```python
-BASIC_PROMPT = """
-        Please analyze this image comprehensively and provide the following information:
-
-        1. General Overview:
-           - Main subject matter and content
-           - Overall composition and context
-           - Key visual elements present
-
-        2. Text Content:
-           - Transcribe any visible text accurately
-           - Include headers, labels, and captions
-           - Note any important text formatting or emphasis
-
-        3. Data Visualization (if present):
-           - For tables:
-             * Convert to markdown format
-             * Preserve column headers and data relationships
-           - For charts/graphs:
-             * Describe the type of visualization
-             * Explain key trends and patterns
-             * List important data points and values
-           - For diagrams/flowcharts:
-             * Explain the structure and relationships
-             * Describe the flow or process
-             * Note any important symbols or annotations
-
-        4. Additional Details:
-           - Identify any branding or logos
-           - Note color schemes if significant
-           - Describe any relevant metadata or context
-
-        Please format the response clearly and maintain the original structure of any data.
-        """
-```
-
-Let's build a minimal but functional image parser:
+就是这么简单，核心代码不到一百行。
 
 ```python
-from pathlib import Path
-from typing import List
-import base64
-from io import BytesIO
-from PIL import Image
-from llama_index.core.multi_modal_llms import MultiModalLLM
-from llama_index.core.multi_modal_llms.generic_utils import ImageDocument
-
 class SimpleImageParser:
     def __init__(self, model: MultiModalLLM):
         self.model = model
-        self.prompt = BASIC_PROMPT
-
-    """A simple parser for extracting information from images using VLMs.
-
-    Args:
-        model (MultiModalLLM): The multi-modal language model to use for parsing
-    """
+        self.prompt = BASIC_PROMPT  # 详述我们想要的数据结构
 
     def process_image(self, image_path: str) -> str:
-        """Convert image to base64 encoding"""
         image = Image.open(image_path)
         buffered = BytesIO()
         image.save(buffered, format="PNG")
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
     async def parse(self, image_path: str) -> str:
-        """Parse image content"""
         image_data = self.process_image(image_path)
-        image_doc = ImageDocument(
-            image_url=f"data:image/jpeg;base64,{image_data}"
-        )
+        image_doc = ImageDocument(image_url=f"data:image/png;base64,{image_data}")
         response = await self.model.acomplete(
             prompt=self.prompt,
             image_documents=[image_doc]
@@ -101,108 +46,28 @@ class SimpleImageParser:
         return str(response)
 ```
 
-The core is, we convert the image to base64 encoding, and then pass it to the VLM.
-
-## Taking It for a Spin
-
-Here's how to use our shiny new parser:
-
-```python
-import asyncio
-import os
-import argparse
-from pathlib import Path
-from llama_index.multi_modal_llms.openai import OpenAIMultiModal
-from dotenv import load_dotenv
-
-load_dotenv()
-
-async def main():
-    parser = argparse.ArgumentParser(description="Parse image content")
-    parser.add_argument("image_path", type=str, help="Path to the image file")
-    args = parser.parse_args()
-
-    image_path = Path(args.image_path)
-    if not image_path.exists():
-        print(f"Image file does not exist: {image_path}")
-        return
-
-    # Initialize the VLM
-    model = OpenAIMultiModal(
-            model=os.getenv("MULTI_MODAL_LLM_MODEL", "gpt-4o-mini"),
-            api_key=os.getenv("MULTI_MODAL_LLM_API_KEY"),
-            api_base=os.getenv("MULTI_MODAL_LLM_API_BASE", "https://api.openai.com/v1"),
-            max_new_tokens=int(os.getenv("MULTI_MODAL_LLM_MAX_TOKENS", "512")),
-            temperature=float(os.getenv("MULTI_MODAL_LLM_TEMPERATURE", "0.7")),
-        verbose=os.getenv("MULTI_MODAL_LLM_VERBOSE", "False").lower() == "true",
-    )
-
-    # Create our parser
-    parser = SimpleImageParser(model)
-    # Let's parse an image!
-    result = await parser.parse(str(image_path))
-    print(result)
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-In this snippet, we initialize the VLM, create our parser, and then parse an image.
-
-## Running the Demo
-
-I have a repo for a demo of using VLM to parse images, you can see the [code here](https://github.com/psiace/psiace/tree/main/demo/vlm-parsing).
-
-Just run the script with the image path:
+## 跑起来
 
 ```bash
-python basic.py <image_path>
+python basic.py ./samples/gateway.png
 ```
 
-The example image is a screenshot of a home gateway, from [Home gateway example](https://commons.wikimedia.org/wiki/File:Home_gateway_example.png):
+脚本会：
+- 在 `.env` 里读多模态模型的 key、base、温度等配置；
+- 调用 VLM；
+- 打印解析结果。
 
-![Home gateway example](example.png)
+在 demo 里，我给了一张家庭网关的界面截图，模型可以同时识别页面布局、表格内容、按钮状态，还能提取文本。效果对 CRM、客服系统、知识库已经够用了。
 
-And the result in terminal is:
+## 想拓展？几个方向
 
-![Home gateway example result](example-result.png)
+- **多格式输入**：引入 `pdf2image`、OpenCV，就能批量处理 PDF、视频帧。
+- **结构化输出**：把结果再走一遍规则或 LLM post-processing，转成 JSON / Markdown 表格。
+- **流水线化**：用 asyncio / 队列批量处理，或接入 `llama-index` 的 RAG 流程，让图像内容直接进检索。
 
-## Bonus: Extending the Parser
+## 资源
 
-Here are some practical ways to extend this simple parser:
+- 代码仓库：[psiace/demo/vlm-parsing](https://github.com/psiace/psiace/tree/main/demo/vlm-parsing)
+- 文档参考：[llama-index docs](https://docs.llamaindex.ai/)
 
-1. **Format Support**
-
-   - Handle PDFs using tools like `pdf2image`
-   - Process videos using `opencv-python` for frame extraction
-
-2. **Output Options**
-
-   - Generate JSON output:
-     ```python
-     async def parse_to_json(self, image_path: str) -> dict:
-         result = await self.parse(image_path)
-         # Add your JSON transformation logic here
-         return json_result
-     ```
-   - Create custom templates using Jinja2 or similar
-
-3. **Processing Pipeline**
-
-   - Integrate Tesseract OCR for text extraction
-   - Try to support table parsing
-   - Implement batch processing with asyncio
-
-4. **Integration Ideas**
-   - Connect with llama-index for RAG applications
-   - Build automated workflows
-
-## Resources
-
-- [llama-index Documentation](https://docs.llamaindex.ai/)
-- [OpenAI](https://platform.openai.com/)
-- [PIL (Python Imaging Library)](https://pillow.readthedocs.io/)
-
----
-
-Thanks for reading! If you have any questions or suggestions, please feel free to leave a comment.
+一句话总结：VLM 的门槛比你想象得低，把它当“图片解析服务”即可。先用简单套路验证价值，再决定要不要引入更复杂的 OCR/结构化管线。EOF

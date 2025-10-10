@@ -1,6 +1,6 @@
 +++
-title = "Building a Self-Bootstrapping Coding Agent in Python"
-description = "I spent some time building Bub, a practical command-line assistant that, while not yet officially released, can already help with various tasks. In this article, I'd like to share how to quickly build a coding agent."
+title = "Bub：一个自举型命令行编码助手"
+description = "从一个 while 循环开始，让智能体先学会修自己的项目。"
 date = 2025-07-16
 slug = "baby-step-coding-agent"
 
@@ -8,118 +8,74 @@ slug = "baby-step-coding-agent"
 lang = "zh"
 +++
 
-> _中文翻译正在整理，以下为英文原文。_
+Bub 是我在命令行里养的一只“小工程师”。第一件拿得出手的成果，是它帮我把项目里的 mypy 报错从 24 个砍到 23 个。下面记录它是怎么长大的。
 
-Bub's first milestone: automatically fixing type annotations. Powered by Moonshot K2
+## 为什么要自己造
 
-> Bub: Successfully fixed the first mypy issue by adding the missing return type annotation `-> None` to the `__init__` method in `src/bub/cli/render.py`, reducing the error count from 24 to 23.
+市面上的编码智能体越来越多，但很多都是“堆 token 不讲效率”。我想试试能不能做一个**自举能力有限但实用**的助手：自己能修自己的代码库，还能解释它做了什么。
 
-## 1. Why Build Your Own Agent?
+## 第一原则：先跑起来
 
-Coding agents have become a crowded market, with many excellent products available—like yetone's avante.nvim, AmpCode recommended by Brother Jintao, and numerous teams drawing grand blueprints in their presentations. However, the "token brute force" phenomenon in coding agents is also quite apparent—consuming hundreds of thousands of tokens while delivering minimal real value. This made me curious: if I built a coding agent myself, could I find a more efficient and practical solution?
-
-So I started working on a CLI assistant called Bub. Its goal is simple: to be a practical command-line assistant with limited self-bootstrapping capabilities. The concept of bootstrapping is nothing new in compilers and operating systems, and many coding agents love to tout "how much code AI engineers contributed." I hope Bub can take its first step by solving the first real problem in its own codebase.
-
----
-
-## 2. Minimum Viable: Get It Running First
-
-My experience is that the smallest working loop is most important—don't start by pursuing "perfect architecture" or spend too much time on data theft.
-
-Bub's architecture is straightforward:
-
-- **Agent**: Main loop, responsible for LLM interaction, tool calling, and context management.
-- **Tool**: Each tool is a class with Pydantic-validated parameters.
-- **ToolRegistry**: Registers all tools for easy extension.
-- **CLI**: Typer + Rich, command-line entry point with support for expanding intermediate states.
-
-The essence of an agent is really just a while loop. In each iteration, the agent determines whether it needs to call tools based on the current context. If needed, it calls them and writes the tool results back to the context.
-
-### Core Main Loop Code
+忘掉“完美架构”，先构建最小正反馈循环——收到指令，判断是否需要工具 → 调用工具 → 把结果写回上下文 → 再次推理。
 
 ```python
 class Agent:
     def chat(self, message: str) -> str:
-        self.conversation_history.append(Message(role="user", content=message))
+        history.append(Message("user", message))
         while True:
-            # Construct context: historical messages + tool list
-            ...
-            response = litellm.completion(...)
-            assistant_message = str(response.choices[0].message.content)
-            self.conversation_history.append(Message(role="assistant", content=assistant_message))
-            tool_calls = self.tool_executor.extract_tool_calls(assistant_message)
-            if tool_calls:
-                for tool_call in tool_calls:
-                    result = self.tool_executor.execute_tool(tool_call.name, **tool_call.parameters)
-                    observation = f"Observation: {result.format_result()}"
-                    self.conversation_history.append(Message(role="user", content=observation))
-                continue
-            else:
-                return assistant_message
+            response = litellm.completion(history, tools)
+            assistant_msg = response.choices[0].message.content
+            history.append(Message("assistant", assistant_msg))
+            tool_calls = tool_executor.extract(assistant_msg)
+            if not tool_calls:
+                return assistant_msg
+            for call in tool_calls:
+                result = tool_executor.execute(call)
+                history.append(Message("user", f"Observation: {result}"))
 ```
 
-**Pitfalls I encountered:**
+踩坑提醒：
 
-- No exception handling—when LLM output format changes, it goes into infinite loops
-- No tool parameter validation—LLM passing random parameters crashes the system
-- Observation feedback too long or lacking useful information, making it hard for LLM to understand
+- LLM 格式出错时要能退出循环；
+- 工具参数必须校验，不然随手传个 `None` 就炸；
+- Observation 不要写诗，信息密度越高越好。
 
----
+## 工具是手和脚
 
-## 3. Tool Definition: Extending LLM Capabilities
-
-Tools are the bridge between LLMs and the external world. Well-defined tools allow models to truly "get their hands dirty." My approach:
-
-- All tool parameters validated with Pydantic—reject immediately if types don't match.
-- Command-line tools have a blacklist (like `rm`, `del`)—block dangerous commands directly.
-- Tool execution results returned in structured format—don't let the LLM guess.
-- When operating command-line tools, both stdout and stderr are important—don't just give exit codes.
-- Clear boundaries between tools to avoid confusion.
+- 参数用 Pydantic 校验，错误直接拒绝；
+- 命令行工具有黑名单，`rm -rf` 这种不用讨论；
+- 输出结构化：stdout、stderr、exit code 分开回传；
+- 结果里明确说明“成功/失败、后续建议”。
 
 ```python
 class RunCommandTool(Tool):
-    DANGEROUS_COMMANDS = {"rm", "del"}
-    def _validate_command(self, base_cmd: str) -> Optional[str]:
-        if base_cmd in self.DANGEROUS_COMMANDS:
-            return f"Dangerous command blocked: {base_cmd}"
-    def execute(self, context: Context) -> ToolResult:
-        # Validate command, execute and return results
+    BLOCKED = {"rm", "shutdown"}
+    async def execute(self, command: str) -> ToolResult:
+        base_cmd = command.split()[0]
+        if base_cmd in self.BLOCKED:
+            return ToolResult(error=f"Command blocked: {base_cmd}")
+        proc = await anyio.run_process(command, check=False)
+        return ToolResult(stdout=proc.stdout, stderr=proc.stderr, returncode=proc.returncode)
 ```
 
----
+## Prompt 要“画线”
 
-## 4. Prompt Design: Making LLMs Follow the Script
+ReAct 格式简单粗暴：Thought、Action、Action Input、Observation、Final Answer。有三点要做到：
 
-Well-organized prompts significantly improve LLM output quality. This is especially important for coding agents because LLM output formats can easily get out of control.
+1. 列出所有工具及参数示例；
+2. 给几段完整的使用样例；
+3. Observation 控制在可读范围内。
 
-My experience:
+## 第一个里程碑：自动修类型
 
-- List all tools and parameter schemas in the prompt.
-- Provide several usage examples covering common scenarios.
-- Keep observation feedback concise—don't pile on useless information.
+流程是：
 
-**Bub's ReAct Prompt Structure:**
+1. 运行 `mypy`，记录报错；
+2. 让 Bub 阅读报错，定位文件；
+3. 用“编辑文件”工具打补丁；
+4. 再跑一次 mypy 验证。
 
-```
-You are an AI assistant with access to tools. When you need to use a tool, follow this format:
-
-Thought: ...
-Action: run_command
-Action Input: {"command": "ls"}
-Observation: <output>
-...
-Final Answer: <your answer>
-```
-
-The advantage of ReAct is that it's simple and direct, easy to implement. Although token consumption is high, it allows for quick iteration and cross-model migration.
-
----
-
-## 5. Milestone: Automatic Type Annotation Fixing
-
-After defining the Agent Loop, tools, and prompts, Bub's first milestone was to make the agent automatically fix mypy errors.
-
-For example:
+举例：
 
 ```diff
 -    def __init__(self):
@@ -130,39 +86,21 @@ For example:
 +        self._show_debug: bool = False
 ```
 
-My approach:
+约束条件：只允许改类型注解、命名、文档，不碰业务逻辑；补丁必须能自动验证；失败要能回滚。
 
-- First use command-line tools to run `mypy` and get error information.
-- Let the agent generate fix suggestions, then apply them to code using file edit tools.
-- After fixing, automatically run mypy again to ensure no new issues.
-- Only let the agent modify type annotations, formatting, and renaming—don't let it touch complex logic.
+## 工程化心得
 
-**Pitfalls I encountered:**
+- 工具要职责单一，方便组合；
+- 大上下文要裁剪或摘要，否则 LLM 迟早超窗；
+- 命令执行默认在沙箱里跑，危险操作默认禁用；
+- 对于不稳定的模型输出，兜底逻辑要早做。
 
-- Models have limited understanding of code context and often fix things incorrectly.
-- Without verification, bugs multiply instead of decreasing.
+## 现在进展
 
----
+Bub 能自动跑 lint/mypy、执行脚本、读写文件，并把修改记录下来。还远没到发布的程度，但已经足够在自己项目里当小助手。下一步计划：
 
-## 6. Advanced Techniques and Engineering Self-Review
+- 引入 RAG，帮助它在仓库里更快定位上下文；
+- 更细粒度的安全护栏；
+- 把“自举”扩展到工具注册、Prompt 微调等环节。
 
-As functionality expanded, I encountered more pitfalls. Some of my experiences:
-
-- When extending tools, aim for single responsibility with clear parameter schemas.
-- For long conversations, truncate or summarize—don't let LLM exceed context windows.
-- In production environments, recommend sandboxing/virtual machines, and disable dangerous commands by default for command-line tools.
-- When LLM output formats are unstable, have fallback mechanisms.
-
-## 7. Conclusion
-
-Bub is still in its early stages, but it can already help me automatically fix bugs, run commands, and read/write files. I hope this is just the beginning, and I look forward to more interesting feedback.
-
-![Bub it. Build it.](bub-it.jpeg)
-
----
-
-### References
-
-- [How to Build an Agent (ampcode)](https://ampcode.com/how-to-build-an-agent)
-- [Tiny Agents: Building LLM-Powered Agents from Scratch (HuggingFace)](https://huggingface.co/blog/tiny-agents)
-- [Bub: Bub it. Build it.](https://github.com/PsiACE/bub)
+“Bub it. Build it.” 就是这只助手的小口号。有些工作不必等行业旗舰搞定，自己动手也能见到火花。EOF

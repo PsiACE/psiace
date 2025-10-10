@@ -1,6 +1,6 @@
 +++
-title = "Agent Has No Secret"
-description = "Events + Queues + CRUD, plus a layer of models. Getting the feedback loop working is more valuable than talking metaphysics."
+title = "Agent 没有什么秘密"
+description = "事件、队列、CRUD，再叠一层模型协作。先把反馈闭环跑通，比任何玄学包装都重要。"
 date = 2025-08-14
 slug = "agent-has-no-secret"
 
@@ -12,35 +12,38 @@ lang = "zh"
 mermaid = true
 +++
 
-> _中文翻译正在整理，以下为英文原文。_
+> 我是 [PsiACE](https://github.com/PsiACE)。这些年围着 Agent 和 RAG 打转，最后的共识只有一句：**少谈玄学，多把反馈闭环跑起来**。系统要能自证、能回放、能换件，这才叫工程。
 
-> I'm [PsiACE](https://github.com/PsiACE). My recent work focuses on Agent and RAG: **less metaphysics, more getting the feedback loop working**, making systems that can explain themselves clearly, run stably, and be replayed and switched.
+## 三句话先交代清楚
 
-## TL;DR
-
-- **Agent is not a new religion**. It's still engineering practice with events, queues, and CRUD, plus a layer of model collaboration.
-- Share one EventBus, connect `agent.*` and `huey.*` events; print every event immediately; finally use a Cascade tree to review causality and timing.
-- **Single-file demo, run immediately**: first see events, then see causality, finally see results.
+- **Agent 不是新宗教。** 底层还是事件、队列、CRUD，只是多了一层模型协作。
+- **总线要讲故事。** EventBus 把 `agent.*` 和 `huey.*` 串起来，事件实时打点，最后用 Cascade Viewer 把因果和时间线复盘。
+- **先给 demo 再谈理念。** 我准备了一个单文件脚本，跑起来就能看到闭环、再决定要不要包装。
 
 ![Cascade Viewer](cascade-viewer.png)
 
 ---
 
-## Why I Write This (And Why This Way)
+## 为什么要把细节摊开讲
 
-- I don't want to discuss "how to draw a complex Agent architecture diagram" anymore. I care more about "**how to make systems explain themselves clearly, fail gracefully, and review transparently**".
-- This article comes with a single-file demo: shared bus, strict ReACT, causality and timing combined, immediate observability. **Ready to use**.
+过去一年接触 Agent 相关项目，总有人问：“到底要不要上多智能体协作？”、“模型能不能自己规划？” 但真正让系统可靠的，是那些看似朴素的工程功夫：
 
-## How I Did It
+- 事件怎么流转？
+- 失败是怎么被记录、被回放的？
+- 观察信息是不是足够让人看懂？
 
-### Core Design Principles
+所以我换个角度写这篇文章：不再展开概念，而是以一个可跑的 demo 为骨架，讲清楚“如何把 Agent 做得像个正经服务”。
 
-- **Shared EventBus**: Agent, ToolExecutor, Storage all publish to the same bus.
-- **Strict ReACT**: Thought → Action → Action Input → Observation → Final Answer.
-- **Causality + Timing**: Each user input advances `tick`; each Observation advances `tick`; `Action → huey.* → Observation` is linked through parent-child relationships.
-- **Immediate Observability**: Print every event in real-time; finally use tree-shaped Cascade Viewer for time-based review.
+## 架构是这样落地的
 
-### Event Flow (Overview)
+### 设计原则
+
+- **只有一个事件总线。** Agent、ToolExecutor、Storage 全都往 EventBus 写事件，不分支、不隐蔽。
+- **遵循 ReACT 流程。** Thought → Action → Action Input → Observation → Final Answer，让模型有章可循，工具有证可查。
+- **因果与时序同时可见。** 每次用户输入推进 `tick`，每个 Observation 也推进 `tick`；`Action → huey.* → Observation` 用父子关系串起来。
+- **观察必须即时。** 事件第一时间打印日志，最后再用 Cascade Viewer 纵览整场对话。
+
+### 事件流一览
 
 ```mermaid
 graph TD
@@ -56,14 +59,15 @@ graph TD
   EventLog --> Renderer[Cascade Viewer]
 ```
 
-## How Is This Different from "Traditional Architecture"?
+## 和“传统架构”有哪些区别？
 
-- **No difference**: Events, queues, CRUD were already there; just connected models as collaborators.
-- **No hype**: No design that fails when the word "intelligent" is removed; it's reliable, explainable, and easier to implement.
+- **底子没变。** 事件、队列、CRUD 这些“老面孔”依然在，只是我们把模型也当成协作者，纳入同一套流程。
+- **拒绝玄乎。** 把“智能”两个字抹掉，系统照样能跑，这才叫可靠、可解释、可维护。
+- **观测逻辑更丰富。** 传统队列只关心任务状态，这里我们得把“模型想了什么”“调用了什么”“拿到的结果是什么”都记下来。
 
-## Minimal Skeleton (Excerpt)
+## 最小骨架长什么样
 
-### Event-driven storage wrapper
+### 事件驱动的存储封装
 
 ```python
 class EventureMemoryStorage(MemoryStorage):
@@ -79,7 +83,7 @@ class EventureMemoryStorage(MemoryStorage):
         })
 ```
 
-### Tool with self-description
+### 自带说明书的小工具
 
 ```python
 def tool_echo(params: dict) -> dict:
@@ -87,7 +91,7 @@ def tool_echo(params: dict) -> dict:
     return {"ok": True, "echo": str(params.get("text", ""))}
 ```
 
-### ReACT loop (Core Idea)
+### ReACT 回路的心跳
 
 ```python
 while True:
@@ -104,38 +108,40 @@ while True:
     return assistant
 ```
 
-## Principles I Follow
+## 做项目时我守的几条线
 
-- **Feedback loop first, fancy features later**: Get "events → queue → state changes → ReACT" working before optimization.
-- **Causality and timing are first-class citizens in engineering**: tick expresses update cycles; parent-child expresses trigger chains.
-- **Observability first**: When systems can explain themselves, optimization has a foundation.
-- **Replaceable**: Bus is stable, backend can be swapped (memory → Redis), models can be swapped (vendor/version).
+- **先把反馈闭环跑通，再谈炫技。** 事件 → 队列 → 状态变更 → ReACT，通了再想优化。
+- **因果与时序是一等公民。** `tick` 表示节奏，父子关系标记触发链。
+- **观测优先。** 系统能自我解释，调优才有地基。
+- **保持可换。** 总线稳定，后端可以换（内存 ↔ Redis），模型可以换（不同厂商 / 版本）。
 
-## How to Run (Single Terminal)
+## 现场演示：单终端就能跑
 
-### Code Location
+### 代码在哪
 
-Check the code at [PsiACE/psiace](https://github.com/PsiACE/psiace) to get the latest version in `demo` folder.
+到 [PsiACE/psiace](https://github.com/PsiACE/psiace) 项目的 `demo` 目录拿最新版本：
 
 - [agent_has_no_secret.py](https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/agent_has_no_secret.py)
 - [README.md](https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/README.md)
 
-### Running Steps
+### 运行方式
 
-1. Configure `.env` (OpenRouter recommended; OpenAI also works)
+1. 配好 `.env`（推荐 OpenRouter，OpenAI 也行）
 2. `python agent_has_no_secret.py`
 
-### What You'll See
+### 屏幕上会看到
 
-- **Real-time event stream** (with colors): `user.input`, `agent.thought`, `agent.action`, `huey.data.*`, `agent.observation` …
-- A green **Final Answer** panel
-- A **tree-shaped Cascade Viewer** grouped by tick: under `agent.action` you can see the parent-child hierarchy of `huey.data.*` and `agent.observation`
+- **实时事件流**（带颜色）：`user.input`、`agent.thought`、`agent.action`、`huey.data.*`、`agent.observation` …
+- 绿色的 **Final Answer** 面板
+- **树状 Cascade Viewer** 按 tick 分组：`agent.action` 下面能看到 `huey.data.*` 与 `agent.observation` 的父子链
 
 ---
 
-## Final Thoughts
+## 写在最后
 
-I admire engineers who can "**explain clearly and make things work**". Agent has no mystery:
+我喜欢那种**讲得清楚又做得出来**的工程师。Agent 没什么神秘：
 
-- Get the feedback loop working first, then consider fancy features;
-- Make causality and costs visible first, then talk about "smarter".
+- 先让反馈闭环转起来，再谈“更智能”；
+- 先把因果链和成本摊开，再谈“更聪明”。
+
+搞 Agent，别膜拜神秘感，就和那些能当场拆给你看、并立刻跑给你看的人站在一边。

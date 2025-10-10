@@ -1,6 +1,6 @@
 +++
-title = "Announcing NebulaGraph MCP Server v0.1.0"
-description = "I implemented a simple NebulaGraph MCP Server based on NebulaGraph 3.x, serving as the first foundational component in the NebulaGraph X MCP ecosystem."
+title = "NebulaGraph MCP Server v0.1.0：我们把图数据库接上了 MCP"
+description = "一个轻量的 NebulaGraph MCP Server，帮语言模型直接调用图数据库，探索 GraphRAG 的新可能。"
 date = 2025-03-11
 slug = "announcing-nebulagraph-mcp-server-v010"
 
@@ -11,53 +11,38 @@ tags = ["MCP", "LlamaIndex", "Python", "NebulaGraph"]
 lang = "zh"
 +++
 
-> _中文翻译正在整理，以下为英文原文。_
+## 为什么要做这件事
 
-Over the past few weeks, **Model Context Protocol (MCP)** has sparked significant discussion and attention within the tech community. As part of this momentum, I contributed to several related open-source projects, including the [McpToolSpec implementation for the LlamaIndex official repository](https://github.com/run-llama/llama_index/pull/17795) and collaborated with Xuanwo and FrostMing to develop a version of the [Model Context Protocol Server for Apache OpenDAL™](https://github.com/Xuanwo/mcp-server-opendal).
+最近 MCP（Model Context Protocol）社区非常热闹：几乎每天都有新的 MCP Server 诞生，涵盖搜索、数据库、存储、天气等各种领域。我们在做 GraphRAG 和 Agent Workflow 时，需要一种方式，让模型在决策过程中即时获取图数据。因此我基于 NebulaGraph 3.x 写了一个 MCP Server，作为 “NebulaGraph × MCP” 生态的第一块基石。
 
-MCP is currently the only standard with an ecosystem advantage. In this context, I implemented a simple **NebulaGraph MCP Server** based on NebulaGraph 3.x, serving as the first foundational component in the NebulaGraph X MCP ecosystem. This server is intended for exploring the potential of combining AI and graph databases, and I hope to see more exciting work emerge under this paradigm.
+## MCP 有什么特别
 
-## About Model Context Protocol (MCP)
+- **统一协议**：把客户端（AI 应用）和服务端（工具/数据源）之间的交互标准化。
+- **开放生态**：社区已经有近千个公开实现，可以直接接入。
+- **松耦合架构**：开发者可以用同一套协议封装任意后端，接入门槛很低。
 
-MCP is an open protocol introduced by the Anthropic team, designed to provide AI systems with a unified and efficient way to access various data resources. By adopting a client-server architecture, MCP standardizes data access, addressing the fragmentation issue of traditional AI systems dealing with diverse data sources.
+对我们来说，MCP 是让 Agent 得以调用图数据库的捷径。
 
-The core features of MCP include:
+## NebulaGraph MCP Server 做了什么
 
-1. **Standardized Communication Protocol**: With MCP, AI assistants can effectively access various data sources, such as local data, remote services, and enterprise tools.
-2. **Openness and Ecosystem Advantage**: The MCP community currently boasts nearly 1,000 MCP Server implementations, covering domains such as search, weather, databases, and more, enabling rapid tool integration.
-3. **Flexible Architecture**: By defining the interaction protocol between clients and servers, MCP provides developers with the foundation to build scalable and reusable systems.
+- 基于 **FastMCP** 实现，支持 `stdio` 和 `SSE` 两种传输模式。
+- 暴露了几个基础能力：
+  - **列出图空间**：让模型知道有哪些数据域；
+  - **查看 Schema**：理解各图空间的点、边定义；
+  - **执行 nGQL 查询**：直接跑查询语句；
+  - **常用 Operator 模板**：例如最短路径、邻居扩展，封装成可复用工具。
+- LlamaIndex 侧通过前文的 `McpToolSpec` 适配器即可直接接入，ReAct Agent 会在推理时自动调用。
 
-While challenges remain in terms of security and reliability, these issues are expected to be resolved over time with improved protocol specifications and the adoption of mature development practices.
-
-## Implementation and Features of the NebulaGraph MCP Server
-
-Recently, I have been working on GraphRAG and Agentic Workflow, focusing on deriving insights and mining graph data using large models and intelligent agents. To support this, I quickly developed the **NebulaGraph MCP Server**, which integrates NebulaGraph 3.x into the MCP ecosystem, enabling language models (like Claude, GPT, etc.) to call and use it.
-
-Currently, the NebulaGraph MCP Server is implemented based on **FastMCP**, adhering to the core MCP specifications. It aims to provide an efficient and lightweight graph database connection service. By exposing NebulaGraph’s functions as standardized tool interfaces, the server empowers large models to easily access NebulaGraph data and perform basic graph exploration tasks.
-
-### Features:
-
-1. **Multiple Transmission Modes**:
-
-   - Supports **stdio** and **SSE** (Server-Sent Events) transmission modes to cater to different development and deployment scenarios.
-
-2. **Basic Graph Exploration Capabilities**:
-
-   - **Graph Space Listing**: Allows models to query available graph spaces.
-   - **Schema Querying**: Supports querying the schema definitions of specific graph spaces.
-   - **Query Execution**: Enables executing NebulaGraph queries through the MCP Server.
-
-3. **Built-in Operator Templates**:
-   - Implements templates for common operations like path search and neighbor discovery, allowing language models to quickly call these tools as needed and gain initial insights into graph data.
-
-To demonstrate its effectiveness, I built a simple example using LlamaIndex’s McpToolSpec and ReActAgent. Below is a screenshot:
+示例里我让 Agent 查询某个空间的 schema，再运行路径搜索，结果连同可视化一并返回。
 
 ![LlamaIndex with NebulaGraph MCP](llamaindex-with-nebulagraph-mcp.png)
 
-## Conclusion
+## 下一步
 
-The **NebulaGraph MCP Server** is an initial attempt to contribute to the MCP ecosystem, aiming to provide a starting point for combining language models and graph databases. As the protocol matures and the ecosystem expands, I look forward to seeing it deliver value in more real-world scenarios. If you are interested in this direction, feel free to explore and experiment together!
+这个版本只是打地基：
 
----
+- 后续会补充权限控制、查询限流等安全能力；
+- 计划支持更多 NebulaGraph 原生特性（如存储过程、图算法库）；
+- 与 GraphRAG 管线结合，让模型不仅能查图，还能基于图结构做推理。
 
-For more details, check out the original repository [here](https://github.com/PsiACE/nebulagraph-mcp-server).
+仓库在这里：[PsiACE/nebulagraph-mcp-server](https://github.com/PsiACE/nebulagraph-mcp-server)。欢迎感兴趣的同学一起折腾，探讨 AI × 图数据库的更多玩法。EOF

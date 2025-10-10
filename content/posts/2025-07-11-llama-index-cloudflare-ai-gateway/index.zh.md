@@ -1,8 +1,9 @@
 +++
-title = "Building a Cloudflare AI Gateway integration for LlamaIndex"
-description = "A wrapper that makes LlamaIndex work with Cloudflare AI Gateway for automatic fallback, caching, and load balancing across multiple LLM providers."
+title = "让 LlamaIndex 接上 Cloudflare AI Gateway"
+description = "一个轻量封装，把多个 LLM 服务放进 Cloudflare 的网关，自动兜底、缓存、限流。"
 date = 2025-07-11
 slug = "llama-index-cloudflare-ai-gateway"
+
 draft = false
 
 [taxonomies]
@@ -12,99 +13,70 @@ tags = ["AI", "LLM", "Cloudflare", "LlamaIndex", "Orchestration"]
 lang = "zh"
 +++
 
-> _中文翻译正在整理，以下为英文原文。_
+## 为什么折腾这个
 
-Single LLM providers are fragile. [OpenAI outage](https://status.openai.com/)? Your app dies. [Anthropic rate limits](https://status.anthropic.com/)? Users wait. It's annoying.
+单供应商的 LLM 太脆弱：OpenAI 宕机、Anthropic 限流，就等于业务停摆。Cloudflare AI Gateway 给了一个诱人的承诺：
 
-I wanted multi-provider orchestration without the complexity. [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/) looked perfect—automatic fallback, caching, load balancing. But no [LlamaIndex](https://docs.llamaindex.ai/) integration.
+- 多家模型的统一入口；
+- 内置缓存、限流、熔断；
+- 请求失败自动切换。
 
-So I built one.
+问题是，LlamaIndex 的 LLM 调用直接命中各家 API，没法自适应 Gateway。我需要一个中间层，让原有代码不改，直接享受多云编排。
 
-## The Problem
+## 解决方案
 
-Cloudflare AI Gateway is smart. It handles:
-
-- Automatic provider fallback
-- Built-in caching and rate limiting
-- Load balancing across providers
-- Unified API interface
-
-But LlamaIndex LLMs make direct HTTP requests to provider APIs. Cloudflare expects a different format.
-
-> Cloudflare provides an [OpenAI-compatible API](https://developers.cloudflare.com/ai-gateway/chat-completion/), but I wanted something more flexible. Compatible often means limited.
-> And Cloudflare also provides a [Vercel ai-sdk integration](https://developers.cloudflare.com/ai-gateway/integrations/vercel-ai-sdk/), but I save my life by using Python.
-
-## The Solution
-
-A wrapper that sits between LlamaIndex LLMs and their HTTP clients. Intercepts requests, transforms them for Cloudflare, handles responses.
+写了一个轻量 wrapper：
 
 ```python
 from llama_index.llms.cloudflare_ai_gateway import CloudflareAIGateway
 from llama_index.llms.openai import OpenAI
 from llama_index.llms.anthropic import Anthropic
-from llama_index.core.llms import ChatMessage
 
-# Create regular LlamaIndex LLMs
 openai_llm = OpenAI(model="gpt-4o-mini", api_key="your-key")
 anthropic_llm = Anthropic(model="claude-3-5-sonnet", api_key="your-key")
 
-# Wrap with Cloudflare AI Gateway
-llm = CloudflareAIGateway(
-    llms=[openai_llm, anthropic_llm],  # Try OpenAI first, then Anthropic
+gateway_llm = CloudflareAIGateway(
+    llms=[openai_llm, anthropic_llm],
     account_id="your-cloudflare-account-id",
     gateway="your-gateway-name",
     api_key="your-cloudflare-api-key",
 )
 
-# Use exactly like any LlamaIndex LLM
-messages = [ChatMessage(role="user", content="What is 2+2?")]
-response = llm.chat(messages)
+resp = gateway_llm.chat([ChatMessage(role="user", content="2 + 2 = ?")])
 ```
 
-Drop-in replacement. Zero code changes.
+作用就是：截住 LlamaIndex 发出的请求，改写为 Cloudflare 期待的格式，处理返回值。原始业务代码不用动。
 
-## What It Does
+## 能做什么
 
-**Core features:**
+- 顺序尝试多个模型，失败自动换下一个；
+- 支持 Cloudflare 的流式接口、异步调用；
+- 统一注入鉴权、重试、日志；
+- 经过实测的模型：OpenAI、Anthropic；
+- 理论兼容：Google AI Studio、DeepSeek、Grok、Azure OpenAI、Perplexity、Replicate 等。
 
-- Automatic provider detection and configuration
-- Built-in fallback when providers fail
-- Streaming support (chat and completion)
-- Async/await compatible
+## 如何体验
 
-**Tested providers:**
-
-- [OpenAI](https://platform.openai.com/), [Anthropic](https://www.anthropic.com/)
-
-**Also supported:**
-
-- [Google AI Studio](https://aistudio.google.com/), [DeepSeek](https://platform.deepseek.com/), [Grok](https://x.ai/)
-- [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service), [Perplexity](https://www.perplexity.ai/), [Replicate](https://replicate.com/)
-
-## Try It
-
-Still a planned PR ([#19395](https://github.com/run-llama/llama_index/pull/19395)), but functional:
+PR 在提审（[#19395](https://github.com/run-llama/llama_index/pull/19395)），不过代码已经能跑：
 
 ```bash
-git clone <repository-url>
+git clone <repo>
 cd llama-index-llms-cloudflare-ai-gateway
 pip install -e .
 
-export OPENAI_API_KEY="your-key"
-export ANTHROPIC_API_KEY="your-key"
-export CLOUDFLARE_ACCOUNT_ID="your-id"
-export CLOUDFLARE_API_KEY="your-key"
-export CLOUDFLARE_GATEWAY="your-gateway"
+export OPENAI_API_KEY=...
+export ANTHROPIC_API_KEY=...
+export CLOUDFLARE_ACCOUNT_ID=...
+export CLOUDFLARE_API_KEY=...
+export CLOUDFLARE_GATEWAY=...
 
 uv run pytest tests/
 ```
 
-May not be production-ready, but good enough to experiment with. Check out the [LlamaIndex integrations repository](https://github.com/run-llama/llama_index/tree/main/llama_index/llms) for other LLM providers.
+## 注意事项
 
----
+- Cloudflare 虽然提供 OpenAI 兼容接口，但做中间层能解锁更多功能（自定义头、特定路由、日志追踪）。
+- 多模型编排别忘了考虑一致性：模型切换后回答风格可能不同，需要在应用层消化。
+- 缓存命中率很依赖 prompt 规范，必要时结合 embedding 去重。
 
-## References
-
-- [Cloudflare AI Gateway Documentation](https://developers.cloudflare.com/ai-gateway/)
-- [LlamaIndex Documentation](https://docs.llamaindex.ai/)
-- [LlamaIndex LLMs Guide](https://docs.llamaindex.ai/en/stable/module_guides/models/llms/)
+这个封装的意义不在于“又造了个轮子”，而是告诉你：在 LlamaIndex 体系里，替换底层 LLM 客户端是很容易的。运维侧想要多云容灾、成本优化，只需要写一个薄薄的适配层。EOF

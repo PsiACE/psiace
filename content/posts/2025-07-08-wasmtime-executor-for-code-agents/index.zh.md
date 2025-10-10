@@ -1,8 +1,9 @@
 +++
-title = "Sandboxed Python executor for AI agents using WebAssembly"
-description = "A weekend hack to explore different sandboxing approaches for Code Agents, using wasmtime-py and VMware's Python WASM binary to run Python code locally. Works with smolagents."
+title = "用 WebAssembly 给代码智能体套上安全带"
+description = "周末写的一个 Wasmtime Python 执行器：让代码智能体在本地沙箱里跑起来，又安全又可控。"
 date = 2025-07-08
 slug = "wasmtime-executor-for-code-agents"
+
 draft = false
 
 [taxonomies]
@@ -12,36 +13,20 @@ tags = ["AI", "WebAssembly", "Security", "Code Agents", "Sandbox"]
 lang = "zh"
 +++
 
-> _中文翻译正在整理，以下为英文原文。_
+## 背景：代码智能体的“勇敢”行为
 
-AI agents that execute code are powerful but terrifying. Within minutes of testing my first code agent, it was trying to install packages and access environment variables I never intended. **We need sandboxing.**
+第一次让 AI 智能体执行代码，不到五分钟它就尝试扫 `/etc/passwd`、安装莫名其妙的包、跑无限循环。要让这种系统可用，第一件事就是控制执行环境。
 
-## The Problem
+Hugging Face 的 [smolagents](https://github.com/huggingface/smolagents) 已经提供了远程执行、Deno + Pyodide 等多种方案，但我想要一个**纯本地、易嵌入**的执行器，于是有了这个 Wasmtime Python Executor。
 
-Code-executing AI agents can do amazing things—analyze data, solve math problems, debug code. But they also operate with zero fear of breaking production systems.
+## 为什么选 WebAssembly
 
-Consider these scenarios:
+- **能力最小化**：WASM 默认没有文件、网络、系统访问，授权什么才有什么。
+- **资源计量**：可以限制 CPU、内存、运行时间。
+- **可移植**：今天跑 Python，明天换 JS、Ruby 也能适配。
+- **确定性**：相同输入输出一致，方便调试和审计。
 
-- **The curious agent**: "Let me check what's in `/etc/passwd`..."
-- **The helpful agent**: "I'll install this package" → `pip install` from compromised PyPI
-- **The infinite loop**: Code that consumes all available memory
-
-Some projects like [Hugging Face smolagents](https://github.com/huggingface/smolagents/blob/main/src/smolagents/remote_executors.py) recognize this—they built multiple executor options to balance capability and security.
-
-## Why WebAssembly?
-
-WebAssembly's superpower isn't speed—it's **security by design**. Born from browser security, WASM provides:
-
-1. **Capability-based security**: Can't do anything unless explicitly granted
-2. **Resource metering**: Count every CPU cycle and memory allocation
-3. **Deterministic execution**: Same code, same result every time
-4. **Language agnostic**: Python today, others tomorrow
-
-Simon Willison explored this in his [TIL post](https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox), and [Hacker News discussed it](https://news.ycombinator.com/item?id=34581487). While [Hugging Face smolagents](https://github.com/huggingface/smolagents) already has a `WasmExecutor` using Pyodide and Deno, I wanted to explore a different approach using wasmtime for local execution.
-
-## A Weekend Hack
-
-So I built one. Nothing fancy—just a **"just do it"** demo:
+## 周末作品长这样
 
 ```python
 from wasmtime_executor import WasmtimePythonExecutor
@@ -61,51 +46,43 @@ agent = WasmtimeCodeAgent(
     additional_authorized_imports=["math", "json"],
 )
 
-result = agent.run("Calculate the square root of 125")
+print(agent.run("Calculate the square root of 125"))
 ```
 
-Implementation: grab VMware's Python WASM binary, wrap with wasmtime-py, make it compatible with smolagents. The key difference? **Local execution** without needing Deno runtime.
+做法：
 
-## What I Learned
+1. 使用 VMware 提供的 Python WASM 发行版；
+2. 借助 `wasmtime-py` 在本地加载；
+3. 实现 smolagents 期望的执行器接口；
+4. 支持白名单 import、输出截断、状态持久化等基础功能。
 
-**What worked:**
+## 优缺点一览
 
-- Drop-in compatibility with smolagents
-- Basic Python operations run fine
-- Error handling is robust
-- State persists between executions
-- **Local execution** without external dependencies
+| 项目 | 现在就能用的 | 需要改进的 |
+| --- | --- | --- |
+| 兼容性 | 可直接接入 smolagents，接口一致 | Python 生态受限，缺包需要自己打 | 
+| 安全性 | 默认隔离，权限收敛 | 还缺更精细的文件/网络授权策略 |
+| 体验 | 完全本地、无外部依赖，错误信息清晰 | 长时间运行性能一般，镜像下载稍麻烦 |
 
-**Trade-offs:**
+## 能不能直接上生产？
 
-- Real isolation vs. limited Python ecosystem
-- Better security vs. worse performance
-- Deterministic vs. complex setup
-- **Local control** vs. remote calls
+暂时不行，这是个 weekend hack。但它验证了这个思路：
 
-## Is This Production Ready?
+- WebAssembly 可以成为代码智能体的“安全带”；
+- 不需要引入 Deno、远程服务，也能实现沙箱；
+- 可以把现有 Agent 框架的执行端换成 Wasmtime，安全性和可控性都会提升。
 
-**Absolutely not.** This is a weekend hack. But it proves the approach works.
+如果要投入生产，需要：
 
-For production you'd need: better resource management, package management, performance optimization, proper logging, security auditing.
+- 更完善的资源配额与杀死策略；
+- 包管理/缓存机制；
+- 日志、审计链路；
+- 安全审查和长时间压力测试。
 
-But for experimenting? Understanding trade-offs? Having a concrete example? It works perfectly.
+## 代码与资料
 
-## The Point
+- Demo 仓库：[psiace/demo/wasmtime-executor](https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor)
+- 参考项目：[smolagents](https://github.com/huggingface/smolagents)、[VMware WASM Runtimes](https://github.com/vmware-labs/webassembly-language-runtimes)
+- 灵感来源：Simon Willison 的 [WASM Python Sandbox](https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox)
 
-The real value isn't this specific implementation—it's demonstrating that **different sandboxing approaches exist for AI code execution**. While smolagents offers Pyodide-based sandboxing with Deno, wasmtime provides an alternative for local execution. You can take an existing agent framework, add security boundaries, maintain functionality, and explore different trade-offs.
-
-## Try It
-
-The complete implementation is in my [Wasmtime Executor demo](https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor). It's rough but works. Clone it, break it, improve it.
-
-The best way to understand these security challenges is to build something. Even if it's just a quick weekend hack.
-
----
-
-## References
-
-- [Hugging Face smolagents](https://github.com/huggingface/smolagents)
-- [Wasmtime Executor Demo](https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor)
-- [Simon Willison's WASM Python Sandbox](https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox)
-- [VMware WebAssembly Language Runtimes](https://github.com/vmware-labs/webassembly-language-runtimes)
+如果你也在思考“让 AI 安全执行代码”的方案，不妨先写一个属于你的沙箱。造轮子是理解问题最快的方式。EOF

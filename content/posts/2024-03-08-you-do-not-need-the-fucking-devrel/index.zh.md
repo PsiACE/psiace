@@ -1,6 +1,6 @@
 +++
-title = "You Don't Need the Fucking DevRel"
-description = "Yes, you don't need the Fucking DevRel, you need a miracle."
+title = "别急着招 DevRel"
+description = "DevRel 不是救火队，也不是喊口号的吉祥物。先想清楚要赋予什么权力，再谈招聘。"
 date = 2024-03-08
 slug = "you-do-not-need-the-fucking-devrel"
 
@@ -11,30 +11,28 @@ tags = ["DevRel", "Make Some Noise"]
 lang = "zh"
 +++
 
-> _中文翻译正在整理，以下为英文原文。_
+## 先别打广告牌
 
-Ah, DevRel – the tech world's equivalent of sticking a megaphone in the hands of a mime: everyone sees the gestures, but no one knows what the hell they're trying to say. Now, if you're considering hiring a DevRel, buckle up, buttercup, because I'm about to serve you a reality sandwich with a side of snark.
+很多团队把 DevRel 想成会写文案、会上台、能在社交媒体刷存在感的“吉祥物”。真要这样，不如直接买块广告牌，或者训练一只会说话的鹦鹉。DevRel 如果只是扩音器，迟早会在会议室里被当成背景音。
 
-First off, let's get one thing clear: if your idea of a DevRel is just another pretty face to parrot your press releases and tweet your hashtags, save your money. Buy a billboard. Hire a skywriter. Hell, teach a parrot to code – at least it'll be good for a laugh.
+真正的 DevRel 是把产品和开发者社区连接起来的桥。从用户视角出发，帮团队把复杂的技术语言翻译成可理解、可落地的解决方案。他既要懂产品路线，也要摸得清社区脉搏；既能撸代码，也能写故事。
 
-But if you're serious – and I mean _commit-your-heart-and-soul_ serious – about having a DevRel, you need to understand that they're not just your company's cheerleader. A DevRel is the bridge between your codebase and the wild jungles of developers who might, if the stars align, use your tools to build the next big thing. They're not just mouthpieces; they're part diplomat, part engineer, part evangelist, and all badass.
+## 三件事想清楚
 
-## Responsibilities, Rights, and Resources
+### 1. 权责资源要匹配
 
-Your DevRel should have the power to make decisions, the responsibility to carry them out, and the resources to not make them look like a clown at a board meeting. If they're going to advocate for your product or platform, they need to have a seat at the table where decisions are made – preferably not the kids' table.
+DevRel 需要参与决策，至少要能影响产品优先级和内容走向。如果每次都被挡在“等业务拍板”之外，他说的任何话都会显得苍白。给予授权，也意味着给足资源：真实数据、工程背景、核心成员的时间。
 
-If you're not willing to give your DevRel this level of clout, then you might as well have your founders or a seasoned developer play double duty. At least they've got the chops and the battle scars to speak with authority, and they won't have to end every sentence with, "I'll get back to you after I check with the grown-ups."
+### 2. 叙事要一致
 
-## Branding and Content Strategy
+让 DevRel 深入团队，把一线的设计取舍、踩坑记录都吸纳进来。只有这样，他们写出来的内容才像亲历者——不是新闻稿，也不是照本宣科的教程，而是能回答“为什么值得一试”这样的疑问。
 
-Now, if you've decided to go all-in and appoint a dedicated DevRel, for the love of Silicon Valley, let them dive deep into the heart of your company. They need to be so entwined with your projects that they dream in commit hashes and wake up with whiteboard marker on their faces.
+### 3. 诚恳比形式更难
 
-Work with them to build a complete brand guideline and content strategy that resonates with your internal vision and the external developer community. This isn't about slapping together a few blog posts and calling it a day. It's about crafting a narrative that developers can rally behind, a story that's as compelling as the 'one more thing' at an Apple keynote.
+社区对虚假的热情特别敏感。与其用堆砌的 buzzword，不如老老实实讲“我们是怎么解决 X 问题的”“我们做错过什么”。真诚是唯一的复利策略。
 
-And please, don't make your DevRel pull content out of their ass because you've kept them in the dark. Nothing smells worse than insincerity and ignorance, except maybe your server room after a hard shutdown.
+## 什么时候暂缓
 
-## In Conclusion
+如果你还没准备好让 DevRel 拿到这些权力与资源，那就别急着招人。让创始人或者资深工程师先上阵：他们说话更有分量，也更容易获得团队信任。真正需要 DevRel 的时刻，是你想把这套叙事机制变成常态的时候。
 
-A DevRel is more than just a hype machine. They're the voice of your developer community within your company, and they're your company's ambassador to the outside world. If you're not ready to give them the power, responsibility, and resources they need to be effective, then you don't need the fucking DevRel.
-
-You need a miracle.
+DevRel 永远不是灵丹妙药。它是一种长期投入，需要团队，把“讲清楚”和“做得好”同时放在心上。EOF
