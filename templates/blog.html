@@ -4,7 +4,7 @@
 {% block content %}
 {% set section_lang = section.extra.lang | default(value=section.lang) %}
 <div id="wrapper">
-  {{ macros::back_link(path = get_url(path="/"), lang = section_lang) }}
+  {{ macros::back_link(path = get_url(path="/", lang=section_lang), lang = section_lang) }}
   {% include "_section_title.html" %}
   {% set translations = section.translations %}
   {% set current_lang = section_lang %}

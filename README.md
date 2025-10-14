@@ -1,10 +1,10 @@
-<h1 align="center">Chojan Shang</h1>
-<p align="center">
-  Operator-minded systems engineer building resilient data & AI infrastructure.<br/>
-  <a href="https://trendshift.io/developers/3326" target="_blank">
-    <img src="https://trendshift.io/api/badge/developers/3326" alt="PsiACE | Trendshift" width="250" height="55">
-  </a>
-</p>
+# Hey, I'm Chojan Shang
+
+Operator-minded systems engineer building resilient data & AI infrastructure.<br/>
+
+<a href="https://trendshift.io/developers/3326" target="_blank">
+  <img src="https://trendshift.io/api/badge/developers/3326" alt="PsiACE | Trendshift" width="250" height="55">
+</a>
 
 ## Quick Snapshot
 

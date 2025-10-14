@@ -34,7 +34,11 @@
             {% set label = "关于" %}
           {% endif %}
         {% endif %}
-        <a {% if item.is_external %}href="{{ item.path }}" target="_blank" rel='noreferrer noopener'{% else %}href="{{ get_url(path=item.path) }}" class="instant"{% endif %}>{{ label }}</a>
+        {% if item.is_external %}
+        <a href="{{ item.path }}" target="_blank" rel='noreferrer noopener'>{{ label }}</a>
+        {% else %}
+        <a href="{{ get_url(path=item.path, lang=section_lang) }}" class="instant">{{ label }}</a>
+        {% endif %}
         {% endfor %}
       </div>
       <div id="right">
@@ -61,7 +65,8 @@
     {% if section.extra.recent %}
     {% set blog_section_path = config.extra.blog_section_path | trim_start_matches(pat="/") %}
     {% set section_md_path = blog_section_path ~ "/_index.md" %}
-    {% set blog_section = get_section(path=section_md_path) %}
+    {% set target_lang = section.extra.lang | default(value=section.lang) %}
+    {% set blog_section = get_section(path=section_md_path, lang=target_lang) %}
     <section class="layout-list">
       <div class="post-list">
         {% for post in blog_section.pages | slice(end=section.extra.recent_max) %}
@@ -77,7 +82,7 @@
         {% if section_lang == "zh" %}
           {% set more_text = "更多 »" %}
         {% endif %}
-        <a class="instant" href="{{ config.extra.blog_section_path }}">{{ more_text }}</a>
+        <a class="instant" href="{{ get_url(path=config.extra.blog_section_path, lang=section_lang) }}">{{ more_text }}</a>
       </div>
     </section>
     {% endif %}

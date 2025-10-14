@@ -46,7 +46,7 @@
     {% endif %}
   </aside>
   <main>
-    {{ macros::back_link(path = get_url(path=section.path), lang = page_lang) }}
+    {{ macros::back_link(path = get_url(path=section.path, lang=page_lang), lang = page_lang) }}
 
     <div>
       {% if page.extra.copy is defined %}{% set allow_copy = page.extra.copy %}{% else %}{% set allow_copy = section.extra.copy %}{% endif %}
