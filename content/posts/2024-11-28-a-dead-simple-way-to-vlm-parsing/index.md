@@ -15,7 +15,7 @@ This post demonstrates a straightforward approach to using VLMs for parsing unst
 
 Let's consider a common scenario: you have a collection of images and need to extract text from them. Or perhaps you want to generate descriptions from pictures to enable full-text search capabilities. It's time to hire a VLM (Visual Language Models or MultiModal Models) to work for you.
 
-Since I work extensively with [llama-index](https://github.com/run-llama/llama-index), I'll be using it in the examples. However, the core concepts remain the same, and you can adapt them to work with any tools or clients of your choice.
+Since I work extensively with [llama_index](https://github.com/run-llama/llama_index), I'll be using it in the examples. However, the core concepts remain the same, and you can adapt them to work with any tools or clients of your choice.
 
 ## Show Me The Code
 

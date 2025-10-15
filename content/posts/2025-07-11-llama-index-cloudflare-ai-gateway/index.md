@@ -97,7 +97,7 @@ export CLOUDFLARE_GATEWAY="your-gateway"
 uv run pytest tests/
 ```
 
-May not be production-ready, but good enough to experiment with. Check out the [LlamaIndex integrations repository](https://github.com/run-llama/llama_index/tree/main/llama_index/llms) for other LLM providers.
+May not be production-ready, but good enough to experiment with. Check out the [LlamaIndex integrations repository](https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/llms) for other LLM providers.
 
 ---
 

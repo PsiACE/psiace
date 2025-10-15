@@ -12,7 +12,7 @@ lang = "en"
 +++
 
 > [!NOTE]
-> This work has been contributed to upstream [llama-index](https://github.com/run-llama/llama-index) as `McpToolSpec` in the [`llama-index-tools-mcp`](https://pypi.org/project/llama-index-tools-mcp/) package. You can find the pull request [llama_index#17795 feat: add mcp tool spec](https://github.com/run-llama/llama_index/pull/17795) and try out the example notebook [llama-index-tools-mcp/examples/mcp.ipynb](https://github.com/run-llama/llama_index/blob/main/llama-index-integrations/tools/llama-index-tools-mcp/examples/mcp.ipynb) directly.
+> This work has been contributed to upstream [llama_index](https://github.com/run-llama/llama_index) as `McpToolSpec` in the [`llama-index-tools-mcp`](https://pypi.org/project/llama-index-tools-mcp/) package. You can find the pull request [llama_index#17795 feat: add mcp tool spec](https://github.com/run-llama/llama_index/pull/17795) and try out the example notebook [llama-index-tools-mcp/examples/mcp.ipynb](https://github.com/run-llama/llama_index/blob/main/llama-index-integrations/tools/llama-index-tools-mcp/examples/mcp.ipynb) directly.
 
 This article mainly introduces how to convert MCP (Model Context Protocol) tools into LlamaIndex tools that can be directly used, allowing [LlamaIndex](https://github.com/run-llama/llama_index) users to seamlessly integrate these services like other modern and popular AI applications like Claude and Cursor, etc.
 
