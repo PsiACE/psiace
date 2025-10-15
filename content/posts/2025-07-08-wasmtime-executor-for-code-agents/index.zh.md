@@ -85,4 +85,4 @@ print(agent.run("Calculate the square root of 125"))
 - 参考项目：[smolagents](https://github.com/huggingface/smolagents)、[VMware WASM Runtimes](https://github.com/vmware-labs/webassembly-language-runtimes)
 - 灵感来源：Simon Willison 的 [WASM Python Sandbox](https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox)
 
-如果你也在思考“让 AI 安全执行代码”的方案，不妨先写一个属于你的沙箱。造轮子是理解问题最快的方式。EOF
+如果你也在思考“让 AI 安全执行代码”的方案，不妨先写一个属于你的沙箱。造轮子是理解问题最快的方式。

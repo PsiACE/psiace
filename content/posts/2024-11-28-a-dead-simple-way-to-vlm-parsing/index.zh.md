@@ -70,4 +70,4 @@ python basic.py ./samples/gateway.png
 - 代码仓库：[psiace/demo/vlm-parsing](https://github.com/psiace/psiace/tree/main/demo/vlm-parsing)
 - 文档参考：[llama-index docs](https://docs.llamaindex.ai/)
 
-一句话总结：VLM 的门槛比你想象得低，把它当“图片解析服务”即可。先用简单套路验证价值，再决定要不要引入更复杂的 OCR/结构化管线。EOF
+一句话总结：VLM 的门槛比你想象得低，把它当“图片解析服务”即可。先用简单套路验证价值，再决定要不要引入更复杂的 OCR/结构化管线。

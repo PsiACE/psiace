@@ -45,4 +45,4 @@ lang = "zh"
 - 计划支持更多 NebulaGraph 原生特性（如存储过程、图算法库）；
 - 与 GraphRAG 管线结合，让模型不仅能查图，还能基于图结构做推理。
 
-仓库在这里：[PsiACE/nebulagraph-mcp-server](https://github.com/PsiACE/nebulagraph-mcp-server)。欢迎感兴趣的同学一起折腾，探讨 AI × 图数据库的更多玩法。EOF
+仓库在这里：[PsiACE/nebulagraph-mcp-server](https://github.com/PsiACE/nebulagraph-mcp-server)。欢迎感兴趣的同学一起折腾，探讨 AI × 图数据库的更多玩法。
