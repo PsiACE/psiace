@@ -1,0 +1,42 @@
+{% import "macros/prose.html" as macros %}
+{% extends "serene/templates/blog.html" %}
+
+{% block content %}
+{% set section_lang = section.extra.lang | default(value=section.lang) %}
+<div id="wrapper">
+  {{ macros::back_link(path = get_url(path="/", lang=section_lang), lang = section_lang) }}
+  {% include "_section_title.html" %}
+  {% set translations = section.translations %}
+  {% set current_lang = section_lang %}
+  {% include "_language_switch.html" %}
+  <main class="layout-list">
+    {% if section.extra.categorized %}
+    {% for category,posts in section.pages | sort(attribute="taxonomies.categories.0") | group_by(attribute="taxonomies.categories.0") %}
+    {% set category_name = category %}
+    {% if category is matching("^__[0-9]{2}__") %}
+      {% set category_name = category | split(pat="") | slice(start=7) | join(sep="") %}
+    {% endif %}
+    <h2 class="category">{{ category_name }}</h2>
+    <div class="post-list categorized">
+      {% for post in posts %}
+      <a class="post instant {% if post.extra.featured %}featured{% endif %}" href="{{ post.permalink }}">
+        <span>{{ post.title }}</span>
+        <span class="date">{{ post.date | date(format=section.extra.date_format) }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="post-list">
+      {% for post in section.pages %}
+      <a class="post instant {% if post.extra.featured %}featured{% endif %}" href="{{ post.permalink }}">
+        <span>{{ post.title }}</span>
+        <span class="date">{{ post.date | date(format=section.extra.date_format) }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </main>
+  {% include "_footer.html" %}
+</div>
+{% endblock content %}

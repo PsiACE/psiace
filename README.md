@@ -1,55 +1,40 @@
-<p align="center">
-  <picture>
-    <img src="https://raw.githubusercontent.com/PsiACE/brand/main/logo/LOGO.jpg" height="256">
-  </picture>
-</p>
+# Chojan Shang · PsiACE
 
-<div align="center">
-  <h1>
-    Chojan Shang
-    <br />
-    <em>Data Is Dead, Long Live Value.</em>
-  </h1>
-  <p>10 / 24 / 1998 - Present</p>
-</div>
+Operator‑minded engineer building resilient data & AI platforms.
 
-> "Most of you are familiar with the virtues of a programmer. There are three, of course: laziness, impatience, and hubris." – Larry Wall
+<a href="https://trendshift.io/developers/3326" target="_blank">
+  <img src="https://trendshift.io/api/badge/developers/3326" alt="PsiACE | Trendshift" width="250" height="55">
+</a>
 
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=psiace" alt="profile views">
-</p>
+## Snapshot
 
-## About Me
+- GenAI Engineer — Vesoft (NebulaGraph)
+  - Ships GraphRAG and agent workflows to production; leads the NebulaGraph GenAI Platform.
+  - Fusion GraphRAG reduced time‑to‑first‑use by ~30% and improved precision by ~15% at equal compute.
+- Apache OpenDAL™ — PMC Member
+  - Architecture and releases across caching, retries, observability, and multi‑cloud backends.
+- Databend (2021–2024) — Founding/Core Engineer
+  - Built query execution and storage I/O; drove lakeFS and KubeSphere integrations; project grew 800 → 8000+ stars.
 
-Passionate about open source, I thrive on building large-scale systems and exploring the intersection of data and AI. My journey is driven by an insatiable curiosity for knowledge and innovation.
+## Focus
 
-<a href="https://trendshift.io/developers/3326" target="_blank"><img src="https://trendshift.io/api/badge/developers/3326" alt="PsiACE | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+- Predictable, observable, and maintainable platform engineering.
+- Graph‑driven retrieval and reasoning that respect structure, not just tokens.
+- Documentation‑ and example‑driven OSS that scales contributions.
 
-### Current Role & Experience
+## Speaking & Writing
 
-- 🚀 GenAI Team Member at [Vesoft Inc. (NebulaGraph)](https://github.com/vesoft-inc/) (Sep 2024 - Present)
-  - Exploring AI and Graph infrastructure and applications
-- 🌟 Founding Member at [Databend](https://github.com/datafuselabs/databend/) (Jul 2021 - Aug 2024)
-  - Early employee and core contributor (code/documentation/community)
-  - Helped shape the future of cloud [Data + AI] analytics
-- 🔧 PMC Member at [Apache OpenDAL™](https://github.com/apache/opendal)
-  - Working on unified data access solutions for developers
-  - One Layer, All Storage.
+- Talks: PyCon China, KCD Beijing, Rust China Conf, CommunityOverCode.
+- Recent: agent protocols and workflows; engineering Graph‑augmented RAG.
 
-### Education
+## Education
 
-- 📚 Master's in Applied Mathematics and Data Science (Sep 2022 - Aug 2024)
-- 💻 Bachelor's in Computer Science and Technology (Sep 2017 - Jun 2021)
+- M.S. Applied Mathematics & Data Science (2022–2024)  
+- B.S. Computer Science & Technology (2017–2021)
 
-## Let's Connect
+## Connect
 
-I'm always open to meaningful conversations and knowledge sharing. Feel free to reach out!
-
-<details>
-<summary><strong>📫 Contact Information</strong></summary>
-
-- GitHub: [@PsiACE](https://github.com/psiace)
-- LinkedIn: [Chojan Shang](https://www.linkedin.com/in/psiace)
-- Twitter: [@repsiace](https://twitter.com/repsiace/)
-
-</details>
+- GitHub: <https://github.com/psiace>  
+- Website: <https://psiace.me>  
+- X / Twitter: <https://twitter.com/repsiace>  
+- LinkedIn: <https://www.linkedin.com/in/psiace>

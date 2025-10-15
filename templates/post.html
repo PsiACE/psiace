@@ -1,0 +1,111 @@
+{% import "macros/prose.html" as macros %}
+{% extends "serene/templates/post.html" %}
+
+{% block lang -%}
+{%- set blog_section_path = config.extra.blog_section_path | trim_start_matches(pat="/") -%}
+{%- set section_md_path = blog_section_path ~ "/_index.md" -%}
+{%- set section = get_section(path=section_md_path, metadata_only=true) -%}
+{%- if page.extra.lang %}{{ page.extra.lang }}{% elif section.extra.lang %}{{ section.extra.lang }}{% else %}{{ page.lang }}{% endif -%}
+{%- endblock lang %}
+
+{% block content %}
+{% set blog_section_path = config.extra.blog_section_path | trim_start_matches(pat="/") %}
+{% set section_md_path = blog_section_path ~ "/_index.md" %}
+{% set section = get_section(path=section_md_path, metadata_only=true) %}
+{% set page_lang = page.extra.lang | default(value=page.lang) %}
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    {% if page.extra.toc is defined %}{% set show_toc = page.extra.toc %}{% else %}{% set show_toc = section.extra.toc %}{% endif %}
+    {% if show_toc and page.toc %}
+    <nav>
+      <ul>
+        {% for h2 in page.toc %}
+        <li>
+          <a class="h2" href="#{{ h2.id | safe }}">{{ h2.title }}</a>
+          {% if h2.children %}
+          <ul>
+            {% for h3 in h2.children %}
+            <li>
+              <a class="h3" href="#{{ h3.id | safe }}">{{ h3.title }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+    {% endif %}
+    {% if section.extra.back_to_top %}
+    <button id="back-to-top" aria-label="back to top">
+      {% set icon = load_data(path="icon/arrow-up.svg") %}
+      {{ icon | safe }}
+    </button>
+    {% endif %}
+  </aside>
+  <main>
+    {{ macros::back_link(path = get_url(path=section.path, lang=page_lang), lang = page_lang) }}
+
+    <div>
+      {% if page.extra.copy is defined %}{% set allow_copy = page.extra.copy %}{% else %}{% set allow_copy = section.extra.copy %}{% endif %}
+      {% if allow_copy %}
+      {% set copy_icon = load_data(path="icon/copy.svg") %}
+      {% set check_icon = load_data(path="icon/check.svg") %}
+      <div id="copy-cfg" style="display: none;" data-copy-icon="{{ copy_icon }}" data-check-icon="{{ check_icon }}"></div>
+      {% endif %}
+      <article class="prose">
+        <h1>{{ page.title }}</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">{{ page.date | date(format=section.extra.date_format) }}</span>
+            {% if page.updated and page.updated != page.date -%}
+            <span>{% if page_lang == "zh" %}更新于{% else %}Updated on{% endif %} <span id="updated">{{ page.updated | date(format=section.extra.date_format) }}</span></span>
+            {% endif -%}
+          </div>
+
+          {% if page.taxonomies.tags is defined %}
+          <div id="tags">
+            {% for tag in page.taxonomies.tags -%}
+            {% set tag_slugify = tag | slugify -%}
+            <a class="instant" href="{{ config.base_url ~ '/tags/' ~ tag_slugify }}"><span>#</span>{{ tag }}</a>
+            {%- endfor %}
+          </div>
+          {% endif %}
+
+          {% set translations = page.translations %}
+          {% set current_lang = page_lang %}
+          {% include "_language_switch.html" %}
+        </div>
+
+        {% if page.extra.outdate_alert is defined %}{% set show_outdate_alert = page.extra.outdate_alert %}{% else %}{% set show_outdate_alert = section.extra.outdate_alert %}{% endif %}
+        {% if page.extra.outdate_alert_days is defined %}{% set outdate_alert_days = page.extra.outdate_alert_days %}{% else %}{% set outdate_alert_days = section.extra.outdate_alert_days %}{% endif %}
+
+        {% if show_outdate_alert -%}
+        <blockquote id="outdate_alert" class="callout caution hidden" data-days="{{ outdate_alert_days }}"
+          data-alert-text-before="{{ section.extra.outdate_alert_text_before }}"
+          data-alert-text-after="{{ section.extra.outdate_alert_text_after }}">
+          <div class="content"></div>
+        </blockquote>
+        {% endif %}
+
+        {{ page.content | safe }}
+      </article>
+
+      {% if page.extra.reaction is defined %}{% set show_reaction = page.extra.reaction %}{% else %}{% set show_reaction = config.extra.reaction %}{% endif %}
+      {% if show_reaction %}
+      <div class="reaction {{ config.extra.reaction_align }}" data-endpoint="{{ config.extra.reaction_endpoint }}"></div>
+      {% endif %}
+
+      {% if page.extra.comment is defined %}{% set show_comment = page.extra.comment %}{% else %}{% set show_comment = section.extra.comment %}{% endif %}
+      {% if show_comment %}
+      <div class="giscus"></div>
+      {% include "_giscus_script.html" %}
+      {% endif %}
+    </div>
+
+    {% include "_footer.html" %}
+  </main>
+</div>
+{% endblock content %}

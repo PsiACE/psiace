@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://psiace.me/sitemap-index.xml

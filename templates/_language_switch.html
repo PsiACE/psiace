@@ -1,0 +1,36 @@
+{% set translations = translations | default(value=[]) %}
+{% set current_lang = current_lang | default(value=config.default_language) %}
+{% set label = "Language" %}
+{% if current_lang == "zh" %}
+  {% set label = "语言" %}
+{% endif %}
+{% set current_label = current_lang %}
+{% if current_lang == "zh" %}
+  {% set current_label = "中文" %}
+{% elif current_lang == "en" %}
+  {% set current_label = "English" %}
+{% else %}
+  {% set current_label = current_lang | upper %}
+{% endif %}
+{% set_global _lang_links = "" %}
+{% set_global _lang_has_links = false %}
+{% for item in translations %}
+  {% if item.lang != current_lang %}
+    {% set lang_code = item.lang %}
+    {% set lang_label = lang_code | upper %}
+    {% if lang_code == "zh" %}
+      {% set lang_label = "中文" %}
+    {% elif lang_code == "en" %}
+      {% set lang_label = "English" %}
+    {% endif %}
+    {% set_global _lang_links = _lang_links ~ '<a class="lang-switch__link" href="' ~ item.permalink ~ '">' ~ lang_label ~ '</a>' ~ ' ' %}
+    {% set_global _lang_has_links = true %}
+  {% endif %}
+{% endfor %}
+{% if _lang_has_links %}
+  <div class="lang-switch" role="navigation" aria-label="{{ label }}">
+    <span class="lang-switch__label">{{ label }}:</span>
+    <span class="lang-switch__current">{{ current_label }}</span>
+    {{ _lang_links | safe }}
+  </div>
+{% endif %}

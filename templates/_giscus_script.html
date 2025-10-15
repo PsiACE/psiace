@@ -1,0 +1,82 @@
+{# Giscus comment system configuration #}
+{% set giscus_lang = config.default_language %}
+{% if page is defined %}
+  {% if page.extra.lang %}
+    {% set giscus_lang = page.extra.lang %}
+  {% else %}
+    {% set giscus_lang = page.lang %}
+  {% endif %}
+{% elif section is defined %}
+  {% if section.extra.lang %}
+    {% set giscus_lang = section.extra.lang %}
+  {% else %}
+    {% set giscus_lang = section.lang %}
+  {% endif %}
+{% endif %}
+{% if giscus_lang == "zh" %}
+  {% set giscus_lang = "zh-CN" %}
+{% endif %}
+
+{# Choose a shared term to map EN/zh to the same discussion.
+   Priority:
+   1) explicit discussion ID (GraphQL) via extra.giscus_discussion_id -> mapping=discussion
+   2) explicit discussion number via extra.giscus_discussion_number -> mapping=number
+   3) explicit term via extra.giscus_term -> mapping=specific
+   4) fallback to slug -> mapping=specific
+#}
+{% set giscus_mapping = "specific" %}
+{% set giscus_term = "" %}
+{% set giscus_discussion_id = "" %}
+
+{% if page is defined %}
+  {% if page.extra.giscus_discussion_id %}
+    {% set giscus_mapping = "discussion" %}
+    {% set giscus_discussion_id = page.extra.giscus_discussion_id %}
+  {% elif page.extra.giscus_discussion_number %}
+    {% set giscus_mapping = "number" %}
+    {% set giscus_term = page.extra.giscus_discussion_number %}
+  {% elif page.extra.giscus_term %}
+    {% set giscus_mapping = "specific" %}
+    {% set giscus_term = page.extra.giscus_term %}
+  {% else %}
+    {% set giscus_mapping = "specific" %}
+    {% set giscus_term = page.slug %}
+  {% endif %}
+{% elif section is defined %}
+  {% if section.extra.giscus_discussion_id %}
+    {% set giscus_mapping = "discussion" %}
+    {% set giscus_discussion_id = section.extra.giscus_discussion_id %}
+  {% elif section.extra.giscus_discussion_number %}
+    {% set giscus_mapping = "number" %}
+    {% set giscus_term = section.extra.giscus_discussion_number %}
+  {% elif section.extra.giscus_term %}
+    {% set giscus_mapping = "specific" %}
+    {% set giscus_term = section.extra.giscus_term %}
+  {% else %}
+    {% set giscus_mapping = "specific" %}
+    {% set giscus_term = section.slug %}
+  {% endif %}
+{% endif %}
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="{{ giscus_mapping }}"
+  {% if giscus_mapping == "discussion" %}
+    data-discussion="{{ giscus_discussion_id }}"
+  {% else %}
+    data-term="{{ giscus_term }}"
+  {% endif %}
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="{{ config.base_url ~ '/giscus_light.css' }}"
+  data-lang="{{ giscus_lang }}"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>

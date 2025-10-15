@@ -1,0 +1,8 @@
+@import url("https://giscus.app/themes/noborder_light.css");
+
+:root {
+  --giscus-accent-color: #2563eb;
+  --giscus-text-color: #111827;
+  --giscus-bg-color: transparent;
+  --giscus-border-color: #e5e7eb;
+}
