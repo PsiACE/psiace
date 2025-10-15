@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
-	<title>Writing</title>
-	<subtitle>Field notes on agent protocols, graph-native retrieval, and resilient data systems.</subtitle>
+	<title>Posts</title>
+	<subtitle>Notes on agent workflows, Fusion GraphRAG, and resilient data&#x2F;AI platforms.</subtitle>
 	<link rel="self" type="application/atom+xml" href="https://psiace.me/posts/feed.xml"/>
   <link rel="alternate" type="text/html" href="https://psiace.me/posts/"/>
   
