@@ -1,6 +1,6 @@
 +++
-title = "Writing"
-description = "Field notes on agent protocols, graph-native retrieval, and resilient data systems."
+title = "Posts"
+description = "Notes on agent workflows, Fusion GraphRAG, and resilient data/AI platforms."
 sort_by = "date"
 template = "blog.html"
 page_template = "post.html"
@@ -11,7 +11,7 @@ generate_feeds = true
 lang = "en"
 
 title = "Latest Posts"
-subtitle = "Long-form updates on building production AI platforms, agent tooling, and graph intelligence."
+subtitle = "Long‑form on production GenAI platforms, agent tooling, and graph‑driven retrieval."
 
 date_format = "%b %-d, %Y"
 

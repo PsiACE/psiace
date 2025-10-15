@@ -26,7 +26,8 @@ date_format = "%b %-d, %Y"
 +++
 
 Hi, I'm **Chojan** (PsiACE).
-I lead GenAI platform work at Vesoft/NebulaGraph, serve on the Apache OpenDAL PMC, and previously helped build Databend from query execution to storage I/O.
+GenAI engineer at Vesoft (NebulaGraph), leading the NebulaGraph GenAI Platform and driving GraphRAG and agent workflows to production and standardization.
+PMC member at Apache OpenDAL, improving the unified storage interface for usability and stability.
+Previously a founding/core engineer at Databend, contributing to multiple core refactors and community documentation/tutorials.
 
-I care about predictable infrastructure, graph-native retrieval, and docs that scale contributors.
-Expect field notes on agent workflows, Fusion GraphRAG, and resilient data systems.
+I care about predictable infrastructure and open collaboration that scales contributors.

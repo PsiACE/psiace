@@ -1,6 +1,6 @@
 +++
-title = "写作"
-description = "记录智能体协议、图检索与韧性数据系统的实践与思考。"
+title = "文章"
+description = "记录智能体工作流、Fusion GraphRAG 与韧性的数据/AI 平台。"
 sort_by = "date"
 template = "blog.html"
 page_template = "post.html"
@@ -11,7 +11,7 @@ generate_feeds = true
 lang = "zh"
 
 title = "最新文章"
-subtitle = "围绕可落地的 AI 基础设施、智能体工具链与图智能的长文记录。"
+subtitle = "围绕可落地的 GenAI 平台、智能体工具链与图驱动检索的长文。"
 
 date_format = "%Y年%m月%d日"
 

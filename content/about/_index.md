@@ -13,29 +13,29 @@ comment = false
 reaction = false
 +++
 Hi, I'm **Chojan Shang** (aka **PsiACE**).
-I focus on engineering data and AI systems that are predictable, observable, and maintainable — not one-off demos.
+I focus on engineering data and AI systems with clear contracts, observable operations, and auditable workflows.
+Not one‑off demos, but maintainable and measurable product capabilities.
 
 ## Experience & Responsibilities
 
 **GenAI Engineer | Vesoft Inc. (NebulaGraph)**  
 2024.09 – present · Shanghai  
-- Deliver GraphRAG and Generative AI for graph-database scenarios across retrieval, Q&A, and recommendation.
-- Lead the architecture and engineering of the NebulaGraph GenAI Platform: ingest → retrieval (vector/graph) → inference; establish unified observability (latency, recall, hit rate).
-- Design and implement a Fusion GraphRAG framework that fuses structural graph knowledge with semantic retrieval; achieved ~30% faster time-to-first-use and ~15% precision uplift at the same compute.
-- Drive LLM engineering integration with the Nebula ecosystem (schema, data sync, auth/audit); codify reusable components and best practices to power QA and recommendation systems.
+- Deliver GraphRAG and generative AI in graph‑database scenarios across retrieval, Q&A, and recommendation.
+- Lead the architecture and engineering of the NebulaGraph GenAI Platform: ingest → retrieval (vector/graph) → inference.
+- Design and implement a Fusion GraphRAG framework that fuses structural graph knowledge with semantic retrieval to optimize context building for complex relational QA.
+- Advance LLM engineering workflows and codify reusable components and best practices.
 
 **PMC Member | Apache OpenDAL**  
 2022 – present · Remote  
-- Lead and contribute to the unified data access layer's architecture and releases; focus on caching, retries, observability, and multi-cloud backend abstraction.
-- Review critical PRs and design proposals; improve API consistency and platform stability; optimize data paths and metrics for high-concurrency / high-latency scenarios.
-- Build community norms and engineering standards; strengthen docs and test examples; mentor contributors and manage OSPP cadence; helped the project graduate to Apache TLP.
+- Contribute to and help lead the unified data access layer’s architecture and releases, focusing on caching, retries, observability, and multi‑cloud backend abstraction.
+- Review critical PRs and design topics, driving API consistency and platform stability; optimize data paths for high‑concurrency and high‑latency scenarios.
+- Build community norms and engineering standards, improve docs and examples, mentor contributors, and coordinate OSPP participation to improve contributor retention and release cadence.
 
-**Core Engineer | Databend Labs (cloud-native data warehouse)**  
+**Core Engineer | Databend Labs (cloud‑native data warehouse)**  
 2021.07 – 2024.08 · Remote  
-- Founding team member; built baseline query execution and storage access layers; unified I/O model around Apache Arrow/Parquet.
-- Led integrations with lakeFS and KubeSphere; delivered a unified access layer and caching for cloud-native data-lake scenarios.
-- Optimized execution and storage I/O to support high-throughput concurrent workloads; project stars grew from ~800 to 8000+ in three years.
-- Drove developer advocacy and community programs that turned Databend into a representative OSS data warehouse.
+- Founding team member; built baseline query execution and storage access layers; unified I/O around Apache Arrow/Parquet.
+- Led integrations and case studies with HuggingFace, lakeFS, and KubeSphere to broaden data‑lake/cloud‑native scenarios.
+- Drove developer advocacy and community operations; the project grew from ~800 to 8000+ stars in three years and became a representative OSS data warehouse.
 
 ## Focus Areas
 
