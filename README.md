@@ -1,42 +1,40 @@
-# Hey, I'm Chojan Shang
+# Chojan Shang · PsiACE
 
-Operator-minded systems engineer building resilient data & AI infrastructure.<br/>
+Operator‑minded engineer building resilient data & AI platforms.
 
 <a href="https://trendshift.io/developers/3326" target="_blank">
   <img src="https://trendshift.io/api/badge/developers/3326" alt="PsiACE | Trendshift" width="250" height="55">
 </a>
 
-## Quick Snapshot
+## Snapshot
 
-- **GenAI Platform — Technical Owner @ Vesoft (NebulaGraph)**  
-  Built graph-native pipelines and **GraphRAG** patterns for production LLM workloads.
-- **Apache OpenDAL™ — PMC member**  
-  Driving a unified storage layer so multiple backends (S3/GCS/HDFS/local) feel native.
-- **Databend (2021–2024) — Founding Engineer & KOL/DevRel**  
-  Worked across query execution & storage I/O in a Rust cloud data engine; closed the loop with docs, tutorials, and community programs.
+- GenAI Engineer — Vesoft (NebulaGraph)
+  - Ships GraphRAG and agent workflows to production; leads the NebulaGraph GenAI Platform.
+  - Fusion GraphRAG reduced time‑to‑first‑use by ~30% and improved precision by ~15% at equal compute.
+- Apache OpenDAL™ — PMC Member
+  - Architecture and releases across caching, retries, observability, and multi‑cloud backends.
+- Databend (2021–2024) — Founding/Core Engineer
+  - Built query execution and storage I/O; drove lakeFS and KubeSphere integrations; project grew 800 → 8000+ stars.
 
-## What I Care About
+## Focus
 
-- **Enduring platforms** → predictable performance, clean contracts, strong observability.  
-- **Graph intelligence** → retrieval that respects structure, not just tokens.  
-- **Inclusive OSS** → documentation, examples, and review culture that scales contributors.
+- Predictable, observable, and maintainable platform engineering.
+- Graph‑driven retrieval and reasoning that respect structure, not just tokens.
+- Documentation‑ and example‑driven OSS that scales contributions.
 
-## Selected Speaking & Writing
+## Speaking & Writing
 
-- **Talks**: PyCon China · KCD Beijing · Rust China Conf · CommunityOverCode  
-- **Recent**: "Agent Has No Secret" (patterns for agents) · "Self-Bootstrapping Coding Agent in Python"  
----
+- Talks: PyCon China, KCD Beijing, Rust China Conf, CommunityOverCode.
+- Recent: agent protocols and workflows; engineering Graph‑augmented RAG.
 
 ## Education
 
-- **M.S. Applied Mathematics & Data Science** (2022–2024)  
-- **B.S. Computer Science & Technology** (2017–2021)
-
----
+- M.S. Applied Mathematics & Data Science (2022–2024)  
+- B.S. Computer Science & Technology (2017–2021)
 
 ## Connect
 
-- **GitHub**: <https://github.com/psiace>  
-- **Website**: <https://psiace.me>  
-- **X / Twitter**: <https://twitter.com/repsiace>  
-- **LinkedIn**: <https://www.linkedin.com/in/psiace>
+- GitHub: <https://github.com/psiace>  
+- Website: <https://psiace.me>  
+- X / Twitter: <https://twitter.com/repsiace>  
+- LinkedIn: <https://www.linkedin.com/in/psiace>
