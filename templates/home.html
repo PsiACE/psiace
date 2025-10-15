@@ -84,6 +84,14 @@
         {% endif %}
         <a class="instant" href="{{ get_url(path=config.extra.blog_section_path, lang=section_lang) }}">{{ more_text }}</a>
       </div>
+      {% set rss_url = blog_section.permalink ~ 'atom.xml' %}
+      <div class="rss-subscribe" style="margin-top: 0.5rem; font-size: 0.95em; opacity: 0.9;">
+        {% if section_lang == 'zh' %}
+          <span>订阅：</span><a href="{{ rss_url }}" rel="alternate" type="application/atom+xml">RSS (atom.xml)</a>
+        {% else %}
+          <span>Subscribe:</span> <a href="{{ rss_url }}" rel="alternate" type="application/atom+xml">RSS (atom.xml)</a>
+        {% endif %}
+      </div>
     </section>
     {% endif %}
   </main>

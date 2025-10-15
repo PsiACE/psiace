@@ -9,6 +9,14 @@
   {% set translations = section.translations %}
   {% set current_lang = section_lang %}
   {% include "_language_switch.html" %}
+  {% set rss_url = section.permalink ~ 'atom.xml' %}
+  <div class="rss-subscribe" style="margin: 0.5rem 0 1rem; font-size: 0.95em; opacity: 0.9;">
+    {% if section_lang == 'zh' %}
+      <span>订阅：</span><a href="{{ rss_url }}" rel="alternate" type="application/atom+xml">RSS (atom.xml)</a>
+    {% else %}
+      <span>Subscribe:</span> <a href="{{ rss_url }}" rel="alternate" type="application/atom+xml">RSS (atom.xml)</a>
+    {% endif %}
+  </div>
   <main class="layout-list">
     {% if section.extra.categorized %}
     {% for category,posts in section.pages | sort(attribute="taxonomies.categories.0") | group_by(attribute="taxonomies.categories.0") %}
