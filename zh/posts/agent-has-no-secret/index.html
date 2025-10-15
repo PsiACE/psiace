@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="事件、队列、CRUD，再叠一层模型协作。先把反馈闭环跑通，比任何玄学包装都重要。">
+
+  <title>Agent 没有什么秘密</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#san-ju-hua-xian-jiao-dai-qing-chu">三句话先交代清楚</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#wei-shen-me-yao-ba-xi-jie-tan-kai-jiang">为什么要把细节摊开讲</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#jia-gou-shi-zhe-yang-luo-di-de">架构是这样落地的</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#she-ji-yuan-ze">设计原则</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#shi-jian-liu-yi-lan">事件流一览</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#he-chuan-tong-jia-gou-you-na-xie-qu-bie">和“传统架构”有哪些区别？</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#zui-xiao-gu-jia-chang-shen-me-yang">最小骨架长什么样</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#shi-jian-qu-dong-de-cun-chu-feng-zhuang">事件驱动的存储封装</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#zi-dai-shuo-ming-shu-de-xiao-gong-ju">自带说明书的小工具</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#react-hui-lu-de-xin-tiao">ReACT 回路的心跳</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#zuo-xiang-mu-shi-wo-shou-de-ji-tiao-xian">做项目时我守的几条线</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#xian-chang-yan-shi-dan-zhong-duan-jiu-neng-pao">现场演示：单终端就能跑</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#dai-ma-zai-na">代码在哪</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#yun-xing-fang-shi">运行方式</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#ping-mu-shang-hui-kan-dao">屏幕上会看到</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#xie-zai-zui-hou">写在最后</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Agent 没有什么秘密</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Aug 14, 2025</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/event-driven"><span>#</span>event-driven</a><a class="instant" href="https://psiace.me/tags/huey"><span>#</span>huey</a><a class="instant" href="https://psiace.me/tags/eventure"><span>#</span>eventure</a><a class="instant" href="https://psiace.me/tags/queue"><span>#</span>queue</a><a class="instant" href="https://psiace.me/tags/crud"><span>#</span>crud</a><a class="instant" href="https://psiace.me/tags/llm"><span>#</span>llm</a><a class="instant" href="https://psiace.me/tags/architecture"><span>#</span>architecture</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/agent-has-no-secret/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <blockquote>
+<p>我是 <a rel="nofollow noreferrer" href="https://github.com/PsiACE">PsiACE</a>。这些年围着 Agent 和 RAG 打转，最后的共识只有一句：<strong>少谈玄学，多把反馈闭环跑起来</strong>。系统要能自证、能回放、能换件，这才叫工程。</p>
+</blockquote>
+<h2 id="san-ju-hua-xian-jiao-dai-qing-chu">三句话先交代清楚<a class="zola-anchor" href="#san-ju-hua-xian-jiao-dai-qing-chu" aria-label="Anchor link for: san-ju-hua-xian-jiao-dai-qing-chu" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li><strong>Agent 不是新宗教。</strong> 底层还是事件、队列、CRUD，只是多了一层模型协作。</li>
+<li><strong>总线要讲故事。</strong> EventBus 把 <code>agent.*</code> 和 <code>huey.*</code> 串起来，事件实时打点，最后用 Cascade Viewer 把因果和时间线复盘。</li>
+<li><strong>先给 demo 再谈理念。</strong> 我准备了一个单文件脚本，跑起来就能看到闭环、再决定要不要包装。</li>
+</ul>
+<p><img src="https://psiace.me/zh/posts/agent-has-no-secret/cascade-viewer.png" alt="Cascade Viewer" /></p>
+<hr />
+<h2 id="wei-shen-me-yao-ba-xi-jie-tan-kai-jiang">为什么要把细节摊开讲<a class="zola-anchor" href="#wei-shen-me-yao-ba-xi-jie-tan-kai-jiang" aria-label="Anchor link for: wei-shen-me-yao-ba-xi-jie-tan-kai-jiang" style="visibility: hidden;"></a>
+</h2>
+<p>过去一年接触 Agent 相关项目，总有人问：“到底要不要上多智能体协作？”、“模型能不能自己规划？” 但真正让系统可靠的，是那些看似朴素的工程功夫：</p>
+<ul>
+<li>事件怎么流转？</li>
+<li>失败是怎么被记录、被回放的？</li>
+<li>观察信息是不是足够让人看懂？</li>
+</ul>
+<p>所以我换个角度写这篇文章：不再展开概念，而是以一个可跑的 demo 为骨架，讲清楚“如何把 Agent 做得像个正经服务”。</p>
+<h2 id="jia-gou-shi-zhe-yang-luo-di-de">架构是这样落地的<a class="zola-anchor" href="#jia-gou-shi-zhe-yang-luo-di-de" aria-label="Anchor link for: jia-gou-shi-zhe-yang-luo-di-de" style="visibility: hidden;"></a>
+</h2>
+<h3 id="she-ji-yuan-ze">设计原则<a class="zola-anchor" href="#she-ji-yuan-ze" aria-label="Anchor link for: she-ji-yuan-ze" style="visibility: hidden;"></a>
+</h3>
+<ul>
+<li><strong>只有一个事件总线。</strong> Agent、ToolExecutor、Storage 全都往 EventBus 写事件，不分支、不隐蔽。</li>
+<li><strong>遵循 ReACT 流程。</strong> Thought → Action → Action Input → Observation → Final Answer，让模型有章可循，工具有证可查。</li>
+<li><strong>因果与时序同时可见。</strong> 每次用户输入推进 <code>tick</code>，每个 Observation 也推进 <code>tick</code>；<code>Action → huey.* → Observation</code> 用父子关系串起来。</li>
+<li><strong>观察必须即时。</strong> 事件第一时间打印日志，最后再用 Cascade Viewer 纵览整场对话。</li>
+</ul>
+<h3 id="shi-jian-liu-yi-lan">事件流一览<a class="zola-anchor" href="#shi-jian-liu-yi-lan" aria-label="Anchor link for: shi-jian-liu-yi-lan" style="visibility: hidden;"></a>
+</h3>
+<pre data-lang="mermaid" class="language-mermaid z-code"><code class="language-mermaid" data-lang="mermaid"><span class="z-text z-plain">graph TD
+</span><span class="z-text z-plain">  User([User]) --&gt; Agent
+</span><span class="z-text z-plain">  Agent --&gt;|publish Action| EventBus
+</span><span class="z-text z-plain">  EventBus --&gt;|agent.action| ToolExecutor
+</span><span class="z-text z-plain">  ToolExecutor --&gt;|huey.task| Huey
+</span><span class="z-text z-plain">  Huey --&gt; Storage[(EventureMemoryStorage)]
+</span><span class="z-text z-plain">  Storage --&gt;|huey.queue.* / huey.data.*| EventBus
+</span><span class="z-text z-plain">  ToolExecutor --&gt;|publish Observation| EventBus
+</span><span class="z-text z-plain">  EventBus --&gt; Agent
+</span><span class="z-text z-plain">  EventBus --&gt; EventLog
+</span><span class="z-text z-plain">  EventLog --&gt; Renderer[Cascade Viewer]
+</span></code></pre>
+<h2 id="he-chuan-tong-jia-gou-you-na-xie-qu-bie">和“传统架构”有哪些区别？<a class="zola-anchor" href="#he-chuan-tong-jia-gou-you-na-xie-qu-bie" aria-label="Anchor link for: he-chuan-tong-jia-gou-you-na-xie-qu-bie" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li><strong>底子没变。</strong> 事件、队列、CRUD 这些“老面孔”依然在，只是我们把模型也当成协作者，纳入同一套流程。</li>
+<li><strong>拒绝玄乎。</strong> 把“智能”两个字抹掉，系统照样能跑，这才叫可靠、可解释、可维护。</li>
+<li><strong>观测逻辑更丰富。</strong> 传统队列只关心任务状态，这里我们得把“模型想了什么”“调用了什么”“拿到的结果是什么”都记下来。</li>
+</ul>
+<h2 id="zui-xiao-gu-jia-chang-shen-me-yang">最小骨架长什么样<a class="zola-anchor" href="#zui-xiao-gu-jia-chang-shen-me-yang" aria-label="Anchor link for: zui-xiao-gu-jia-chang-shen-me-yang" style="visibility: hidden;"></a>
+</h2>
+<h3 id="shi-jian-qu-dong-de-cun-chu-feng-zhuang">事件驱动的存储封装<a class="zola-anchor" href="#shi-jian-qu-dong-de-cun-chu-feng-zhuang" aria-label="Anchor link for: shi-jian-qu-dong-de-cun-chu-feng-zhuang" style="visibility: hidden;"></a>
+</h3>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-class z-python"><span class="z-storage z-type z-class z-python"><span class="z-keyword z-declaration z-class z-python">class</span></span> <span class="z-entity z-name z-class z-python"><span class="z-meta z-generic-name z-python">EventureMemoryStorage</span></span><span class="z-meta z-class z-inheritance z-python"><span class="z-punctuation z-section z-inheritance z-begin z-python">(</span></span></span><span class="z-meta z-class z-inheritance z-python"><span class="z-entity z-other z-inherited-class z-python">MemoryStorage</span><span class="z-punctuation z-section z-inheritance z-end z-python">)</span></span><span class="z-meta z-class z-python"><span class="z-punctuation z-section z-class z-begin z-python">:</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-support z-function z-magic z-python">__init__</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">event_bus</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">EventBus</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">super</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-magic z-python">__init__</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">huey<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">bus</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">event_bus</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">enqueue</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">data</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">priority</span></span><span class="z-meta z-function z-parameters z-default-value z-python"><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-constant z-language z-python">None</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">super</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">enqueue</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">data</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">priority</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">priority</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">bus</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">publish</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">huey.queue.enqueue<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-mapping-or-set z-python"><span class="z-punctuation z-section z-mapping-or-set z-begin z-python">{</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-meta z-mapping-or-set z-python"></span><span class="z-meta z-mapping z-python">            </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">data<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">data</span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-meta z-mapping z-python">            </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">priority<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">priority</span></span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-meta z-mapping z-value z-python"></span><span class="z-meta z-mapping z-python">        <span class="z-punctuation z-section z-mapping z-end z-python">}</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<h3 id="zi-dai-shuo-ming-shu-de-xiao-gong-ju">自带说明书的小工具<a class="zola-anchor" href="#zi-dai-shuo-ming-shu-de-xiao-gong-ju" aria-label="Anchor link for: zi-dai-shuo-ming-shu-de-xiao-gong-ju" style="visibility: hidden;"></a>
+</h3>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-function z-python"><span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">tool_echo</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">params</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">dict</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">dict</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-comment z-block z-documentation z-python"><span class="z-punctuation z-definition z-comment z-begin z-python">&quot;&quot;&quot;</span>Echo back text. Args: {&quot;text&quot;: string} Returns: {&quot;ok&quot;: bool, &quot;echo&quot;: string}<span class="z-punctuation z-definition z-comment z-end z-python">&quot;&quot;&quot;</span></span>
+</span><span class="z-source z-python">    <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-mapping z-python"><span class="z-punctuation z-section z-mapping z-begin z-python">{</span></span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">ok<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-constant z-language z-python">True</span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span> </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">echo<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-type z-python">str</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">params</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">text<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-section z-mapping z-end z-python">}</span></span>
+</span></code></pre>
+<h3 id="react-hui-lu-de-xin-tiao">ReACT 回路的心跳<a class="zola-anchor" href="#react-hui-lu-de-xin-tiao" aria-label="Anchor link for: react-hui-lu-de-xin-tiao" style="visibility: hidden;"></a>
+</h3>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-statement z-loop z-while z-python"><span class="z-keyword z-control z-loop z-while z-python">while</span> <span class="z-constant z-language z-python">True</span><span class="z-punctuation z-section z-block z-loop z-while z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">resp</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">chat</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">completions</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">create</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-variable z-parameter z-python">model</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">model</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">messages</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">history</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">assistant</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">resp</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">choices</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-constant z-numeric z-integer z-decimal z-python">0</span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">message</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">content</span> <span class="z-keyword z-operator z-logical z-python">or</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">call</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">extract</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">assistant</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">call</span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">action_id</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">uuid4</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">bus</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">publish</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">agent.action<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-mapping z-python"><span class="z-punctuation z-section z-mapping z-begin z-python">{</span></span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">id<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">action_id</span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span> <span class="z-keyword z-operator z-unpacking z-mapping z-python">**</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">call</span></span><span class="z-punctuation z-section z-mapping z-end z-python">}</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> wait for agent.observation(id==action_id) and append as Observation
+</span></span><span class="z-source z-python">        <span class="z-keyword z-control z-flow z-continue z-python">continue</span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">assistant</span></span>
+</span></code></pre>
+<h2 id="zuo-xiang-mu-shi-wo-shou-de-ji-tiao-xian">做项目时我守的几条线<a class="zola-anchor" href="#zuo-xiang-mu-shi-wo-shou-de-ji-tiao-xian" aria-label="Anchor link for: zuo-xiang-mu-shi-wo-shou-de-ji-tiao-xian" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li><strong>先把反馈闭环跑通，再谈炫技。</strong> 事件 → 队列 → 状态变更 → ReACT，通了再想优化。</li>
+<li><strong>因果与时序是一等公民。</strong> <code>tick</code> 表示节奏，父子关系标记触发链。</li>
+<li><strong>观测优先。</strong> 系统能自我解释，调优才有地基。</li>
+<li><strong>保持可换。</strong> 总线稳定，后端可以换（内存 ↔ Redis），模型可以换（不同厂商 / 版本）。</li>
+</ul>
+<h2 id="xian-chang-yan-shi-dan-zhong-duan-jiu-neng-pao">现场演示：单终端就能跑<a class="zola-anchor" href="#xian-chang-yan-shi-dan-zhong-duan-jiu-neng-pao" aria-label="Anchor link for: xian-chang-yan-shi-dan-zhong-duan-jiu-neng-pao" style="visibility: hidden;"></a>
+</h2>
+<h3 id="dai-ma-zai-na">代码在哪<a class="zola-anchor" href="#dai-ma-zai-na" aria-label="Anchor link for: dai-ma-zai-na" style="visibility: hidden;"></a>
+</h3>
+<p>到 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/psiace">PsiACE/psiace</a> 项目的 <code>demo</code> 目录拿最新版本：</p>
+<ul>
+<li><a rel="nofollow noreferrer" href="https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/agent_has_no_secret.py">agent_has_no_secret.py</a></li>
+<li><a rel="nofollow noreferrer" href="https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/README.md">README.md</a></li>
+</ul>
+<h3 id="yun-xing-fang-shi">运行方式<a class="zola-anchor" href="#yun-xing-fang-shi" aria-label="Anchor link for: yun-xing-fang-shi" style="visibility: hidden;"></a>
+</h3>
+<ol>
+<li>配好 <code>.env</code>（推荐 OpenRouter，OpenAI 也行）</li>
+<li><code>python agent_has_no_secret.py</code></li>
+</ol>
+<h3 id="ping-mu-shang-hui-kan-dao">屏幕上会看到<a class="zola-anchor" href="#ping-mu-shang-hui-kan-dao" aria-label="Anchor link for: ping-mu-shang-hui-kan-dao" style="visibility: hidden;"></a>
+</h3>
+<ul>
+<li><strong>实时事件流</strong>（带颜色）：<code>user.input</code>、<code>agent.thought</code>、<code>agent.action</code>、<code>huey.data.*</code>、<code>agent.observation</code> …</li>
+<li>绿色的 <strong>Final Answer</strong> 面板</li>
+<li><strong>树状 Cascade Viewer</strong> 按 tick 分组：<code>agent.action</code> 下面能看到 <code>huey.data.*</code> 与 <code>agent.observation</code> 的父子链</li>
+</ul>
+<hr />
+<h2 id="xie-zai-zui-hou">写在最后<a class="zola-anchor" href="#xie-zai-zui-hou" aria-label="Anchor link for: xie-zai-zui-hou" style="visibility: hidden;"></a>
+</h2>
+<p>我喜欢那种<strong>讲得清楚又做得出来</strong>的工程师。Agent 没什么神秘：</p>
+<ul>
+<li>先让反馈闭环转起来，再谈“更智能”；</li>
+<li>先把因果链和成本摊开，再谈“更聪明”。</li>
+</ul>
+<p>搞 Agent，别膜拜神秘感，就和那些能当场拆给你看、并立刻跑给你看的人站在一边。</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="agent-has-no-secret"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

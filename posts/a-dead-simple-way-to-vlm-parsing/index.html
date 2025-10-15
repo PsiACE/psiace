@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Learn how to use Visual Language Models (VLMs) to parse unstructured data from images and other media in a straightforward way.">
+
+  <title>A Dead Simple Way to VLM Parsing</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#show-me-the-code">Show Me The Code</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#taking-it-for-a-spin">Taking It for a Spin</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#running-the-demo">Running the Demo</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#bonus-extending-the-parser">Bonus: Extending the Parser</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#resources">Resources</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>A Dead Simple Way to VLM Parsing</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Nov 28, 2024</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/vlm"><span>#</span>VLM</a><a class="instant" href="https://psiace.me/tags/parsing"><span>#</span>Parsing</a><a class="instant" href="https://psiace.me/tags/openai"><span>#</span>OpenAI</a><a class="instant" href="https://psiace.me/tags/unstructured-data"><span>#</span>Unstructured Data</a><a class="instant" href="https://psiace.me/tags/multimodal"><span>#</span>MultiModal</a><a class="instant" href="https://psiace.me/tags/llama-index"><span>#</span>llama-index</a><a class="instant" href="https://psiace.me/tags/python"><span>#</span>Python</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/a-dead-simple-way-to-vlm-parsing/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <p>This post demonstrates a straightforward approach to using VLMs for parsing unstructured data from images. While simple, this method can be easily extended to handle more complex scenarios, such as extracting information from PDFs. If you want, you can built a more complex parser as <a rel="nofollow noreferrer" href="https://www.llamaindex.ai/llamaparse">llamaparse</a> with more steps, like OCR, table parsing, etc.</p>
+<p>Let's consider a common scenario: you have a collection of images and need to extract text from them. Or perhaps you want to generate descriptions from pictures to enable full-text search capabilities. It's time to hire a VLM (Visual Language Models or MultiModal Models) to work for you.</p>
+<p>Since I work extensively with <a rel="nofollow noreferrer" href="https://github.com/run-llama/llama_index">llama_index</a>, I'll be using it in the examples. However, the core concepts remain the same, and you can adapt them to work with any tools or clients of your choice.</p>
+<h2 id="show-me-the-code">Show Me The Code<a class="zola-anchor" href="#show-me-the-code" aria-label="Anchor link for: show-me-the-code" style="visibility: hidden;"></a>
+</h2>
+<p>At first, we need to define a prompt for the VLM to follow, to help it understand what we need.</p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">BASIC_PROMPT</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;&quot;&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">        <span class="z-meta z-string z-python"></span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">Please analyze this image comprehensively and provide the following information:
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">        1. General Overview:
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - Main subject matter and content
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - Overall composition and context
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - Key visual elements present
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">        2. Text Content:
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - Transcribe any visible text accurately
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - Include headers, labels, and captions
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - Note any important text formatting or emphasis
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">        3. Data Visualization (if present):
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - For tables:
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">             * Convert to markdown format
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">             * Preserve column headers and data relationships
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - For charts/graphs:
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">             * Describe the type of visualization
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">             * Explain key trends and patterns
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">             * List important data points and values
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - For diagrams/flowcharts:
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">             * Explain the structure and relationships
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">             * Describe the flow or process
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">             * Note any important symbols or annotations
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">        4. Additional Details:
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - Identify any branding or logos
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - Note color schemes if significant
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">           - Describe any relevant metadata or context
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">        Please format the response clearly and maintain the original structure of any data.
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">        <span class="z-punctuation z-definition z-string z-end z-python">&quot;&quot;&quot;</span></span></span>
+</span></code></pre>
+<p>Let's build a minimal but functional image parser:</p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">pathlib</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">Path</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">typing</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">List</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">base64</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">io</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">BytesIO</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">PIL</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">Image</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">llama_index</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">core</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">multi_modal_llms</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">MultiModalLLM</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">llama_index</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">core</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">multi_modal_llms</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">generic_utils</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">ImageDocument</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-class z-python"><span class="z-storage z-type z-class z-python"><span class="z-keyword z-declaration z-class z-python">class</span></span> <span class="z-entity z-name z-class z-python"><span class="z-meta z-generic-name z-python">SimpleImageParser</span></span><span class="z-punctuation z-section z-class z-begin z-python">:</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-support z-function z-magic z-python">__init__</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">model</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">MultiModalLLM</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">model</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">model</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">prompt</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">BASIC_PROMPT</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-comment z-block z-documentation z-python"><span class="z-punctuation z-definition z-comment z-begin z-python">&quot;&quot;&quot;</span>A simple parser for extracting information from images using VLMs.
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">    Args:
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">        model (MultiModalLLM): The multi-modal language model to use for parsing
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">    <span class="z-punctuation z-definition z-comment z-end z-python">&quot;&quot;&quot;</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">process_image</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">image_path</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-comment z-block z-documentation z-python"><span class="z-punctuation z-definition z-comment z-begin z-python">&quot;&quot;&quot;</span>Convert image to base64 encoding<span class="z-punctuation z-definition z-comment z-end z-python">&quot;&quot;&quot;</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">Image</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">open</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_path</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">buffered</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">BytesIO</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">save</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">buffered</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">format</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">PNG<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">base64</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">b64encode</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">buffered</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">getvalue</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">decode</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">utf-8<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-modifier z-async z-python">async</span> <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">parse</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">image_path</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-comment z-block z-documentation z-python"><span class="z-punctuation z-definition z-comment z-begin z-python">&quot;&quot;&quot;</span>Parse image content<span class="z-punctuation z-definition z-comment z-end z-python">&quot;&quot;&quot;</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_data</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">process_image</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_path</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_doc</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">ImageDocument</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">image_url</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-storage z-type z-string z-python">f</span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python">data:image/jpeg;base64,</span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-begin z-python">{</span><span class="z-source z-python z-embedded"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_data</span></span></span></span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-end z-python">}</span></span><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">model</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">acomplete</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">prompt</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">prompt</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">image_documents</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-sequence z-list z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_doc</span></span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-type z-python">str</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<p>The core is, we convert the image to base64 encoding, and then pass it to the VLM.</p>
+<h2 id="taking-it-for-a-spin">Taking It for a Spin<a class="zola-anchor" href="#taking-it-for-a-spin" aria-label="Anchor link for: taking-it-for-a-spin" style="visibility: hidden;"></a>
+</h2>
+<p>Here's how to use our shiny new parser:</p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">asyncio</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">argparse</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">pathlib</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">Path</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">llama_index</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">multi_modal_llms</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">openai</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">OpenAIMultiModal</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">dotenv</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">load_dotenv</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">load_dotenv</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python"><span class="z-storage z-modifier z-async z-python">async</span> <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">main</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">argparse</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">ArgumentParser</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-variable z-parameter z-python">description</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Parse image content<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">add_argument</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">image_path<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">type</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">help</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Path to the image file<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">args</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">parse_args</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_path</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">Path</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">args</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">image_path</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-keyword z-operator z-logical z-python">not</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_path</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">exists</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-storage z-type z-string z-python">f</span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python">Image file does not exist: </span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-begin z-python">{</span><span class="z-source z-python z-embedded"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_path</span></span></span></span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-end z-python">}</span></span><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-keyword z-control z-flow z-return z-python">return</span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Initialize the VLM
+</span></span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">model</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">OpenAIMultiModal</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">model</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">getenv</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">MULTI_MODAL_LLM_MODEL<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">gpt-4o-mini<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">api_key</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">getenv</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">MULTI_MODAL_LLM_API_KEY<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">api_base</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">getenv</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">MULTI_MODAL_LLM_API_BASE<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">https://api.openai.com/v1<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">max_new_tokens</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-type z-python">int</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">getenv</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">MULTI_MODAL_LLM_MAX_TOKENS<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">512<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">temperature</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-type z-python">float</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">getenv</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">MULTI_MODAL_LLM_TEMPERATURE<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">0.7<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">verbose</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">getenv</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">MULTI_MODAL_LLM_VERBOSE<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">False<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">lower</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span> <span class="z-keyword z-operator z-comparison z-python">==</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">true<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Create our parser
+</span></span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">SimpleImageParser</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">model</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Let&#39;s parse an image!
+</span></span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">result</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">parse</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-type z-python">str</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_path</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">result</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-variable z-magic z-python">__name__</span></span> <span class="z-keyword z-operator z-comparison z-python">==</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">__main__<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">asyncio</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">run</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">main</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<p>In this snippet, we initialize the VLM, create our parser, and then parse an image.</p>
+<h2 id="running-the-demo">Running the Demo<a class="zola-anchor" href="#running-the-demo" aria-label="Anchor link for: running-the-demo" style="visibility: hidden;"></a>
+</h2>
+<p>I have a repo for a demo of using VLM to parse images, you can see the <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/vlm-parsing">code here</a>.</p>
+<p>Just run the script with the image path:</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">python</span></span><span class="z-meta z-function-call z-arguments z-shell"> basic.py <span class="z-keyword z-operator z-assignment z-redirection z-shell">&lt;</span>image_path<span class="z-keyword z-operator z-assignment z-redirection z-shell">&gt;</span>
+</span></span></code></pre>
+<p>The example image is a screenshot of a home gateway, from <a rel="nofollow noreferrer" href="https://commons.wikimedia.org/wiki/File:Home_gateway_example.png">Home gateway example</a>:</p>
+<p><img src="https://psiace.me/posts/a-dead-simple-way-to-vlm-parsing/example.png" alt="Home gateway example" /></p>
+<p>And the result in terminal is:</p>
+<p><img src="https://psiace.me/posts/a-dead-simple-way-to-vlm-parsing/example-result.png" alt="Home gateway example result" /></p>
+<h2 id="bonus-extending-the-parser">Bonus: Extending the Parser<a class="zola-anchor" href="#bonus-extending-the-parser" aria-label="Anchor link for: bonus-extending-the-parser" style="visibility: hidden;"></a>
+</h2>
+<p>Here are some practical ways to extend this simple parser:</p>
+<ol>
+<li>
+<p><strong>Format Support</strong></p>
+<ul>
+<li>Handle PDFs using tools like <code>pdf2image</code></li>
+<li>Process videos using <code>opencv-python</code> for frame extraction</li>
+</ul>
+</li>
+<li>
+<p><strong>Output Options</strong></p>
+<ul>
+<li>Generate JSON output:<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-function z-python"><span class="z-storage z-modifier z-async z-python">async</span> <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">parse_to_json</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">image_path</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">dict</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">result</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">parse</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">image_path</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Add your JSON transformation logic here
+</span></span><span class="z-source z-python">    <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">json_result</span></span>
+</span></code></pre>
+</li>
+<li>Create custom templates using Jinja2 or similar</li>
+</ul>
+</li>
+<li>
+<p><strong>Processing Pipeline</strong></p>
+<ul>
+<li>Integrate Tesseract OCR for text extraction</li>
+<li>Try to support table parsing</li>
+<li>Implement batch processing with asyncio</li>
+</ul>
+</li>
+<li>
+<p><strong>Integration Ideas</strong></p>
+<ul>
+<li>Connect with llama-index for RAG applications</li>
+<li>Build automated workflows</li>
+</ul>
+</li>
+</ol>
+<h2 id="resources">Resources<a class="zola-anchor" href="#resources" aria-label="Anchor link for: resources" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li><a rel="nofollow noreferrer" href="https://docs.llamaindex.ai/">llama-index Documentation</a></li>
+<li><a rel="nofollow noreferrer" href="https://platform.openai.com/">OpenAI</a></li>
+<li><a rel="nofollow noreferrer" href="https://pillow.readthedocs.io/">PIL (Python Imaging Library)</a></li>
+</ul>
+<hr />
+<p>Thanks for reading! If you have any questions or suggestions, please feel free to leave a comment.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="a-dead-simple-way-to-vlm-parsing"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/feed.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;feed.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;feed.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;feed.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

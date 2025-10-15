@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="周末写的一个 Wasmtime Python 执行器：让代码智能体在本地沙箱里跑起来，又安全又可控。">
+
+  <title>用 WebAssembly 给代码智能体套上安全带</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#bei-jing-dai-ma-zhi-neng-ti-de-yong-gan-xing-wei">背景：代码智能体的“勇敢”行为</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#wei-shen-me-xuan-webassembly">为什么选 WebAssembly</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#zhou-mo-zuo-pin-chang-zhe-yang">周末作品长这样</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#you-que-dian-yi-lan">优缺点一览</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#neng-bu-neng-zhi-jie-shang-sheng-chan">能不能直接上生产？</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#dai-ma-yu-zi-liao">代码与资料</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>用 WebAssembly 给代码智能体套上安全带</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Jul 8, 2025</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/ai"><span>#</span>AI</a><a class="instant" href="https://psiace.me/tags/webassembly"><span>#</span>WebAssembly</a><a class="instant" href="https://psiace.me/tags/security"><span>#</span>Security</a><a class="instant" href="https://psiace.me/tags/code-agents"><span>#</span>Code Agents</a><a class="instant" href="https://psiace.me/tags/sandbox"><span>#</span>Sandbox</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/wasmtime-executor-for-code-agents/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <h2 id="bei-jing-dai-ma-zhi-neng-ti-de-yong-gan-xing-wei">背景：代码智能体的“勇敢”行为<a class="zola-anchor" href="#bei-jing-dai-ma-zhi-neng-ti-de-yong-gan-xing-wei" aria-label="Anchor link for: bei-jing-dai-ma-zhi-neng-ti-de-yong-gan-xing-wei" style="visibility: hidden;"></a>
+</h2>
+<p>第一次让 AI 智能体执行代码，不到五分钟它就尝试扫 <code>/etc/passwd</code>、安装莫名其妙的包、跑无限循环。要让这种系统可用，第一件事就是控制执行环境。</p>
+<p>Hugging Face 的 <a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents">smolagents</a> 已经提供了远程执行、Deno + Pyodide 等多种方案，但我想要一个<strong>纯本地、易嵌入</strong>的执行器，于是有了这个 Wasmtime Python Executor。</p>
+<h2 id="wei-shen-me-xuan-webassembly">为什么选 WebAssembly<a class="zola-anchor" href="#wei-shen-me-xuan-webassembly" aria-label="Anchor link for: wei-shen-me-xuan-webassembly" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li><strong>能力最小化</strong>：WASM 默认没有文件、网络、系统访问，授权什么才有什么。</li>
+<li><strong>资源计量</strong>：可以限制 CPU、内存、运行时间。</li>
+<li><strong>可移植</strong>：今天跑 Python，明天换 JS、Ruby 也能适配。</li>
+<li><strong>确定性</strong>：相同输入输出一致，方便调试和审计。</li>
+</ul>
+<h2 id="zhou-mo-zuo-pin-chang-zhe-yang">周末作品长这样<a class="zola-anchor" href="#zhou-mo-zuo-pin-chang-zhe-yang" aria-label="Anchor link for: zhou-mo-zuo-pin-chang-zhe-yang" style="visibility: hidden;"></a>
+</h2>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">wasmtime_executor</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">WasmtimePythonExecutor</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">smolagents</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">CodeAgent</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">InferenceClientModel</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-class z-python"><span class="z-storage z-type z-class z-python"><span class="z-keyword z-declaration z-class z-python">class</span></span> <span class="z-entity z-name z-class z-python"><span class="z-meta z-generic-name z-python">WasmtimeCodeAgent</span></span><span class="z-meta z-class z-inheritance z-python"><span class="z-punctuation z-section z-inheritance z-begin z-python">(</span></span></span><span class="z-meta z-class z-inheritance z-python"><span class="z-entity z-other z-inherited-class z-python">CodeAgent</span><span class="z-punctuation z-section z-inheritance z-end z-python">)</span></span><span class="z-meta z-class z-python"><span class="z-punctuation z-section z-class z-begin z-python">:</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">create_python_executor</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">WasmtimePythonExecutor</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">additional_authorized_imports</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">additional_authorized_imports</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">max_print_outputs_length</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">max_print_outputs_length</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-keyword z-operator z-unpacking z-mapping z-python">**</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">executor_kwargs</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">WasmtimeCodeAgent</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">tools</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-sequence z-list z-empty z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">model</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">InferenceClientModel</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">additional_authorized_imports</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-sequence z-list z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">math<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">json<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">run</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Calculate the square root of 125<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<p>做法：</p>
+<ol>
+<li>使用 VMware 提供的 Python WASM 发行版；</li>
+<li>借助 <code>wasmtime-py</code> 在本地加载；</li>
+<li>实现 smolagents 期望的执行器接口；</li>
+<li>支持白名单 import、输出截断、状态持久化等基础功能。</li>
+</ol>
+<h2 id="you-que-dian-yi-lan">优缺点一览<a class="zola-anchor" href="#you-que-dian-yi-lan" aria-label="Anchor link for: you-que-dian-yi-lan" style="visibility: hidden;"></a>
+</h2>
+<table><thead><tr><th>项目</th><th>现在就能用的</th><th>需要改进的</th></tr></thead><tbody>
+<tr><td>兼容性</td><td>可直接接入 smolagents，接口一致</td><td>Python 生态受限，缺包需要自己打</td></tr>
+<tr><td>安全性</td><td>默认隔离，权限收敛</td><td>还缺更精细的文件/网络授权策略</td></tr>
+<tr><td>体验</td><td>完全本地、无外部依赖，错误信息清晰</td><td>长时间运行性能一般，镜像下载稍麻烦</td></tr>
+</tbody></table>
+<h2 id="neng-bu-neng-zhi-jie-shang-sheng-chan">能不能直接上生产？<a class="zola-anchor" href="#neng-bu-neng-zhi-jie-shang-sheng-chan" aria-label="Anchor link for: neng-bu-neng-zhi-jie-shang-sheng-chan" style="visibility: hidden;"></a>
+</h2>
+<p>暂时不行，这是个 weekend hack。但它验证了这个思路：</p>
+<ul>
+<li>WebAssembly 可以成为代码智能体的“安全带”；</li>
+<li>不需要引入 Deno、远程服务，也能实现沙箱；</li>
+<li>可以把现有 Agent 框架的执行端换成 Wasmtime，安全性和可控性都会提升。</li>
+</ul>
+<p>如果要投入生产，需要：</p>
+<ul>
+<li>更完善的资源配额与杀死策略；</li>
+<li>包管理/缓存机制；</li>
+<li>日志、审计链路；</li>
+<li>安全审查和长时间压力测试。</li>
+</ul>
+<h2 id="dai-ma-yu-zi-liao">代码与资料<a class="zola-anchor" href="#dai-ma-yu-zi-liao" aria-label="Anchor link for: dai-ma-yu-zi-liao" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li>Demo 仓库：<a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor">psiace/demo/wasmtime-executor</a></li>
+<li>参考项目：<a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents">smolagents</a>、<a rel="nofollow noreferrer" href="https://github.com/vmware-labs/webassembly-language-runtimes">VMware WASM Runtimes</a></li>
+<li>灵感来源：Simon Willison 的 <a rel="nofollow noreferrer" href="https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox">WASM Python Sandbox</a></li>
+</ul>
+<p>如果你也在思考“让 AI 安全执行代码”的方案，不妨先写一个属于你的沙箱。造轮子是理解问题最快的方式。</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="wasmtime-executor-for-code-agents"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

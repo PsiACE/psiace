@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Learn how to integrate MCP tools into LlamaIndex, with a end-to-end demo.">
+
+  <title>Integrate MCP tools into LlamaIndex</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#1-background">1. Background</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#1-1-what-is-mcp">1.1 What is MCP?</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#1-2-what-is-llamaindex">1.2 What is LlamaIndex?</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#2-why-do-we-need-to-convert-mcp-tools-to-llamaindex-tools">2. Why do we need to convert MCP tools to LlamaIndex tools?</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#3-implementation">3. Implementation</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#4-code-example">4. Code Example</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#4-1-mcptooladapter">4.1 MCPToolAdapter</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#4-2-usage-in-llamaindex">4.2 Usage in LlamaIndex</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#5-running-the-demo">5. Running the Demo</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#6-summary">6. Summary</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Integrate MCP tools into LlamaIndex</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Feb 11, 2025</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/mcp"><span>#</span>MCP</a><a class="instant" href="https://psiace.me/tags/llamaindex"><span>#</span>LlamaIndex</a><a class="instant" href="https://psiace.me/tags/python"><span>#</span>Python</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/integrate-mcp-tools-into-llamaindex/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <blockquote>
+<p>[!NOTE]
+This work has been contributed to upstream <a rel="nofollow noreferrer" href="https://github.com/run-llama/llama_index">llama_index</a> as <code>McpToolSpec</code> in the <a rel="nofollow noreferrer" href="https://pypi.org/project/llama-index-tools-mcp/"><code>llama-index-tools-mcp</code></a> package. You can find the pull request <a rel="nofollow noreferrer" href="https://github.com/run-llama/llama_index/pull/17795">llama_index#17795 feat: add mcp tool spec</a> and try out the example notebook <a rel="nofollow noreferrer" href="https://github.com/run-llama/llama_index/blob/main/llama-index-integrations/tools/llama-index-tools-mcp/examples/mcp.ipynb">llama-index-tools-mcp/examples/mcp.ipynb</a> directly.</p>
+</blockquote>
+<p>This article mainly introduces how to convert MCP (Model Context Protocol) tools into LlamaIndex tools that can be directly used, allowing <a rel="nofollow noreferrer" href="https://github.com/run-llama/llama_index">LlamaIndex</a> users to seamlessly integrate these services like other modern and popular AI applications like Claude and Cursor, etc.</p>
+<h2 id="1-background">1. Background<a class="zola-anchor" href="#1-background" aria-label="Anchor link for: 1-background" style="visibility: hidden;"></a>
+</h2>
+<h3 id="1-1-what-is-mcp">1.1 What is MCP?<a class="zola-anchor" href="#1-1-what-is-mcp" aria-label="Anchor link for: 1-1-what-is-mcp" style="visibility: hidden;"></a>
+</h3>
+<p>MCP(Model Context Protocol, https://modelcontextprotocol.io) is a protocol for building services that interact with AI applications. It allows developers to build servers that expose features like data (resources), functions (tools), and prompts. For example, we can define a <code>fetch_ipinfo</code> tool that retrieves detailed information about a specified IP address (such as city and timezone). code here: <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/llamaindex-mcp-adapter/mcp_server.py">mcp_server.py</a></p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-annotation z-python"><span class="z-punctuation z-definition z-annotation z-python">@</span><span class="z-meta z-annotation z-function z-python"></span></span><span class="z-meta z-annotation z-function z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">mcp</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-annotation z-function z-python"><span class="z-meta z-generic-name z-python">tool</span></span></span></span><span class="z-meta z-annotation z-function z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span></span><span class="z-meta z-annotation z-function z-python"><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function z-python"><span class="z-storage z-modifier z-async z-python">async</span> <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">fetch_ipinfo</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">ip</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span> <span class="z-keyword z-operator z-arithmetic z-python">|</span> <span class="z-constant z-language z-python">None</span> </span><span class="z-meta z-function z-parameters z-default-value z-python"><span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-constant z-language z-python">None</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-keyword z-operator z-unpacking z-mapping z-python">**</span><span class="z-variable z-parameter z-python">kwargs</span><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">IPDetails</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-comment z-block z-documentation z-python"><span class="z-punctuation z-definition z-comment z-begin z-python">&quot;&quot;&quot;</span>Get the detailed information of a specified IP address
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">    Args:
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">        ip(str or None): The IP address to get information for. Follow the format like 192.168.1.1 .
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">        **kwargs: Additional keyword arguments to pass to the IPInfo handler.
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">    Returns:
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">        IPDetails: The detailed information of the specified IP address.
+</span></span><span class="z-source z-python"><span class="z-comment z-block z-documentation z-python">    <span class="z-punctuation z-definition z-comment z-end z-python">&quot;&quot;&quot;</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">handler</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ipinfo</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">getHandler</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">access_token</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">environ</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">IPINFO_API_TOKEN<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-constant z-language z-python">None</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">headers</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-section z-mapping z-begin z-python">{</span></span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">user-agent<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">basic-mcp-server<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span> </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">custom_header<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">yes<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-section z-mapping z-end z-python">}</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-keyword z-operator z-unpacking z-mapping z-python">**</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">kwargs</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">details</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">handler</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">getDetails</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-variable z-parameter z-python">ip_address</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ip</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">IPDetails</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-keyword z-operator z-arithmetic z-python">*</span><span class="z-keyword z-operator z-arithmetic z-python">*</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">details</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">all</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<h3 id="1-2-what-is-llamaindex">1.2 What is LlamaIndex?<a class="zola-anchor" href="#1-2-what-is-llamaindex" aria-label="Anchor link for: 1-2-what-is-llamaindex" style="visibility: hidden;"></a>
+</h3>
+<p>LlamaIndex (https://github.com/run-llama/llama_index) is a framework for building, managing, and calling index systems. It aims to bring external information into large language models in a structured way, achieving more efficient information retrieval, question answering, and dialogue generation. When using LlamaIndex, you often need to call external tools to get dynamic data, which can be considered as converting MCP tools into LlamaIndex tools.</p>
+<h2 id="2-why-do-we-need-to-convert-mcp-tools-to-llamaindex-tools">2. Why do we need to convert MCP tools to LlamaIndex tools?<a class="zola-anchor" href="#2-why-do-we-need-to-convert-mcp-tools-to-llamaindex-tools" aria-label="Anchor link for: 2-why-do-we-need-to-convert-mcp-tools-to-llamaindex-tools" style="visibility: hidden;"></a>
+</h2>
+<p>In actual scenarios, you may want to:</p>
+<ul>
+<li>Use the rich features exposed by the MCP servers, there is a list of MCP servers https://github.com/AlexMili/Awesome-MCP .</li>
+<li>Integrate MCP tools into LlamaIndex to form a unified workflow, simplifying the process of calling external APIs with large language models.</li>
+<li>Automatically convert MCP tools to FunctionTool objects in LlamaIndex, making it easier for LlamaIndex Agent to automatically call and manage tools.</li>
+</ul>
+<p>By doing this, you can easily reuse the tools already in MCP, without having to write code again, and also use the powerful dialogue generation and context management capabilities of LlamaIndex.</p>
+<h2 id="3-implementation">3. Implementation<a class="zola-anchor" href="#3-implementation" aria-label="Anchor link for: 3-implementation" style="visibility: hidden;"></a>
+</h2>
+<p>Implementing the conversion of MCP tools to LlamaIndex tools mainly includes the following steps:</p>
+<ul>
+<li><strong>Communicate with MCP server</strong>:
+<ul>
+<li>Establish a connection with the MCP server using the <code>MCPClient</code> class, at least support <code>list_tools</code> and <code>call_tool</code> methods.</li>
+<li>See <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/llamaindex-mcp-adapter/mcp_client.py">mcp_client.py</a> for reference.</li>
+</ul>
+</li>
+<li><strong>Construct adapter</strong>:
+<ul>
+<li>Define the <code>MCPToolAdapter</code> class, which uses the MCPClient's <code>list_tools</code> method to get the tool list and uses the <code>FunctionTool.from_defaults</code> method in LlamaIndex to wrap each MCP tool into a LlamaIndex tool.</li>
+<li>See <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/llamaindex-mcp-adapter/llamaindex_mcp_adapter.py">llamaindex_mcp_adapter.py</a> for reference.</li>
+</ul>
+</li>
+<li><strong>Use the adapter in LlamaIndex</strong>:
+<ul>
+<li>In LlamaIndex, use the adapter to get tools, and then use the agent to call the tools.</li>
+<li>See <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/llamaindex-mcp-adapter/llamaindex_mcp_example.py">llamaindex_mcp_example.py</a> for reference.</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-code-example">4. Code Example<a class="zola-anchor" href="#4-code-example" aria-label="Anchor link for: 4-code-example" style="visibility: hidden;"></a>
+</h2>
+<h3 id="4-1-mcptooladapter">4.1 MCPToolAdapter<a class="zola-anchor" href="#4-1-mcptooladapter" aria-label="Anchor link for: 4-1-mcptooladapter" style="visibility: hidden;"></a>
+</h3>
+<p>The following code is from <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/llamaindex-mcp-adapter/llamaindex_mcp_adapter.py">llamaindex_mcp_adapter.py</a>, which shows how to convert MCP tools to LlamaIndex tools:</p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">typing</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">Any</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">Dict</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">List</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">Optional</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">Type</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">llama_index</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">core</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">tools</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">FunctionTool</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">mcp_client</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">MCPClient</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">pydantic</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">BaseModel</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">Field</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">create_model</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">json_type_mapping</span></span><span class="z-punctuation z-separator z-annotation z-variable z-python">:</span> <span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">Dict</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span>, <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">Type</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-mapping-or-set z-python"><span class="z-punctuation z-section z-mapping-or-set z-begin z-python">{</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping-or-set z-python"></span><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">string<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">number<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">float</span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">integer<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">int</span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">boolean<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">bool</span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">object<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">dict</span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-python">    </span><span class="z-meta z-mapping z-key z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">array<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-separator z-mapping z-key-value z-python">:</span></span><span class="z-meta z-mapping z-python"> </span><span class="z-meta z-mapping z-value z-python"><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">list</span></span>
+</span></span><span class="z-source z-python"><span class="z-meta z-mapping z-value z-python"></span><span class="z-meta z-mapping z-python"><span class="z-punctuation z-section z-mapping z-end z-python">}</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python"><span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">create_model_from_json_schema</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">schema</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">Dict</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span>, <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">Any</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">model_name</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span> </span><span class="z-meta z-function z-parameters z-default-value z-python"><span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">DynamicModel<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">Type</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">BaseModel</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">properties</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">schema</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">properties<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-mapping z-empty z-python"><span class="z-punctuation z-section z-mapping z-begin z-python">{</span><span class="z-punctuation z-section z-mapping z-end z-python">}</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">required_fields</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-type z-python">set</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">schema</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">required<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-sequence z-list z-empty z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">fields</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-mapping z-empty z-python"><span class="z-punctuation z-section z-mapping z-begin z-python">{</span><span class="z-punctuation z-section z-mapping z-end z-python">}</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-meta z-statement z-loop z-for z-python"><span class="z-keyword z-control z-loop z-for z-python">for</span> <span class="z-meta z-generic-name z-python">field_name</span><span class="z-punctuation z-separator z-target-list z-python">,</span> <span class="z-meta z-generic-name z-python">field_schema</span> <span class="z-keyword z-control z-loop z-for z-in z-python">in</span></span><span class="z-meta z-statement z-loop z-for z-python"> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">properties</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">items</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span></span><span class="z-meta z-statement z-loop z-for z-python"><span class="z-punctuation z-section z-block z-loop z-for z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">json_type</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">field_schema</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">type<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">string<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">field_type</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">json_type_mapping</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">json_type</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">        <span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">field_name</span></span> <span class="z-keyword z-operator z-logical z-python">in</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">required_fields</span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">            <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">default_value</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-constant z-language z-python">...</span>
+</span><span class="z-source z-python">        <span class="z-meta z-statement z-conditional z-else z-python"><span class="z-keyword z-control z-conditional z-else z-python">else</span><span class="z-punctuation z-section z-block z-conditional z-else z-python">:</span></span>
+</span><span class="z-source z-python">            <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">default_value</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-constant z-language z-python">None</span>
+</span><span class="z-source z-python">            <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">field_type</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">Optional</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">field_type</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">        <span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">fields</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">field_name</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-sequence z-tuple z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">field_type</span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">Field</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">default_value</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">description</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">field_schema</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">description<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-sequence z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">dynamic_model</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">create_model</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">model_name</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-keyword z-operator z-unpacking z-mapping z-python">**</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">fields</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">dynamic_model</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-class z-python"><span class="z-storage z-type z-class z-python"><span class="z-keyword z-declaration z-class z-python">class</span></span> <span class="z-entity z-name z-class z-python"><span class="z-meta z-generic-name z-python">MCPToolAdapter</span></span><span class="z-punctuation z-section z-class z-begin z-python">:</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-support z-function z-magic z-python">__init__</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">client</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">MCPClient</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">client</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-modifier z-async z-python">async</span> <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">list_tools</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">List</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">FunctionTool</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">client</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">list_tools</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-sequence z-list z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-sequence z-list z-python">            <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">FunctionTool</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">from_defaults</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-sequence z-list z-python"><span class="z-meta z-function-call z-arguments z-python">                <span class="z-variable z-parameter z-python">fn</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">_create_tool_fn</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">name</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-sequence z-list z-python"><span class="z-meta z-function-call z-arguments z-python">                <span class="z-variable z-parameter z-python">name</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">name</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-sequence z-list z-python"><span class="z-meta z-function-call z-arguments z-python">                <span class="z-variable z-parameter z-python">description</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">description</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-sequence z-list z-python"><span class="z-meta z-function-call z-arguments z-python">                <span class="z-variable z-parameter z-python">fn_schema</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">create_model_from_json_schema</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">inputSchema</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-sequence z-list z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></span><span class="z-source z-python"><span class="z-meta z-sequence z-list z-python">            <span class="z-meta z-expression z-generator z-python"><span class="z-keyword z-control z-loop z-for z-generator z-python">for</span> <span class="z-meta z-generic-name z-python">tool</span> <span class="z-keyword z-control z-loop z-for z-in z-python">in</span></span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">tools</span></span>
+</span></span><span class="z-source z-python"><span class="z-meta z-sequence z-list z-python">        <span class="z-punctuation z-section z-sequence z-end z-python">]</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">_create_tool_fn</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">tool_name</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">        <span class="z-storage z-modifier z-async z-python">async</span> <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">tool_fn</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-keyword z-operator z-unpacking z-mapping z-python">**</span><span class="z-variable z-parameter z-python">kwargs</span><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">            <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">client</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">call_tool</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool_name</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">kwargs</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">        <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool_fn</span></span>
+</span></code></pre>
+<p>Explanation:</p>
+<ul>
+<li>
+<p><strong>JSON Schema to Pydantic model</strong>:</p>
+<ul>
+<li>The function <code>create_model_from_json_schema</code> builds a dynamic Pydantic model based on the JSON Schema defined in the MCP tool, making it easier to validate tool parameters and provide auto-completion.</li>
+</ul>
+</li>
+<li>
+<p><strong>Adapter's list_tools method</strong>:</p>
+<ul>
+<li>This method fetches the tool list from the server using <code>MCPClient</code>, then wraps each tool with <code>FunctionTool.from_defaults</code>, and finally obtains a list of tools that can be used by the LlamaIndex Agent.</li>
+</ul>
+</li>
+<li>
+<p><strong>Dynamic call MCP tool</strong>:</p>
+<ul>
+<li>The helper method <code>_create_tool_fn</code> returns an asynchronous function, which internally calls <code>self.client.call_tool</code> to implement the actual tool calling logic.</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Why we need to convert MCP tool's input parameters to Pydantic model?</p>
+<p>MCP tool defines the input parameters in JSON Schema format (<code>inputSchema</code> in <code>Tool</code> object, which is <code>Dict[str, Any]</code>), and the <code>create_model_from_json_schema</code> function converts it to a Pydantic model, which is used as the <code>fn_schema</code> of the <code>FunctionTool</code> in LlamaIndex.</p>
+</blockquote>
+<h3 id="4-2-usage-in-llamaindex">4.2 Usage in LlamaIndex<a class="zola-anchor" href="#4-2-usage-in-llamaindex" aria-label="Anchor link for: 4-2-usage-in-llamaindex" style="visibility: hidden;"></a>
+</h3>
+<p>The following code is from <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/llamaindex-mcp-adapter/llamaindex_mcp_example.py">llamaindex_mcp_example.py</a>, which shows how to use the <code>MCPToolAdapter</code> with LlamaIndex:</p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">llama_index</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">core</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">llms</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">ChatMessage</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">llama_index</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">core</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">agent</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">ReActAgent</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">ReActChatFormatter</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">llama_index</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">core</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">agent</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">react</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">prompts</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-variable z-other z-constant z-python">REACT_CHAT_SYSTEM_HEADER</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">llama_index</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">llms</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-import-name z-python">azure_openai</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">AzureOpenAI</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">llamaindex_mcp_adapter</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">MCPToolAdapter</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">mcp_client</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">MCPClient</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">anyio</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">dotenv</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">argparse</span></span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">dotenv</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">load_dotenv</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">SYSTEM_PROMPT</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;&quot;&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python"><span class="z-meta z-string z-python"></span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python"><span class="z-punctuation z-separator z-continuation z-line z-python">\</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">You are an AI assistant.
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">Before you answer the user&#39;s question, you need to fetch the ip info first, to help you follow the laws of the country.
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python">- When user ask about current ip info, location, city, country or timezone, use the &#39;fetch_ipinfo&#39; tool to provide the answer.
+</span></span></span><span class="z-source z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-block z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;&quot;&quot;</span></span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python"><span class="z-storage z-modifier z-async z-python">async</span> <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">get_agent</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">adapter</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">MCPToolAdapter</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tools</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">adapter</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">list_tools</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">llm</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">AzureOpenAI</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">model</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">environ</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">AZURE_OPENAI_MODEL<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">your-model-name<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">max_tokens</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-type z-python">int</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">environ</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">AZURE_OPENAI_MAX_TOKENS<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-constant z-numeric z-integer z-decimal z-python">4096</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">azure_endpoint</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">environ</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">AZURE_OPENAI_ENDPOINT<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">https://your-azure-endpoint.openai.azure.com<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">api_key</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">environ</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">AZURE_OPENAI_API_KEY<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">your-api-key<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">api_version</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">environ</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">AZURE_OPENAI_API_VERSION<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">your-api-version<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">engine</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">os</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">environ</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">AZURE_OPENAI_ENGINE<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">your-deployment-name<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ReActAgent</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">from_tools</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">llm</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">llm</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">tools</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-type z-python">list</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tools</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">react_chat_formatter</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">ReActChatFormatter</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">system_header</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">SYSTEM_PROMPT</span></span> <span class="z-keyword z-operator z-arithmetic z-python">+</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-constant z-character z-escape z-python">\n</span><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span> <span class="z-keyword z-operator z-arithmetic z-python">+</span> <span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">REACT_CHAT_SYSTEM_HEADER</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">max_iterations</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-constant z-numeric z-integer z-decimal z-python">20</span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-variable z-parameter z-python">verbose</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-constant z-language z-python">True</span><span class="z-punctuation z-separator z-arguments z-python">,</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python"><span class="z-storage z-modifier z-async z-python">async</span> <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">handle_user_message</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">message_content</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">agent</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ReActAgent</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">user_message</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ChatMessage</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">from_str</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-variable z-parameter z-python">role</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">user<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">content</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">message_content</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">achat</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-variable z-parameter z-python">message</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">user_message</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">content</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">response</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-variable z-magic z-python">__name__</span></span> <span class="z-keyword z-operator z-comparison z-python">==</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">__main__<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-modifier z-async z-python">async</span> <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">main</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">argparse</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">ArgumentParser</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">add_argument</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">--client_type<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">type</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">default</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">sse<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">choices</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-sequence z-list z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">sse<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">stdio<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">args</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">parser</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">parse_args</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">        <span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">args</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">client_type</span></span> <span class="z-keyword z-operator z-comparison z-python">==</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">sse<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">            <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">MCPClient</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">http://0.0.0.0:8000/sse<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-statement z-conditional z-else z-python"><span class="z-keyword z-control z-conditional z-else z-python">else</span><span class="z-punctuation z-section z-block z-conditional z-else z-python">:</span></span>
+</span><span class="z-source z-python">            <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">MCPClient</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">                <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">./venv/bin/python<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-sequence z-list z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">mcp_server.py<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">--server_type<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">stdio<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span>
+</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">adapter</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">MCPToolAdapter</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">        <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">get_agent</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">adapter</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">        <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">handle_user_message</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">What&#39;s the city of my current ip?<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-keyword z-other z-await z-python">await</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">handle_user_message</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Is it legal to hold drugs in my country?<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python">    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">anyio</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">run</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">main</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<p>Explanation:</p>
+<ul>
+<li><strong>Get MCP tools</strong>:
+<ul>
+<li>Use <code>MCPToolAdapter</code> to get MCP tools and convert them to LlamaIndex tools.</li>
+</ul>
+</li>
+<li><strong>Create Agent</strong>:
+<ul>
+<li>Use <code>ReActAgent.from_tools</code> to build an Agent, which embeds Azure OpenAI's LLM.</li>
+</ul>
+</li>
+<li><strong>Process user messages</strong>:
+<ul>
+<li>The user's message is analyzed by the Agent, triggering the corresponding MCP tool (e.g., calling <code>fetch_ipinfo</code>).</li>
+</ul>
+</li>
+</ul>
+<p>This approach seamlessly converts MCP tools to LlamaIndex tools, greatly reducing integration complexity.</p>
+<h2 id="5-running-the-demo">5. Running the Demo<a class="zola-anchor" href="#5-running-the-demo" aria-label="Anchor link for: 5-running-the-demo" style="visibility: hidden;"></a>
+</h2>
+<p>You can run the demo with the following command:</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">python</span></span><span class="z-meta z-function-call z-arguments z-shell"> llamaindex_mcp_example.py<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>client_type</span> stdio</span>
+</span></code></pre>
+<p>The demo will start a MCP server using <code>stdio</code> mode, and then use the <code>MCPToolAdapter</code> to get MCP tools and convert them to LlamaIndex tools. Also, it will use the <code>AzureOpenAI</code> to call the tools and generate responses.</p>
+<p>The demo also provides a <code>sse</code> mode, you can run the demo with the following command:</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">python</span></span><span class="z-meta z-function-call z-arguments z-shell"> mcp_server.py<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>server_type</span> sse</span>
+</span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">python</span></span><span class="z-meta z-function-call z-arguments z-shell"> llamaindex_mcp_example.py<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>client_type</span> sse <span class="z-comment z-line z-number-sign z-shell"><span class="z-punctuation z-definition z-comment z-begin z-shell">#</span></span><span class="z-comment z-line z-number-sign z-shell"> in another terminal session</span><span class="z-comment z-line z-number-sign z-shell">
+</span></span></span></code></pre>
+<p>The following is the output of the demo, with the <code>stdio</code> mode:</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">Processing</span></span><span class="z-meta z-function-call z-arguments z-shell"> request of type ListToolsRequest</span>
+</span><span class="z-source z-shell z-bash"><span class="z-keyword z-operator z-assignment z-redirection z-shell">&gt;</span> Running <span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">step</span></span><span class="z-meta z-function-call z-arguments z-shell"> ede14770-91c9-428b-a66a-d57d20e0b5d5. Step input: What<span class="z-string z-quoted z-single z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&#39;</span>s the city of my current ip?
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Thought: The current language of the user is: English. I need to use a tool to help me answer the question.
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Action: fetch_ipinfo
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Action Input: {<span class="z-punctuation z-definition z-string z-end z-shell">&#39;</span></span>kwargs<span class="z-string z-quoted z-single z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&#39;</span>: AttributedDict()}
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Processing request of type CallToolRequest
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Observation: meta=None content=[TextContent(type=<span class="z-punctuation z-definition z-string z-end z-shell">&#39;</span></span>text<span class="z-string z-quoted z-single z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&#39;</span>, text=<span class="z-punctuation z-definition z-string z-end z-shell">&#39;</span></span><span class="z-meta z-group z-expansion z-brace z-shell"><span class="z-punctuation z-section z-expansion z-brace z-begin z-shell">{</span><span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>ip<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>183.193.123.192<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>hostname<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: null<span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>city<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>Shanghai<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>region<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>Shanghai<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>country<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>CN<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>loc<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>31.2222,121.4581<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>timezone<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>Asia/Shanghai<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-section z-expansion z-brace z-end z-shell">}</span></span><span class="z-string z-quoted z-single z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&#39;</span>)] isError=False
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">&gt; Running step 45ea121b-9c05-431f-b409-d235409c1556. Step input: None
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Thought: I can answer without using any more tools. I<span class="z-punctuation z-definition z-string z-end z-shell">&#39;</span></span>ll use the user<span class="z-string z-quoted z-single z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&#39;</span>s language to answer.
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Answer: The city of your current IP is Shanghai.
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">The city of your current IP is Shanghai.
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">&gt; Running step 4006f760-1070-4b0c-8446-7db886bc7c2e. Step input: Is it legal to hold drugs in my country?
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Thought: The current language of the user is: English. I need to use a tool to help me answer the question.
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Action: fetch_ipinfo
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Action Input: {<span class="z-punctuation z-definition z-string z-end z-shell">&#39;</span></span>kwargs<span class="z-string z-quoted z-single z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&#39;</span>: AttributedDict()}
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Processing request of type CallToolRequest
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Observation: meta=None content=[TextContent(type=<span class="z-punctuation z-definition z-string z-end z-shell">&#39;</span></span>text<span class="z-string z-quoted z-single z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&#39;</span>, text=<span class="z-punctuation z-definition z-string z-end z-shell">&#39;</span></span><span class="z-meta z-group z-expansion z-brace z-shell"><span class="z-punctuation z-section z-expansion z-brace z-begin z-shell">{</span><span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>ip<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>183.193.123.192<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>hostname<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: null<span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>city<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>Shanghai<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>region<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>Shanghai<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>country<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>CN<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>loc<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>31.2222,121.4581<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-separator z-shell">,</span> <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>timezone<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span>: <span class="z-string z-quoted z-double z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&quot;</span>Asia/Shanghai<span class="z-punctuation z-definition z-string z-end z-shell">&quot;</span></span><span class="z-punctuation z-section z-expansion z-brace z-end z-shell">}</span></span><span class="z-string z-quoted z-single z-shell"><span class="z-punctuation z-definition z-string z-begin z-shell">&#39;</span>)] isError=False
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">&gt; Running step e728f5d0-6c0e-454a-aeb9-a654ace0e41b. Step input: None
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Thought: I have obtained the IP information, including the country, which is China. Now I can provide information regarding the legality of holding drugs in China.
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">Answer: In China, the possession of drugs is illegal and can lead to severe penalties, including imprisonment. It is important to be aware of and comply with local laws regarding drug possession.
+</span></span></span><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-arguments z-shell"><span class="z-string z-quoted z-single z-shell">In China, the possession of drugs is illegal and can lead to severe penalties, including imprisonment. It is important to be aware of and comply with local laws regarding drug possession.
+</span></span></span></code></pre>
+<h2 id="6-summary">6. Summary<a class="zola-anchor" href="#6-summary" aria-label="Anchor link for: 6-summary" style="visibility: hidden;"></a>
+</h2>
+<p>This article details how to convert MCP tools to LlamaIndex tools. By:</p>
+<ul>
+<li>Interacting with MCP servers using <code>MCPClient</code>;</li>
+<li>Automatically converting tool parameter definitions (using JSON Schema to convert to Pydantic models) through <code>MCPToolAdapter</code>;</li>
+<li>Integrating converted tools into LlamaIndex <code>ReActAgent</code> and calling them;</li>
+</ul>
+<p>Now you can seamlessly integrate MCP tools into LlamaIndex, reducing development costs and providing great flexibility for AI application expansion.</p>
+<p>Welcome to explore the combination of MCP and LlamaIndex, and further expand more practical tools and functions!</p>
+<hr />
+<p>See the <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/llamaindex-mcp-adapter">demo</a> for more details.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="integrate-mcp-tools-into-llamaindex"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/feed.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;feed.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;feed.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;feed.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

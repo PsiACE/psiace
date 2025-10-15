@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="I spent some time building Bub, a practical command-line assistant that, while not yet officially released, can already help with various tasks. In this article, I&#x27;d like to share how to quickly build a coding agent.">
+
+  <title>Building a Self-Bootstrapping Coding Agent in Python</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#1-why-build-your-own-agent">1. Why Build Your Own Agent?</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#2-minimum-viable-get-it-running-first">2. Minimum Viable: Get It Running First</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#core-main-loop-code">Core Main Loop Code</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#3-tool-definition-extending-llm-capabilities">3. Tool Definition: Extending LLM Capabilities</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#4-prompt-design-making-llms-follow-the-script">4. Prompt Design: Making LLMs Follow the Script</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#5-milestone-automatic-type-annotation-fixing">5. Milestone: Automatic Type Annotation Fixing</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#6-advanced-techniques-and-engineering-self-review">6. Advanced Techniques and Engineering Self-Review</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#7-conclusion">7. Conclusion</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#references">References</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Building a Self-Bootstrapping Coding Agent in Python</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Jul 16, 2025</span>
+            </div>
+
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/baby-step-coding-agent/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <p>Bub's first milestone: automatically fixing type annotations. Powered by Moonshot K2</p>
+<blockquote>
+<p>Bub: Successfully fixed the first mypy issue by adding the missing return type annotation <code>-&gt; None</code> to the <code>__init__</code> method in <code>src/bub/cli/render.py</code>, reducing the error count from 24 to 23.</p>
+</blockquote>
+<h2 id="1-why-build-your-own-agent">1. Why Build Your Own Agent?<a class="zola-anchor" href="#1-why-build-your-own-agent" aria-label="Anchor link for: 1-why-build-your-own-agent" style="visibility: hidden;"></a>
+</h2>
+<p>Coding agents have become a crowded market, with many excellent products available—like yetone's avante.nvim, AmpCode recommended by Brother Jintao, and numerous teams drawing grand blueprints in their presentations. However, the "token brute force" phenomenon in coding agents is also quite apparent—consuming hundreds of thousands of tokens while delivering minimal real value. This made me curious: if I built a coding agent myself, could I find a more efficient and practical solution?</p>
+<p>So I started working on a CLI assistant called Bub. Its goal is simple: to be a practical command-line assistant with limited self-bootstrapping capabilities. The concept of bootstrapping is nothing new in compilers and operating systems, and many coding agents love to tout "how much code AI engineers contributed." I hope Bub can take its first step by solving the first real problem in its own codebase.</p>
+<hr />
+<h2 id="2-minimum-viable-get-it-running-first">2. Minimum Viable: Get It Running First<a class="zola-anchor" href="#2-minimum-viable-get-it-running-first" aria-label="Anchor link for: 2-minimum-viable-get-it-running-first" style="visibility: hidden;"></a>
+</h2>
+<p>My experience is that the smallest working loop is most important—don't start by pursuing "perfect architecture" or spend too much time on data theft.</p>
+<p>Bub's architecture is straightforward:</p>
+<ul>
+<li><strong>Agent</strong>: Main loop, responsible for LLM interaction, tool calling, and context management.</li>
+<li><strong>Tool</strong>: Each tool is a class with Pydantic-validated parameters.</li>
+<li><strong>ToolRegistry</strong>: Registers all tools for easy extension.</li>
+<li><strong>CLI</strong>: Typer + Rich, command-line entry point with support for expanding intermediate states.</li>
+</ul>
+<p>The essence of an agent is really just a while loop. In each iteration, the agent determines whether it needs to call tools based on the current context. If needed, it calls them and writes the tool results back to the context.</p>
+<h3 id="core-main-loop-code">Core Main Loop Code<a class="zola-anchor" href="#core-main-loop-code" aria-label="Anchor link for: core-main-loop-code" style="visibility: hidden;"></a>
+</h3>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-class z-python"><span class="z-storage z-type z-class z-python"><span class="z-keyword z-declaration z-class z-python">class</span></span> <span class="z-entity z-name z-class z-python"><span class="z-meta z-generic-name z-python">Agent</span></span><span class="z-punctuation z-section z-class z-begin z-python">:</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">chat</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">message</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">conversation_history</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">append</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">Message</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-variable z-parameter z-python">role</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">user<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">content</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">message</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-statement z-loop z-while z-python"><span class="z-keyword z-control z-loop z-while z-python">while</span> <span class="z-constant z-language z-python">True</span><span class="z-punctuation z-section z-block z-loop z-while z-python">:</span></span>
+</span><span class="z-source z-python">            <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Construct context: historical messages + tool list
+</span></span><span class="z-source z-python">            <span class="z-constant z-language z-python">...</span>
+</span><span class="z-source z-python">            <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">litellm</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">completion</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-constant z-language z-python">...</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">            <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">assistant_message</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-type z-python">str</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">response</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">choices</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-constant z-numeric z-integer z-decimal z-python">0</span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">message</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">content</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">            <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">conversation_history</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">append</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">Message</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-variable z-parameter z-python">role</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">assistant<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">content</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">assistant_message</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">            <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool_calls</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">tool_executor</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">extract_tool_calls</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">assistant_message</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">            <span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool_calls</span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">                <span class="z-meta z-statement z-loop z-for z-python"><span class="z-keyword z-control z-loop z-for z-python">for</span> <span class="z-meta z-generic-name z-python">tool_call</span> <span class="z-keyword z-control z-loop z-for z-in z-python">in</span></span><span class="z-meta z-statement z-loop z-for z-python"> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool_calls</span></span></span><span class="z-meta z-statement z-loop z-for z-python"><span class="z-punctuation z-section z-block z-loop z-for z-python">:</span></span>
+</span><span class="z-source z-python">                    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">result</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">tool_executor</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">execute_tool</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool_call</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">name</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-keyword z-operator z-unpacking z-mapping z-python">**</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">tool_call</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">parameters</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">                    <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">observation</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-storage z-type z-string z-python">f</span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python">Observation: </span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-begin z-python">{</span><span class="z-source z-python z-embedded"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">result</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">format_result</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span></span></span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-end z-python">}</span></span><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span>
+</span><span class="z-source z-python">                    <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">conversation_history</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">append</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">Message</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-variable z-parameter z-python">role</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">user<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-variable z-parameter z-python">content</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">observation</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">                <span class="z-keyword z-control z-flow z-continue z-python">continue</span>
+</span><span class="z-source z-python">            <span class="z-meta z-statement z-conditional z-else z-python"><span class="z-keyword z-control z-conditional z-else z-python">else</span><span class="z-punctuation z-section z-block z-conditional z-else z-python">:</span></span>
+</span><span class="z-source z-python">                <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">assistant_message</span></span>
+</span></code></pre>
+<p><strong>Pitfalls I encountered:</strong></p>
+<ul>
+<li>No exception handling—when LLM output format changes, it goes into infinite loops</li>
+<li>No tool parameter validation—LLM passing random parameters crashes the system</li>
+<li>Observation feedback too long or lacking useful information, making it hard for LLM to understand</li>
+</ul>
+<hr />
+<h2 id="3-tool-definition-extending-llm-capabilities">3. Tool Definition: Extending LLM Capabilities<a class="zola-anchor" href="#3-tool-definition-extending-llm-capabilities" aria-label="Anchor link for: 3-tool-definition-extending-llm-capabilities" style="visibility: hidden;"></a>
+</h2>
+<p>Tools are the bridge between LLMs and the external world. Well-defined tools allow models to truly "get their hands dirty." My approach:</p>
+<ul>
+<li>All tool parameters validated with Pydantic—reject immediately if types don't match.</li>
+<li>Command-line tools have a blacklist (like <code>rm</code>, <code>del</code>)—block dangerous commands directly.</li>
+<li>Tool execution results returned in structured format—don't let the LLM guess.</li>
+<li>When operating command-line tools, both stdout and stderr are important—don't just give exit codes.</li>
+<li>Clear boundaries between tools to avoid confusion.</li>
+</ul>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-class z-python"><span class="z-storage z-type z-class z-python"><span class="z-keyword z-declaration z-class z-python">class</span></span> <span class="z-entity z-name z-class z-python"><span class="z-meta z-generic-name z-python">RunCommandTool</span></span><span class="z-meta z-class z-inheritance z-python"><span class="z-punctuation z-section z-inheritance z-begin z-python">(</span></span></span><span class="z-meta z-class z-inheritance z-python"><span class="z-entity z-other z-inherited-class z-python">Tool</span><span class="z-punctuation z-section z-inheritance z-end z-python">)</span></span><span class="z-meta z-class z-python"><span class="z-punctuation z-section z-class z-begin z-python">:</span></span>
+</span><span class="z-source z-python">    <span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">DANGEROUS_COMMANDS</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-set z-python"><span class="z-punctuation z-section z-set z-begin z-python">{</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">rm<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-set z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">del<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-set z-end z-python">}</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">_validate_command</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">base_cmd</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">Optional</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-qualified-name z-python"><span class="z-support z-type z-python">str</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-meta z-statement z-conditional z-if z-python"><span class="z-keyword z-control z-conditional z-if z-python">if</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">base_cmd</span></span> <span class="z-keyword z-operator z-logical z-python">in</span> <span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-variable z-other z-constant z-python">DANGEROUS_COMMANDS</span></span><span class="z-punctuation z-section z-block z-conditional z-if z-python">:</span></span>
+</span><span class="z-source z-python">            <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-storage z-type z-string z-python">f</span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-interpolated z-python"><span class="z-string z-quoted z-double z-python">Dangerous command blocked: </span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-begin z-python">{</span><span class="z-source z-python z-embedded"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">base_cmd</span></span></span></span><span class="z-meta z-interpolation z-python"><span class="z-punctuation z-section z-interpolation z-end z-python">}</span></span><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">execute</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-separator z-parameters z-python">,</span> <span class="z-variable z-parameter z-python">context</span></span><span class="z-meta z-function z-parameters z-annotation z-python"><span class="z-punctuation z-separator z-annotation z-parameter z-python">:</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">Context</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"> </span><span class="z-meta z-function z-annotation z-return z-python"><span class="z-punctuation z-separator z-annotation z-return z-python">-&gt;</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ToolResult</span></span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
+</span><span class="z-source z-python">        <span class="z-comment z-line z-number-sign z-python"><span class="z-punctuation z-definition z-comment z-python">#</span> Validate command, execute and return results
+</span></span></code></pre>
+<hr />
+<h2 id="4-prompt-design-making-llms-follow-the-script">4. Prompt Design: Making LLMs Follow the Script<a class="zola-anchor" href="#4-prompt-design-making-llms-follow-the-script" aria-label="Anchor link for: 4-prompt-design-making-llms-follow-the-script" style="visibility: hidden;"></a>
+</h2>
+<p>Well-organized prompts significantly improve LLM output quality. This is especially important for coding agents because LLM output formats can easily get out of control.</p>
+<p>My experience:</p>
+<ul>
+<li>List all tools and parameter schemas in the prompt.</li>
+<li>Provide several usage examples covering common scenarios.</li>
+<li>Keep observation feedback concise—don't pile on useless information.</li>
+</ul>
+<p><strong>Bub's ReAct Prompt Structure:</strong></p>
+<pre class="z-code"><code><span class="z-text z-plain">You are an AI assistant with access to tools. When you need to use a tool, follow this format:
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">Thought: ...
+</span><span class="z-text z-plain">Action: run_command
+</span><span class="z-text z-plain">Action Input: {&quot;command&quot;: &quot;ls&quot;}
+</span><span class="z-text z-plain">Observation: &lt;output&gt;
+</span><span class="z-text z-plain">...
+</span><span class="z-text z-plain">Final Answer: &lt;your answer&gt;
+</span></code></pre>
+<p>The advantage of ReAct is that it's simple and direct, easy to implement. Although token consumption is high, it allows for quick iteration and cross-model migration.</p>
+<hr />
+<h2 id="5-milestone-automatic-type-annotation-fixing">5. Milestone: Automatic Type Annotation Fixing<a class="zola-anchor" href="#5-milestone-automatic-type-annotation-fixing" aria-label="Anchor link for: 5-milestone-automatic-type-annotation-fixing" style="visibility: hidden;"></a>
+</h2>
+<p>After defining the Agent Loop, tools, and prompts, Bub's first milestone was to make the agent automatically fix mypy errors.</p>
+<p>For example:</p>
+<pre data-lang="diff" class="language-diff z-code"><code class="language-diff" data-lang="diff"><span class="z-source z-diff"><span class="z-markup z-deleted z-diff"><span class="z-punctuation z-definition z-deleted z-diff">-</span>    def __init__(self):
+</span></span><span class="z-source z-diff"><span class="z-markup z-deleted z-diff"><span class="z-punctuation z-definition z-deleted z-diff">-</span>        self.console = Console()
+</span></span><span class="z-source z-diff"><span class="z-markup z-deleted z-diff"><span class="z-punctuation z-definition z-deleted z-diff">-</span>        self._show_debug = False
+</span></span><span class="z-source z-diff"><span class="z-markup z-inserted z-diff"><span class="z-punctuation z-definition z-inserted z-diff">+</span>    def __init__(self) -&gt; None:
+</span></span><span class="z-source z-diff"><span class="z-markup z-inserted z-diff"><span class="z-punctuation z-definition z-inserted z-diff">+</span>        self.console: Console = Console()
+</span></span><span class="z-source z-diff"><span class="z-markup z-inserted z-diff"><span class="z-punctuation z-definition z-inserted z-diff">+</span>        self._show_debug: bool = False
+</span></span></code></pre>
+<p>My approach:</p>
+<ul>
+<li>First use command-line tools to run <code>mypy</code> and get error information.</li>
+<li>Let the agent generate fix suggestions, then apply them to code using file edit tools.</li>
+<li>After fixing, automatically run mypy again to ensure no new issues.</li>
+<li>Only let the agent modify type annotations, formatting, and renaming—don't let it touch complex logic.</li>
+</ul>
+<p><strong>Pitfalls I encountered:</strong></p>
+<ul>
+<li>Models have limited understanding of code context and often fix things incorrectly.</li>
+<li>Without verification, bugs multiply instead of decreasing.</li>
+</ul>
+<hr />
+<h2 id="6-advanced-techniques-and-engineering-self-review">6. Advanced Techniques and Engineering Self-Review<a class="zola-anchor" href="#6-advanced-techniques-and-engineering-self-review" aria-label="Anchor link for: 6-advanced-techniques-and-engineering-self-review" style="visibility: hidden;"></a>
+</h2>
+<p>As functionality expanded, I encountered more pitfalls. Some of my experiences:</p>
+<ul>
+<li>When extending tools, aim for single responsibility with clear parameter schemas.</li>
+<li>For long conversations, truncate or summarize—don't let LLM exceed context windows.</li>
+<li>In production environments, recommend sandboxing/virtual machines, and disable dangerous commands by default for command-line tools.</li>
+<li>When LLM output formats are unstable, have fallback mechanisms.</li>
+</ul>
+<h2 id="7-conclusion">7. Conclusion<a class="zola-anchor" href="#7-conclusion" aria-label="Anchor link for: 7-conclusion" style="visibility: hidden;"></a>
+</h2>
+<p>Bub is still in its early stages, but it can already help me automatically fix bugs, run commands, and read/write files. I hope this is just the beginning, and I look forward to more interesting feedback.</p>
+<p><img src="https://psiace.me/posts/baby-step-coding-agent/bub-it.jpeg" alt="Bub it. Build it." /></p>
+<hr />
+<h3 id="references">References<a class="zola-anchor" href="#references" aria-label="Anchor link for: references" style="visibility: hidden;"></a>
+</h3>
+<ul>
+<li><a rel="nofollow noreferrer" href="https://ampcode.com/how-to-build-an-agent">How to Build an Agent (ampcode)</a></li>
+<li><a rel="nofollow noreferrer" href="https://huggingface.co/blog/tiny-agents">Tiny Agents: Building LLM-Powered Agents from Scratch (HuggingFace)</a></li>
+<li><a rel="nofollow noreferrer" href="https://github.com/PsiACE/bub">Bub: Bub it. Build it.</a></li>
+</ul>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="baby-step-coding-agent"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/feed.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;feed.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;feed.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;feed.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>
