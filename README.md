@@ -10,7 +10,7 @@ Operator‑minded engineer building resilient data & AI platforms.
 
 - GenAI Engineer — Vesoft (NebulaGraph)
   - Ships GraphRAG and agent workflows to production; leads the NebulaGraph GenAI Platform.
-  - Fusion GraphRAG reduced time‑to‑first‑use by ~30% and improved precision by ~15% at equal compute.
+  - Fusion GraphRAG reduced time‑to‑first‑use by ~80% and improved precision by ~10% at equal compute.
 - Apache OpenDAL™ — PMC Member
   - Architecture and releases across caching, retries, observability, and multi‑cloud backends.
 - Databend (2021–2024) — Founding/Core Engineer
