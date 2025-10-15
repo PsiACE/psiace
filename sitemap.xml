@@ -10,6 +10,9 @@
         <loc>https://psiace.me/categories/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/categories/engineering/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/posts/</loc>
     </url>
     <url>
@@ -51,6 +54,10 @@
     <url>
         <loc>https://psiace.me/posts/rag-is-the-way/</loc>
         <lastmod>2025-04-17</lastmod>
+    </url>
+    <url>
+        <loc>https://psiace.me/posts/spec-driven-sdks/</loc>
+        <lastmod>2025-10-15</lastmod>
     </url>
     <url>
         <loc>https://psiace.me/posts/wasmtime-executor-for-code-agents/</loc>
@@ -157,7 +164,13 @@
         <loc>https://psiace.me/tags/sandbox/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/sdk/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/security/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/tags/spec/</loc>
     </url>
     <url>
         <loc>https://psiace.me/tags/truth/</loc>
@@ -182,6 +195,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/categories/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/categories/gong-cheng-shi-jian/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/posts/</loc>
@@ -225,6 +241,10 @@
     <url>
         <loc>https://psiace.me/zh/posts/rag-is-the-way/</loc>
         <lastmod>2025-04-17</lastmod>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/posts/spec-driven-sdks/</loc>
+        <lastmod>2025-10-15</lastmod>
     </url>
     <url>
         <loc>https://psiace.me/zh/posts/wasmtime-executor-for-code-agents/</loc>
@@ -331,7 +351,13 @@
         <loc>https://psiace.me/zh/tags/sandbox/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/zh/tags/sdk/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/tags/security/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/spec/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/truth/</loc>

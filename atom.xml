@@ -1,21 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
-	<title>Posts</title>
-	<subtitle>Notes on agent workflows, Fusion GraphRAG, and resilient data&#x2F;AI platforms.</subtitle>
-	<link rel="self" type="application/atom+xml" href="https://psiace.me/posts/feed.xml"/>
-  <link rel="alternate" type="text/html" href="https://psiace.me/posts/"/>
-  
-	<updated>2025-09-08T00:00:00+00:00</updated>
-	
-	<id>https://psiace.me/posts/feed.xml</id>
-	<entry xml:lang="en">
-		<title>ACP: Interaction Contract &amp; Python SDK</title>
-		<published>2025-09-08T00:00:00+00:00</published>
-		<updated>2025-09-08T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/acp-and-python-sdk/"/>
-		<id>https://psiace.me/posts/acp-and-python-sdk/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/acp-and-python-sdk/">&lt;blockquote&gt;
+    <title>Chojan Shang · PsiACE</title>
+    <subtitle>Operator-minded systems engineer building resilient data &amp; AI infrastructure.</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://psiace.me/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://psiace.me"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-10-15T00:00:00+00:00</updated>
+    <id>https://psiace.me/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Spec‑Driven SDKs in the Age of Generative AI</title>
+        <published>2025-10-15T00:00:00+00:00</published>
+        <updated>2025-10-15T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/spec-driven-sdks/"/>
+        <id>https://psiace.me/posts/spec-driven-sdks/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/spec-driven-sdks/">&lt;blockquote&gt;
+&lt;p&gt;AI writes fast — and tends to bloat.
+Specs are strict — and can ossify.&lt;&#x2F;p&gt;
+&lt;p&gt;I choose the middle path —
+let AI run inside boundaries, and let humans own outcomes.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;why-not-pure-ai-nor-pure-spec&quot;&gt;Why Not Pure AI, Nor Pure Spec&lt;a class=&quot;zola-anchor&quot; href=&quot;#why-not-pure-ai-nor-pure-spec&quot; aria-label=&quot;Anchor link for: why-not-pure-ai-nor-pure-spec&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;AI‑assisted coding is addictive, but as projects grow, context drifts and complexity balloons.
+You get something that runs, but barely holds.&lt;&#x2F;p&gt;
+&lt;p&gt;On the other hand, pure spec‑driven frameworks — like GitHub’s &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;github&#x2F;spec-kit&quot;&gt;Spec Kit&lt;&#x2F;a&gt; — are often heavy for iterative work.
+Precise, but hard to live with.&lt;&#x2F;p&gt;
+&lt;p&gt;So I took the middle ground: spec‑first boundaries, AI‑assisted speed — using the Agent Client Protocol (ACP).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-makes-acp-a-good-base&quot;&gt;What Makes ACP a Good Base&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-makes-acp-a-good-base&quot; aria-label=&quot;Anchor link for: what-makes-acp-a-good-base&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;ACP, started by Zed, defines how editors and agents talk.
+It uses JSON‑RPC 2.0 and is described in JSON Schema — clear edges, machine‑readable types, auditable behaviors.
+That balance makes it ideal for SDKs that must live across languages and over time.&lt;&#x2F;p&gt;
+&lt;p&gt;I applied this while maintaining the ACP &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;psiace&#x2F;agent-client-protocol-python&quot;&gt;Python SDK&lt;&#x2F;a&gt; for the &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;agentclientprotocol.com&quot;&gt;Agent Client Protocol&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;how-i-built-the-python-sdk&quot;&gt;How I Built the Python SDK&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-i-built-the-python-sdk&quot; aria-label=&quot;Anchor link for: how-i-built-the-python-sdk&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;stage-0-minimal-but-runnable&quot;&gt;Stage 0 — Minimal, but Runnable&lt;a class=&quot;zola-anchor&quot; href=&quot;#stage-0-minimal-but-runnable&quot; aria-label=&quot;Anchor link for: stage-0-minimal-but-runnable&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;I relied heavily on a coding agent (Codex) with human‑set boundaries and review. Three constraints:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Agent‑generated Pydantic models from the datamodel.&lt;&#x2F;li&gt;
+&lt;li&gt;Minimal I&#x2F;O (JSON‑RPC over stdio), with agent assistance.&lt;&#x2F;li&gt;
+&lt;li&gt;Agent‑ported examples and basic tests, human‑verified for regression.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Small on purpose: ship first, surface problems early.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;stage-1-learning-from-feedback&quot;&gt;Stage 1 — Learning from Feedback&lt;a class=&quot;zola-anchor&quot; href=&quot;#stage-1-learning-from-feedback&quot; aria-label=&quot;Anchor link for: stage-1-learning-from-feedback&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;Early users found naming awkward and ergonomics rough.
+I had the agent scan docs to produce a rename map (more Pythonic names), then borrowed ideas from other SDKs:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;TypeScript had helpers.&lt;&#x2F;li&gt;
+&lt;li&gt;Go had golden tests.&lt;&#x2F;li&gt;
+&lt;li&gt;Rust had clean modular structure.&lt;&#x2F;li&gt;
+&lt;li&gt;Protocol SDKs like MCP offered architecture hints.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;With agent assistance I restructured code and tests; I set the standards and did the reviews.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;stage-2-routing-over-conditionals&quot;&gt;Stage 2 — Routing over Conditionals&lt;a class=&quot;zola-anchor&quot; href=&quot;#stage-2-routing-over-conditionals&quot; aria-label=&quot;Anchor link for: stage-2-routing-over-conditionals&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;I didn’t want endless if‑trees like &lt;code&gt;if method == &quot;...&quot;&lt;&#x2F;code&gt;.
+So I wrote a compact router that makes method→handler first‑class:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; class=&quot;language-python z-code&quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;z-source z-python&quot;&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;builder&lt;&#x2F;span&gt;&lt;&#x2F;span&gt; &lt;span class=&quot;z-keyword z-operator z-assignment z-python&quot;&gt;=&lt;&#x2F;span&gt; &lt;span class=&quot;z-meta z-function-call z-python&quot;&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-variable z-function z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;RouterBuilder&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-function-call z-arguments z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-arguments z-begin z-python&quot;&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-section z-arguments z-end z-python&quot;&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-python&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-python&quot;&gt;&lt;span class=&quot;z-meta z-function-call z-python&quot;&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;builder&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-accessor z-dot z-python&quot;&gt;.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-variable z-function z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;request_attr&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-function-call z-arguments z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-arguments z-begin z-python&quot;&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-item-access z-python&quot;&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-variable z-other z-constant z-python&quot;&gt;CLIENT_METHODS&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-item-access z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-brackets z-begin z-python&quot;&gt;[&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-item-access z-arguments z-python&quot;&gt;&lt;span class=&quot;z-meta z-string z-python&quot;&gt;&lt;span class=&quot;z-string z-quoted z-double z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string z-begin z-python&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-string z-python&quot;&gt;&lt;span class=&quot;z-string z-quoted z-double z-python&quot;&gt;fs_write_text_file&lt;span class=&quot;z-punctuation z-definition z-string z-end z-python&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-item-access z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-brackets z-end z-python&quot;&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-arguments z-python&quot;&gt;,&lt;&#x2F;span&gt; &lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;WriteTextFileRequest&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-arguments z-python&quot;&gt;,&lt;&#x2F;span&gt; &lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;client&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-arguments z-python&quot;&gt;,&lt;&#x2F;span&gt; &lt;span class=&quot;z-meta z-string z-python&quot;&gt;&lt;span class=&quot;z-string z-quoted z-double z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string z-begin z-python&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-string z-python&quot;&gt;&lt;span class=&quot;z-string z-quoted z-double z-python&quot;&gt;writeTextFile&lt;span class=&quot;z-punctuation z-definition z-string z-end z-python&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-section z-arguments z-end z-python&quot;&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-python&quot;&gt;&lt;span class=&quot;z-meta z-function-call z-python&quot;&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;builder&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-accessor z-dot z-python&quot;&gt;.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-variable z-function z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;request_attr&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-function-call z-arguments z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-arguments z-begin z-python&quot;&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-item-access z-python&quot;&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-variable z-other z-constant z-python&quot;&gt;CLIENT_METHODS&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-item-access z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-brackets z-begin z-python&quot;&gt;[&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-item-access z-arguments z-python&quot;&gt;&lt;span class=&quot;z-meta z-string z-python&quot;&gt;&lt;span class=&quot;z-string z-quoted z-double z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string z-begin z-python&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-string z-python&quot;&gt;&lt;span class=&quot;z-string z-quoted z-double z-python&quot;&gt;fs_read_text_file&lt;span class=&quot;z-punctuation z-definition z-string z-end z-python&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-item-access z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-brackets z-end z-python&quot;&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-arguments z-python&quot;&gt;,&lt;&#x2F;span&gt; &lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;ReadTextFileRequest&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-arguments z-python&quot;&gt;,&lt;&#x2F;span&gt; &lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;client&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-arguments z-python&quot;&gt;,&lt;&#x2F;span&gt; &lt;span class=&quot;z-meta z-string z-python&quot;&gt;&lt;span class=&quot;z-string z-quoted z-double z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string z-begin z-python&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-string z-python&quot;&gt;&lt;span class=&quot;z-string z-quoted z-double z-python&quot;&gt;readTextFile&lt;span class=&quot;z-punctuation z-definition z-string z-end z-python&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-section z-arguments z-end z-python&quot;&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Registered handlers are pluggable, testable, and auditable.
+By v0.4.9 the SDK wasn’t big, but it was stable and teachable.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;context-curation-feed-the-agent-only-what-matters&quot;&gt;Context curation — feed the agent only what matters&lt;a class=&quot;zola-anchor&quot; href=&quot;#context-curation-feed-the-agent-only-what-matters&quot; aria-label=&quot;Anchor link for: context-curation-feed-the-agent-only-what-matters&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;I treat prompt context as an engineering budget:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Context manifest: list only schemas, public interfaces, and minimal examples; exclude generated&#x2F;vendor code.&lt;&#x2F;li&gt;
+&lt;li&gt;Diff‑aware prompting: provide changed hunks plus a small window (5–15 lines), not whole files.&lt;&#x2F;li&gt;
+&lt;li&gt;Golden snippets index: let the agent retrieve tagged canonical examples instead of pasting large blobs.&lt;&#x2F;li&gt;
+&lt;li&gt;Guardrails first: “Do not invent fields beyond schema; fail closed; ask for missing inputs.”&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;principles-for-spec-driven-ai-assisted-sdks&quot;&gt;Principles for Spec‑Driven, AI‑Assisted SDKs&lt;a class=&quot;zola-anchor&quot; href=&quot;#principles-for-spec-driven-ai-assisted-sdks&quot; aria-label=&quot;Anchor link for: principles-for-spec-driven-ai-assisted-sdks&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th style=&quot;text-align: left&quot;&gt;Principle&lt;&#x2F;th&gt;&lt;th style=&quot;text-align: left&quot;&gt;Description&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Separate generated vs human‑governed code&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;Models are generated; business logic is human‑owned and reviewed. Never mix.&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Ship the smallest working unit first&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;Real feedback drives ergonomics.&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Golden tests for major RPCs&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;Capture and replay requests&#x2F;responses as the regression and audit baseline.&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Curate and budget context&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;Feed only what’s necessary — small, precise, reproducible.&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;p&gt;Specs give AI a sandbox — and AI makes specs come alive.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;accountability-why-i-trust-ai-written-code&quot;&gt;Accountability: Why I Trust AI‑Written Code&lt;a class=&quot;zola-anchor&quot; href=&quot;#accountability-why-i-trust-ai-written-code&quot; aria-label=&quot;Anchor link for: accountability-why-i-trust-ai-written-code&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;AI can write, but I set the boundaries.
+Typed models, reproducible tests, and replayable traces let me verify every step.
+I trust not the model, but the engineering discipline around it.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;a-note-in-my-prs&quot;&gt;A Note in My PRs&lt;a class=&quot;zola-anchor&quot; href=&quot;#a-note-in-my-prs&quot; aria-label=&quot;Anchor link for: a-note-in-my-prs&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;I first saw this note in @Xuanwo’s PRs. I haven’t used it in mine yet, but I’m willing to adopt it — because I’m accountable for the outcome. In this SDK work I used AI heavily; I set the boundaries and own the result:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This PR was primarily authored with GPT‑5‑Codex and hand‑reviewed by me.
+I’m responsible for every line that lands here.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;This isn’t about showing off AI — it’s about owning the outcome.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;closing-fuel-and-rails&quot;&gt;Closing: Fuel and Rails&lt;a class=&quot;zola-anchor&quot; href=&quot;#closing-fuel-and-rails&quot; aria-label=&quot;Anchor link for: closing-fuel-and-rails&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;AI is the fuel.
+Spec is the rail.
+Fuel gives speed; rails keep you alive.&lt;&#x2F;p&gt;
+&lt;p&gt;I like this balance — AI writes, I define boundaries.
+Every line explainable, every bug reproducible.
+That’s how to build responsibly in the AI age.&lt;&#x2F;p&gt;
+&lt;p&gt;— &lt;strong&gt;PsiACE&lt;&#x2F;strong&gt; (&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&quot;&gt;GitHub&lt;&#x2F;a&gt; · &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;opendal.apache.org&#x2F;&quot;&gt;Apache OpenDAL PMC Member&lt;&#x2F;a&gt;)&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>ACP: Interaction Contract &amp; Python SDK</title>
+        <published>2025-09-08T00:00:00+00:00</published>
+        <updated>2025-09-08T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/acp-and-python-sdk/"/>
+        <id>https://psiace.me/posts/acp-and-python-sdk/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/acp-and-python-sdk/">&lt;blockquote&gt;
 &lt;p&gt;I&#x27;m &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&quot;&gt;PsiACE&lt;&#x2F;a&gt;. My recent work focuses on Agent and RAG: &lt;strong&gt;less metaphysics, more getting the feedback loop working&lt;&#x2F;strong&gt;, making systems that can explain themselves clearly, run stably, and be replayed and switched.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;h2 id=&quot;tl-dr&quot;&gt;TL;DR&lt;a class=&quot;zola-anchor&quot; href=&quot;#tl-dr&quot; aria-label=&quot;Anchor link for: tl-dr&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
@@ -149,15 +268,25 @@
 &lt;p&gt;AI engineering is entering a phase where standards anchor ecosystems. Zed’s bet with ACP is pragmatic: integrate external agents while preserving a unified experience, so existing workflows and agent capabilities fit together naturally.&lt;&#x2F;p&gt;
 &lt;p&gt;The Python SDK makes “get it running first” easy: connect to ACP with minimal code, complete the feedback loop, then iterate.&lt;&#x2F;p&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>Agent Has No Secret</title>
-		<published>2025-08-14T00:00:00+00:00</published>
-		<updated>2025-08-14T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/agent-has-no-secret/"/>
-		<id>https://psiace.me/posts/agent-has-no-secret/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/agent-has-no-secret/">&lt;blockquote&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Agent Has No Secret</title>
+        <published>2025-08-14T00:00:00+00:00</published>
+        <updated>2025-08-14T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/agent-has-no-secret/"/>
+        <id>https://psiace.me/posts/agent-has-no-secret/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/agent-has-no-secret/">&lt;blockquote&gt;
 &lt;p&gt;I&#x27;m &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&quot;&gt;PsiACE&lt;&#x2F;a&gt;. My recent work focuses on Agent and RAG: &lt;strong&gt;less metaphysics, more getting the feedback loop working&lt;&#x2F;strong&gt;, making systems that can explain themselves clearly, run stably, and be replayed and switched.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;h2 id=&quot;tl-dr&quot;&gt;TL;DR&lt;a class=&quot;zola-anchor&quot; href=&quot;#tl-dr&quot; aria-label=&quot;Anchor link for: tl-dr&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
@@ -281,15 +410,25 @@
 &lt;li&gt;Make causality and costs visible first, then talk about &quot;smarter&quot;.&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>Building a Self-Bootstrapping Coding Agent in Python</title>
-		<published>2025-07-16T00:00:00+00:00</published>
-		<updated>2025-07-16T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/baby-step-coding-agent/"/>
-		<id>https://psiace.me/posts/baby-step-coding-agent/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/baby-step-coding-agent/">&lt;p&gt;Bub&#x27;s first milestone: automatically fixing type annotations. Powered by Moonshot K2&lt;&#x2F;p&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Building a Self-Bootstrapping Coding Agent in Python</title>
+        <published>2025-07-16T00:00:00+00:00</published>
+        <updated>2025-07-16T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/baby-step-coding-agent/"/>
+        <id>https://psiace.me/posts/baby-step-coding-agent/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/baby-step-coding-agent/">&lt;p&gt;Bub&#x27;s first milestone: automatically fixing type annotations. Powered by Moonshot K2&lt;&#x2F;p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Bub: Successfully fixed the first mypy issue by adding the missing return type annotation &lt;code&gt;-&amp;gt; None&lt;&#x2F;code&gt; to the &lt;code&gt;__init__&lt;&#x2F;code&gt; method in &lt;code&gt;src&#x2F;bub&#x2F;cli&#x2F;render.py&lt;&#x2F;code&gt;, reducing the error count from 24 to 23.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -423,15 +562,25 @@
 &lt;li&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&#x2F;bub&quot;&gt;Bub: Bub it. Build it.&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>Building a Cloudflare AI Gateway integration for LlamaIndex</title>
-		<published>2025-07-11T00:00:00+00:00</published>
-		<updated>2025-07-11T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/llama-index-cloudflare-ai-gateway/"/>
-		<id>https://psiace.me/posts/llama-index-cloudflare-ai-gateway/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/llama-index-cloudflare-ai-gateway/">&lt;p&gt;Single LLM providers are fragile. &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;status.openai.com&#x2F;&quot;&gt;OpenAI outage&lt;&#x2F;a&gt;? Your app dies. &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;status.anthropic.com&#x2F;&quot;&gt;Anthropic rate limits&lt;&#x2F;a&gt;? Users wait. It&#x27;s annoying.&lt;&#x2F;p&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Building a Cloudflare AI Gateway integration for LlamaIndex</title>
+        <published>2025-07-11T00:00:00+00:00</published>
+        <updated>2025-07-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/llama-index-cloudflare-ai-gateway/"/>
+        <id>https://psiace.me/posts/llama-index-cloudflare-ai-gateway/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/llama-index-cloudflare-ai-gateway/">&lt;p&gt;Single LLM providers are fragile. &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;status.openai.com&#x2F;&quot;&gt;OpenAI outage&lt;&#x2F;a&gt;? Your app dies. &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;status.anthropic.com&#x2F;&quot;&gt;Anthropic rate limits&lt;&#x2F;a&gt;? Users wait. It&#x27;s annoying.&lt;&#x2F;p&gt;
 &lt;p&gt;I wanted multi-provider orchestration without the complexity. &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;developers.cloudflare.com&#x2F;ai-gateway&#x2F;&quot;&gt;Cloudflare AI Gateway&lt;&#x2F;a&gt; looked perfect—automatic fallback, caching, load balancing. But no &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;docs.llamaindex.ai&#x2F;&quot;&gt;LlamaIndex&lt;&#x2F;a&gt; integration.&lt;&#x2F;p&gt;
 &lt;p&gt;So I built one.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;the-problem&quot;&gt;The Problem&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-problem&quot; aria-label=&quot;Anchor link for: the-problem&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
@@ -516,15 +665,25 @@ And Cloudflare also provides a &lt;a rel=&quot;nofollow noreferrer&quot; href=&q
 &lt;li&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;docs.llamaindex.ai&#x2F;en&#x2F;stable&#x2F;module_guides&#x2F;models&#x2F;llms&#x2F;&quot;&gt;LlamaIndex LLMs Guide&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>Sandboxed Python executor for AI agents using WebAssembly</title>
-		<published>2025-07-08T00:00:00+00:00</published>
-		<updated>2025-07-08T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/wasmtime-executor-for-code-agents/"/>
-		<id>https://psiace.me/posts/wasmtime-executor-for-code-agents/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/wasmtime-executor-for-code-agents/">&lt;p&gt;AI agents that execute code are powerful but terrifying. Within minutes of testing my first code agent, it was trying to install packages and access environment variables I never intended. &lt;strong&gt;We need sandboxing.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Sandboxed Python executor for AI agents using WebAssembly</title>
+        <published>2025-07-08T00:00:00+00:00</published>
+        <updated>2025-07-08T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/wasmtime-executor-for-code-agents/"/>
+        <id>https://psiace.me/posts/wasmtime-executor-for-code-agents/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/wasmtime-executor-for-code-agents/">&lt;p&gt;AI agents that execute code are powerful but terrifying. Within minutes of testing my first code agent, it was trying to install packages and access environment variables I never intended. &lt;strong&gt;We need sandboxing.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;the-problem&quot;&gt;The Problem&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-problem&quot; aria-label=&quot;Anchor link for: the-problem&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;Code-executing AI agents can do amazing things—analyze data, solve math problems, debug code. But they also operate with zero fear of breaking production systems.&lt;&#x2F;p&gt;
@@ -607,15 +766,25 @@ And Cloudflare also provides a &lt;a rel=&quot;nofollow noreferrer&quot; href=&q
 &lt;li&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;vmware-labs&#x2F;webassembly-language-runtimes&quot;&gt;VMware WebAssembly Language Runtimes&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>RAG in Coding Agents: Making Smarter Programming Assistants</title>
-		<published>2025-06-18T00:00:00+00:00</published>
-		<updated>2025-06-18T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/rag-in-coding-agent/"/>
-		<id>https://psiace.me/posts/rag-in-coding-agent/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/rag-in-coding-agent/">&lt;p&gt;Programming can be tough. Whether you&#x27;re debugging a tricky error, trying to understand a massive codebase, or figuring out how to use a new framework, there&#x27;s always something that slows you down. Wouldn&#x27;t it be great if there was a tool that could help you with all of this—something that could act like a super-smart assistant, guiding you through the process?&lt;&#x2F;p&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>RAG in Coding Agents: Making Smarter Programming Assistants</title>
+        <published>2025-06-18T00:00:00+00:00</published>
+        <updated>2025-06-18T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/rag-in-coding-agent/"/>
+        <id>https://psiace.me/posts/rag-in-coding-agent/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/rag-in-coding-agent/">&lt;p&gt;Programming can be tough. Whether you&#x27;re debugging a tricky error, trying to understand a massive codebase, or figuring out how to use a new framework, there&#x27;s always something that slows you down. Wouldn&#x27;t it be great if there was a tool that could help you with all of this—something that could act like a super-smart assistant, guiding you through the process?&lt;&#x2F;p&gt;
 &lt;p&gt;That&#x27;s where &lt;strong&gt;RAG&lt;&#x2F;strong&gt; (Retrieval-Augmented Generation) comes in. It&#x27;s a fancy name for a simple idea: combining the ability to look things up (retrieval) with the ability to create new solutions (generation). In this article, we&#x27;ll break down how RAG works, why it&#x27;s useful for coding assistants, and how it can make your life as a developer easier.&lt;&#x2F;p&gt;
 &lt;hr &#x2F;&gt;
 &lt;h2 id=&quot;what-is-rag&quot;&gt;What is RAG?&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-rag&quot; aria-label=&quot;Anchor link for: what-is-rag&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
@@ -837,15 +1006,25 @@ And Cloudflare also provides a &lt;a rel=&quot;nofollow noreferrer&quot; href=&q
 &lt;li&gt;https:&#x2F;&#x2F;www.phontron.com&#x2F;slides&#x2F;neubig24softwareagents.pdf&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>RAG is the way about retrieval, agent, and grounding truth</title>
-		<published>2025-04-17T00:00:00+00:00</published>
-		<updated>2025-04-17T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/rag-is-the-way/"/>
-		<id>https://psiace.me/posts/rag-is-the-way/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/rag-is-the-way/">&lt;p&gt;Last year, I had to leave the database infrastructure field (if you remember some of my previous voices) and dive into RAG application development. At the time, I thought I was finally going to break free from the tedious low-level tech stack and do something &quot;more high-level&quot; in applications. The result? Reality gave me a resounding slap in the face.&lt;&#x2F;p&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>RAG is the way about retrieval, agent, and grounding truth</title>
+        <published>2025-04-17T00:00:00+00:00</published>
+        <updated>2025-04-17T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/rag-is-the-way/"/>
+        <id>https://psiace.me/posts/rag-is-the-way/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/rag-is-the-way/">&lt;p&gt;Last year, I had to leave the database infrastructure field (if you remember some of my previous voices) and dive into RAG application development. At the time, I thought I was finally going to break free from the tedious low-level tech stack and do something &quot;more high-level&quot; in applications. The result? Reality gave me a resounding slap in the face.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;you-can-never-escape-the-infrastructure-curse&quot;&gt;You Can Never Escape the Infrastructure Curse&lt;a class=&quot;zola-anchor&quot; href=&quot;#you-can-never-escape-the-infrastructure-curse&quot; aria-label=&quot;Anchor link for: you-can-never-escape-the-infrastructure-curse&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;Look around: everyone&#x27;s talking about ChatGPT, talking about all sorts of fancy AI applications. Product managers are excitedly drawing various chat boxes, designers are dancing with joy over natural language interactions. It&#x27;s like everyone&#x27;s saying: Hey, look, we can finally throw away those boring technical details and just talk to AI directly!&lt;&#x2F;p&gt;
@@ -901,15 +1080,25 @@ And Cloudflare also provides a &lt;a rel=&quot;nofollow noreferrer&quot; href=&q
 &lt;p&gt;I&#x27;ll say: &quot;I never switched at all. I just changed the way I solve the same problems. These problems now have a better name: the trinity of retrieval, intelligent agents, and grounding truth.&quot;&lt;&#x2F;p&gt;
 &lt;p&gt;Now, excuse me, I need to deal with some damn vector quantization issues, educate a few confused intelligent agents, and make sure my text splitting strategy doesn&#x27;t tear facts to pieces. This is what real RAG work looks like.&lt;&#x2F;p&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>Announcing NebulaGraph MCP Server v0.1.0</title>
-		<published>2025-03-11T00:00:00+00:00</published>
-		<updated>2025-03-11T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/announcing-nebulagraph-mcp-server-v010/"/>
-		<id>https://psiace.me/posts/announcing-nebulagraph-mcp-server-v010/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/announcing-nebulagraph-mcp-server-v010/">&lt;p&gt;Over the past few weeks, &lt;strong&gt;Model Context Protocol (MCP)&lt;&#x2F;strong&gt; has sparked significant discussion and attention within the tech community. As part of this momentum, I contributed to several related open-source projects, including the &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;run-llama&#x2F;llama_index&#x2F;pull&#x2F;17795&quot;&gt;McpToolSpec implementation for the LlamaIndex official repository&lt;&#x2F;a&gt; and collaborated with Xuanwo and FrostMing to develop a version of the &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Xuanwo&#x2F;mcp-server-opendal&quot;&gt;Model Context Protocol Server for Apache OpenDAL™&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Announcing NebulaGraph MCP Server v0.1.0</title>
+        <published>2025-03-11T00:00:00+00:00</published>
+        <updated>2025-03-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/announcing-nebulagraph-mcp-server-v010/"/>
+        <id>https://psiace.me/posts/announcing-nebulagraph-mcp-server-v010/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/announcing-nebulagraph-mcp-server-v010/">&lt;p&gt;Over the past few weeks, &lt;strong&gt;Model Context Protocol (MCP)&lt;&#x2F;strong&gt; has sparked significant discussion and attention within the tech community. As part of this momentum, I contributed to several related open-source projects, including the &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;run-llama&#x2F;llama_index&#x2F;pull&#x2F;17795&quot;&gt;McpToolSpec implementation for the LlamaIndex official repository&lt;&#x2F;a&gt; and collaborated with Xuanwo and FrostMing to develop a version of the &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Xuanwo&#x2F;mcp-server-opendal&quot;&gt;Model Context Protocol Server for Apache OpenDAL™&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;MCP is currently the only standard with an ecosystem advantage. In this context, I implemented a simple &lt;strong&gt;NebulaGraph MCP Server&lt;&#x2F;strong&gt; based on NebulaGraph 3.x, serving as the first foundational component in the NebulaGraph X MCP ecosystem. This server is intended for exploring the potential of combining AI and graph databases, and I hope to see more exciting work emerge under this paradigm.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;about-model-context-protocol-mcp&quot;&gt;About Model Context Protocol (MCP)&lt;a class=&quot;zola-anchor&quot; href=&quot;#about-model-context-protocol-mcp&quot; aria-label=&quot;Anchor link for: about-model-context-protocol-mcp&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
@@ -957,15 +1146,25 @@ And Cloudflare also provides a &lt;a rel=&quot;nofollow noreferrer&quot; href=&q
 &lt;hr &#x2F;&gt;
 &lt;p&gt;For more details, check out the original repository &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&#x2F;nebulagraph-mcp-server&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>Integrate MCP tools into LlamaIndex</title>
-		<published>2025-02-11T00:00:00+00:00</published>
-		<updated>2025-02-11T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/integrate-mcp-tools-into-llamaindex/"/>
-		<id>https://psiace.me/posts/integrate-mcp-tools-into-llamaindex/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/integrate-mcp-tools-into-llamaindex/">&lt;blockquote&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Integrate MCP tools into LlamaIndex</title>
+        <published>2025-02-11T00:00:00+00:00</published>
+        <updated>2025-02-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/integrate-mcp-tools-into-llamaindex/"/>
+        <id>https://psiace.me/posts/integrate-mcp-tools-into-llamaindex/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/integrate-mcp-tools-into-llamaindex/">&lt;blockquote&gt;
 &lt;p&gt;[!NOTE]
 This work has been contributed to upstream &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;run-llama&#x2F;llama_index&quot;&gt;llama_index&lt;&#x2F;a&gt; as &lt;code&gt;McpToolSpec&lt;&#x2F;code&gt; in the &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;llama-index-tools-mcp&#x2F;&quot;&gt;&lt;code&gt;llama-index-tools-mcp&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; package. You can find the pull request &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;run-llama&#x2F;llama_index&#x2F;pull&#x2F;17795&quot;&gt;llama_index#17795 feat: add mcp tool spec&lt;&#x2F;a&gt; and try out the example notebook &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;run-llama&#x2F;llama_index&#x2F;blob&#x2F;main&#x2F;llama-index-integrations&#x2F;tools&#x2F;llama-index-tools-mcp&#x2F;examples&#x2F;mcp.ipynb&quot;&gt;llama-index-tools-mcp&#x2F;examples&#x2F;mcp.ipynb&lt;&#x2F;a&gt; directly.&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
@@ -1263,15 +1462,25 @@ This work has been contributed to upstream &lt;a rel=&quot;nofollow noreferrer&q
 &lt;hr &#x2F;&gt;
 &lt;p&gt;See the &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;psiace&#x2F;psiace&#x2F;tree&#x2F;main&#x2F;demo&#x2F;llamaindex-mcp-adapter&quot;&gt;demo&lt;&#x2F;a&gt; for more details.&lt;&#x2F;p&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>A Dead Simple Way to VLM Parsing</title>
-		<published>2024-11-28T00:00:00+00:00</published>
-		<updated>2024-11-28T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/a-dead-simple-way-to-vlm-parsing/"/>
-		<id>https://psiace.me/posts/a-dead-simple-way-to-vlm-parsing/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/a-dead-simple-way-to-vlm-parsing/">&lt;p&gt;This post demonstrates a straightforward approach to using VLMs for parsing unstructured data from images. While simple, this method can be easily extended to handle more complex scenarios, such as extracting information from PDFs. If you want, you can built a more complex parser as &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;www.llamaindex.ai&#x2F;llamaparse&quot;&gt;llamaparse&lt;&#x2F;a&gt; with more steps, like OCR, table parsing, etc.&lt;&#x2F;p&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>A Dead Simple Way to VLM Parsing</title>
+        <published>2024-11-28T00:00:00+00:00</published>
+        <updated>2024-11-28T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/a-dead-simple-way-to-vlm-parsing/"/>
+        <id>https://psiace.me/posts/a-dead-simple-way-to-vlm-parsing/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/a-dead-simple-way-to-vlm-parsing/">&lt;p&gt;This post demonstrates a straightforward approach to using VLMs for parsing unstructured data from images. While simple, this method can be easily extended to handle more complex scenarios, such as extracting information from PDFs. If you want, you can built a more complex parser as &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;www.llamaindex.ai&#x2F;llamaparse&quot;&gt;llamaparse&lt;&#x2F;a&gt; with more steps, like OCR, table parsing, etc.&lt;&#x2F;p&gt;
 &lt;p&gt;Let&#x27;s consider a common scenario: you have a collection of images and need to extract text from them. Or perhaps you want to generate descriptions from pictures to enable full-text search capabilities. It&#x27;s time to hire a VLM (Visual Language Models or MultiModal Models) to work for you.&lt;&#x2F;p&gt;
 &lt;p&gt;Since I work extensively with &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;run-llama&#x2F;llama_index&quot;&gt;llama_index&lt;&#x2F;a&gt;, I&#x27;ll be using it in the examples. However, the core concepts remain the same, and you can adapt them to work with any tools or clients of your choice.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;show-me-the-code&quot;&gt;Show Me The Code&lt;a class=&quot;zola-anchor&quot; href=&quot;#show-me-the-code&quot; aria-label=&quot;Anchor link for: show-me-the-code&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
@@ -1452,15 +1661,25 @@ This work has been contributed to upstream &lt;a rel=&quot;nofollow noreferrer&q
 &lt;hr &#x2F;&gt;
 &lt;p&gt;Thanks for reading! If you have any questions or suggestions, please feel free to leave a comment.&lt;&#x2F;p&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>You Don&#x27;t Need the Fucking DevRel</title>
-		<published>2024-03-08T00:00:00+00:00</published>
-		<updated>2024-03-08T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/you-do-not-need-the-fucking-devrel/"/>
-		<id>https://psiace.me/posts/you-do-not-need-the-fucking-devrel/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/you-do-not-need-the-fucking-devrel/">&lt;p&gt;Ah, DevRel – the tech world&#x27;s equivalent of sticking a megaphone in the hands of a mime: everyone sees the gestures, but no one knows what the hell they&#x27;re trying to say. Now, if you&#x27;re considering hiring a DevRel, buckle up, buttercup, because I&#x27;m about to serve you a reality sandwich with a side of snark.&lt;&#x2F;p&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>You Don&#x27;t Need the Fucking DevRel</title>
+        <published>2024-03-08T00:00:00+00:00</published>
+        <updated>2024-03-08T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/you-do-not-need-the-fucking-devrel/"/>
+        <id>https://psiace.me/posts/you-do-not-need-the-fucking-devrel/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/you-do-not-need-the-fucking-devrel/">&lt;p&gt;Ah, DevRel – the tech world&#x27;s equivalent of sticking a megaphone in the hands of a mime: everyone sees the gestures, but no one knows what the hell they&#x27;re trying to say. Now, if you&#x27;re considering hiring a DevRel, buckle up, buttercup, because I&#x27;m about to serve you a reality sandwich with a side of snark.&lt;&#x2F;p&gt;
 &lt;p&gt;First off, let&#x27;s get one thing clear: if your idea of a DevRel is just another pretty face to parrot your press releases and tweet your hashtags, save your money. Buy a billboard. Hire a skywriter. Hell, teach a parrot to code – at least it&#x27;ll be good for a laugh.&lt;&#x2F;p&gt;
 &lt;p&gt;But if you&#x27;re serious – and I mean &lt;em&gt;commit-your-heart-and-soul&lt;&#x2F;em&gt; serious – about having a DevRel, you need to understand that they&#x27;re not just your company&#x27;s cheerleader. A DevRel is the bridge between your codebase and the wild jungles of developers who might, if the stars align, use your tools to build the next big thing. They&#x27;re not just mouthpieces; they&#x27;re part diplomat, part engineer, part evangelist, and all badass.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;responsibilities-rights-and-resources&quot;&gt;Responsibilities, Rights, and Resources&lt;a class=&quot;zola-anchor&quot; href=&quot;#responsibilities-rights-and-resources&quot; aria-label=&quot;Anchor link for: responsibilities-rights-and-resources&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
@@ -1477,15 +1696,25 @@ This work has been contributed to upstream &lt;a rel=&quot;nofollow noreferrer&q
 &lt;p&gt;A DevRel is more than just a hype machine. They&#x27;re the voice of your developer community within your company, and they&#x27;re your company&#x27;s ambassador to the outside world. If you&#x27;re not ready to give them the power, responsibility, and resources they need to be effective, then you don&#x27;t need the fucking DevRel.&lt;&#x2F;p&gt;
 &lt;p&gt;You need a miracle.&lt;&#x2F;p&gt;
 </content>
-	</entry>
-	<entry xml:lang="en">
-		<title>A New Beginning, with Astro</title>
-		<published>2023-09-25T00:00:00+00:00</published>
-		<updated>2023-09-25T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://psiace.me/posts/a-new-beginning/"/>
-		<id>https://psiace.me/posts/a-new-beginning/</id>
-    
-		<content type="html" xml:base="https://psiace.me/posts/a-new-beginning/">&lt;h2 id=&quot;hey-world&quot;&gt;Hey, World!&lt;a class=&quot;zola-anchor&quot; href=&quot;#hey-world&quot; aria-label=&quot;Anchor link for: hey-world&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>A New Beginning, with Astro</title>
+        <published>2023-09-25T00:00:00+00:00</published>
+        <updated>2023-09-25T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/a-new-beginning/"/>
+        <id>https://psiace.me/posts/a-new-beginning/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/a-new-beginning/">&lt;h2 id=&quot;hey-world&quot;&gt;Hey, World!&lt;a class=&quot;zola-anchor&quot; href=&quot;#hey-world&quot; aria-label=&quot;Anchor link for: hey-world&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;I am delighted to announce the launch of my new blog, which is powered by &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;withastro&#x2F;&quot;&gt;Astro&lt;&#x2F;a&gt; and features the &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;chrismwilliams&#x2F;astro-theme-cactus&quot;&gt;Astro Cactus&lt;&#x2F;a&gt; theme.&lt;&#x2F;p&gt;
 &lt;p&gt;In this fresh start, I have cleared all previous content to create a clean slate.&lt;&#x2F;p&gt;
@@ -1504,5 +1733,6 @@ This work has been contributed to upstream &lt;a rel=&quot;nofollow noreferrer&q
 &lt;hr &#x2F;&gt;
 &lt;p&gt;I hope you’ll join me on this exciting journey!&lt;&#x2F;p&gt;
 </content>
-	</entry>
+        
+    </entry>
 </feed>

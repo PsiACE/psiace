@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="在 AI 时代走中间路径：用规范约束 AI，用 AI 加速规范。基于 ACP 的 SDK 实践：路由、黄金样张与可审计性。">
+
+  <title>用 Spec 做 SDK - 生成式 AI 的时代</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#wei-shen-me-bu-shi-quan-ai-ye-bu-shi-quan-spec">为什么不是全 AI，也不是全 Spec</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#acp-wei-sdk-er-sheng-de-xie-yi">ACP：为 SDK 而生的协议</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#wo-de-shi-xian-guo-cheng">我的实现过程</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#qi-dian-zui-xiao-ke-yong-ti-mvp">起点：最小可用体（MVP）</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#die-dai-cong-fan-kui-zhong-chang-chu-jie-gou">迭代：从反馈中长出结构</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#lu-you-hua-ti-dai-if-pan-duan">路由化：替代 if 判断</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#shang-xia-wen-jian-xuan-rang-ai-chi-dui-dong-xi">上下文拣选：让 AI 吃对东西</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#fang-fa-lun-spec-yu-ai-de-xie-zuo">方法论：Spec 与 AI 的协作</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#ze-ren-gan-wei-shen-me-wo-gan-dui-ai-xie-de-dai-ma-fu-ze">责任感：为什么我敢对 AI 写的代码负责</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#wo-zai-pr-li-de-shuo-ming">我在 PR 里的说明</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#jie-yu-su-du-yu-gui-dao">结语：速度与轨道</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>用 Spec 做 SDK - 生成式 AI 的时代</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Oct 15, 2025</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/ai"><span>#</span>AI</a><a class="instant" href="https://psiace.me/tags/sdk"><span>#</span>SDK</a><a class="instant" href="https://psiace.me/tags/spec"><span>#</span>Spec</a><a class="instant" href="https://psiace.me/tags/acp"><span>#</span>ACP</a><a class="instant" href="https://psiace.me/tags/agent"><span>#</span>Agent</a><a class="instant" href="https://psiace.me/tags/mcp"><span>#</span>MCP</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/spec-driven-sdks/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <blockquote>
+<p>AI 写得快，但容易膨胀；
+Spec 很严格，但可能僵化。</p>
+<p>我选择中间那条路——
+让 AI 在边界内跑，让人对结果负责。</p>
+</blockquote>
+<h2 id="wei-shen-me-bu-shi-quan-ai-ye-bu-shi-quan-spec">为什么不是全 AI，也不是全 Spec<a class="zola-anchor" href="#wei-shen-me-bu-shi-quan-ai-ye-bu-shi-quan-spec" aria-label="Anchor link for: wei-shen-me-bu-shi-quan-ai-ye-bu-shi-quan-spec" style="visibility: hidden;"></a>
+</h2>
+<p>AI 写代码的速度让人上瘾；一旦规模扩大，很容易出现上下文漂移、结构膨胀、边界模糊——项目“能跑但不稳”。</p>
+<p>另一个极端是 spec 驱动：严谨，但往往过重。GitHub 推出的 <a rel="nofollow noreferrer" href="https://github.com/github/spec-kit">Spec Kit</a> 倡导“先规范再生成”，对快速迭代的团队并不总是友好，容易过度设计、难以跟踪决策。</p>
+<p>我走中间态：在维护 <a rel="nofollow noreferrer" href="https://agentclientprotocol.com">Agent Client Protocol (ACP)</a> 的 <a rel="nofollow noreferrer" href="https://github.com/psiace/agent-client-protocol-python"><strong>Python SDK</strong></a> 时，用规范约束 AI 生成，用 AI 加速规范适配。</p>
+<h2 id="acp-wei-sdk-er-sheng-de-xie-yi">ACP：为 SDK 而生的协议<a class="zola-anchor" href="#acp-wei-sdk-er-sheng-de-xie-yi" aria-label="Anchor link for: acp-wei-sdk-er-sheng-de-xie-yi" style="visibility: hidden;"></a>
+</h2>
+<p>ACP 由 <a rel="nofollow noreferrer" href="https://zed.dev/blog/bring-your-own-agent-to-zed">Zed</a> 发起，定义<strong>编辑器 ↔ Agent</strong> 的通信方式。
+它采用 <a rel="nofollow noreferrer" href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a> 作为通信机制，并以 <strong>JSON Schema</strong> 描述数据结构（典型 schema 见 ACP 仓库）。边界明确、类型可机读、行为可审计——天生适合需要跨语言、长期维护的 SDK。</p>
+<h2 id="wo-de-shi-xian-guo-cheng">我的实现过程<a class="zola-anchor" href="#wo-de-shi-xian-guo-cheng" aria-label="Anchor link for: wo-de-shi-xian-guo-cheng" style="visibility: hidden;"></a>
+</h2>
+<h3 id="qi-dian-zui-xiao-ke-yong-ti-mvp">起点：最小可用体（MVP）<a class="zola-anchor" href="#qi-dian-zui-xiao-ke-yong-ti-mvp" aria-label="Anchor link for: qi-dian-zui-xiao-ke-yong-ti-mvp" style="visibility: hidden;"></a>
+</h3>
+<p>我给自己三条约束（大量使用 Coding Agent，统一由我把边界与审阅）：</p>
+<ol>
+<li>基于 datamodel 生成 <strong>Pydantic</strong> 模型（<a rel="nofollow noreferrer" href="https://docs.pydantic.dev/latest/">pydantic.dev</a>）。</li>
+<li>实现最小 I/O（JSON-RPC over stdio）。</li>
+<li>迁移文档示例与基本测试，由我负责核对与回归。</li>
+</ol>
+<p>体量刻意保持小：<strong>先上线，尽快暴露问题</strong>。</p>
+<h3 id="die-dai-cong-fan-kui-zhong-chang-chu-jie-gou">迭代：从反馈中长出结构<a class="zola-anchor" href="#die-dai-cong-fan-kui-zhong-chang-chu-jie-gou" aria-label="Anchor link for: die-dai-cong-fan-kui-zhong-chang-chu-jie-gou" style="visibility: hidden;"></a>
+</h3>
+<p>早期用户反馈“命名不一致、使用不顺手”。
+我让 agent 扫描文档生成 <strong>rename map</strong>（统一 Python 化命名），并对照其他语言实现取长补短：</p>
+<ul>
+<li>TypeScript SDK 里 <strong>helpers</strong>（降低重复样板）。</li>
+<li>Go SDK 用 <strong>golden tests</strong>（固定请求/响应样张做回归）。</li>
+<li>Rust SDK 的模块组织更克制。</li>
+<li>其他协议类 SDK（如 <a rel="nofollow noreferrer" href="https://modelcontextprotocol.io/">MCP</a>）采用相似的协议，值得借鉴。</li>
+</ul>
+<p>在 agent 协助下完成结构与测试重组，由我把控标准与审阅路径。</p>
+<h3 id="lu-you-hua-ti-dai-if-pan-duan">路由化：替代 if 判断<a class="zola-anchor" href="#lu-you-hua-ti-dai-if-pan-duan" aria-label="Anchor link for: lu-you-hua-ti-dai-if-pan-duan" style="visibility: hidden;"></a>
+</h3>
+<p>我不想看到满屏的 <code>if method == "..."</code>，于是写了极简路由，把“方法名 → 处理器”变成一等公民：</p>
+<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">builder</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">RouterBuilder</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python">
+</span><span class="z-source z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">builder</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">request_attr</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">CLIENT_METHODS</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">fs_write_text_file<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">WriteTextFileRequest</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">writeTextFile<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">builder</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">request_attr</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">CLIENT_METHODS</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">fs_read_text_file<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>  <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ReadTextFileRequest</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>  <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">readTextFile<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span></code></pre>
+<p>到 <code>v0.4.9</code>，体量不大，但代码 <strong>稳定且可教学</strong>。</p>
+<h2 id="shang-xia-wen-jian-xuan-rang-ai-chi-dui-dong-xi">上下文拣选：让 AI 吃对东西<a class="zola-anchor" href="#shang-xia-wen-jian-xuan-rang-ai-chi-dui-dong-xi" aria-label="Anchor link for: shang-xia-wen-jian-xuan-rang-ai-chi-dui-dong-xi" style="visibility: hidden;"></a>
+</h2>
+<p>我把提示词上下文当“工程预算”管理：只喂必要信息、限定边界，并对版本负责。</p>
+<ul>
+<li><strong>上下文清单（manifest）</strong>：只列 schema、公共接口与最小示例；排除生成代码与外部依赖。</li>
+<li><strong>Diff 感知</strong>：只给改动的 hunk 与少量前后文（5–15 行），而不是整文件。</li>
+<li><strong>黄金片段索引</strong>：提示 agent 自检索必要片段，避免大段粘贴。</li>
+<li><strong>先立护栏</strong>：明确“不得臆造 schema 字段；失败优先；缺信息先询问”。</li>
+</ul>
+<h2 id="fang-fa-lun-spec-yu-ai-de-xie-zuo">方法论：Spec 与 AI 的协作<a class="zola-anchor" href="#fang-fa-lun-spec-yu-ai-de-xie-zuo" aria-label="Anchor link for: fang-fa-lun-spec-yu-ai-de-xie-zuo" style="visibility: hidden;"></a>
+</h2>
+<table><thead><tr><th style="text-align: left">原则</th><th style="text-align: left">说明</th></tr></thead><tbody>
+<tr><td style="text-align: left"><strong>生成与人工治理分离</strong></td><td style="text-align: left">模型自动生成，业务由人编排与审阅，不混用。</td></tr>
+<tr><td style="text-align: left"><strong>从最小可用体开始</strong></td><td style="text-align: left">用真实反馈驱动人体工学优化。</td></tr>
+<tr><td style="text-align: left"><strong>Golden Test</strong></td><td style="text-align: left">捕获/回放请求与响应，作为回归与审计基线。</td></tr>
+<tr><td style="text-align: left"><strong>上下文拣选与预算</strong></td><td style="text-align: left">只喂必要上下文，小而准、可复现。</td></tr>
+</tbody></table>
+<p>规范给 AI 以边界；AI 让规范鲜活起来。</p>
+<h2 id="ze-ren-gan-wei-shen-me-wo-gan-dui-ai-xie-de-dai-ma-fu-ze">责任感：为什么我敢对 AI 写的代码负责<a class="zola-anchor" href="#ze-ren-gan-wei-shen-me-wo-gan-dui-ai-xie-de-dai-ma-fu-ze" aria-label="Anchor link for: ze-ren-gan-wei-shen-me-wo-gan-dui-ai-xie-de-dai-ma-fu-ze" style="visibility: hidden;"></a>
+</h2>
+<p>AI 能写，但边界我来定义。
+有强类型模型、可复现测试、可回放轨迹，我可以验证每一步。
+我信任的不是模型，而是 <strong>它背后的工程纪律</strong> 。</p>
+<h2 id="wo-zai-pr-li-de-shuo-ming">我在 PR 里的说明<a class="zola-anchor" href="#wo-zai-pr-li-de-shuo-ming" aria-label="Anchor link for: wo-zai-pr-li-de-shuo-ming" style="visibility: hidden;"></a>
+</h2>
+<p>这段说明最早见于 <a rel="nofollow noreferrer" href="https://github.com/Xuanwo">@xuanwo</a> 的 PR。我之前没有这样写，但我愿意采用这种方式——因为我对结果负责。在这个 SDK 的工作中我大量使用了 AI；<strong>边界与质量由我把关</strong>：</p>
+<blockquote>
+<p><strong>This PR was primarily authored with GPT-5-Codex and hand-reviewed by me.
+I’m responsible for every change that lands here.</strong></p>
+</blockquote>
+<p>这不是“炫 AI”，而是<strong>结果负责的声明</strong>。</p>
+<h2 id="jie-yu-su-du-yu-gui-dao">结语：速度与轨道<a class="zola-anchor" href="#jie-yu-su-du-yu-gui-dao" aria-label="Anchor link for: jie-yu-su-du-yu-gui-dao" style="visibility: hidden;"></a>
+</h2>
+<p>AI 是燃料，Spec 是轨道。
+燃料给你速度，轨道让你抵达。</p>
+<p>我喜欢这种平衡：模型来写，我来设边界。
+每一行可解释，每一次失败可复现。
+这就是在人工智能时代负责任地构建方式。</p>
+<p>— <strong>PsiACE</strong> （<a rel="nofollow noreferrer" href="https://github.com/PsiACE">GitHub</a> · <a rel="nofollow noreferrer" href="https://opendal.apache.org/">Apache OpenDAL PMC Member</a>）</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="spec-driven-sdks"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>
