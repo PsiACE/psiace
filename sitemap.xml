@@ -44,6 +44,10 @@
         <lastmod>2025-02-11</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/posts/live-a-little-part-1/</loc>
+        <lastmod>2025-10-20</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/posts/llama-index-cloudflare-ai-gateway/</loc>
         <lastmod>2025-07-11</lastmod>
     </url>
@@ -86,6 +90,9 @@
         <loc>https://psiace.me/tags/architecture/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/career/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/cloudflare/</loc>
     </url>
     <url>
@@ -123,6 +130,9 @@
     </url>
     <url>
         <loc>https://psiace.me/tags/mcp/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/tags/memoir/</loc>
     </url>
     <url>
         <loc>https://psiace.me/tags/multimodal/</loc>
@@ -231,6 +241,10 @@
         <lastmod>2025-02-11</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/zh/posts/live-a-little-part-1/</loc>
+        <lastmod>2025-10-20</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/posts/llama-index-cloudflare-ai-gateway/</loc>
         <lastmod>2025-07-11</lastmod>
     </url>
@@ -273,6 +287,9 @@
         <loc>https://psiace.me/zh/tags/architecture/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/zh/tags/career/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/tags/cloudflare/</loc>
     </url>
     <url>
@@ -310,6 +327,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/mcp/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/memoir/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/multimodal/</loc>

@@ -10,9 +10,9 @@
   
     
   
-  <meta name="description" content="一个轻量的 NebulaGraph MCP Server，帮语言模型直接调用图数据库，探索 GraphRAG 的新可能。">
+  <meta name="description" content="在二十七岁前回看 2016 至 2021 年与代码相伴的日子。">
 
-  <title>NebulaGraph MCP Server v0.1.0：我们把图数据库接上了 MCP</title>
+  <title>Live a Little · 上篇（2016 – 2021）</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -179,22 +179,27 @@
       <ul>
         
         <li>
-          <a class="h2" href="#wei-shen-me-yao-zuo-zhe-jian-shi">为什么要做这件事</a>
+          <a class="h2" href="#2016-shao-nian-yi-qi-yu-di-yi-xing-dai-ma">2016：少年意气与第一行代码</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#mcp-you-shen-me-te-bie">MCP 有什么特别</a>
+          <a class="h2" href="#2017-2018-da-xue-suan-fa-yu-chu-lian">2017 – 2018：大学、算法与初恋</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#nebulagraph-mcp-server-zuo-liao-shen-me">NebulaGraph MCP Server 做了什么</a>
+          <a class="h2" href="#2019-fan-yi-she-qu-yu-zao-qi-xiang-mu">2019：翻译、社区与早期项目</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#xia-yi-bu">下一步</a>
+          <a class="h2" href="#2020-rust-zhi-xia-yu-fang-xiang-chu-ding">2020：Rust 之夏与方向初定</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#2021-zhuan-zhe-yu-di-yi-fen-gong-zuo">2021：转折与第一份工作</a>
           
         </li>
         
@@ -235,15 +240,15 @@
 "></div>
       
       <article class="prose">
-        <h1>NebulaGraph MCP Server v0.1.0：我们把图数据库接上了 MCP</h1>
+        <h1>Live a Little · 上篇（2016 – 2021）</h1>
         <div id="post-info">
           <div id="date">
-            <span id="publish">Mar 11, 2025</span>
+            <span id="publish">Oct 20, 2025</span>
             </div>
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/mcp"><span>#</span>MCP</a><a class="instant" href="https://psiace.me/tags/llamaindex"><span>#</span>LlamaIndex</a><a class="instant" href="https://psiace.me/tags/python"><span>#</span>Python</a><a class="instant" href="https://psiace.me/tags/nebulagraph"><span>#</span>NebulaGraph</a>
+            <a class="instant" href="https://psiace.me/tags/memoir"><span>#</span>Memoir</a><a class="instant" href="https://psiace.me/tags/career"><span>#</span>Career</a>
           </div>
           
 
@@ -278,7 +283,7 @@
   <div class="lang-switch" role="navigation" aria-label="语言">
     <span class="lang-switch__label">语言:</span>
     <span class="lang-switch__current">中文</span>
-    <a class="lang-switch__link" href="https://psiace.me/posts/announcing-nebulagraph-mcp-server-v010/">English</a> 
+    <a class="lang-switch__link" href="https://psiace.me/posts/live-a-little-part-1/">English</a> 
   </div>
 
 
@@ -289,42 +294,97 @@
 
         
 
-        <h2 id="wei-shen-me-yao-zuo-zhe-jian-shi">为什么要做这件事<a class="zola-anchor" href="#wei-shen-me-yao-zuo-zhe-jian-shi" aria-label="Anchor link for: wei-shen-me-yao-zuo-zhe-jian-shi" style="visibility: hidden;"></a>
+        <p><strong>在代码与青春之间</strong></p>
+<blockquote>
+<p>我即将二十七岁。
+按新时代的算法，已经稳稳进入「老登」序列。
+这一年，我的第二份正式工作也满了一年多。
+回头看，想聊聊那些年我和代码之间的故事。</p>
+</blockquote>
+<hr />
+<h2 id="2016-shao-nian-yi-qi-yu-di-yi-xing-dai-ma">2016：少年意气与第一行代码<a class="zola-anchor" href="#2016-shao-nian-yi-qi-yu-di-yi-xing-dai-ma" aria-label="Anchor link for: 2016-shao-nian-yi-qi-yu-di-yi-xing-dai-ma" style="visibility: hidden;"></a>
 </h2>
-<p>最近 MCP（Model Context Protocol）社区非常热闹：几乎每天都有新的 MCP Server 诞生，涵盖搜索、数据库、存储、天气等各种领域。我们在做 GraphRAG 和 Agent Workflow 时，需要一种方式，让模型在决策过程中即时获取图数据。因此我基于 NebulaGraph 3.x 写了一个 MCP Server，作为 “NebulaGraph × MCP” 生态的第一块基石。</p>
-<h2 id="mcp-you-shen-me-te-bie">MCP 有什么特别<a class="zola-anchor" href="#mcp-you-shen-me-te-bie" aria-label="Anchor link for: mcp-you-shen-me-te-bie" style="visibility: hidden;"></a>
+<p>把时间拨回 2016 年。
+那时我沉迷小说，读过的大部头早已按「车载斗量」计。
+Ruby 风头正盛，我用 Rails 搭过小站，也在 GitHub 上部署过 Jekyll 生成的静态页。
+想写漂亮 UI 的冲动驱使我去学 HTML；
+我偷偷读完了 <em>Digital Design and Computer Architecture</em> ——一本讲 Verilog HDL 和计算机体系结构的书。
+那时我并不真正懂，只是怀着一点少年心气。</p>
+<hr />
+<h2 id="2017-2018-da-xue-suan-fa-yu-chu-lian">2017 – 2018：大学、算法与初恋<a class="zola-anchor" href="#2017-2018-da-xue-suan-fa-yu-chu-lian" aria-label="Anchor link for: 2017-2018-da-xue-suan-fa-yu-chu-lian" style="visibility: hidden;"></a>
 </h2>
-<ul>
-<li><strong>统一协议</strong>：把客户端（AI 应用）和服务端（工具/数据源）之间的交互标准化。</li>
-<li><strong>开放生态</strong>：社区已经有近千个公开实现，可以直接接入。</li>
-<li><strong>松耦合架构</strong>：开发者可以用同一套协议封装任意后端，接入门槛很低。</li>
-</ul>
-<p>对我们来说，MCP 是让 Agent 得以调用图数据库的捷径。</p>
-<h2 id="nebulagraph-mcp-server-zuo-liao-shen-me">NebulaGraph MCP Server 做了什么<a class="zola-anchor" href="#nebulagraph-mcp-server-zuo-liao-shen-me" aria-label="Anchor link for: nebulagraph-mcp-server-zuo-liao-shen-me" style="visibility: hidden;"></a>
+<p>2017 年，我进入大学，主修计算机科学与技术。
+学校很大，疫情前的校车也只能遍历小半个校区。
+数学天赋平平，但我仍喜欢编程——因为它让我能「造点什么」。</p>
+<p>2018 年，我试图认真地学算法与英语，已经在 Linux 环境下生活。
+我读 GNU 和自由软件基金会的故事，也在 GNU.org 帮忙校对文章。
+那时的我还不会 git 之外的工具，全靠前辈帮我合并推送。
+在邮件列表里，我看到俊余的名字——几年后，他做的 WebP 图像服务在推特上火爆一时。</p>
+<p>同年我写信给刚落地中国的 <a rel="nofollow noreferrer" href="https://leetcode.cn/">LeetCode 力扣</a>，想参与题解翻译。
+Hercy 给我了第一封正式回复。
+和 Winston 一起帮我做了 landing 。
+如今一晃也结缘七年。</p>
+<p>当然，2018 也有更多故事：
+我挂了高数，也遇见了现在的女朋友。
+那年秋天我和工作室的朋友一起看《昨日青空》，出来吃小吃时我说：</p>
+<blockquote>
+<p>「这电影该和女生一起看。」
+后来我又买了两张票，和学妹二刷——
+转眼，我们已经在一起七年。</p>
+</blockquote>
+<p>技术上，18 年我第三次重生 GitHub 账号，尝试 Rust 项目 Servo，学 Cargo 命令，修 README 里的构建流程。
+当时谁能想到，我未来有一段工作会真正用 Rust 写代码。</p>
+<hr />
+<h2 id="2019-fan-yi-she-qu-yu-zao-qi-xiang-mu">2019：翻译、社区与早期项目<a class="zola-anchor" href="#2019-fan-yi-she-qu-yu-zao-qi-xiang-mu" aria-label="Anchor link for: 2019-fan-yi-she-qu-yu-zao-qi-xiang-mu" style="visibility: hidden;"></a>
 </h2>
-<ul>
-<li>基于 <strong>FastMCP</strong> 实现，支持 <code>stdio</code> 和 <code>SSE</code> 两种传输模式。</li>
-<li>暴露了几个基础能力：
-<ul>
-<li><strong>列出图空间</strong>：让模型知道有哪些数据域；</li>
-<li><strong>查看 Schema</strong>：理解各图空间的点、边定义；</li>
-<li><strong>执行 nGQL 查询</strong>：直接跑查询语句；</li>
-<li><strong>常用 Operator 模板</strong>：例如最短路径、邻居扩展，封装成可复用工具。</li>
-</ul>
-</li>
-<li>LlamaIndex 侧通过前文的 <code>McpToolSpec</code> 适配器即可直接接入，ReAct Agent 会在推理时自动调用。</li>
-</ul>
-<p>示例里我让 Agent 查询某个空间的 schema，再运行路径搜索，结果连同可视化一并返回。</p>
-<p><img src="https://psiace.me/zh/posts/announcing-nebulagraph-mcp-server-v010/llamaindex-with-nebulagraph-mcp.png" alt="LlamaIndex with NebulaGraph MCP" /></p>
-<h2 id="xia-yi-bu">下一步<a class="zola-anchor" href="#xia-yi-bu" aria-label="Anchor link for: xia-yi-bu" style="visibility: hidden;"></a>
+<p>翻译比我想的走得更远。
+2019 年，<a rel="nofollow noreferrer" href="https://linux.cn/lctt/">LCTT</a> 仍是国内最活跃的 Linux 中文社区。
+我在里面结识了老王和白宦成老师；我们计划合写一本书，虽最终搁浅，但那段共同写作的日子至今难忘。</p>
+<p>技术上，Python 当时如日中天。
+我学了 Flask、Django、FastAPI 皮毛，用 Cookiecutter 生成项目模板。
+后来成为 <a rel="nofollow noreferrer" href="https://github.com/audreyfeldroy/cookiecutter-pypackage">audreyfeldroy/cookiecutter-pypackage</a> 的维护者——一个几千 star 的项目。
+她和 Pydanny 是有名的「夫妻店」，今天依然活跃。</p>
+<p>年底，我修完编译原理课，读 <em>Crafting Interpreters</em>，写了个 C 语言项目的模板 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/meco">meco</a> 和玩具语言 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/emo">emo</a>。
+那时也尝试 Neo4j 与 NebulaGraph，做过可视化图查询的项目。
+我没想到，几年后我真会在图数据库公司工作。</p>
+<hr />
+<h2 id="2020-rust-zhi-xia-yu-fang-xiang-chu-ding">2020：Rust 之夏与方向初定<a class="zola-anchor" href="#2020-rust-zhi-xia-yu-fang-xiang-chu-ding" aria-label="Anchor link for: 2020-rust-zhi-xia-yu-fang-xiang-chu-ding" style="visibility: hidden;"></a>
 </h2>
-<p>这个版本只是打地基：</p>
-<ul>
-<li>后续会补充权限控制、查询限流等安全能力；</li>
-<li>计划支持更多 NebulaGraph 原生特性（如存储过程、图算法库）；</li>
-<li>与 GraphRAG 管线结合，让模型不仅能查图，还能基于图结构做推理。</li>
-</ul>
-<p>仓库在这里：<a rel="nofollow noreferrer" href="https://github.com/PsiACE/nebulagraph-mcp-server">PsiACE/nebulagraph-mcp-server</a>。欢迎感兴趣的同学一起折腾，探讨 AI × 图数据库的更多玩法。</p>
+<p>2020 准备考研，但心思其实一半在代码。
+我从 Python 转向 Rust，入选首届 <a rel="nofollow noreferrer" href="https://summer-ospp.ac.cn/">开源之夏 OSPP</a>，在 Casbin 写了 <a rel="nofollow noreferrer" href="https://github.com/casbin-rs/casbin-raft">casbin-raft</a>，认识了江成和 Hackerchai。
+江成后来为我写了推荐信，chai 去了 Kong。
+和 OSPP 的缘分甚至更深，一直延续到今天。</p>
+<p>同年，我在 Rust 中文社区贡献翻译：
+译过 <em>Writing an OS in Rust</em> 中的一章，与洛佳结识——后来他做了 <a rel="nofollow noreferrer" href="https://github.com/rustsbi/rustsbi">RustSBI</a>。
+我还翻译了 nrc 的 <em>“Early Impressions of Go from a Rust Programmer”</em> 。
+PingCAP 的 VLDB 论文成为了毕设开题材料。
+这个内容在获得授权后发布在了 <a rel="nofollow noreferrer" href="https://github.com/psiace/tidb-a-raft-based-htap-database">PsiACE/TiDB-A-Raft-based-HTAP-Database</a></p>
+<p>毕业设计题是 “基于 Rust 的分布式 KV”——Raft + Bitcask。
+熟悉 PingCAP 的同学应该都知道灵感出自何处。
+我研究 async-raft（即 <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/openraft">databend/openraft</a> 前身），也给 P 社周边库提 PR。
+那年我以个人捐赠者身份支持 <a rel="nofollow noreferrer" href="https://rustcc.cn/2020rustchinaconf/">Rust China Conf 2020</a>，和夏歌、Mike、汉东有了更多交流。
+后来，我还做了几年 Rust 中文社区日报编辑。</p>
+<hr />
+<h2 id="2021-zhuan-zhe-yu-di-yi-fen-gong-zuo">2021：转折与第一份工作<a class="zola-anchor" href="#2021-zhuan-zhe-yu-di-yi-fen-gong-zuo" aria-label="Anchor link for: 2021-zhuan-zhe-yu-di-yi-fen-gong-zuo" style="visibility: hidden;"></a>
+</h2>
+<p>考研失败——毕竟我复习间隙还在给 <a rel="nofollow noreferrer" href="https://github.com/xi-editor/xi-editor">xi-editor</a> 修过 lint。
+我去 Wasmedge 面试实习，了解到了 WebAssembly 和 ERC20 标准，我修正的方案最后被用于社区。
+又从 Meilisearch 和 Hashlink 分叉出 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/riteraft">riteraft</a> 和 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/ritelinked">ritelinked</a>，前者积累 300 多 star，后者成为我下载量最高的 crate 之一。</p>
+<p>我也拿到 PingCAP 面试机会，当时项目是给 <a rel="nofollow noreferrer" href="https://github.com/pingcap/tichi">Tichi</a> 做贡献。
+练习部署 Prow 时，第一次切身感受国内网络之艰难。
+Mini256 就在那个组里——几年后，我在做 GraphRAG 时看到 TiDB 推出 AutoFlow，他也在做 RAG 了。</p>
+<p>那段时间，我一边写论文，一边给 <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/databend">Databend</a> 做早期贡献，从 CI 到模糊测试，再到上游的 Arrow 和 SQL 解析器。
+那时 Databend 不过 10 人左右。
+我加了虎哥好友，只想向技术大佬多学习，没想到真的因此获得了工作机会。
+他爽快地约我在武汉见面。
+我至今记得那天的阳光——
+那是创业者最有光的年纪。</p>
+<p>6 – 7 月间，我在 Databend 上下游提了约 40 个 PR。
+就这样，我加入了这个立志打造“中国版 Snowflake”的团队，开始了我的第一份真正意义上的工程师工作。</p>
+<hr />
+<blockquote>
+<p><em>未完待续 —— Part 2 将讲述 2022 至 2025，从 Databend 到 Apache OpenDAL 等这些年的故事。</em></p>
+</blockquote>
 
       </article>
 
@@ -365,7 +425,7 @@
   data-category-id="DIC_kwDOKYGbpM4CZxPW"
   data-mapping="specific"
   
-    data-term="announcing-nebulagraph-mcp-server-v010"
+    data-term="live-a-little-part-1"
   
   data-strict="0"
   data-reactions-enabled="1"

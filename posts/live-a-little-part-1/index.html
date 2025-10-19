@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="zh">
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
@@ -10,9 +10,9 @@
   
     
   
-  <meta name="description" content="一个轻量的 NebulaGraph MCP Server，帮语言模型直接调用图数据库，探索 GraphRAG 的新可能。">
+  <meta name="description" content="Looking back at the years between sixteen and twenty-one and how code shaped my early path.">
 
-  <title>NebulaGraph MCP Server v0.1.0：我们把图数据库接上了 MCP</title>
+  <title>Live a Little · Part 1 (2016–2021) </title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -179,22 +179,27 @@
       <ul>
         
         <li>
-          <a class="h2" href="#wei-shen-me-yao-zuo-zhe-jian-shi">为什么要做这件事</a>
+          <a class="h2" href="#2016-a-boy-and-his-first-lines-of-code">2016 – A Boy and His First Lines of Code</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#mcp-you-shen-me-te-bie">MCP 有什么特别</a>
+          <a class="h2" href="#2017-2018-university-and-first-encounters">2017–2018 University and First Encounters</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#nebulagraph-mcp-server-zuo-liao-shen-me">NebulaGraph MCP Server 做了什么</a>
+          <a class="h2" href="#2019-translation-and-community">2019 – Translation and Community</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#xia-yi-bu">下一步</a>
+          <a class="h2" href="#2020-rust-summer-and-finding-a-direction">2020 – Rust Summer and Finding a Direction</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#2021-from-failed-exams-to-first-job">2021 – From Failed Exams to First Job</a>
           
         </li>
         
@@ -216,11 +221,9 @@
 
 
 
-  
-
 <header>
   <nav>
-    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
   </nav>
 </header>
 
@@ -235,15 +238,15 @@
 "></div>
       
       <article class="prose">
-        <h1>NebulaGraph MCP Server v0.1.0：我们把图数据库接上了 MCP</h1>
+        <h1>Live a Little · Part 1 (2016–2021) </h1>
         <div id="post-info">
           <div id="date">
-            <span id="publish">Mar 11, 2025</span>
+            <span id="publish">Oct 20, 2025</span>
             </div>
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/mcp"><span>#</span>MCP</a><a class="instant" href="https://psiace.me/tags/llamaindex"><span>#</span>LlamaIndex</a><a class="instant" href="https://psiace.me/tags/python"><span>#</span>Python</a><a class="instant" href="https://psiace.me/tags/nebulagraph"><span>#</span>NebulaGraph</a>
+            <a class="instant" href="https://psiace.me/tags/memoir"><span>#</span>Memoir</a><a class="instant" href="https://psiace.me/tags/career"><span>#</span>Career</a>
           </div>
           
 
@@ -253,16 +256,12 @@
 
 
 
-  
-
-
-
-  
-
-
 
 
   
+
+
+
 
   
     
@@ -274,11 +273,13 @@
     
   
 
+  
 
-  <div class="lang-switch" role="navigation" aria-label="语言">
-    <span class="lang-switch__label">语言:</span>
-    <span class="lang-switch__current">中文</span>
-    <a class="lang-switch__link" href="https://psiace.me/posts/announcing-nebulagraph-mcp-server-v010/">English</a> 
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/live-a-little-part-1/">中文</a> 
   </div>
 
 
@@ -289,42 +290,88 @@
 
         
 
-        <h2 id="wei-shen-me-yao-zuo-zhe-jian-shi">为什么要做这件事<a class="zola-anchor" href="#wei-shen-me-yao-zuo-zhe-jian-shi" aria-label="Anchor link for: wei-shen-me-yao-zuo-zhe-jian-shi" style="visibility: hidden;"></a>
+        <p><strong>Between Code and Youth</strong></p>
+<blockquote>
+<p>I'm turning twenty-seven soon.
+By the standards of this era, that already puts me in the “old folks” cohort.
+My second full-time job has just crossed its first anniversary.
+Looking back, I want to talk about the years I spent growing up with code.</p>
+</blockquote>
+<hr />
+<h2 id="2016-a-boy-and-his-first-lines-of-code">2016 – A Boy and His First Lines of Code<a class="zola-anchor" href="#2016-a-boy-and-his-first-lines-of-code" aria-label="Anchor link for: 2016-a-boy-and-his-first-lines-of-code" style="visibility: hidden;"></a>
 </h2>
-<p>最近 MCP（Model Context Protocol）社区非常热闹：几乎每天都有新的 MCP Server 诞生，涵盖搜索、数据库、存储、天气等各种领域。我们在做 GraphRAG 和 Agent Workflow 时，需要一种方式，让模型在决策过程中即时获取图数据。因此我基于 NebulaGraph 3.x 写了一个 MCP Server，作为 “NebulaGraph × MCP” 生态的第一块基石。</p>
-<h2 id="mcp-you-shen-me-te-bie">MCP 有什么特别<a class="zola-anchor" href="#mcp-you-shen-me-te-bie" aria-label="Anchor link for: mcp-you-shen-me-te-bie" style="visibility: hidden;"></a>
+<p>Back in 2016, I was a book addict, devouring door-stopper web novels by the truckload.
+Ruby was everywhere in China, so I tinkered with Rails and deployed a Jekyll site on GitHub Pages.
+Wanting prettier UI nudged me into HTML basics.
+I even snuck in a full read of <em>Digital Design and Computer Architecture</em> — a Verilog HDL and computer architecture primer.
+I barely understood it, but teenage bravado kept me going.</p>
+<hr />
+<h2 id="2017-2018-university-and-first-encounters">2017–2018 University and First Encounters<a class="zola-anchor" href="#2017-2018-university-and-first-encounters" aria-label="Anchor link for: 2017-2018-university-and-first-encounters" style="visibility: hidden;"></a>
 </h2>
-<ul>
-<li><strong>统一协议</strong>：把客户端（AI 应用）和服务端（工具/数据源）之间的交互标准化。</li>
-<li><strong>开放生态</strong>：社区已经有近千个公开实现，可以直接接入。</li>
-<li><strong>松耦合架构</strong>：开发者可以用同一套协议封装任意后端，接入门槛很低。</li>
-</ul>
-<p>对我们来说，MCP 是让 Agent 得以调用图数据库的捷径。</p>
-<h2 id="nebulagraph-mcp-server-zuo-liao-shen-me">NebulaGraph MCP Server 做了什么<a class="zola-anchor" href="#nebulagraph-mcp-server-zuo-liao-shen-me" aria-label="Anchor link for: nebulagraph-mcp-server-zuo-liao-shen-me" style="visibility: hidden;"></a>
+<p>I entered university in 2017, majoring in Computer Science and Technology.
+Campus was huge; even the pre-pandemic shuttle only covered half of it.
+Math never came easy, yet coding let me build things, so I stuck with it.</p>
+<p>In 2018 I tried to take algorithms and English seriously while already living inside Linux.
+I devoured GNU and Free Software Foundation histories and helped the GNU.org proofread articles.
+I barely knew tools beyond basic git, so seniors merged patches for me.
+Mailing lists introduced me to Junyu, whose WebP image service would later go viral on Twitter.</p>
+<p>That year I also wrote to the fresh <a rel="nofollow noreferrer" href="https://leetcode.cn/">LeetCode China</a> launch to volunteer for solution translations.
+Hercy sent my first official reply, and Winston helped me land the gig.
+Seven years on, we’re still friends.</p>
+<p>Of course 2018 had more stories:
+I failed Calculus yet met my girlfriend.
+That autumn I watched <em>Crystal Sky of Yesterday</em> with studio friends, then said on the way out:</p>
+<blockquote>
+<p>“This movie should be watched with someone special.”
+I bought two more tickets to rewatch it with a junior from the club —
+seven years later we’re still together.</p>
+</blockquote>
+<p>Technically, in 2018 I reset my GitHub account for the third time, experimented with Servo, learned Cargo commands, and fixed README build steps.
+I never imagined a future job would have me writing Rust for real.</p>
+<hr />
+<h2 id="2019-translation-and-community">2019 – Translation and Community<a class="zola-anchor" href="#2019-translation-and-community" aria-label="Anchor link for: 2019-translation-and-community" style="visibility: hidden;"></a>
 </h2>
-<ul>
-<li>基于 <strong>FastMCP</strong> 实现，支持 <code>stdio</code> 和 <code>SSE</code> 两种传输模式。</li>
-<li>暴露了几个基础能力：
-<ul>
-<li><strong>列出图空间</strong>：让模型知道有哪些数据域；</li>
-<li><strong>查看 Schema</strong>：理解各图空间的点、边定义；</li>
-<li><strong>执行 nGQL 查询</strong>：直接跑查询语句；</li>
-<li><strong>常用 Operator 模板</strong>：例如最短路径、邻居扩展，封装成可复用工具。</li>
-</ul>
-</li>
-<li>LlamaIndex 侧通过前文的 <code>McpToolSpec</code> 适配器即可直接接入，ReAct Agent 会在推理时自动调用。</li>
-</ul>
-<p>示例里我让 Agent 查询某个空间的 schema，再运行路径搜索，结果连同可视化一并返回。</p>
-<p><img src="https://psiace.me/zh/posts/announcing-nebulagraph-mcp-server-v010/llamaindex-with-nebulagraph-mcp.png" alt="LlamaIndex with NebulaGraph MCP" /></p>
-<h2 id="xia-yi-bu">下一步<a class="zola-anchor" href="#xia-yi-bu" aria-label="Anchor link for: xia-yi-bu" style="visibility: hidden;"></a>
+<p>Translation carried me farther than I expected.
+In 2019 <a rel="nofollow noreferrer" href="https://linux.cn/lctt/">LCTT</a> was still the most vibrant Linux community in China.
+There I met Wang and teacher Bai Huancheng; we even planned a book that never shipped, yet that collaboration remains unforgettable.</p>
+<p>Python was booming.
+I picked up Flask, Django, and FastAPI and became a maintainer of <a rel="nofollow noreferrer" href="https://github.com/audreyfeldroy/cookiecutter-pypackage">audreyfeldroy/cookiecutter-pypackage</a>, a project with thousands of stars.
+Audrey Feldroy and Daniel Roy “Pydanny” Greenfeld still run that legendary two-person shop.</p>
+<p>By year end I finished the compiler course, read <em>Crafting Interpreters</em>, and built <a rel="nofollow noreferrer" href="https://github.com/PsiACE/meco">meco</a>, a C project template, plus the toy language <a rel="nofollow noreferrer" href="https://github.com/PsiACE/emo">emo</a>.
+I also tried Neo4j and NebulaGraph, building a graph-visualization project.
+I had no idea I’d later work at a graph database company.</p>
+<hr />
+<h2 id="2020-rust-summer-and-finding-a-direction">2020 – Rust Summer and Finding a Direction<a class="zola-anchor" href="#2020-rust-summer-and-finding-a-direction" aria-label="Anchor link for: 2020-rust-summer-and-finding-a-direction" style="visibility: hidden;"></a>
 </h2>
-<p>这个版本只是打地基：</p>
-<ul>
-<li>后续会补充权限控制、查询限流等安全能力；</li>
-<li>计划支持更多 NebulaGraph 原生特性（如存储过程、图算法库）；</li>
-<li>与 GraphRAG 管线结合，让模型不仅能查图，还能基于图结构做推理。</li>
-</ul>
-<p>仓库在这里：<a rel="nofollow noreferrer" href="https://github.com/PsiACE/nebulagraph-mcp-server">PsiACE/nebulagraph-mcp-server</a>。欢迎感兴趣的同学一起折腾，探讨 AI × 图数据库的更多玩法。</p>
+<p>I told myself I was preparing for graduate school in 2020, yet my mind stayed half in code.
+I shifted from Python to Rust and joined the first <a rel="nofollow noreferrer" href="https://summer-ospp.ac.cn/">Open Source Promotion Plan (OSPP)</a> to build <a rel="nofollow noreferrer" href="https://github.com/casbin-rs/casbin-raft">casbin-raft</a>.
+That’s where I met Jiang Cheng and Hackerchai — Jiang later wrote a recommendation letter, and chai went on to Kong.
+My connection with OSPP ran even deeper, continuing to this day.</p>
+<p>I also translated a chapter of <em>Writing an OS in Rust</em> and met Luo Jia, creator of <a rel="nofollow noreferrer" href="https://github.com/rustsbi/rustsbi">RustSBI</a>.
+nrc’s <em>“Early Impressions of Go from a Rust Programmer”</em> was another piece I translated.
+Their VLDB paper became the backbone of my thesis proposal, and with permission I published my notes at <a rel="nofollow noreferrer" href="https://github.com/psiace/tidb-a-raft-based-htap-database">PsiACE/TiDB-A-Raft-based-HTAP-Database</a>.</p>
+<p>My thesis was a Rust-based distributed KV store built with Raft + Bitcask.
+If you know PingCAP, you can guess the inspiration.
+I studied <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/openraft">async-raft</a> — the predecessor of databend/openraft — and contributed to PingCAP projects.
+I donated to the inaugural <a rel="nofollow noreferrer" href="https://rustcc.cn/2020rustchinaconf/">Rust China Conf 2020</a> and later edited the Rust Chinese Community Daily for a few years.</p>
+<hr />
+<h2 id="2021-from-failed-exams-to-first-job">2021 – From Failed Exams to First Job<a class="zola-anchor" href="#2021-from-failed-exams-to-first-job" aria-label="Anchor link for: 2021-from-failed-exams-to-first-job" style="visibility: hidden;"></a>
+</h2>
+<p>The exam was a mess — I was still fixing lint in <a rel="nofollow noreferrer" href="https://github.com/xi-editor/xi-editor">xi-editor</a> during review weeks.
+I interviewed with Wasmedge for an internship, learned about WebAssembly and the ERC20 standard, and my solution was eventually adopted by the community.
+And forked <a rel="nofollow noreferrer" href="https://github.com/PsiACE/riteraft">riteraft</a> and <a rel="nofollow noreferrer" href="https://github.com/PsiACE/ritelinked">ritelinked</a> from Meilisearch and Hashlink, respectively, earning a modest following.
+I also interviewed with PingCAP for <a rel="nofollow noreferrer" href="https://github.com/ti-community-infra/tichi">TiChi</a>, learning Prow deployment the hard way.</p>
+<p>Meanwhile I contributed to <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/databend">Databend</a> across CI, fuzzing, and upstream Arrow and SQL parser changes.
+Back then Databend had maybe ten people.
+I added BohuTANG on WeChat just to learn, yet after my thesis defense he invited me to join.
+We met in Wuhan, and his founder energy was blindingly bright.
+During June and July I sent around forty PRs upstream and downstream.
+That’s how I joined a team determined to build the “Snowflake of China.”
+My first real engineering job began.</p>
+<hr />
+<blockquote>
+<p><em>To be continued — Part 2 will cover 2022 to 2025, from Databend to Apache OpenDAL and beyond.</em></p>
+</blockquote>
 
       </article>
 
@@ -341,8 +388,6 @@
     
   
 
-
-  
 
 
 
@@ -365,14 +410,14 @@
   data-category-id="DIC_kwDOKYGbpM4CZxPW"
   data-mapping="specific"
   
-    data-term="announcing-nebulagraph-mcp-server-v010"
+    data-term="live-a-little-part-1"
   
   data-strict="0"
   data-reactions-enabled="1"
   data-emit-metadata="0"
   data-input-position="top"
   data-theme="https://psiace.me/giscus_light.css"
-  data-lang="zh-CN"
+  data-lang="en"
   data-loading="lazy"
   crossorigin="anonymous"
   async
