@@ -5,8 +5,41 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-10-20T00:00:00+00:00</updated>
+    <updated>2025-11-07T00:00:00+00:00</updated>
     <id>https://psiace.me/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Agent Client Protocol Python SDK — A New Chapter</title>
+        <published>2025-11-07T00:00:00+00:00</published>
+        <updated>2025-11-07T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/acp-python-sdk-new-chapter/"/>
+        <id>https://psiace.me/posts/acp-python-sdk-new-chapter/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/acp-python-sdk-new-chapter/">&lt;p&gt;When I first started working on the &lt;strong&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;agentclientprotocol&#x2F;python-sdk&quot;&gt;Agent Client Protocol Python SDK&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;, it was a small side project born out of curiosity.
+I wanted to understand how coding agents communicate—how state, intent, and messages flow between the client and the agent.&lt;&#x2F;p&gt;
+&lt;p&gt;Over time it grew into something real.
+More developers began to use it—from &lt;strong&gt;Moonshot&lt;&#x2F;strong&gt; to other model companies exploring agent workflows.
+The SDK became more stable, closely tracking the evolving ACP spec and serving as a foundation for real-world integrations.&lt;&#x2F;p&gt;
+&lt;p&gt;Today marks a new chapter.
+The Python SDK has officially moved under the &lt;strong&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;agentclientprotocol&quot;&gt;agentclientprotocol&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; organization, joining the TypeScript, Rust, and Kotlin SDKs as part of the official ecosystem.&lt;&#x2F;p&gt;
+&lt;p&gt;I will keep maintaining and improving it there.
+My focus stays on reliability, clarity, and making it easier for developers to build agentic systems.&lt;&#x2F;p&gt;
+&lt;p&gt;Special thanks to &lt;strong&gt;Sergey Ignatov&lt;&#x2F;strong&gt;, &lt;strong&gt;Anna&lt;&#x2F;strong&gt;, and &lt;strong&gt;Ben&lt;&#x2F;strong&gt; for their trust and support during this transition—and to everyone who has used, contributed to, or shared feedback on this SDK.&lt;&#x2F;p&gt;
+&lt;p&gt;This project started as an experiment, but it has become a shared effort.
+Here is to the next chapter—together.&lt;&#x2F;p&gt;
+&lt;p&gt;— &lt;strong&gt;Chojan Shang (PsiACE)&lt;&#x2F;strong&gt;
+Maintainer, ACP Python SDK&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Live a Little · Part 1 (2016–2021) </title>
         <published>2025-10-20T00:00:00+00:00</published>

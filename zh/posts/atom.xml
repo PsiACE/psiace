@@ -5,8 +5,40 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/zh/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-10-20T00:00:00+00:00</updated>
+    <updated>2025-11-07T00:00:00+00:00</updated>
     <id>https://psiace.me/zh/posts/atom.xml</id>
+    <entry xml:lang="zh">
+        <title>Agent Client Protocol Python SDK 的新篇章</title>
+        <published>2025-11-07T00:00:00+00:00</published>
+        <updated>2025-11-07T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/acp-python-sdk-new-chapter/"/>
+        <id>https://psiace.me/zh/posts/acp-python-sdk-new-chapter/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/acp-python-sdk-new-chapter/">&lt;p&gt;当我最初开始编写 &lt;strong&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;agentclientprotocol&#x2F;python-sdk&quot;&gt;Agent Client Protocol Python SDK&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; 时，它只是一个出于好奇的小项目。
+我想弄清楚 &lt;em&gt;coding agents&lt;&#x2F;em&gt; 是如何交流的——状态、意图与消息在客户端和智能体之间如何流动。&lt;&#x2F;p&gt;
+&lt;p&gt;随着时间推移，它逐渐成长为一个真正有用的项目。
+越来越多的开发者开始使用它，从 &lt;strong&gt;Moonshot&lt;&#x2F;strong&gt; 到其他探索智能体工作流的公司。
+SDK 的架构变得稳定，并持续与 ACP 规范保持同步，成为多种实际集成的基础。&lt;&#x2F;p&gt;
+&lt;p&gt;今天，是一个新的开始。
+Python SDK 已经正式迁移到 &lt;strong&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;agentclientprotocol&quot;&gt;agentclientprotocol&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt; 组织下，与 TypeScript、Rust、Kotlin SDK 一起成为官方生态的一部分。&lt;&#x2F;p&gt;
+&lt;p&gt;我会继续在新组织下维护和改进它，专注于让它更加可靠、简洁、易于集成，让更多开发者能够轻松构建智能体系统。&lt;&#x2F;p&gt;
+&lt;p&gt;特别感谢 &lt;strong&gt;Sergey Ignatov&lt;&#x2F;strong&gt;、&lt;strong&gt;Anna&lt;&#x2F;strong&gt; 和 &lt;strong&gt;Ben&lt;&#x2F;strong&gt; 在整个迁移过程中给予的信任与支持，也感谢所有曾经使用、贡献或反馈过这个项目的开发者们。&lt;&#x2F;p&gt;
+&lt;p&gt;这个项目最初只是一个实验，如今它已成为一个共同的努力。
+愿我们一起迎接新的篇章。&lt;&#x2F;p&gt;
+&lt;p&gt;— &lt;strong&gt;尚卓燃（PsiACE）&lt;&#x2F;strong&gt;
+Maintainer, ACP Python SDK&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="zh">
         <title>Live a Little · 上篇（2016 – 2021）</title>
         <published>2025-10-20T00:00:00+00:00</published>
