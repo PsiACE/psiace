@@ -54,7 +54,7 @@ sundy-li 主导的几次大规模的重构我也有参与，从 reddit 帖子发
 当时的存储访问层是 dal，应该是老赵设计的，但是我们需要兼顾对象存储和 HDFS。
 漩涡建议重写成通用接口，于是他做了 dal2，后来独立出来成为 opendal。
 
-菜菜子做了早期 HDFS 的集成，Databend 也顺势补了 hive 支持。
+菜菜子做了早期 WebHDFS 的集成，Databend 也顺势补了 hive 支持。
 数据公司大抵都有一些类似的需求，opendal 被不少友商关注，在 tison 的帮助下进入基金会孵化。
 
 在 opendal 前，我只是拿工资写开源。
