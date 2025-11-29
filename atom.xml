@@ -56,7 +56,7 @@ Early Databend was a large practice field; I touched most corners and learned ho
 &lt;p&gt;I met Xuanwo when he was handling the website move.
 The storage access layer then was dal, designed by Zhao to favor object storage while staying HDFS friendly.
 Xuanwo suggested a rewrite into a general interface, so dal2 was built and later spun out as opendal.&lt;&#x2F;p&gt;
-&lt;p&gt;Caicaizi built the early HDFS integration; Databend added Hive support on top.
+&lt;p&gt;Cai built the early WebHDFS integration; Databend aslo added Hive support.
 Many data companies had similar needs, so opendal drew attention; with tison&#x27;s help it entered foundation incubation.&lt;&#x2F;p&gt;
 &lt;p&gt;Before opendal I was just a salaried engineer writing open source.
 Here I felt trust and cooperation without a profit goal — “community over code.”&lt;&#x2F;p&gt;
