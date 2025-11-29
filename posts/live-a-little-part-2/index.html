@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="zh">
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
@@ -10,9 +10,9 @@
   
     
   
-  <meta name="description" content="回顾 ACP Python SDK 从小实验成长为官方项目的过程，并聊聊新的阶段。">
+  <meta name="description" content="Fragments from 2021–2025: Databend, OpenDAL, Macau school years, NebulaGraph, and Fusion GraphRAG.">
 
-  <title>Agent Client Protocol Python SDK 的新篇章</title>
+  <title>Live a Little · Part 2 (2021–2025)</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -175,6 +175,42 @@
   <aside>
     
     
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#addenda">Addenda</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#databend">Databend</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#apache-opendal">Apache OpenDAL</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#macau-school-years">Macau School Years</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#nebulagraph">NebulaGraph</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#closing">Closing</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
     
     <button id="back-to-top" aria-label="back to top">
       
@@ -190,11 +226,9 @@
 
 
 
-  
-
 <header>
   <nav>
-    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
   </nav>
 </header>
 
@@ -209,15 +243,15 @@
 "></div>
       
       <article class="prose">
-        <h1>Agent Client Protocol Python SDK 的新篇章</h1>
+        <h1>Live a Little · Part 2 (2021–2025)</h1>
         <div id="post-info">
           <div id="date">
-            <span id="publish">Nov 7, 2025</span>
+            <span id="publish">Nov 29, 2025</span>
             </div>
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/agent-client-protocol"><span>#</span>agent-client-protocol</a><a class="instant" href="https://psiace.me/tags/python"><span>#</span>python</a><a class="instant" href="https://psiace.me/tags/sdk"><span>#</span>sdk</a><a class="instant" href="https://psiace.me/tags/open-source"><span>#</span>open-source</a><a class="instant" href="https://psiace.me/tags/community"><span>#</span>community</a>
+            <a class="instant" href="https://psiace.me/tags/memoir"><span>#</span>Memoir</a><a class="instant" href="https://psiace.me/tags/career"><span>#</span>Career</a>
           </div>
           
 
@@ -227,16 +261,12 @@
 
 
 
-  
-
-
-
-  
-
-
 
 
   
+
+
+
 
   
     
@@ -248,11 +278,13 @@
     
   
 
+  
 
-  <div class="lang-switch" role="navigation" aria-label="语言">
-    <span class="lang-switch__label">语言:</span>
-    <span class="lang-switch__current">中文</span>
-    <a class="lang-switch__link" href="https://psiace.me/posts/acp-python-sdk-new-chapter/">English</a> 
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/live-a-little-part-2/">中文</a> 
   </div>
 
 
@@ -263,19 +295,93 @@
 
         
 
-        <p>当我最初开始编写 <strong><a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol/python-sdk">Agent Client Protocol Python SDK</a></strong> 时，它只是一个出于好奇的小项目。
-我想弄清楚 <em>coding agents</em> 是如何交流的——状态、意图与消息在客户端和智能体之间如何流动。</p>
-<p>随着时间推移，它逐渐成长为一个真正有用的项目。
-越来越多的开发者开始使用它，从 <strong>Moonshot</strong> 到其他探索智能体工作流的公司。
-SDK 的架构变得稳定，并持续与 ACP 规范保持同步，成为多种实际集成的基础。</p>
-<p>今天，是一个新的开始。
-Python SDK 已经正式迁移到 <strong><a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol">agentclientprotocol</a></strong> 组织下，与 TypeScript、Rust、Kotlin SDK 一起成为官方生态的一部分。</p>
-<p>我会继续在新组织下维护和改进它，专注于让它更加可靠、简洁、易于集成，让更多开发者能够轻松构建智能体系统。</p>
-<p>特别感谢 <strong>Sergey Ignatov</strong>、<strong>Anna</strong> 和 <strong>Ben</strong> 在整个迁移过程中给予的信任与支持，也感谢所有曾经使用、贡献或反馈过这个项目的开发者们。</p>
-<p>这个项目最初只是一个实验，如今它已成为一个共同的努力。
-愿我们一起迎接新的篇章。</p>
-<p>— <strong>尚卓燃（PsiACE）</strong>
-Maintainer, ACP Python SDK</p>
+        <p><strong>A Gambler's City Chronicle</strong></p>
+<p>This piece is 2021–2025, the years when most overlaps with friends began.
+2021 was a database boom, 2024 an AI frenzy.
+I caught both, never won big, but stayed at the table.
+From 2022 to 2024 I lived in a gambling city; the title comes from there.
+Names may be missing, but the people are not forgotten.</p>
+<hr />
+<h2 id="addenda">Addenda<a class="zola-anchor" href="#addenda" aria-label="Anchor link for: addenda" style="visibility: hidden;"></a>
+</h2>
+<p>I once wrote some frontend.
+Added the ACF2+ pitch detection algorithm in JS to pitchfinder and built a small audio and visualization demo.
+Tried music OCR: read sheet music, turn it into notes, play with a Java library.
+Did simple image search by extracting features and comparing similarity, testing many combinations out of curiosity.</p>
+<hr />
+<h2 id="databend">Databend<a class="zola-anchor" href="#databend" aria-label="Anchor link for: databend" style="visibility: hidden;"></a>
+</h2>
+<p>I had no database background, was the first new grad, and skipped the interview.
+When people asked how, I had no clear answer; I am just grateful for the trust.</p>
+<p>Work split between engineering and community.
+Engineering was repo-level refactors, dependency upkeep, and occasional new features.
+Community came from liking to write and share; by the time I went back to school it had become a main track.</p>
+<p>Early on I moved tests from source files to external unit tests to make builds faster and cleaner; it worked but added file switching and mental load.
+As the codebase grew, we split things again to improve build parallelism and quality.
+I joined the big refactors led by sundy-li: he found <code>arrow2</code> from a reddit thread, migrated, then rebuilt again after Chi's type-level ideas.</p>
+<p>Cloud work with flaneur and Zhihan taught me cadence through their OKR alignment docs; soon we had an internal cloud prototype we could play with.
+For benchmarks I proposed writing results as json in the repo for visualization.
+Early Databend was a large practice field; I touched most corners and learned how a data system breathes.</p>
+<hr />
+<h2 id="apache-opendal">Apache OpenDAL<a class="zola-anchor" href="#apache-opendal" aria-label="Anchor link for: apache-opendal" style="visibility: hidden;"></a>
+</h2>
+<p>I met Xuanwo when he was handling the website move.
+The storage access layer then was dal, designed by Zhao to favor object storage while staying HDFS friendly.
+Xuanwo suggested a rewrite into a general interface, so dal2 was built and later spun out as opendal.</p>
+<p>Caicaizi built the early HDFS integration; Databend added Hive support on top.
+Many data companies had similar needs, so opendal drew attention; with tison's help it entered foundation incubation.</p>
+<p>Before opendal I was just a salaried engineer writing open source.
+Here I felt trust and cooperation without a profit goal — “community over code.”</p>
+<hr />
+<h2 id="macau-school-years">Macau School Years<a class="zola-anchor" href="#macau-school-years" aria-label="Anchor link for: macau-school-years" style="visibility: hidden;"></a>
+</h2>
+<p>After a year of full-time work I went to Macau for Applied Math and Data Science.
+Maybe it was too much time indoors, maybe feeling not good enough; I wanted to get out.</p>
+<p>Math classes were heavy; convex optimization cost hair but I made it through.
+AI and LLM work entered daily life: Meta's SAM for segmentation, CLIP for interactive captioning, a small nanogpt with tweaks to model structure, optimizers, and schedulers.</p>
+<p>I stayed close to Databend: compiler and Rust optimizations with a few talks; studying lakeFS and HuggingFace data; KubeSphere 4.0 integration and a Databend playground; an online hackathon; most Chinese docs plus an LLM workflow to translate English docs; I even skipped class to join the debate on opening enterprise source.</p>
+<p>At ApacheCon 2023 I met Xuanwo in person; we each gave an OpenDAL talk.
+He sent me wedding candy; I sometimes acted as his merge bot.
+I also met tison, saka, flaneur, xp, and went to the Summer Palace with TCeason.
+Later I met Zhihan and Eric; at Rust conf I finally matched RisingWave IDs to faces.</p>
+<p>In 2024, after a trip to Japan, I focused on a thesis about modern cache replacement for layered storage.
+Talked once with juncheng, who led sieve and s3fifo and kept designs minimal.
+Graduation forced me to narrow focus; my advisor's calm helped.
+I graduated and left Databend.
+My last public talk there was “Caching for Modern Layered Storage.”</p>
+<hr />
+<h2 id="nebulagraph">NebulaGraph<a class="zola-anchor" href="#nebulagraph" aria-label="Anchor link for: nebulagraph" style="visibility: hidden;"></a>
+</h2>
+<p>Leaving Databend meant job hunting again.
+I still wanted data infra and even considered less technical roles.
+The market was cold; two peer companies took me to CXO rounds with no offer.
+Big-tech interviews were flat: interviewers were lukewarm about my background, and I did not lean into algorithms or playbook questions.
+Friends pointed me to web3; offers were high but compliance risks kept me away.</p>
+<p>The turn came at ApacheCon Hangzhou.
+Friends Dinah and Yanli told me NebulaGraph's GenAI team was hiring; the lead was long-time Twitter friend wey-gu.
+The final round with Sherman included a spoken algorithm question — not something I expected in a culture-fit chat.</p>
+<p>Before joining I went to Shanghai for Rust Conf and to spot the office; finally met yihong0618, an interesting soul.
+Met RisingWave friends, including MrCroxx (foyer-rs) and Runji (arrow-udf, later at deepseek).
+Six months later at KCD Beijing I visited their office and tried the dried fish.</p>
+<p>At PyCon China 2024, wey gave a keynote; I met frostming and Jintao and took a photo with pink-haired saka.
+At Rust Conf 2025 I met Leiysky and Andy; they and tison were starting a new product.
+Later that year at PyCon I spoke on coding agents and met many friends from chat groups.</p>
+<p>Side projects:</p>
+<ul>
+<li>First MCP integration for Llama Index, with the initial implementation contributed to the official repo.</li>
+<li>First agentclientprotocol Python SDK, adopted as an official SDK with help from JetBrains friends.</li>
+<li>Visited their Shanghai office and carried home a basket of swag.</li>
+</ul>
+<p>We moved from Pudong to Nanjing West Road, from a dark room to sunlight.
+Dinah left for OceanBase; wey left to build nowledage memory.
+Yanli and I stayed at NebulaGraph, kept working on GraphRAG and agents, and shipped Fusion GraphRAG.
+Shao handled end-to-end evaluation, insisting recall and accuracy come first.
+Fusion GraphRAG keeps onboarding cost close to vector or full-text RAG and reaches 95%+ QA accuracy in some domains.</p>
+<hr />
+<h2 id="closing">Closing<a class="zola-anchor" href="#closing" aria-label="Anchor link for: closing" style="visibility: hidden;"></a>
+</h2>
+<p>Time has moved to late 2025.
+That is about it.</p>
 
       </article>
 
@@ -292,8 +398,6 @@ Maintainer, ACP Python SDK</p>
     
   
 
-
-  
 
 
 
@@ -316,14 +420,14 @@ Maintainer, ACP Python SDK</p>
   data-category-id="DIC_kwDOKYGbpM4CZxPW"
   data-mapping="specific"
   
-    data-term="acp-python-sdk-new-chapter"
+    data-term="live-a-little-part-2"
   
   data-strict="0"
   data-reactions-enabled="1"
   data-emit-metadata="0"
   data-input-position="top"
   data-theme="https://psiace.me/giscus_light.css"
-  data-lang="zh-CN"
+  data-lang="en"
   data-loading="lazy"
   crossorigin="anonymous"
   async
