@@ -1,6 +1,6 @@
 +++
 title = "文章"
-description = "记录智能体工作流、Fusion GraphRAG 与韧性的数据/AI 平台。"
+description = "围绕 AI 系统之下结构层的长文：数据、上下文、能力与生态。"
 sort_by = "date"
 template = "blog.html"
 page_template = "post.html"
@@ -11,7 +11,7 @@ generate_feeds = true
 lang = "zh"
 
 title = "最新文章"
-subtitle = "围绕可落地的 GenAI 平台、智能体工具链与图驱动检索的长文。"
+subtitle = "结构先行，智能其后。"
 
 date_format = "%Y年%m月%d日"
 

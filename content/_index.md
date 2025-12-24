@@ -10,7 +10,7 @@ footer = false
 # If you don't want to display id/bio/avatar, simply comment out that line
 name = "Chojan Shang"
 id = "psiace"
-bio = "Operator-minded engineer building resilient data & AI platforms."
+bio = "AI needs structure. I build it."
 avatar = "img/avatar.png"
 links = [
     { name = "GitHub", icon = "github", url = "https://github.com/psiace" },
@@ -25,9 +25,12 @@ recent_more_text = "more »"
 date_format = "%b %-d, %Y"
 +++
 
-Hi, I'm **Chojan** (PsiACE).
-GenAI engineer at Vesoft (NebulaGraph), leading the NebulaGraph GenAI Platform and driving GraphRAG and agent workflows to production and standardization.
-PMC member at Apache OpenDAL, improving the unified storage interface for usability and stability.
-Previously a founding/core engineer at Databend, contributing to multiple core refactors and community documentation/tutorials.
+Hi, I'm PsiACE, an open-source engineer.
 
-I care about predictable infrastructure and open collaboration that scales contributors.
+I build the structure layer beneath AI systems,
+so intelligence becomes reliable, observable, and reusable.
+
+My work spans data systems, structured context,
+capability protocols, and open-source ecosystems.
+
+**AI needs structure. I build it.**

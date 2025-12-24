@@ -9,7 +9,7 @@ footer = false
 
 name = "尚卓燃"
 id = "psiace"
-bio = "偏爱工程化的系统工程师，关注数据与 AI 基础设施的韧性。"
+bio = "AI 需要结构。我来搭建。"
 avatar = "img/avatar.png"
 links = [
     { name = "GitHub", icon = "github", url = "https://github.com/psiace" },
@@ -24,9 +24,12 @@ recent_more_text = "更多 »"
 date_format = "%Y年%m月%d日"
 +++
 
-你好，我是 **尚卓燃**。
-现任 Vesoft Inc.（NebulaGraph）GenAI 工程师，主导 NebulaGraph GenAI Platform 的工程化落地，推进 GraphRAG 与 Agent Workflow 的实践与标准化。
-同时担任 Apache OpenDAL PMC Member，长期打磨统一存储接口的可用性与稳定性。
-此前是 Databend 创始团队成员，参与多轮核心重构并沉淀文档与社区教程。
+你好，我是 PsiACE，一名开源工程师。
 
-我关注两件事：可预测的基础设施，以及能扩展贡献者的开放协作。
+我在构建 AI 系统之下的结构层，
+让智能变得可靠、可观测、可复用。
+
+我的工作覆盖数据系统、结构化上下文、
+能力协议与开源生态。
+
+**AI 需要结构。我来搭建。**

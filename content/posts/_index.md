@@ -1,6 +1,6 @@
 +++
 title = "Posts"
-description = "Notes on agent workflows, Fusion GraphRAG, and resilient data/AI platforms."
+description = "Long-form on the structure layer beneath AI systems: data, context, capability, and ecosystem."
 sort_by = "date"
 template = "blog.html"
 page_template = "post.html"
@@ -11,7 +11,7 @@ generate_feeds = true
 lang = "en"
 
 title = "Latest Posts"
-subtitle = "Long‑form on production GenAI platforms, agent tooling, and graph‑driven retrieval."
+subtitle = "Structure first. Then intelligence."
 
 date_format = "%b %-d, %Y"
 
