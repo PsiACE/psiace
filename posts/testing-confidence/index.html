@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="zh">
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
@@ -10,9 +10,9 @@
   
     
   
-  <meta name="description" content="让检索和生成协作，编码助手才能真正懂需求、找资料、写代码、修 bug。">
+  <meta name="description" content="Testing sets a trust boundary between maintainers and users by aligning expectations, not chasing coverage.">
 
-  <title>当 RAG 遇上编程助手</title>
+  <title>On Testing Confidence</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -179,42 +179,27 @@
       <ul>
         
         <li>
-          <a class="h2" href="#wei-shen-me-dan-kao-llm-bu-gou">为什么单靠 LLM 不够</a>
+          <a class="h2" href="#testing-is-not-the-same-as-coverage">Testing is not the same as coverage</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#yi-ge-wan-zheng-de-rag-bian-cheng-xun-huan">一个完整的 RAG 编程循环</a>
-          
-          <ul>
-            
-            <li>
-              <a class="h3" href="#ren-wu-cheng-qing">任务澄清</a>
-            </li>
-            
-            <li>
-              <a class="h3" href="#shou-ji-shang-xia-wen">收集上下文</a>
-            </li>
-            
-            <li>
-              <a class="h3" href="#sheng-cheng-sha-xiang-yan-zheng">生成 + 沙箱验证</a>
-            </li>
-            
-            <li>
-              <a class="h3" href="#jiao-fu">交付</a>
-            </li>
-            
-          </ul>
+          <a class="h2" href="#testing-is-a-long-term-constraint-on-semantics">Testing is a long-term constraint on semantics</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#rag-zhen-zheng-jie-jue-de-tong-dian">RAG 真正解决的痛点</a>
+          <a class="h2" href="#testing-aligns-maintainer-judgment-with-user-reality">Testing aligns maintainer judgment with user reality</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#jian-yi-de-zui-jia-shi-jian">建议的最佳实践</a>
+          <a class="h2" href="#testing-confidence-a-shared-understanding-of-failure">Testing confidence: a shared understanding of failure</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#conclusion">Conclusion</a>
           
         </li>
         
@@ -236,11 +221,9 @@
 
 
 
-  
-
 <header>
   <nav>
-    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
   </nav>
 </header>
 
@@ -255,15 +238,15 @@
 "></div>
       
       <article class="prose">
-        <h1>当 RAG 遇上编程助手</h1>
+        <h1>On Testing Confidence</h1>
         <div id="post-info">
           <div id="date">
-            <span id="publish">Jun 18, 2025</span>
+            <span id="publish">Dec 25, 2025</span>
             </div>
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/rag"><span>#</span>RAG</a><a class="instant" href="https://psiace.me/tags/retrieval"><span>#</span>Retrieval</a><a class="instant" href="https://psiace.me/tags/agent"><span>#</span>Agent</a><a class="instant" href="https://psiace.me/tags/coding"><span>#</span>Coding</a><a class="instant" href="https://psiace.me/tags/programming"><span>#</span>Programming</a>
+            <a class="instant" href="https://psiace.me/tags/engineering-confidence"><span>#</span>Engineering Confidence</a>
           </div>
           
 
@@ -272,8 +255,6 @@
           
 
 
-
-  
 
 
 
@@ -295,10 +276,10 @@
   
 
 
-  <div class="lang-switch" role="navigation" aria-label="语言">
-    <span class="lang-switch__label">语言:</span>
-    <span class="lang-switch__current">中文</span>
-    <a class="lang-switch__link" href="https://psiace.me/posts/rag-in-coding-agent/">English</a> 
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/testing-confidence/">中文</a> 
   </div>
 
 
@@ -309,88 +290,108 @@
 
         
 
-        <h2 id="wei-shen-me-dan-kao-llm-bu-gou">为什么单靠 LLM 不够<a class="zola-anchor" href="#wei-shen-me-dan-kao-llm-bu-gou" aria-label="Anchor link for: wei-shen-me-dan-kao-llm-bu-gou" style="visibility: hidden;"></a>
+        <p>In the long process of building software systems that others can rely on, I gradually realized that testing is not merely a QA tool.
+It is an engineering method for establishing a trust boundary between maintainers and users.</p>
+<p>When a system lacks this boundary, complexity does not disappear.
+It shifts into maintainer judgment, user adoption cost, or collaboration friction on both sides.</p>
+<p>For maintainers, tests determine whether a system can keep evolving.
+For users, tests determine whether a system is worth relying on.</p>
+<p>"Testing confidence" does not come from a metric.
+It comes from whether these two perspectives are clearly aligned through tests.</p>
+<h2 id="testing-is-not-the-same-as-coverage">Testing is not the same as coverage<a class="zola-anchor" href="#testing-is-not-the-same-as-coverage" aria-label="Anchor link for: testing-is-not-the-same-as-coverage" style="visibility: hidden;"></a>
 </h2>
-<p>写代码最费时的地方不是敲键盘，而是：</p>
+<p>In practice, testing is often reduced to metrics: coverage, CI pass rate, regression counts.
+These metrics are valuable to maintainers because they reduce uncertainty when changing code.</p>
+<p>But they do not answer the question users really care about:</p>
+<blockquote>
+<p>When a system is placed in real environments, real load, and real dependencies, is its behavior predictable?</p>
+</blockquote>
+<p>Once others use a system, their usage almost always deviates from the designer's intent.
+The value of tests is not to enumerate all paths.
+It is to use executable cases to make expected behavior and boundary conditions explicit and fixed.</p>
+<p>When those boundaries are clear:</p>
 <ul>
-<li>看懂庞大的旧代码；</li>
-<li>在仓库里定位相关文件；</li>
-<li>理解框架的各种约定；</li>
-<li>排查莫名其妙的错误日志。</li>
+<li>Maintainers know which behaviors must not be broken.</li>
+<li>Users know which behaviors they can rely on.</li>
 </ul>
-<p>LLM 虽然能“续写代码”，但不了解上下文，很容易耍流氓。引入 RAG（Retrieval-Augmented Generation）后，助手可以先检索，再生成——像是一个随叫随到的资深同事。</p>
-<h2 id="yi-ge-wan-zheng-de-rag-bian-cheng-xun-huan">一个完整的 RAG 编程循环<a class="zola-anchor" href="#yi-ge-wan-zheng-de-rag-bian-cheng-xun-huan" aria-label="Anchor link for: yi-ge-wan-zheng-de-rag-bian-cheng-xun-huan" style="visibility: hidden;"></a>
+<p>From this perspective, tests are not an accessory to code.
+They are a layer that connects maintainers and users.</p>
+<h2 id="testing-is-a-long-term-constraint-on-semantics">Testing is a long-term constraint on semantics<a class="zola-anchor" href="#testing-is-a-long-term-constraint-on-semantics" aria-label="Anchor link for: testing-is-a-long-term-constraint-on-semantics" style="visibility: hidden;"></a>
 </h2>
-<pre data-lang="mermaid" class="language-mermaid z-code"><code class="language-mermaid" data-lang="mermaid"><span class="z-text z-plain">graph LR
-</span><span class="z-text z-plain">   subgraph TaskInit [1. 任务澄清]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       A[读懂需求] --&gt; B[准备环境]
-</span><span class="z-text z-plain">       B --&gt; C[扫描代码库]
-</span><span class="z-text z-plain">       B --&gt; D[加载规范 &amp; 文档]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph ContextBuild [2. 收集上下文]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       E[查框架/库文档]
-</span><span class="z-text z-plain">       E --&gt; F[找类似代码]
-</span><span class="z-text z-plain">       F --&gt; G[搜问答平台]
-</span><span class="z-text z-plain">       G --&gt; H[拼出知识 Soup]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph CodeWork [3. 生成与验证]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       I[生成补丁] --&gt; J[沙箱运行]
-</span><span class="z-text z-plain">       J --&gt; K[记录结果]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph HandleFeedback [4. 处理反馈]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       L[成功 ✅]
-</span><span class="z-text z-plain">       M[失败 ❌ → 诊断 &amp; 修复]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph Finish [5. 收尾]
-</span><span class="z-text z-plain">       N[交付补丁 + 说明]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   TaskInit --&gt; ContextBuild --&gt; CodeWork --&gt; HandleFeedback
-</span><span class="z-text z-plain">   K --&gt;|成功| L --&gt; Finish
-</span><span class="z-text z-plain">   K --&gt;|失败| M -.-&gt; ContextBuild
-</span></code></pre>
-<h3 id="ren-wu-cheng-qing">任务澄清<a class="zola-anchor" href="#ren-wu-cheng-qing" aria-label="Anchor link for: ren-wu-cheng-qing" style="visibility: hidden;"></a>
-</h3>
-<p>助手先问清楚：“你要的认证是 JWT 还是 OAuth？”、“这个项目用的是 FastAPI 还是 Django？”同时建立工作目录、读取配置、构建代码索引地图。</p>
-<h3 id="shou-ji-shang-xia-wen">收集上下文<a class="zola-anchor" href="#shou-ji-shang-xia-wen" aria-label="Anchor link for: shou-ji-shang-xia-wen" style="visibility: hidden;"></a>
-</h3>
+<p>In Databend, we rely heavily on test cases already validated by existing database systems.
+We also track key benchmarks over the long term to lock in our commitment to established semantics and standards.</p>
+<p>One important fact is this:
+the primary source of system complexity is not implementation difficulty, but the stability of semantics over time.</p>
+<p>For example:</p>
 <ul>
-<li>官方文档、内部 Wiki；</li>
-<li>仓库里已有的相似实现；</li>
-<li>StackOverflow / GitHub Issues 等社区问答；</li>
-<li>团队自定义的编码规范。</li>
+<li>Whether to return a result or an error under certain exceptional conditions.</li>
+<li>Whether different execution paths satisfy the same invariants.</li>
+<li>Whether behaviors that are inelegant but widely used must remain compatible.</li>
 </ul>
-<p>这些信息拼成“知识汤”，保证后续的代码生成有出处可查。</p>
-<h3 id="sheng-cheng-sha-xiang-yan-zheng">生成 + 沙箱验证<a class="zola-anchor" href="#sheng-cheng-sha-xiang-yan-zheng" aria-label="Anchor link for: sheng-cheng-sha-xiang-yan-zheng" style="visibility: hidden;"></a>
-</h3>
-<p>助手在独立环境里动手改代码、跑测试、收集日志。失败了就把上下文补齐再试，成功了就打包结果。</p>
-<h3 id="jiao-fu">交付<a class="zola-anchor" href="#jiao-fu" aria-label="Anchor link for: jiao-fu" style="visibility: hidden;"></a>
-</h3>
-<p>除了最终代码，还要附上：修改说明、需要人工复核的点、关联的文档链接。这样才算一个可落地的工作流。</p>
-<h2 id="rag-zhen-zheng-jie-jue-de-tong-dian">RAG 真正解决的痛点<a class="zola-anchor" href="#rag-zhen-zheng-jie-jue-de-tong-dian" aria-label="Anchor link for: rag-zhen-zheng-jie-jue-de-tong-dian" style="visibility: hidden;"></a>
-</h2>
-<ol>
-<li><strong>定位成本</strong>：海量仓库里精准找到相关文件和上下文。</li>
-<li><strong>解释能力</strong>：能说清“为什么这么写”，而不是只给结论。</li>
-<li><strong>调试反馈</strong>：把报错、日志、外部知识结合在一起分析，而不是盲目试错。</li>
-<li><strong>协作透明度</strong>：知识 Soup 可以存档，方便团队复盘、复用。</li>
-</ol>
-<h2 id="jian-yi-de-zui-jia-shi-jian">建议的最佳实践<a class="zola-anchor" href="#jian-yi-de-zui-jia-shi-jian" aria-label="Anchor link for: jian-yi-de-zui-jia-shi-jian" style="visibility: hidden;"></a>
-</h2>
+<p>If these semantics are not fixed by tests, they become a hidden burden for maintainers.
+Every change then depends on memory and experience to judge, "Will this break something?"</p>
+<p>For users, semantic drift is even more direct.
+The same usage can produce different results across versions.</p>
+<p>Therefore, the role of testing here is not "checking for bugs."
+It is:</p>
 <ul>
-<li><strong>动态检索策略</strong>：通用知识提前缓存，针对性问题再实时检索。</li>
-<li><strong>可观察性</strong>：保留检索到的证据、生成的思路、执行日志，方便人工介入。</li>
-<li><strong>安全护栏</strong>：沙箱执行、写操作白名单、敏感信息脱敏，一个都不能少。</li>
+<li>Providing clear evolution boundaries for maintainers.</li>
+<li>Providing stable behavioral expectations for users.</li>
 </ul>
-<p>RAG 不是银弹，但它让编码助手从“会写代码的聊天机器人”变成“懂上下文的协作者”。当检索、生成、执行、反馈串在一起，开发者才能真正把时间花在创造价值上。</p>
+<p>This is why systems like MySQL and SQLite treat tests as high-value assets.
+Tests carry long-term promises to users.</p>
+<h2 id="testing-aligns-maintainer-judgment-with-user-reality">Testing aligns maintainer judgment with user reality<a class="zola-anchor" href="#testing-aligns-maintainer-judgment-with-user-reality" aria-label="Anchor link for: testing-aligns-maintainer-judgment-with-user-reality" style="visibility: hidden;"></a>
+</h2>
+<p>In Apache OpenDAL's CI, we include hundreds of tests across multiple platforms and services.
+In practice, a single contributor rarely has the time to assemble the full environment of dependencies and services.</p>
+<p>If Databend's tests mainly stabilize internal and external semantics, then in Apache OpenDAL, tests are more about bridging the gap between maintainer judgment and user reality.</p>
+<p>In the object storage ecosystem, many services claim to be "S3 compatible."
+For maintainers, implementing the spec can easily lead to the assumption that the system "should work."</p>
+<p>But users do not operate at the spec level.
+They use real accounts, real services, and real failure modes.
+Many issues surface precisely in that gap between assumption and reality.</p>
+<p>Therefore, in OpenDAL, we insist on:</p>
+<ul>
+<li>Using real services for tests whenever possible.</li>
+<li>Not treating docs or compatibility claims as engineering facts.</li>
+<li>Keeping failure cases long term as part of regression tests.</li>
+</ul>
+<p>The value of these tests is:</p>
+<ul>
+<li>They constrain maintainers' overly optimistic assumptions about the external world.</li>
+<li>They give users a clear signal about which behaviors are validated in real environments and can be relied on.</li>
+</ul>
+<p>Here, tests are not about "proving correctness."
+They are about keeping maintainer judgment consistent with user reality.</p>
+<h2 id="testing-confidence-a-shared-understanding-of-failure">Testing confidence: a shared understanding of failure<a class="zola-anchor" href="#testing-confidence-a-shared-understanding-of-failure" aria-label="Anchor link for: testing-confidence-a-shared-understanding-of-failure" style="visibility: hidden;"></a>
+</h2>
+<p>Across these practices, I have formed a stable view:</p>
+<blockquote>
+<p>Testing confidence is not that a system "rarely fails," but that when failures happen, maintainers and users share a consistent understanding of their nature.</p>
+</blockquote>
+<p>When a behavior is covered by tests:</p>
+<ul>
+<li>For users, a failure means a bug.</li>
+<li>For maintainers, fixing it is a clear engineering responsibility.</li>
+</ul>
+<p>When a behavior is not covered by tests:</p>
+<ul>
+<li>For users, it should not be treated as a system promise.</li>
+<li>For maintainers, it should not be assumed as behavior to keep compatible long term.</li>
+</ul>
+<p>Tests make this distinction clear, executable, and regression-ready.
+They also significantly reduce friction in expectations on both sides.</p>
+<h2 id="conclusion">Conclusion<a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion" style="visibility: hidden;"></a>
+</h2>
+<p>From an engineering perspective, testing is neither a tool only for maintainers nor a mechanism only for users.
+It is a structure that helps both sides reach consensus on the same behavioral boundaries.</p>
+<p>It turns implicit assumptions into explicit constraints.
+It turns personal experience into a sustainable engineering boundary.</p>
+<p>For me, no matter which layer the system lives at, testing ultimately serves one thing:</p>
+<blockquote>
+<p>To make systems predictable when they are depended on,
+and to make maintenance sustainable over the long run.</p>
+</blockquote>
 
       </article>
 
@@ -407,8 +408,6 @@
     
   
 
-
-  
 
 
 
@@ -431,14 +430,14 @@
   data-category-id="DIC_kwDOKYGbpM4CZxPW"
   data-mapping="specific"
   
-    data-term="rag-in-coding-agent"
+    data-term="testing-confidence"
   
   data-strict="0"
   data-reactions-enabled="1"
   data-emit-metadata="0"
   data-input-position="top"
   data-theme="https://psiace.me/giscus_light.css"
-  data-lang="zh-CN"
+  data-lang="en"
   data-loading="lazy"
   crossorigin="anonymous"
   async
@@ -508,11 +507,6 @@
 
   
 <script src="/js/lightense.min.js"></script>
-
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true });
-</script>
 
 
   <script src="https://psiace.me/js/main.js"></script>

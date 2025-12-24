@@ -5,8 +5,129 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-11-29T00:00:00+00:00</updated>
+    <updated>2025-12-25T00:00:00+00:00</updated>
     <id>https://psiace.me/posts/atom.xml</id>
+    <entry xml:lang="en">
+        <title>On Testing Confidence</title>
+        <published>2025-12-25T00:00:00+00:00</published>
+        <updated>2025-12-25T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/testing-confidence/"/>
+        <id>https://psiace.me/posts/testing-confidence/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/testing-confidence/">&lt;p&gt;In the long process of building software systems that others can rely on, I gradually realized that testing is not merely a QA tool.
+It is an engineering method for establishing a trust boundary between maintainers and users.&lt;&#x2F;p&gt;
+&lt;p&gt;When a system lacks this boundary, complexity does not disappear.
+It shifts into maintainer judgment, user adoption cost, or collaboration friction on both sides.&lt;&#x2F;p&gt;
+&lt;p&gt;For maintainers, tests determine whether a system can keep evolving.
+For users, tests determine whether a system is worth relying on.&lt;&#x2F;p&gt;
+&lt;p&gt;&quot;Testing confidence&quot; does not come from a metric.
+It comes from whether these two perspectives are clearly aligned through tests.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;testing-is-not-the-same-as-coverage&quot;&gt;Testing is not the same as coverage&lt;a class=&quot;zola-anchor&quot; href=&quot;#testing-is-not-the-same-as-coverage&quot; aria-label=&quot;Anchor link for: testing-is-not-the-same-as-coverage&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;In practice, testing is often reduced to metrics: coverage, CI pass rate, regression counts.
+These metrics are valuable to maintainers because they reduce uncertainty when changing code.&lt;&#x2F;p&gt;
+&lt;p&gt;But they do not answer the question users really care about:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;When a system is placed in real environments, real load, and real dependencies, is its behavior predictable?&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Once others use a system, their usage almost always deviates from the designer&#x27;s intent.
+The value of tests is not to enumerate all paths.
+It is to use executable cases to make expected behavior and boundary conditions explicit and fixed.&lt;&#x2F;p&gt;
+&lt;p&gt;When those boundaries are clear:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Maintainers know which behaviors must not be broken.&lt;&#x2F;li&gt;
+&lt;li&gt;Users know which behaviors they can rely on.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;From this perspective, tests are not an accessory to code.
+They are a layer that connects maintainers and users.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;testing-is-a-long-term-constraint-on-semantics&quot;&gt;Testing is a long-term constraint on semantics&lt;a class=&quot;zola-anchor&quot; href=&quot;#testing-is-a-long-term-constraint-on-semantics&quot; aria-label=&quot;Anchor link for: testing-is-a-long-term-constraint-on-semantics&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;In Databend, we rely heavily on test cases already validated by existing database systems.
+We also track key benchmarks over the long term to lock in our commitment to established semantics and standards.&lt;&#x2F;p&gt;
+&lt;p&gt;One important fact is this:
+the primary source of system complexity is not implementation difficulty, but the stability of semantics over time.&lt;&#x2F;p&gt;
+&lt;p&gt;For example:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Whether to return a result or an error under certain exceptional conditions.&lt;&#x2F;li&gt;
+&lt;li&gt;Whether different execution paths satisfy the same invariants.&lt;&#x2F;li&gt;
+&lt;li&gt;Whether behaviors that are inelegant but widely used must remain compatible.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;If these semantics are not fixed by tests, they become a hidden burden for maintainers.
+Every change then depends on memory and experience to judge, &quot;Will this break something?&quot;&lt;&#x2F;p&gt;
+&lt;p&gt;For users, semantic drift is even more direct.
+The same usage can produce different results across versions.&lt;&#x2F;p&gt;
+&lt;p&gt;Therefore, the role of testing here is not &quot;checking for bugs.&quot;
+It is:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Providing clear evolution boundaries for maintainers.&lt;&#x2F;li&gt;
+&lt;li&gt;Providing stable behavioral expectations for users.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;This is why systems like MySQL and SQLite treat tests as high-value assets.
+Tests carry long-term promises to users.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;testing-aligns-maintainer-judgment-with-user-reality&quot;&gt;Testing aligns maintainer judgment with user reality&lt;a class=&quot;zola-anchor&quot; href=&quot;#testing-aligns-maintainer-judgment-with-user-reality&quot; aria-label=&quot;Anchor link for: testing-aligns-maintainer-judgment-with-user-reality&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;In Apache OpenDAL&#x27;s CI, we include hundreds of tests across multiple platforms and services.
+In practice, a single contributor rarely has the time to assemble the full environment of dependencies and services.&lt;&#x2F;p&gt;
+&lt;p&gt;If Databend&#x27;s tests mainly stabilize internal and external semantics, then in Apache OpenDAL, tests are more about bridging the gap between maintainer judgment and user reality.&lt;&#x2F;p&gt;
+&lt;p&gt;In the object storage ecosystem, many services claim to be &quot;S3 compatible.&quot;
+For maintainers, implementing the spec can easily lead to the assumption that the system &quot;should work.&quot;&lt;&#x2F;p&gt;
+&lt;p&gt;But users do not operate at the spec level.
+They use real accounts, real services, and real failure modes.
+Many issues surface precisely in that gap between assumption and reality.&lt;&#x2F;p&gt;
+&lt;p&gt;Therefore, in OpenDAL, we insist on:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Using real services for tests whenever possible.&lt;&#x2F;li&gt;
+&lt;li&gt;Not treating docs or compatibility claims as engineering facts.&lt;&#x2F;li&gt;
+&lt;li&gt;Keeping failure cases long term as part of regression tests.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The value of these tests is:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;They constrain maintainers&#x27; overly optimistic assumptions about the external world.&lt;&#x2F;li&gt;
+&lt;li&gt;They give users a clear signal about which behaviors are validated in real environments and can be relied on.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Here, tests are not about &quot;proving correctness.&quot;
+They are about keeping maintainer judgment consistent with user reality.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;testing-confidence-a-shared-understanding-of-failure&quot;&gt;Testing confidence: a shared understanding of failure&lt;a class=&quot;zola-anchor&quot; href=&quot;#testing-confidence-a-shared-understanding-of-failure&quot; aria-label=&quot;Anchor link for: testing-confidence-a-shared-understanding-of-failure&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Across these practices, I have formed a stable view:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Testing confidence is not that a system &quot;rarely fails,&quot; but that when failures happen, maintainers and users share a consistent understanding of their nature.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;When a behavior is covered by tests:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;For users, a failure means a bug.&lt;&#x2F;li&gt;
+&lt;li&gt;For maintainers, fixing it is a clear engineering responsibility.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;When a behavior is not covered by tests:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;For users, it should not be treated as a system promise.&lt;&#x2F;li&gt;
+&lt;li&gt;For maintainers, it should not be assumed as behavior to keep compatible long term.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Tests make this distinction clear, executable, and regression-ready.
+They also significantly reduce friction in expectations on both sides.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;a class=&quot;zola-anchor&quot; href=&quot;#conclusion&quot; aria-label=&quot;Anchor link for: conclusion&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;From an engineering perspective, testing is neither a tool only for maintainers nor a mechanism only for users.
+It is a structure that helps both sides reach consensus on the same behavioral boundaries.&lt;&#x2F;p&gt;
+&lt;p&gt;It turns implicit assumptions into explicit constraints.
+It turns personal experience into a sustainable engineering boundary.&lt;&#x2F;p&gt;
+&lt;p&gt;For me, no matter which layer the system lives at, testing ultimately serves one thing:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;To make systems predictable when they are depended on,
+and to make maintenance sustainable over the long run.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Live a Little · Part 2 (2021–2025)</title>
         <published>2025-11-29T00:00:00+00:00</published>
