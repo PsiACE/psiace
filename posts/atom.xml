@@ -5,8 +5,107 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-12-25T00:00:00+00:00</updated>
+    <updated>2025-12-31T00:00:00+00:00</updated>
     <id>https://psiace.me/posts/atom.xml</id>
+    <entry xml:lang="en">
+        <title>My 2025: The Fifth Year of All-in DB</title>
+        <published>2025-12-31T00:00:00+00:00</published>
+        <updated>2025-12-31T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/my-2025-all-in-db-year-5/"/>
+        <id>https://psiace.me/posts/my-2025-all-in-db-year-5/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/my-2025-all-in-db-year-5/">&lt;p&gt;If I had not sprained my ankle on Labor Day in 2021, I might not have walked the path
+from lakehouse cloud-native to vector multimodal AI native.
+Yes, 2025 marks my fifth year of grinding in the database industry.
+It is year-end reflection time again.
+I recently did a hard retcon of my own history, but the ritual still matters.
+This time I want to talk more about myself.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;just-talking-about-work&quot;&gt;Just Talking About Work&lt;a class=&quot;zola-anchor&quot; href=&quot;#just-talking-about-work&quot; aria-label=&quot;Anchor link for: just-talking-about-work&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;I still work at a database company.
+Yes, &quot;still&quot; means I switched again.
+At the end of December, I joined OceanBase to work on open-source projects around
+databases and the AI ecosystem.
+This is the third database company in my career.&lt;&#x2F;p&gt;
+&lt;p&gt;For most of 2025 I worked on GraphRAG at NebulaGraph.
+Even though the track is crowded and no longer hot, my team and I still delivered a solid answer
+over the past year — 95% accuracy in domain-specific evaluations, and overall cost reduced to a
+level comparable to vector plus full-text hybrid indexes.
+It almost paved the road for wider adoption of graph-based document RAG.&lt;&#x2F;p&gt;
+&lt;p&gt;Work-driven outputs also created some positive impact.
+In March, when I researched MCP integration, I designed and implemented the first MCP
+integration in the LlamaIndex ecosystem, and contributed it upstream as llama-index-tools-mcp.
+After the community refined it further, it became a top 2% download package in the Python ecosystem.&lt;&#x2F;p&gt;
+&lt;p&gt;I am not a workaholic or a researcher.
+If we talk about code taste, among the colleagues I have worked with, I am probably just average.
+Even so, I can still shine.
+In the NebulaGraph community awards at the end of 2025, I was recognized by my peers.
+Thanks to everyone for the support and help.
+Though our paths are far apart, we will meet again.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;may-open-source-bless-us&quot;&gt;May Open Source Bless Us&lt;a class=&quot;zola-anchor&quot; href=&quot;#may-open-source-bless-us&quot; aria-label=&quot;Anchor link for: may-open-source-bless-us&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Because the GenAI platform I work on is a commercial product, my open-source participation
+has changed.
+More often now, I do things from the angle of requirement research and delivery.
+The llama-index-tools-mcp mentioned above is one such result.&lt;&#x2F;p&gt;
+&lt;p&gt;I also explored coding agents.
+Following ampcode&#x27;s article, I made a simple Python implementation.
+Later explorations became the foundation of my PyCon China 2025 talk,
+&quot;Building a Multi-Agent Collaborative CLI Coding Assistant from Scratch.&quot;&lt;&#x2F;p&gt;
+&lt;p&gt;As a snippet from that talk, I introduced a Python SDK I wrote for the agent client protocol.
+I never expected that a few months later it would be integrated by kimi-cli, openhands, and others,
+and eventually become part of the official SDK.
+Monthly downloads passed one million, and I gained a new role as a maintainer.&lt;&#x2F;p&gt;
+&lt;p&gt;I also put work into Apache projects.
+I split several OpenDAL subprojects out of the repo, and recently spent some late nights
+on the Rust implementation of DataSketches.&lt;&#x2F;p&gt;
+&lt;p&gt;Open source might not be better or worse with me in it, but I do draw nourishment and momentum
+from it.
+The good things I once had seem to have come alongside open source.
+Even so, I still have too many promises left behind and failed to deliver.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;toward-a-better-life&quot;&gt;Toward a Better Life&lt;a class=&quot;zola-anchor&quot; href=&quot;#toward-a-better-life&quot; aria-label=&quot;Anchor link for: toward-a-better-life&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;The most important change this year is that, because I moved to Hangzhou for work at the end
+of the year, I finally ended a four-year long-distance relationship, now in its eighth year.
+I also unlocked more memories with my girlfriend, like practicing &quot;goldfish mouth&quot; at G.E.M.&#x27;s
+concert, and getting fan-made materials from wmls at a Mayday concert.&lt;&#x2F;p&gt;
+&lt;p&gt;I tried to pick up new skills through learning.
+I can still only play &quot;Lan Hua Cao&quot; by following the sheet, but at least I can recognize
+my guitar chords again.
+I practiced house dance for a while.
+Keeping up with other people&#x27;s rhythm is already a big challenge for me, but moving with the beat
+always helps me relax.&lt;&#x2F;p&gt;
+&lt;p&gt;I have two not-so-cute cats.
+For a while they would scratch the door open at midnight and jump onto me to rave.
+Honestly, I have not taken good enough care of them.
+But Goji still shows me his little belly, and Aloe has been willing to come over for a tiny bite
+of cat treat after we moved to Hangzhou.&lt;&#x2F;p&gt;
+&lt;p&gt;Life, oh life.
+Days and nights, but when I pick up the pen I do not know what to write.
+Things are okay, no big storms.
+In a recent checkup, I did not see fatty liver on the report anymore.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;a-few-lines-for-ai&quot;&gt;A Few Lines for AI&lt;a class=&quot;zola-anchor&quot; href=&quot;#a-few-lines-for-ai&quot; aria-label=&quot;Anchor link for: a-few-lines-for-ai&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Aside from some changes in efficiency, process, and rhythm, my work and life have not been
+stirred much by AI.
+Value does not shift dramatically just because one or two tools are added.&lt;&#x2F;p&gt;
+&lt;p&gt;I do not plan to count how much code I generated with AI, or how many tokens or dollars I spent
+in the past year.
+But, rarely, this is a piece of writing typed 100% by me.&lt;&#x2F;p&gt;
+&lt;p&gt;The world is going through profound change.
+I am honored to be part of it, one wave among countless, breaking against a rock.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>On Testing Confidence</title>
         <published>2025-12-25T00:00:00+00:00</published>

@@ -5,8 +5,97 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/zh/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-12-25T00:00:00+00:00</updated>
+    <updated>2025-12-31T00:00:00+00:00</updated>
     <id>https://psiace.me/zh/posts/atom.xml</id>
+    <entry xml:lang="zh">
+        <title>我的 2025：All in DB 的第五年</title>
+        <published>2025-12-31T00:00:00+00:00</published>
+        <updated>2025-12-31T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/my-2025-all-in-db-year-5/"/>
+        <id>https://psiace.me/zh/posts/my-2025-all-in-db-year-5/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/my-2025-all-in-db-year-5/">&lt;p&gt;如果 21 年的五一没有崴到脚，我可能也不会一路从湖仓一体云原生走到向量多模 AI Native。
+是的，2025 年是我在数据库行业摸爬滚打的第五个年头。
+又到写年终总结的时候了，虽然前段时间狠狠地搞了一下「岁月史书」，但是该有的仪式感还是要的。&lt;&#x2F;p&gt;
+&lt;p&gt;这次多谈谈自己。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;zhi-shi-tan-tan-gong-zuo&quot;&gt;只是谈谈工作&lt;a class=&quot;zola-anchor&quot; href=&quot;#zhi-shi-tan-tan-gong-zuo&quot; aria-label=&quot;Anchor link for: zhi-shi-tan-tan-gong-zuo&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;我还是在一家数据库公司工作。
+是的，「还是」意味着我又一次切换了工作。
+12 月底的时候，我加入 OceanBase 从事数据库和 AI 生态相关的开源工作，
+这已经是我职业生涯中的第三家数据库公司。&lt;&#x2F;p&gt;
+&lt;p&gt;当然，在 NebulaGraph 做 GraphRAG 占据了 2025 的绝大多数时间。
+尽管这个赛道已经过度拥挤并且不再火热，但我和团队里的其他同学在过去一年里还是交出了一份不错的答卷——
+在特定领域的客户评测中能够达到 95% 的准确率，
+总体开销也降低至可以对标向量全文混合索引，
+几乎为基于图的文档类 RAG 的广泛应用铺平了道路。&lt;&#x2F;p&gt;
+&lt;p&gt;至于工作派生出的产出也产生了一些积极的影响。
+比如在 3 月份我调研集成 MCP 的时候，
+设计和实现了 LlamaIndex 生态中的第一个 MCP 集成方案，
+并且以 llama-index-tools-mcp 的形式贡献给上游。
+在由社区进一步开发完善后，它成为了整个 Python 生态中下载量排在前 2% 的包。&lt;&#x2F;p&gt;
+&lt;p&gt;我算不上一个醉心工作和研究的人。
+若论代码品味，在过往共事过的同事中似乎也只算一般。
+即便这样的我，也可以发光发热。
+在 2025 年底的 NebulaGraph 社区评选中，也获得同事的肯定。
+非常感谢大家的提携和帮忙，尽管江湖路远，终究还是会有机会再见面。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;yuan-kai-yuan-bi-you-ni-wo&quot;&gt;愿开源庇佑你我&lt;a class=&quot;zola-anchor&quot; href=&quot;#yuan-kai-yuan-bi-you-ni-wo&quot; aria-label=&quot;Anchor link for: yuan-kai-yuan-bi-you-ni-wo&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;由于工作从事的 GenAI 平台是一个商业化产品，我参与开源的模式也发生了改变，
+更多时候会从需求调研和落地的角度做一些事情，
+前述的 llama-index-tools-mcp 就是这样的一个产物。&lt;&#x2F;p&gt;
+&lt;p&gt;当然，我围绕 coding agent 做过一些探索。
+参照 ampcode 的文章做了一个简单的 Python 实现，
+它的后续演进的一些探索成为了在 PyCon China 2025 上的分享
+《从 0 开始构建多 Agent 协作的命令行编程助手》的基石。&lt;&#x2F;p&gt;
+&lt;p&gt;作为演讲中的一个片段，我介绍了自己为 agent client protocol 做的 Python SDK。
+没有想过几个月后它会被 kimi-cli、openhands 等集成，
+并且最终成为官方 SDK 的一员，单月下载量过百万，我也多刷新出一个新的维护者的身份。&lt;&#x2F;p&gt;
+&lt;p&gt;我在 Apache 项目上也有一些投入。
+将 OpenDAL 的几个子项目从 Repo 中拆了出来，
+最近又在 DataSketches 的 Rust 实现上投入了一些无处安放的夜晚。&lt;&#x2F;p&gt;
+&lt;p&gt;开源是否有我并不见得会更好或更糟糕，但我确确实实会从中汲取养分和动力。
+哪些我曾经拥有过的美好一切，似乎就是在和开源伴生而来。
+尽管我还有太多承诺过的事情被抛在脑后，没有办法及时兑现。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;ben-xiang-geng-mei-hao-de-sheng-huo&quot;&gt;奔向更美好的生活&lt;a class=&quot;zola-anchor&quot; href=&quot;#ben-xiang-geng-mei-hao-de-sheng-huo&quot; aria-label=&quot;Anchor link for: ben-xiang-geng-mei-hao-de-sheng-huo&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;今年最重要的改变是：由于年底换到杭州工作，我总算结束了长达 4 年的异地恋爱，在第 8 个年头。
+也解锁了更多和女朋友的美好的回忆，
+比如在邓紫棋的演唱会上练习金鱼嘴，在五月天的演唱会被 wmls 投喂物料。&lt;&#x2F;p&gt;
+&lt;p&gt;尝试通过学习来收获一些新技能。
+虽然现在也还只是停留看着谱子弹《兰花草》的水平，
+但至少又再一次能认得吉他和弦了。
+练习了一段时间 house 舞种，
+尽管跟上其他人的节奏对我已经是一个非常大的挑战，
+但跟着节奏摇摆总是能让心情得到放松。&lt;&#x2F;p&gt;
+&lt;p&gt;我有两只不那么可爱的猫咪。
+有段时间一到凌晨就会扒拉开门跑到我的身上蹦迪。
+坦白说，我没有把它们照顾很好。
+但是枸杞还是一如既往地向我展露它的小肚皮，
+芦荟在搬家到杭州以后也愿意偶尔凑过来吃一点点猫条。&lt;&#x2F;p&gt;
+&lt;p&gt;生活啊，生活呵。
+日日夜夜，但是提笔就不知道要写些什么了。
+过得还算安好，也无甚风雨。
+不久前的体检里似乎也没有再看到脂肪肝的影子。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;liu-yi-xie-bi-mo-gei-ai&quot;&gt;留一些笔墨给 AI&lt;a class=&quot;zola-anchor&quot; href=&quot;#liu-yi-xie-bi-mo-gei-ai&quot; aria-label=&quot;Anchor link for: liu-yi-xie-bi-mo-gei-ai&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;除了一些效率、流程和节奏上的变化，我的工作和生活并没有因为 AI 而产生更多的波澜，
+毕竟价值并不会因为多了一两个工具的介入就发生显著的偏移。&lt;&#x2F;p&gt;
+&lt;p&gt;我没有打算统计我有多少代码是使用 AI 生成，过去一年到底花费了多少 token 或者费用。
+但是，难得地，这是一篇 100% 我手打的文字。&lt;&#x2F;p&gt;
+&lt;p&gt;世界在发生着深刻的变革，很荣幸能够参与其中，作为无数浪花中拍在石头上的一朵。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="zh">
         <title>聊聊测试自信</title>
         <published>2025-12-25T00:00:00+00:00</published>
