@@ -10,9 +10,9 @@
   
     
   
-  <meta name="description" content="Fragments from 2021–2025: Databend, OpenDAL, Macau school years, NebulaGraph, and Fusion GraphRAG.">
+  <meta name="description" content="An Agent has only one deterministic session. It is perpetual—never ending, never forking, only moving forward.">
 
-  <title>Live a Little · Part 2 (2021–2025)</title>
+  <title>Reinventing the Punch Tape</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -179,32 +179,22 @@
       <ul>
         
         <li>
-          <a class="h2" href="#addenda">Addenda</a>
+          <a class="h2" href="#tl-dr">TL;DR</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#databend">Databend</a>
+          <a class="h2" href="#the-endless-tape">The Endless Tape</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#apache-opendal">Apache OpenDAL</a>
+          <a class="h2" href="#the-wheel-rolls-forward">The Wheel Rolls Forward</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#macau-school-years">Macau School Years</a>
-          
-        </li>
-        
-        <li>
-          <a class="h2" href="#nebulagraph">NebulaGraph</a>
-          
-        </li>
-        
-        <li>
-          <a class="h2" href="#closing">Closing</a>
+          <a class="h2" href="#the-new-punch-tape-computer">The New Punch Tape Computer</a>
           
         </li>
         
@@ -243,15 +233,15 @@
 "></div>
       
       <article class="prose">
-        <h1>Live a Little · Part 2 (2021–2025)</h1>
+        <h1>Reinventing the Punch Tape</h1>
         <div id="post-info">
           <div id="date">
-            <span id="publish">Nov 29, 2025</span>
+            <span id="publish">Jan 28, 2026</span>
             </div>
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/memoir"><span>#</span>Memoir</a><a class="instant" href="https://psiace.me/tags/career"><span>#</span>Career</a>
+            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/memory"><span>#</span>memory</a><a class="instant" href="https://psiace.me/tags/context"><span>#</span>context</a><a class="instant" href="https://psiace.me/tags/architecture"><span>#</span>architecture</a><a class="instant" href="https://psiace.me/tags/log"><span>#</span>log</a><a class="instant" href="https://psiace.me/tags/session"><span>#</span>session</a>
           </div>
           
 
@@ -269,8 +259,6 @@
 
 
   
-
-  
     
     
     
@@ -280,11 +268,13 @@
     
   
 
+  
+
 
   <div class="lang-switch" role="navigation" aria-label="Language">
     <span class="lang-switch__label">Language:</span>
     <span class="lang-switch__current">English</span>
-    <a class="lang-switch__link" href="https://psiace.me/zh/posts/live-a-little-part-2/">中文</a> 
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/reinvent-the-punch-tape/">中文</a> 
   </div>
 
 
@@ -295,93 +285,43 @@
 
         
 
-        <p><strong>A Gambler's City Chronicle</strong></p>
-<p>This piece is 2021–2025, the years when most overlaps with friends began.
-2021 was a database boom, 2024 an AI frenzy.
-I caught both, never won big, but stayed at the table.
-From 2022 to 2024 I lived in a gambling city; the title comes from there.
-Names may be missing, but the people are not forgotten.</p>
-<hr />
-<h2 id="addenda">Addenda<a class="zola-anchor" href="#addenda" aria-label="Anchor link for: addenda" style="visibility: hidden;"></a>
+        <blockquote>
+<p>Hi, I'm <a rel="nofollow noreferrer" href="https://github.com/PsiACE">PsiACE</a>. This idea was born about 4 months ago when I was still working toward better GraphRAG. I have some experience with Agents and databases over the past few years—feel free to read my previous posts.</p>
+</blockquote>
+<h2 id="tl-dr">TL;DR<a class="zola-anchor" href="#tl-dr" aria-label="Anchor link for: tl-dr" style="visibility: hidden;"></a>
 </h2>
-<p>I once wrote some frontend.
-Added the ACF2+ pitch detection algorithm in JS to pitchfinder and built a small audio and visualization demo.
-Tried music OCR: read sheet music, turn it into notes, play with a Java library.
-Did simple image search by extracting features and comparing similarity, testing many combinations out of curiosity.</p>
-<hr />
-<h2 id="databend">Databend<a class="zola-anchor" href="#databend" aria-label="Anchor link for: databend" style="visibility: hidden;"></a>
+<p>Agent systems tend to grow complex: forking, rollback, short-term and long-term memory, carefully designed compression and truncation.</p>
+<p>The more engineering invested, the harder the behavior becomes to predict. I think it's time to reinvent the punch tape: an Agent has only one deterministic session. It is perpetual—never ending, never forking, only moving forward. On this endless punch tape, you can always reliably retrieve the small piece of context you need most at that moment.</p>
+<p><strong>Let interactions happen as naturally as in the real world.</strong></p>
+<p>Real human interaction never truly forks into multiple equally real timelines, nor does it erase what has happened through rollback. Conversations may wander off-topic, correct mistakes, switch tasks, or start a new phase—but they always happen along the same continuous timeline.</p>
+<h2 id="the-endless-tape">The Endless Tape<a class="zola-anchor" href="#the-endless-tape" aria-label="Anchor link for: the-endless-tape" style="visibility: hidden;"></a>
 </h2>
-<p>I had no database background, was the first new grad, and skipped the interview.
-When people asked how, I had no clear answer; I am just grateful for the trust.</p>
-<p>Work split between engineering and community.
-Engineering was repo-level refactors, dependency upkeep, and occasional new features.
-Community came from liking to write and share; by the time I went back to school it had become a main track.</p>
-<p>Early on I moved tests from source files to external unit tests to make builds faster and cleaner; it worked but added file switching and mental load.
-As the codebase grew, we split things again to improve build parallelism and quality.
-I joined the big refactors led by sundy-li: he found <code>arrow2</code> from a reddit thread, migrated, then rebuilt again after Chi's type-level ideas.</p>
-<p>Cloud work with flaneur and Zhihan taught me cadence through their OKR alignment docs; soon we had an internal cloud prototype we could play with.
-For benchmarks I proposed writing results as json in the repo for visualization.
-Early Databend was a large practice field; I touched most corners and learned how a data system breathes.</p>
-<hr />
-<h2 id="apache-opendal">Apache OpenDAL<a class="zola-anchor" href="#apache-opendal" aria-label="Anchor link for: apache-opendal" style="visibility: hidden;"></a>
+<p><strong>The foundation of an Agent should be a long tape</strong>—yes, a log.</p>
+<p>Beyond simple conversation history, the log should record what happened: a tool result, a key decision, a phase transition—all written as facts. Once a fact is written, it is never modified or replaced with a lossy substitute.</p>
+<p>You can always go back to any point in time and see what actually happened—not a version that was later revised, compressed, or rewritten. The purpose of the log is not just to let the model read through history, but to make the Agent's behavior easier to verify.</p>
+<p>On top of this long tape, <strong>the Agent computes state</strong>.</p>
+<p>Naturally, we should use state computed from the log—instead of "memory"—to support queries and context assembly, rather than replacing facts with summaries or compressed content. It's somewhat like a materialized view in a database: it can be discarded, it can be rebuilt, and it should be able to explain where each piece of state comes from.</p>
+<p>At any moment, the system simply picks a new starting point, rebuilds state from the log, and continues execution.</p>
+<p>Anchors are introduced precisely for this purpose.</p>
+<p>If you rebuild state from the beginning of the log every time, the system eventually becomes unwieldy and hits context limits. <strong>Anchors provide a set of explicit rebuild starting points</strong>, expressing "from here, the state is stable enough to continue working." Anchors don't delete history, nor do they summarize it—they just tell the system where to start counting.</p>
+<p>An anchor is typically created by a handoff. When the Agent recognizes that the phase has changed, or that continuing from the current rebuild starting point would make state messy, it performs a handoff: it writes the minimal structured state still necessary for the next phase into the log, creates a new anchor, and subsequent state rebuilds start from that new anchor.</p>
+<p>What gets packaged here is not a summary of history, but state oriented toward the next phase; history remains complete in the log. The thread doesn't break, nor does it fork—it just keeps moving forward.</p>
+<h2 id="the-wheel-rolls-forward">The Wheel Rolls Forward<a class="zola-anchor" href="#the-wheel-rolls-forward" aria-label="Anchor link for: the-wheel-rolls-forward" style="visibility: hidden;"></a>
 </h2>
-<p>I met Xuanwo when he was handling the website move.
-The storage access layer then was dal, designed by Zhao to favor object storage while staying HDFS friendly.
-Xuanwo suggested a rewrite into a general interface, so dal2 was built and later spun out as opendal.</p>
-<p>Cai built the early WebHDFS integration; Databend aslo added Hive support.
-Many data companies had similar needs, so opendal drew attention; with tison's help it entered foundation incubation.</p>
-<p>Before opendal I was just a salaried engineer writing open source.
-Here I felt trust and cooperation without a profit goal — “community over code.”</p>
-<hr />
-<h2 id="macau-school-years">Macau School Years<a class="zola-anchor" href="#macau-school-years" aria-label="Anchor link for: macau-school-years" style="visibility: hidden;"></a>
+<p><strong>Agents don't really fork.</strong></p>
+<p>Forking essentially creates multiple equally real futures, but the real world has only one "now." You can change direction, but you can't branch what has already happened into another timeline.</p>
+<p>Many scenarios that seem to require forking are more naturally expressed as handoffs. You don't need to create a parallel thread—you just acknowledge that you've entered a new phase. You're still moving forward on the same thread, just rebuilding state from a new anchor. The past still exists in the log, ready to be queried and referenced at any time, but it doesn't need to become a parallel world.</p>
+<p>Similarly, <strong>Agents don't really roll back.</strong></p>
+<p>Rollback means undoing what has already happened, but in real interaction, correction isn't done by erasing the past—it's done by adding new facts. From an engineering perspective, rollback changes state, but we only allow state to be changed by new facts; we don't allow old facts to disappear.</p>
+<p>The essence of "rollback requirements" is a context assembly problem. You want to ignore certain fragments in this execution, emphasize others, and guide the model to reason in a different direction. This doesn't require modifying the log or returning to an old state—it just requires selecting a different working set when assembling context.</p>
+<p><strong>Agents also don't really rely on various "memory tricks."</strong></p>
+<p>Multi-layer summaries, repeated compression, and complex heuristics may work in the short term, but over time they introduce noise, uncertainty, and inexplicability. It becomes harder and harder to distinguish what is fact, what is a model-generated generalization, and what is residual error from compression.</p>
+<p>Retrieval and recall from history are still necessary. You can pull original text fragments from the same thread's history, or pull evidence from external data sources, and temporarily assemble them into the current context. But lossy compression should never quietly replace history.</p>
+<h2 id="the-new-punch-tape-computer">The New Punch Tape Computer<a class="zola-anchor" href="#the-new-punch-tape-computer" aria-label="Anchor link for: the-new-punch-tape-computer" style="visibility: hidden;"></a>
 </h2>
-<p>After a year of full-time work I went to Macau for Applied Math and Data Science.
-Maybe it was too much time indoors, maybe feeling not good enough; I wanted to get out.</p>
-<p>Math classes were heavy; convex optimization cost hair but I made it through.
-AI and LLM work entered daily life: Meta's SAM for segmentation, CLIP for interactive captioning, a small nanogpt with tweaks to model structure, optimizers, and schedulers.</p>
-<p>I stayed close to Databend: compiler and Rust optimizations with a few talks; studying lakeFS and HuggingFace data; KubeSphere 4.0 integration and a Databend playground; an online hackathon; most Chinese docs plus an LLM workflow to translate English docs; I even skipped class to join the debate on opening enterprise source.</p>
-<p>At ApacheCon 2023 I met Xuanwo in person; we each gave an OpenDAL talk.
-He sent me wedding candy; I sometimes acted as his merge bot.
-I also met tison, saka, flaneur, xp, and went to the Summer Palace with TCeason.
-Later I met Zhihan and Eric; at Rust conf I finally matched RisingWave IDs to faces.</p>
-<p>In 2024, after a trip to Japan, I focused on a thesis about modern cache replacement for layered storage.
-Talked once with juncheng, who led sieve and s3fifo and kept designs minimal.
-Graduation forced me to narrow focus; my advisor's calm helped.
-I graduated and left Databend.
-My last public talk there was “Caching for Modern Layered Storage.”</p>
-<hr />
-<h2 id="nebulagraph">NebulaGraph<a class="zola-anchor" href="#nebulagraph" aria-label="Anchor link for: nebulagraph" style="visibility: hidden;"></a>
-</h2>
-<p>Leaving Databend meant job hunting again.
-I still wanted data infra and even considered less technical roles.
-The market was cold; two peer companies took me to CXO rounds with no offer.
-Big-tech interviews were flat: interviewers were lukewarm about my background, and I did not lean into algorithms or playbook questions.
-Friends pointed me to web3; offers were high but compliance risks kept me away.</p>
-<p>The turn came at ApacheCon Hangzhou.
-Friends Dinah and Yanli told me NebulaGraph's GenAI team was hiring; the lead was long-time Twitter friend wey-gu.
-The final round with Sherman included a spoken algorithm question — not something I expected in a culture-fit chat.</p>
-<p>Before joining I went to Shanghai for Rust Conf and to spot the office; finally met yihong0618, an interesting soul.
-Met RisingWave friends, including MrCroxx (foyer-rs) and Runji (arrow-udf, later at deepseek).
-Six months later at KCD Beijing I visited their office and tried the dried fish.</p>
-<p>At PyCon China 2024, wey gave a keynote; I met frostming and Jintao and took a photo with pink-haired saka.
-At Rust Conf 2025 I met Leiysky and Andy; they and tison were starting a new product.
-Later that year at PyCon I spoke on coding agents and met many friends from chat groups.</p>
-<p>Side projects:</p>
-<ul>
-<li>First MCP integration for Llama Index, with the initial implementation contributed to the official repo.</li>
-<li>First agentclientprotocol Python SDK, adopted as an official SDK with help from JetBrains friends.</li>
-<li>Visited their Shanghai office and carried home a basket of swag.</li>
-</ul>
-<p>We moved from Pudong to Nanjing West Road, from a dark room to sunlight.
-Dinah left for OceanBase; wey left to build nowledage memory.
-Yanli and I stayed at NebulaGraph, kept working on GraphRAG and agents, and shipped Fusion GraphRAG.
-Shao handled end-to-end evaluation, insisting recall and accuracy come first.
-Fusion GraphRAG keeps onboarding cost close to vector or full-text RAG and reaches 95%+ QA accuracy in some domains.</p>
-<hr />
-<h2 id="closing">Closing<a class="zola-anchor" href="#closing" aria-label="Anchor link for: closing" style="visibility: hidden;"></a>
-</h2>
-<p>Time has moved to late 2025.
-That is about it.</p>
+<p>This design thus becomes simple.</p>
+<p>Maintain an endlessly forward-moving thread, continuously appending facts. Use anchors to express phase transitions, use context assembly to control the window for each execution, allow on-demand reading from history and external data sources, and prevent lossy results from becoming new truth.</p>
+<p>Agents should fully leverage everything we've built in storage, computation, and other domains. "More reliable interaction" will beat "smarter memory."</p>
 
       </article>
 
@@ -420,7 +360,7 @@ That is about it.</p>
   data-category-id="DIC_kwDOKYGbpM4CZxPW"
   data-mapping="specific"
   
-    data-term="live-a-little-part-2"
+    data-term="reinvent-the-punch-tape"
   
   data-strict="0"
   data-reactions-enabled="1"

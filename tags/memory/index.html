@@ -9,9 +9,9 @@ en">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
   
-  <meta name="description" content="Tags">
+  <meta name="description" content="memory">
 
-  <title>Tags</title>
+  <title>Posts</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -146,7 +146,7 @@ en">
   
 </head>
 
-<body class="tag-list">
+<body class="tag-single">
   
   <script>
     const theme = sessionStorage.getItem('theme');
@@ -173,61 +173,20 @@ en">
 
 <header>
   <nav>
-    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me">← Back</a>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags">← Back</a>
   </nav>
 </header>
 
-  <main>
-    <h1 class="title">Tags</h1>
-    <div class="tags">
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;acp&#x2F;"># acp</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;agent&#x2F;"># agent</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;agent-client-protocol&#x2F;"># agent-client-protocol</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;ai&#x2F;"># ai</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;architecture&#x2F;"># architecture</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;career&#x2F;"># career</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;cloudflare&#x2F;"># cloudflare</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;code-agents&#x2F;"># code agents</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;coding&#x2F;"># coding</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;community&#x2F;"># community</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;context&#x2F;"># context</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;crud&#x2F;"># crud</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;devrel&#x2F;"># devrel</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;engineering-confidence&#x2F;"># engineering confidence</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;event-driven&#x2F;"># event-driven</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;eventure&#x2F;"># eventure</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;huey&#x2F;"># huey</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;llama-index&#x2F;"># llama-index</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;llamaindex&#x2F;"># llamaindex</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;llm&#x2F;"># llm</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;log&#x2F;"># log</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;make-some-noise&#x2F;"># make some noise</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;mcp&#x2F;"># mcp</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;memoir&#x2F;"># memoir</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;memory&#x2F;"># memory</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;multimodal&#x2F;"># multimodal</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;nebulagraph&#x2F;"># nebulagraph</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;nothing&#x2F;"># nothing</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;open-source&#x2F;"># open-source</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;openai&#x2F;"># openai</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;orchestration&#x2F;"># orchestration</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;parsing&#x2F;"># parsing</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;programming&#x2F;"># programming</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;protocol&#x2F;"># protocol</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;python&#x2F;"># python</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;queue&#x2F;"># queue</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;rag&#x2F;"># rag</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;retrieval&#x2F;"># retrieval</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;sandbox&#x2F;"># sandbox</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;sdk&#x2F;"># sdk</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;security&#x2F;"># security</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;session&#x2F;"># session</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;spec&#x2F;"># spec</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;truth&#x2F;"># truth</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;unstructured-data&#x2F;"># unstructured data</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;vlm&#x2F;"># vlm</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;webassembly&#x2F;"># webassembly</a>
-      <a class="instant" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags&#x2F;zed&#x2F;"># zed</a>
+  <main class="layout-list">
+    <div class="title">
+      <span># memory</span>
+    </div>
+    <div class="post-list">
+      
+      <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;reinvent-the-punch-tape&#x2F;">
+        <span>Reinventing the Punch Tape</span>
+        <span class="date">Jan 28, 2026</span>
+      </a>
       
     </div>
   </main>

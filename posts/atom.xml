@@ -5,8 +5,64 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-12-31T00:00:00+00:00</updated>
+    <updated>2026-01-28T00:00:00+00:00</updated>
     <id>https://psiace.me/posts/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Reinventing the Punch Tape</title>
+        <published>2026-01-28T00:00:00+00:00</published>
+        <updated>2026-01-28T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/reinvent-the-punch-tape/"/>
+        <id>https://psiace.me/posts/reinvent-the-punch-tape/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/reinvent-the-punch-tape/">&lt;blockquote&gt;
+&lt;p&gt;Hi, I&#x27;m &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&quot;&gt;PsiACE&lt;&#x2F;a&gt;. This idea was born about 4 months ago when I was still working toward better GraphRAG. I have some experience with Agents and databases over the past few years—feel free to read my previous posts.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;tl-dr&quot;&gt;TL;DR&lt;a class=&quot;zola-anchor&quot; href=&quot;#tl-dr&quot; aria-label=&quot;Anchor link for: tl-dr&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Agent systems tend to grow complex: forking, rollback, short-term and long-term memory, carefully designed compression and truncation.&lt;&#x2F;p&gt;
+&lt;p&gt;The more engineering invested, the harder the behavior becomes to predict. I think it&#x27;s time to reinvent the punch tape: an Agent has only one deterministic session. It is perpetual—never ending, never forking, only moving forward. On this endless punch tape, you can always reliably retrieve the small piece of context you need most at that moment.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Let interactions happen as naturally as in the real world.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Real human interaction never truly forks into multiple equally real timelines, nor does it erase what has happened through rollback. Conversations may wander off-topic, correct mistakes, switch tasks, or start a new phase—but they always happen along the same continuous timeline.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-endless-tape&quot;&gt;The Endless Tape&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-endless-tape&quot; aria-label=&quot;Anchor link for: the-endless-tape&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;The foundation of an Agent should be a long tape&lt;&#x2F;strong&gt;—yes, a log.&lt;&#x2F;p&gt;
+&lt;p&gt;Beyond simple conversation history, the log should record what happened: a tool result, a key decision, a phase transition—all written as facts. Once a fact is written, it is never modified or replaced with a lossy substitute.&lt;&#x2F;p&gt;
+&lt;p&gt;You can always go back to any point in time and see what actually happened—not a version that was later revised, compressed, or rewritten. The purpose of the log is not just to let the model read through history, but to make the Agent&#x27;s behavior easier to verify.&lt;&#x2F;p&gt;
+&lt;p&gt;On top of this long tape, &lt;strong&gt;the Agent computes state&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Naturally, we should use state computed from the log—instead of &quot;memory&quot;—to support queries and context assembly, rather than replacing facts with summaries or compressed content. It&#x27;s somewhat like a materialized view in a database: it can be discarded, it can be rebuilt, and it should be able to explain where each piece of state comes from.&lt;&#x2F;p&gt;
+&lt;p&gt;At any moment, the system simply picks a new starting point, rebuilds state from the log, and continues execution.&lt;&#x2F;p&gt;
+&lt;p&gt;Anchors are introduced precisely for this purpose.&lt;&#x2F;p&gt;
+&lt;p&gt;If you rebuild state from the beginning of the log every time, the system eventually becomes unwieldy and hits context limits. &lt;strong&gt;Anchors provide a set of explicit rebuild starting points&lt;&#x2F;strong&gt;, expressing &quot;from here, the state is stable enough to continue working.&quot; Anchors don&#x27;t delete history, nor do they summarize it—they just tell the system where to start counting.&lt;&#x2F;p&gt;
+&lt;p&gt;An anchor is typically created by a handoff. When the Agent recognizes that the phase has changed, or that continuing from the current rebuild starting point would make state messy, it performs a handoff: it writes the minimal structured state still necessary for the next phase into the log, creates a new anchor, and subsequent state rebuilds start from that new anchor.&lt;&#x2F;p&gt;
+&lt;p&gt;What gets packaged here is not a summary of history, but state oriented toward the next phase; history remains complete in the log. The thread doesn&#x27;t break, nor does it fork—it just keeps moving forward.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-wheel-rolls-forward&quot;&gt;The Wheel Rolls Forward&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-wheel-rolls-forward&quot; aria-label=&quot;Anchor link for: the-wheel-rolls-forward&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;Agents don&#x27;t really fork.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Forking essentially creates multiple equally real futures, but the real world has only one &quot;now.&quot; You can change direction, but you can&#x27;t branch what has already happened into another timeline.&lt;&#x2F;p&gt;
+&lt;p&gt;Many scenarios that seem to require forking are more naturally expressed as handoffs. You don&#x27;t need to create a parallel thread—you just acknowledge that you&#x27;ve entered a new phase. You&#x27;re still moving forward on the same thread, just rebuilding state from a new anchor. The past still exists in the log, ready to be queried and referenced at any time, but it doesn&#x27;t need to become a parallel world.&lt;&#x2F;p&gt;
+&lt;p&gt;Similarly, &lt;strong&gt;Agents don&#x27;t really roll back.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Rollback means undoing what has already happened, but in real interaction, correction isn&#x27;t done by erasing the past—it&#x27;s done by adding new facts. From an engineering perspective, rollback changes state, but we only allow state to be changed by new facts; we don&#x27;t allow old facts to disappear.&lt;&#x2F;p&gt;
+&lt;p&gt;The essence of &quot;rollback requirements&quot; is a context assembly problem. You want to ignore certain fragments in this execution, emphasize others, and guide the model to reason in a different direction. This doesn&#x27;t require modifying the log or returning to an old state—it just requires selecting a different working set when assembling context.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Agents also don&#x27;t really rely on various &quot;memory tricks.&quot;&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Multi-layer summaries, repeated compression, and complex heuristics may work in the short term, but over time they introduce noise, uncertainty, and inexplicability. It becomes harder and harder to distinguish what is fact, what is a model-generated generalization, and what is residual error from compression.&lt;&#x2F;p&gt;
+&lt;p&gt;Retrieval and recall from history are still necessary. You can pull original text fragments from the same thread&#x27;s history, or pull evidence from external data sources, and temporarily assemble them into the current context. But lossy compression should never quietly replace history.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-new-punch-tape-computer&quot;&gt;The New Punch Tape Computer&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-new-punch-tape-computer&quot; aria-label=&quot;Anchor link for: the-new-punch-tape-computer&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;This design thus becomes simple.&lt;&#x2F;p&gt;
+&lt;p&gt;Maintain an endlessly forward-moving thread, continuously appending facts. Use anchors to express phase transitions, use context assembly to control the window for each execution, allow on-demand reading from history and external data sources, and prevent lossy results from becoming new truth.&lt;&#x2F;p&gt;
+&lt;p&gt;Agents should fully leverage everything we&#x27;ve built in storage, computation, and other domains. &quot;More reliable interaction&quot; will beat &quot;smarter memory.&quot;&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>My 2025: The Fifth Year of All-in DB</title>
         <published>2025-12-31T00:00:00+00:00</published>

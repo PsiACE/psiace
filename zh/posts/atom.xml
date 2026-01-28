@@ -5,8 +5,64 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/zh/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-12-31T00:00:00+00:00</updated>
+    <updated>2026-01-28T00:00:00+00:00</updated>
     <id>https://psiace.me/zh/posts/atom.xml</id>
+    <entry xml:lang="zh">
+        <title>重新发明打孔纸带</title>
+        <published>2026-01-28T00:00:00+00:00</published>
+        <updated>2026-01-28T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/reinvent-the-punch-tape/"/>
+        <id>https://psiace.me/zh/posts/reinvent-the-punch-tape/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/reinvent-the-punch-tape/">&lt;blockquote&gt;
+&lt;p&gt;大家好，我是 &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&quot;&gt;PsiACE&lt;&#x2F;a&gt;，你可以在 GitHub 上找到我，这个想法最开始诞生于 4 个月前，那个时候我还在为更好的 GraphRAG 而努力。我过去几年在 Agent 和数据库有一些经验，你也可以阅读我的历史文章。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;tl-dr&quot;&gt;TL;DR&lt;a class=&quot;zola-anchor&quot; href=&quot;#tl-dr&quot; aria-label=&quot;Anchor link for: tl-dr&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Agent 系统很容易走向复杂：分叉、回滚、长短期记忆、精心设计的压缩截断。&lt;&#x2F;p&gt;
+&lt;p&gt;在工程上投入越多，行为越难以预测，我想是时候重新发明打孔纸带：Agent 只有一个确定的会话。它是永续的，不结束、不分叉，只是不断向前。在这个无尽的打孔纸带上，每次都能稳定地拿到此刻最需要的一小段上下文。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;让交互像真实世界一样自然地发生&lt;&#x2F;strong&gt;。&lt;&#x2F;p&gt;
+&lt;p&gt;人与人之间的互动并不会真的分叉成多个同等真实的时间线，也不会通过回滚抹掉已经发生的事情。对话会跑题，会纠错，会换任务，会开始一个新阶段，但它始终发生在同一条连续的时间里。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;wu-jin-de-chang-zhi-dai&quot;&gt;无尽的长纸带&lt;a class=&quot;zola-anchor&quot; href=&quot;#wu-jin-de-chang-zhi-dai&quot; aria-label=&quot;Anchor link for: wu-jin-de-chang-zhi-dai&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;Agent 的基础应该是一条长纸带&lt;&#x2F;strong&gt;，是的，日志。&lt;&#x2F;p&gt;
+&lt;p&gt;相比单纯的会话历史，日志中还应当记录发生过什么，一次工具结果、一次关键决策、一次阶段切换，都会作为事实被写入。事实一旦写入，就不再被修改，也不被有损替换。&lt;&#x2F;p&gt;
+&lt;p&gt;你永远可以回到某个时间点，看到当时真实发生了什么，而不是一个后来被修订、压缩或重写过的版本。日志的意义不仅仅在是让模型读完历史，而在于让 Agent 的行为更容易验证。&lt;&#x2F;p&gt;
+&lt;p&gt;在这条长纸带之上，&lt;strong&gt;Agent 计算状态&lt;&#x2F;strong&gt;。&lt;&#x2F;p&gt;
+&lt;p&gt;自然地，我们应该使用从日志中计算出来的当前状态代替&quot;记忆&quot;，用来支持查询和上下文装配，而不是使用总结和压缩过的内容替代事实本身。它有点像数据库中的物化视图，可以被丢弃，也可以被重建，并且应该能够解释每一条状态从何而来。&lt;&#x2F;p&gt;
+&lt;p&gt;在任何时候，系统只是重新选择一个起点，从日志重建状态，然后继续执行。&lt;&#x2F;p&gt;
+&lt;p&gt;锚点正是为此引入的。&lt;&#x2F;p&gt;
+&lt;p&gt;如果每次都从日志起点重建状态，系统最终会变得笨重，并且最终触发上下文限制。&lt;strong&gt;锚点提供了一组明确的重建起点&lt;&#x2F;strong&gt;，用来表达&quot;从这里开始，状态已经足够稳定，可以继续工作&quot;。锚点不删除历史，也不总结历史，它只是告诉系统从哪里开始算。&lt;&#x2F;p&gt;
+&lt;p&gt;锚点通常由一次 handoff 产生。当 Agent 识别到阶段已经变化，或者继续沿用当前重建起点会让状态变得混乱时，它会执行一次 handoff：把对下一阶段仍然必要的最小结构化状态写入日志，创建一个新的锚点，之后的状态重建从新锚点开始。&lt;&#x2F;p&gt;
+&lt;p&gt;这里打包的不是对历史的摘要，而是面向下一阶段的状态；历史仍然完整地留在日志里。线程没有断裂，也没有分叉，它只是继续向前。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;che-lun-gun-gun-xiang-qian&quot;&gt;车轮滚滚向前&lt;a class=&quot;zola-anchor&quot; href=&quot;#che-lun-gun-gun-xiang-qian&quot; aria-label=&quot;Anchor link for: che-lun-gun-gun-xiang-qian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;Agent 并不真的分叉。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;分叉本质上是在制造多条同等真实的未来，但真实世界只有一个&quot;现在&quot;。你可以改变方向，但无法让已经发生的事情另起一条世界线。&lt;&#x2F;p&gt;
+&lt;p&gt;许多看似需要分叉的场景，更自然的表达方式其实是 handoff。你不需要创建一条并行线程，而是承认自己进入了一个新阶段。你仍然在同一条线程上前进，只是从新的锚点开始重建状态。过去仍然存在于日志中，随时可以被查询和引用，但它不需要被变成一个并行世界。&lt;&#x2F;p&gt;
+&lt;p&gt;同样地，&lt;strong&gt;Agent 并不真的回滚。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;回滚意味着撤销已经发生的事情，但在真实交互中，纠错并不是通过抹掉过去完成的，而是通过补充新的事实完成的。从工程角度看，回滚改变的是状态，而我们只允许用新事实改变状态，不允许让旧事实消失。&lt;&#x2F;p&gt;
+&lt;p&gt;&quot;回滚需求&quot;的本质是上下文装配问题。你希望在本次执行中忽略某些片段，强调另一些片段，引导模型沿着不同方向推理。这不需要修改日志，也不需要回到旧状态，只需要在装配上下文时选择不同的工作集。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Agent 也不真的依赖各种&quot;记忆技巧&quot;。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;多层摘要、反复压缩和复杂启发式规则在短期内可能有效，但长期会引入噪声、不确定性和不可解释性。你会越来越难区分哪些是事实，哪些是模型生成的概括，哪些是压缩后的残留误差。&lt;&#x2F;p&gt;
+&lt;p&gt;检索和从历史中召回仍然是必要的。你可以从同一条线程的历史中取原文片段，也可以从外部数据源中取证据，把它们临时装配进本次上下文。但任何有损压缩都不应该悄悄替代历史。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;xin-de-da-kong-zhi-dai-ji-suan-ji&quot;&gt;新的打孔纸带计算机&lt;a class=&quot;zola-anchor&quot; href=&quot;#xin-de-da-kong-zhi-dai-ji-suan-ji&quot; aria-label=&quot;Anchor link for: xin-de-da-kong-zhi-dai-ji-suan-ji&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;这套设计因此变得简单。&lt;&#x2F;p&gt;
+&lt;p&gt;维护一条无尽向前的线程，并不断追加事实。用锚点表达阶段切换，用上下文装配控制每一次执行的窗口，并且允许从历史和外部数据源按需读取，并阻止有损结果成为新的真相。&lt;&#x2F;p&gt;
+&lt;p&gt;Agent 应该充分利用我们过去在存储、计算等领域构建的一切，&quot;更可靠的交互&quot;将会胜过&quot;更聪明的记忆&quot;。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="zh">
         <title>我的 2025：All in DB 的第五年</title>
         <published>2025-12-31T00:00:00+00:00</published>

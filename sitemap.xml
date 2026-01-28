@@ -72,6 +72,10 @@
         <lastmod>2025-04-17</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/posts/reinvent-the-punch-tape/</loc>
+        <lastmod>2026-01-28</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/posts/spec-driven-sdks/</loc>
         <lastmod>2025-10-15</lastmod>
     </url>
@@ -121,6 +125,9 @@
         <loc>https://psiace.me/tags/community/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/context/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/crud/</loc>
     </url>
     <url>
@@ -148,6 +155,9 @@
         <loc>https://psiace.me/tags/llm/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/log/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/make-some-noise/</loc>
     </url>
     <url>
@@ -155,6 +165,9 @@
     </url>
     <url>
         <loc>https://psiace.me/tags/memoir/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/tags/memory/</loc>
     </url>
     <url>
         <loc>https://psiace.me/tags/multimodal/</loc>
@@ -203,6 +216,9 @@
     </url>
     <url>
         <loc>https://psiace.me/tags/security/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/tags/session/</loc>
     </url>
     <url>
         <loc>https://psiace.me/tags/spec/</loc>
@@ -294,6 +310,10 @@
         <lastmod>2025-04-17</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/zh/posts/reinvent-the-punch-tape/</loc>
+        <lastmod>2026-01-28</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/posts/spec-driven-sdks/</loc>
         <lastmod>2025-10-15</lastmod>
     </url>
@@ -343,6 +363,9 @@
         <loc>https://psiace.me/zh/tags/community/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/zh/tags/context/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/tags/crud/</loc>
     </url>
     <url>
@@ -370,6 +393,9 @@
         <loc>https://psiace.me/zh/tags/llm/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/zh/tags/log/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/tags/make-some-noise/</loc>
     </url>
     <url>
@@ -377,6 +403,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/memoir/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/memory/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/multimodal/</loc>
@@ -425,6 +454,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/security/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/session/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/spec/</loc>
