@@ -5,8 +5,119 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2026-01-28T00:00:00+00:00</updated>
+    <updated>2026-02-16T00:00:00+00:00</updated>
     <id>https://psiace.me/posts/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Prometheus Bound</title>
+        <published>2026-02-16T00:00:00+00:00</published>
+        <updated>2026-02-16T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/prometheus-bound/"/>
+        <id>https://psiace.me/posts/prometheus-bound/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/prometheus-bound/">&lt;blockquote&gt;
+&lt;p&gt;This piece is dedicated to bub, and to my friends.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Over the past week, we validated our earlier idea of punch tape and anchors on bub for the first time. Praise Ming; I think everyone can also read his article, &quot;What does it take to create a lobster?&quot;&lt;&#x2F;p&gt;
+&lt;p&gt;Back to this post: I want to discuss another topic. What do sessions, memory, and context mean to a model, or to an agent?&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In Greek mythology, Prometheus brought fire to humanity, and was then chained to the Caucasus, enduring punishment day after day.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;To me, this is a metaphor for reality.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;prometheus-bound&#x2F;prometheus-tweet.png&quot; alt=&quot;Source: my tweet from last October&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h2 id=&quot;session-a-concrete-problem&quot;&gt;Session, a Concrete Problem&lt;a class=&quot;zola-anchor&quot; href=&quot;#session-a-concrete-problem&quot; aria-label=&quot;Anchor link for: session-a-concrete-problem&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;In the chatbot worldview over the past few years, a session has been the key unit for switching tasks. That led to isolation between sessions. Even today, when openclaw is everywhere, we are still deeply influenced by it:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Question: When a user says &quot;switch topics &#x2F; start over&quot;, the process has already fixed the session at startup. Switching a symlink within this turn can only affect the next turn. In your AI-native picture, how do you make &quot;this single message&quot; start from a new session immediately? In group chats, multiple topics often run in parallel. What session organization do you recommend?&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;(Background: from day one, bub grew up in group chats. I call this &quot;socialized evaluation&quot;. It&#x27;s a smarter approach, and if I get the chance, I&#x27;ll write more about it.)&lt;&#x2F;p&gt;
+&lt;p&gt;A session is a form of hard isolation. That means sessions do not perceive each other. A session can only move forward until the task is done, or until people get bored, but context length is limited.&lt;&#x2F;p&gt;
+&lt;p&gt;In the past, we&#x27;ve seen a few session patterns:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;To support longer context in a single session, we got compact and summary.&lt;&#x2F;li&gt;
+&lt;li&gt;To let sessions share the same ancestors and descendants, we got fork and merge.&lt;&#x2F;li&gt;
+&lt;li&gt;To reduce the complexity of the first two, we got handoff. Punch tape and anchors are also influenced by this.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;These approaches only address problems within a single session. What should we do when the problem is cross-session?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;memory-a-failed-prototype&quot;&gt;Memory, a Failed Prototype&lt;a class=&quot;zola-anchor&quot; href=&quot;#memory-a-failed-prototype&quot; aria-label=&quot;Anchor link for: memory-a-failed-prototype&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Even though memory has been extremely popular over the past year, and many of my friends and colleagues have invested a lot of experience into it, my evaluation of memory is exactly what the title suggests.&lt;&#x2F;p&gt;
+&lt;p&gt;Memory mainly targets consistency in generation, and it roughly falls into two categories:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;If conversations happen within the same system, how do we keep consistency?&lt;&#x2F;li&gt;
+&lt;li&gt;If conversations happen across different systems, how do we keep consistency?&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Let&#x27;s look at how a typical memory system works:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;When a user has a conversation, relevant corpora and preferences are extracted by the model and routed to a memory sidecar for retrieval.&lt;&#x2F;li&gt;
+&lt;li&gt;Given relevance to the user&#x27;s question and the context window, results are ranked and trimmed, then filled into a generation template.&lt;&#x2F;li&gt;
+&lt;li&gt;The template guides the model&#x27;s generation.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Cost is deterministic. Most memory systems claim that by introducing a smaller model or pre&#x2F;post steps, they can significantly reduce token cost and latency (for example, a common trick is to drop the facts associated with each memory item) while achieving good enough quality.&lt;&#x2F;p&gt;
+&lt;p&gt;But what matters is another point: consistency is not free:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Extraction is a lossy process, and we require the model to participate deeply in it. If you&#x27;ve ever criticized hallucinations, what makes you accept the extraction step?&lt;&#x2F;li&gt;
+&lt;li&gt;User preferences are broad and not constant. The investment needed to calibrate this will far exceed imagination. If you&#x27;ve looked at knowledge graphs or GraphRAG, you can easily foresee this.&lt;&#x2F;li&gt;
+&lt;li&gt;Most memoryless approaches (for example, Markdown-based ones) are essentially embeddingless approaches. They still cannot solve distortion and drift when switching models.&lt;&#x2F;li&gt;
+&lt;li&gt;As a sidecar, failure should not affect system behavior. So you may not get the consistency you expect.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Will the token and time savings from the past come back at some point? Memory looks full of difficulties. Then what about context, could it be another bright road?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;context-another-sugar-coated-bullet&quot;&gt;Context, Another Sugar-Coated Bullet&lt;a class=&quot;zola-anchor&quot; href=&quot;#context-another-sugar-coated-bullet&quot; aria-label=&quot;Anchor link for: context-another-sugar-coated-bullet&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;In the established meaning of context engineering, it contains everything: the sessions and memory mentioned above, external RAG systems, real-time queries on the internet, and knowledge from various business systems.&lt;&#x2F;p&gt;
+&lt;p&gt;It&#x27;s hard for me to imagine anything that cannot be put into this basket. So we can simply assume that, in this worldview, context will keep expanding until it exceeds a fixed window limit. That&#x27;s also where most people&#x27;s obsession with context management begins: truncate, add retrieval constraints, add hand-coded rules, and try to find a large enough, high-quality context to solve the problem.&lt;&#x2F;p&gt;
+&lt;p&gt;I want to offer two counterexamples:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;In a well-known evaluation of long-context capability, besides the GPT family, most models show cliff-like quality degradation as context grows. And because each model has a different capability boundary, context management can hardly be directly portable across all models and agent systems.&lt;&#x2F;li&gt;
+&lt;li&gt;Another example is &quot;lobsters attacking the moon&quot;. A Kimi staff member once suggested that users should use caching mechanisms to design lobsters, and avoid certain time periods to release load. The complexity of context management makes this request almost absurd. I would even criticize it as a form of laziness.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Abstraction leakage is a serious system design problem. When we rely on certain established context management mechanisms to handle all of this, it also means there will be enough ways to break system reliability.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;smarter-with-fewer-assumptions&quot;&gt;Smarter, With Fewer Assumptions&lt;a class=&quot;zola-anchor&quot; href=&quot;#smarter-with-fewer-assumptions&quot; aria-label=&quot;Anchor link for: smarter-with-fewer-assumptions&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;From the beginning, bub was not designed as a &quot;persistent conversation system&quot;. We designed it to work over a sufficiently long context, an endless tape. On day one it had to face socialized tasks in group chats. Problems keep appearing, tasks keep forming, and then keep ending. In such a diverse and complex setting, every turn may face a new goal. It does not, and cannot, require a state that continues forever, and it does not even require a conversation ancestor that must be inherited.&lt;&#x2F;p&gt;
+&lt;p&gt;Looking back at the idea that once scared me to create, an endless punch tape with anchors on it has worked well on bub. When we cross context boundaries or hit system failures, it gives us a chance to have repair methods that are simple and reliable enough.&lt;&#x2F;p&gt;
+&lt;p&gt;But in real-world tasks, there is no punch tape, and there will not truly be an anchor at some milestone. The point is an action: construct, not inherit. When a task appears, as humans we do not shove all history into the window. We do two things: explore and choose.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Explore may include history, external systems, memory, or even real-time queries.&lt;&#x2F;li&gt;
+&lt;li&gt;Choose means discarding most irrelevant content, keeping only the minimal sufficient material.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Context engineering defaults to increment, extension, and managing expansion. It assumes state must be maintained, so it introduces caching, extraction, merging, compression, and forking. Every layer is trying to patch the same premise: history cannot be dropped. But the reality is that they cannot carry enough history.&lt;&#x2F;p&gt;
+&lt;p&gt;Practice on bub gave me a simpler answer: history can be dropped. More precisely, history does not need to be inherited by default. It&#x27;s just a library of materials. Query it when needed, ignore it when not.&lt;&#x2F;p&gt;
+&lt;p&gt;This is also where tape matters. It&#x27;s not about recording everything; it&#x27;s about enabling &quot;read on demand&quot;. It turns state from an &quot;ongoing burden&quot; into an &quot;optional resource&quot;. When context is no longer a monotonic function, cache is just an optimization, not a lifeline; memory is just an index, not a personality; session is just a boundary, not an identity.&lt;&#x2F;p&gt;
+&lt;p&gt;Being smarter does not mean introducing more mechanisms. It means assuming less.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;simplicity&quot;&gt;Simplicity&lt;a class=&quot;zola-anchor&quot; href=&quot;#simplicity&quot; aria-label=&quot;Anchor link for: simplicity&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;When I wrote down the title, &quot;Prometheus Bound&quot;, I thought I was criticizing a kind of bondage.&lt;&#x2F;p&gt;
+&lt;p&gt;We are used to metaphors, imagining the model as suppressed fire, a force constrained by engineering systems. But maybe the problem is not that dramatic. The model is not imprisoned. It is just misused within a wrong organization.&lt;&#x2F;p&gt;
+&lt;p&gt;Task appears, construct context, complete task, end.
+Next turn, start over.
+When we stop building systems on top of &quot;persistent state&quot;, a lot of complexity disappears naturally.&lt;&#x2F;p&gt;
+&lt;p&gt;If the system is clear enough, we don&#x27;t need myths.
+And we don&#x27;t need Prometheus.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Of course, every system exists because there were real problems it tried to solve. This post contains a lot of criticism to express a viewpoint, but that does not mean those systems are meaningless.&lt;&#x2F;p&gt;
+&lt;p&gt;Again, thanks to bub and my friends, for giving me a chance to feel and express all of this more deeply.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;recommended-reading&quot;&gt;Recommended Reading&lt;a class=&quot;zola-anchor&quot; href=&quot;#recommended-reading&quot; aria-label=&quot;Anchor link for: recommended-reading&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;frostming.com&#x2F;posts&#x2F;2026&#x2F;create-a-claw&#x2F;&quot;&gt;What does it take to create a lobster?&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;reinvent-the-punch-tape&#x2F;&quot;&gt;Reinvent the punch tape&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;psiace&#x2F;bub&quot;&gt;bub&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;www.piglei.com&#x2F;articles&#x2F;ai-programming-is-a-new-framework&#x2F;&quot;&gt;AI Programming Is a New Framework&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Reinventing the Punch Tape</title>
         <published>2026-01-28T00:00:00+00:00</published>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="从会话、Memory 到上下文：更少假设，更多构造。">
+
+  <title>被缚的普罗米修斯</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#hui-hua-yi-ge-ju-ti-wen-ti">会话，一个具体问题</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#memory-shi-bai-de-shi-yan-pin">Memory ，失败的实验品</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#context-ling-yi-ge-tang-yi-pao-dan">Context ，另一个糖衣炮弹</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#geng-cong-ming-he-geng-shao-jia-she">更聪明和更少假设</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#da-dao-zhi-jian">大道至简</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#tui-jian-yue-du">推荐阅读</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>被缚的普罗米修斯</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Feb 16, 2026</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/session"><span>#</span>session</a><a class="instant" href="https://psiace.me/tags/memory"><span>#</span>memory</a><a class="instant" href="https://psiace.me/tags/context"><span>#</span>context</a><a class="instant" href="https://psiace.me/tags/architecture"><span>#</span>architecture</a><a class="instant" href="https://psiace.me/tags/bub"><span>#</span>bub</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/prometheus-bound/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <blockquote>
+<p>谨以此文，献给 bub ，和我的朋友们。</p>
+</blockquote>
+<p>在刚刚过去的一周里，我们在 bub 上第一次验证了此前关于打孔纸带与锚点的想法，赞美明哥哥，我想大家也可以去读他写的那篇《创造一只龙虾，需要些什么?》。</p>
+<p>回到这篇文章，我想讨论另外一个话题，会话、Memory 和上下文对模型或者 Agent 意味着什么。</p>
+<blockquote>
+<p>在希腊神话里，普罗米修斯把火带给人类，随后被锁在高加索山上，日复一日地承受惩罚。</p>
+</blockquote>
+<p>我想这代表了一种现实隐喻。</p>
+<p><img src="https://psiace.me/zh/posts/prometheus-bound/prometheus-tweet.png" alt="图源：去年 10 月我的推文" /></p>
+<hr />
+<h2 id="hui-hua-yi-ge-ju-ti-wen-ti">会话，一个具体问题<a class="zola-anchor" href="#hui-hua-yi-ge-ju-ti-wen-ti" aria-label="Anchor link for: hui-hua-yi-ge-ju-ti-wen-ti" style="visibility: hidden;"></a>
+</h2>
+<p>过去几年在 chatbot 的视角下，会话是任务切换的关键要素，于是会话之间存在着隔离，即便是 openclaw 大行其道的今天，仍然深受其影响：</p>
+<blockquote>
+<p>疑问：当用户说“换个话题/从头开始”时，进程启动时 session 已固定，模型在这一轮里再切 symlink 只能影响下一轮。你在文章的 AI-native 设想里，通常怎么让“这一条消息”就从新 session 开始？群聊里经常多话题并行，你更推荐的 session 组织方式是什么？</p>
+</blockquote>
+<p>(前情提要，bub 从最开始就是在群聊中成长的，我管这个叫社会化评估，这是一种更为聪明的方式，如果有机会我会继续讲讲这个话题。)</p>
+<p>会话是一种硬隔离的形式，这意味着会话与会话之间是没有感知的，会话只能不断向前，直到任务完成或者感到厌烦，但是上下文的长度是有限的。</p>
+<p>过去我们会看到几种不同的会话模式：</p>
+<ul>
+<li>为了允许会话能够支持更长的上下文，诞生了 compact、summary 。</li>
+<li>为了允许会话之间共享相同的祖先和孙代，诞生了 fork 和 merge 。</li>
+<li>为了减少前两者的复杂性，诞生了 handoff 。当然，打孔纸带和锚点也深受其影响。</li>
+</ul>
+<p>前面的几种方式只解决同一会话的问题，如果遇到跨会话应该怎么办？</p>
+<h2 id="memory-shi-bai-de-shi-yan-pin">Memory ，失败的实验品<a class="zola-anchor" href="#memory-shi-bai-de-shi-yan-pin" aria-label="Anchor link for: memory-shi-bai-de-shi-yan-pin" style="visibility: hidden;"></a>
+</h2>
+<p>尽管 Memory 在过去一年内非常火爆，甚至我有不少好友、同事在上面投入了不少经验，但我对 Memory 的评价就像标题那样。</p>
+<p>Memory 解决的主要是生成的一致性问题，大致可以分为两类：</p>
+<ul>
+<li>如果会话在同一个系统里展开，如何保持一致性。</li>
+<li>如果会话在不同系统中展开，如何保持一致性。</li>
+</ul>
+<p>让我们看看一个常规的 Memory 系统应该如何工作：</p>
+<ul>
+<li>当用户发生会话，相关的语料和偏好会被模型提取，路由到 Memory 旁路进行查询。</li>
+<li>考虑到用户问题的相关性和上下文窗口，进行排序和删减工作。填充到生成使用的模板中。</li>
+<li>利用模板指导模型的生成动作。</li>
+</ul>
+<p>开销是一个确定性的动作，大多数 Memory 系统会声称通过引入一个更轻量的小模型或者前后置步骤大幅减少 token 开销和推理时间（比如，一个典型的做法是放弃 Memory 项背后关联的事实），并且取得足够高质量的效果。</p>
+<p>但是值得我们关注的其实是另外一个问题，一致性并不是免费的：</p>
+<ul>
+<li>提取是一个失真的过程，而且我们要求模型深入地参与它。如果你批评过模型的幻觉，是什么让你接受提取这个过程。</li>
+<li>用户的偏好是广泛的，而且并非一成不变，在校准这件事情上的投入会远远超过想像。如果你曾经了解知识图谱或者 GraphRAG ，应该是可以轻松预见这一切。</li>
+<li>大多数 Memory Less 方案（比如基于 Markdown 的方案），本质是 Embedding Less 方案，它仍然无法解决失真和更换模型后的漂移问题。</li>
+<li>作为一个旁路，它的失败不应该影响系统行为。所以你可能无法得到预期的一致性。</li>
+</ul>
+<p>过去减少的 token 和时间的开销，会不会在某个时间节点再回来。Memory 看起来困难重重，那么上下文呢，会是另一条光明的道路吗？</p>
+<h2 id="context-ling-yi-ge-tang-yi-pao-dan">Context ，另一个糖衣炮弹<a class="zola-anchor" href="#context-ling-yi-ge-tang-yi-pao-dan" aria-label="Anchor link for: context-ling-yi-ge-tang-yi-pao-dan" style="visibility: hidden;"></a>
+</h2>
+<p>在上下文工程的既定语境里，它包罗万象，这里面存在前面提到的会话和 Memory，外部的 RAG 系统，互联网上的即时查询，和各种业务系统的知识。</p>
+<p>我甚至很难想像会看到一个确切无法装入箩筐的事物，所以我们可以简单地认为，上下文在这个语境是一定会不断膨胀的，直到它超过某个确定的窗口限制。这也是大多数人执迷上下文管理的开始，通过截断、增加各种检索的限制，通过人为编码的设置，试图找到一个相对足够大和优质的上下文来解决问题。</p>
+<p>我想举两个反例：</p>
+<ul>
+<li>在一个知名的模型长上下文能力测评中，除了 gpt 系列之外，绝大多数模型在上下文增长的过程中出现了生成质量的断崖式衰退。而每个模型的能力边界不同，意味着上下文管理很难直接适应所有模型和 Agent 系统。</li>
+<li>另一个例子是“龙虾攻打月球”，有 Kimi 的工作人员表示用户应该利用缓存的机制来设计龙虾，并且尽量避开某一些时段以释放负载。上下文管理的复杂度意味着这个要求几乎是无厘头的，我甚至会批判这是一种偷懒行为。</li>
+</ul>
+<p>抽象泄漏是严重的系统设计问题，当利用某些既定的上下文管理机制处理这一切时，也意味着会存在足够多的手段打破系统的可靠性。</p>
+<h2 id="geng-cong-ming-he-geng-shao-jia-she">更聪明和更少假设<a class="zola-anchor" href="#geng-cong-ming-he-geng-shao-jia-she" aria-label="Anchor link for: geng-cong-ming-he-geng-shao-jia-she" style="visibility: hidden;"></a>
+</h2>
+<p>bub 的设计最开始就没有考虑 “持续对话系统” ，我们考虑它在一个足够长的上下文上工作，也就是无尽的纸带。它在第一天就需要面临群聊中的社会化任务。问题不断出现，任务不断形成，又不断结束。在这样一个多样和复杂的场景中，每一轮对话都可能面临一个新的目标，它没有也无法要求存在某个永远延续的状态，甚至不存在必须继承的对话祖先。</p>
+<p>回过头来看那个曾经让我害怕创造的想法，一条无尽的打孔纸带和上面的锚点，它在 bub 上运作良好，在越过上下文边界或者系统故障时，让我们有机会拥有足够简单和可靠的修复手段。</p>
+<p>但是在现实任务之中，并不存在打孔纸带，也不会真的存在一个里程碑上的锚点。重点在于一个动作：构造，而不是继承。当一个任务出现，作为人类的我们也并不是把所有历史压进窗口里，而是做两件事——探索与选择。</p>
+<ul>
+<li>探索可能包括历史记录、外部系统、Memory、甚至即时查询。</li>
+<li>选择则意味着丢弃大部分无关内容，只保留最小充分的材料。</li>
+</ul>
+<p>上下文工程默认的是递增，是延展，是管理膨胀。它假设状态必须被维护，于是引入缓存、提取、合并、压缩、分叉。每一层机制都在试图修补同一个前提：历史不能丢。但事实是它们无法携带足够多的历史。</p>
+<p>bub 的实践给了我一个更简单的答案 —— 历史可以丢。更准确地说，历史不必默认继承。它只是素材库。需要时查询，不需要时忽略。</p>
+<p>tape 的意义也在这里。它不是为了记录一切，而是为了允许“按需读取”。它把状态从“持续负担”变成“可选资源”。当上下文不再是递增函数，缓存就只是优化，而不是生命线；Memory 只是索引，而不是人格；会话只是边界，而不是身份。</p>
+<p>所谓更聪明，不是引入更多机制。而是减少假设。</p>
+<h2 id="da-dao-zhi-jian">大道至简<a class="zola-anchor" href="#da-dao-zhi-jian" aria-label="Anchor link for: da-dao-zhi-jian" style="visibility: hidden;"></a>
+</h2>
+<p>写下“被缚的普罗米修斯”这个标题时，我以为自己在批判一种束缚。</p>
+<p>我们总是习惯用隐喻，把模型想象成被压抑的火种，被工程系统限制的力量。但也许问题没有那么戏剧化。模型并没有被囚禁。它只是被我们误用在一种错误的组织方式里。</p>
+<p>任务出现，构造上下文，完成任务，结束。
+下一轮重新开始。
+当我们停止把系统建立在“延续状态”之上，很多复杂度会自然消失。</p>
+<p>如果系统足够清晰，就不需要神话。
+也不需要普罗米修斯。</p>
+<hr />
+<p>当然，每一种系统的出现，都意味着有依赖它所解决的问题存在，为了抒发观点，本文做了大量的批判，不代表它们是没有意义的。</p>
+<p>另外再次感谢 bub 和我的朋友们，让我有机会更深刻地感受和表达这一切。</p>
+<h2 id="tui-jian-yue-du">推荐阅读<a class="zola-anchor" href="#tui-jian-yue-du" aria-label="Anchor link for: tui-jian-yue-du" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li><a rel="nofollow noreferrer" href="https://frostming.com/posts/2026/create-a-claw/">创造一只龙虾，需要些什么?</a></li>
+<li><a rel="nofollow noreferrer" href="https://psiace.me/zh/posts/reinvent-the-punch-tape/">重新发明打孔纸带</a></li>
+<li><a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a></li>
+<li><a rel="nofollow noreferrer" href="https://www.piglei.com/articles/ai-programming-is-a-new-framework/">AI Programming Is a New Framework</a></li>
+</ul>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="prometheus-bound"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

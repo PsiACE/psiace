@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Sessions, memory, and context for models and agents: construct, don&#x27;t inherit.">
+
+  <title>Prometheus Bound</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#session-a-concrete-problem">Session, a Concrete Problem</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#memory-a-failed-prototype">Memory, a Failed Prototype</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#context-another-sugar-coated-bullet">Context, Another Sugar-Coated Bullet</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#smarter-with-fewer-assumptions">Smarter, With Fewer Assumptions</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#simplicity">Simplicity</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#recommended-reading">Recommended Reading</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Prometheus Bound</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Feb 16, 2026</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/session"><span>#</span>session</a><a class="instant" href="https://psiace.me/tags/memory"><span>#</span>memory</a><a class="instant" href="https://psiace.me/tags/context"><span>#</span>context</a><a class="instant" href="https://psiace.me/tags/architecture"><span>#</span>architecture</a><a class="instant" href="https://psiace.me/tags/bub"><span>#</span>bub</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/prometheus-bound/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <blockquote>
+<p>This piece is dedicated to bub, and to my friends.</p>
+</blockquote>
+<p>Over the past week, we validated our earlier idea of punch tape and anchors on bub for the first time. Praise Ming; I think everyone can also read his article, "What does it take to create a lobster?"</p>
+<p>Back to this post: I want to discuss another topic. What do sessions, memory, and context mean to a model, or to an agent?</p>
+<blockquote>
+<p>In Greek mythology, Prometheus brought fire to humanity, and was then chained to the Caucasus, enduring punishment day after day.</p>
+</blockquote>
+<p>To me, this is a metaphor for reality.</p>
+<p><img src="https://psiace.me/posts/prometheus-bound/prometheus-tweet.png" alt="Source: my tweet from last October" /></p>
+<hr />
+<h2 id="session-a-concrete-problem">Session, a Concrete Problem<a class="zola-anchor" href="#session-a-concrete-problem" aria-label="Anchor link for: session-a-concrete-problem" style="visibility: hidden;"></a>
+</h2>
+<p>In the chatbot worldview over the past few years, a session has been the key unit for switching tasks. That led to isolation between sessions. Even today, when openclaw is everywhere, we are still deeply influenced by it:</p>
+<blockquote>
+<p>Question: When a user says "switch topics / start over", the process has already fixed the session at startup. Switching a symlink within this turn can only affect the next turn. In your AI-native picture, how do you make "this single message" start from a new session immediately? In group chats, multiple topics often run in parallel. What session organization do you recommend?</p>
+</blockquote>
+<p>(Background: from day one, bub grew up in group chats. I call this "socialized evaluation". It's a smarter approach, and if I get the chance, I'll write more about it.)</p>
+<p>A session is a form of hard isolation. That means sessions do not perceive each other. A session can only move forward until the task is done, or until people get bored, but context length is limited.</p>
+<p>In the past, we've seen a few session patterns:</p>
+<ul>
+<li>To support longer context in a single session, we got compact and summary.</li>
+<li>To let sessions share the same ancestors and descendants, we got fork and merge.</li>
+<li>To reduce the complexity of the first two, we got handoff. Punch tape and anchors are also influenced by this.</li>
+</ul>
+<p>These approaches only address problems within a single session. What should we do when the problem is cross-session?</p>
+<h2 id="memory-a-failed-prototype">Memory, a Failed Prototype<a class="zola-anchor" href="#memory-a-failed-prototype" aria-label="Anchor link for: memory-a-failed-prototype" style="visibility: hidden;"></a>
+</h2>
+<p>Even though memory has been extremely popular over the past year, and many of my friends and colleagues have invested a lot of experience into it, my evaluation of memory is exactly what the title suggests.</p>
+<p>Memory mainly targets consistency in generation, and it roughly falls into two categories:</p>
+<ul>
+<li>If conversations happen within the same system, how do we keep consistency?</li>
+<li>If conversations happen across different systems, how do we keep consistency?</li>
+</ul>
+<p>Let's look at how a typical memory system works:</p>
+<ul>
+<li>When a user has a conversation, relevant corpora and preferences are extracted by the model and routed to a memory sidecar for retrieval.</li>
+<li>Given relevance to the user's question and the context window, results are ranked and trimmed, then filled into a generation template.</li>
+<li>The template guides the model's generation.</li>
+</ul>
+<p>Cost is deterministic. Most memory systems claim that by introducing a smaller model or pre/post steps, they can significantly reduce token cost and latency (for example, a common trick is to drop the facts associated with each memory item) while achieving good enough quality.</p>
+<p>But what matters is another point: consistency is not free:</p>
+<ul>
+<li>Extraction is a lossy process, and we require the model to participate deeply in it. If you've ever criticized hallucinations, what makes you accept the extraction step?</li>
+<li>User preferences are broad and not constant. The investment needed to calibrate this will far exceed imagination. If you've looked at knowledge graphs or GraphRAG, you can easily foresee this.</li>
+<li>Most memoryless approaches (for example, Markdown-based ones) are essentially embeddingless approaches. They still cannot solve distortion and drift when switching models.</li>
+<li>As a sidecar, failure should not affect system behavior. So you may not get the consistency you expect.</li>
+</ul>
+<p>Will the token and time savings from the past come back at some point? Memory looks full of difficulties. Then what about context, could it be another bright road?</p>
+<h2 id="context-another-sugar-coated-bullet">Context, Another Sugar-Coated Bullet<a class="zola-anchor" href="#context-another-sugar-coated-bullet" aria-label="Anchor link for: context-another-sugar-coated-bullet" style="visibility: hidden;"></a>
+</h2>
+<p>In the established meaning of context engineering, it contains everything: the sessions and memory mentioned above, external RAG systems, real-time queries on the internet, and knowledge from various business systems.</p>
+<p>It's hard for me to imagine anything that cannot be put into this basket. So we can simply assume that, in this worldview, context will keep expanding until it exceeds a fixed window limit. That's also where most people's obsession with context management begins: truncate, add retrieval constraints, add hand-coded rules, and try to find a large enough, high-quality context to solve the problem.</p>
+<p>I want to offer two counterexamples:</p>
+<ul>
+<li>In a well-known evaluation of long-context capability, besides the GPT family, most models show cliff-like quality degradation as context grows. And because each model has a different capability boundary, context management can hardly be directly portable across all models and agent systems.</li>
+<li>Another example is "lobsters attacking the moon". A Kimi staff member once suggested that users should use caching mechanisms to design lobsters, and avoid certain time periods to release load. The complexity of context management makes this request almost absurd. I would even criticize it as a form of laziness.</li>
+</ul>
+<p>Abstraction leakage is a serious system design problem. When we rely on certain established context management mechanisms to handle all of this, it also means there will be enough ways to break system reliability.</p>
+<h2 id="smarter-with-fewer-assumptions">Smarter, With Fewer Assumptions<a class="zola-anchor" href="#smarter-with-fewer-assumptions" aria-label="Anchor link for: smarter-with-fewer-assumptions" style="visibility: hidden;"></a>
+</h2>
+<p>From the beginning, bub was not designed as a "persistent conversation system". We designed it to work over a sufficiently long context, an endless tape. On day one it had to face socialized tasks in group chats. Problems keep appearing, tasks keep forming, and then keep ending. In such a diverse and complex setting, every turn may face a new goal. It does not, and cannot, require a state that continues forever, and it does not even require a conversation ancestor that must be inherited.</p>
+<p>Looking back at the idea that once scared me to create, an endless punch tape with anchors on it has worked well on bub. When we cross context boundaries or hit system failures, it gives us a chance to have repair methods that are simple and reliable enough.</p>
+<p>But in real-world tasks, there is no punch tape, and there will not truly be an anchor at some milestone. The point is an action: construct, not inherit. When a task appears, as humans we do not shove all history into the window. We do two things: explore and choose.</p>
+<ul>
+<li>Explore may include history, external systems, memory, or even real-time queries.</li>
+<li>Choose means discarding most irrelevant content, keeping only the minimal sufficient material.</li>
+</ul>
+<p>Context engineering defaults to increment, extension, and managing expansion. It assumes state must be maintained, so it introduces caching, extraction, merging, compression, and forking. Every layer is trying to patch the same premise: history cannot be dropped. But the reality is that they cannot carry enough history.</p>
+<p>Practice on bub gave me a simpler answer: history can be dropped. More precisely, history does not need to be inherited by default. It's just a library of materials. Query it when needed, ignore it when not.</p>
+<p>This is also where tape matters. It's not about recording everything; it's about enabling "read on demand". It turns state from an "ongoing burden" into an "optional resource". When context is no longer a monotonic function, cache is just an optimization, not a lifeline; memory is just an index, not a personality; session is just a boundary, not an identity.</p>
+<p>Being smarter does not mean introducing more mechanisms. It means assuming less.</p>
+<h2 id="simplicity">Simplicity<a class="zola-anchor" href="#simplicity" aria-label="Anchor link for: simplicity" style="visibility: hidden;"></a>
+</h2>
+<p>When I wrote down the title, "Prometheus Bound", I thought I was criticizing a kind of bondage.</p>
+<p>We are used to metaphors, imagining the model as suppressed fire, a force constrained by engineering systems. But maybe the problem is not that dramatic. The model is not imprisoned. It is just misused within a wrong organization.</p>
+<p>Task appears, construct context, complete task, end.
+Next turn, start over.
+When we stop building systems on top of "persistent state", a lot of complexity disappears naturally.</p>
+<p>If the system is clear enough, we don't need myths.
+And we don't need Prometheus.</p>
+<hr />
+<p>Of course, every system exists because there were real problems it tried to solve. This post contains a lot of criticism to express a viewpoint, but that does not mean those systems are meaningless.</p>
+<p>Again, thanks to bub and my friends, for giving me a chance to feel and express all of this more deeply.</p>
+<h2 id="recommended-reading">Recommended Reading<a class="zola-anchor" href="#recommended-reading" aria-label="Anchor link for: recommended-reading" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li><a rel="nofollow noreferrer" href="https://frostming.com/posts/2026/create-a-claw/">What does it take to create a lobster?</a></li>
+<li><a rel="nofollow noreferrer" href="https://psiace.me/zh/posts/reinvent-the-punch-tape/">Reinvent the punch tape</a></li>
+<li><a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a></li>
+<li><a rel="nofollow noreferrer" href="https://www.piglei.com/articles/ai-programming-is-a-new-framework/">AI Programming Is a New Framework</a></li>
+</ul>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="prometheus-bound"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>
