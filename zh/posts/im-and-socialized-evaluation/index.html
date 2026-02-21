@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="zh">
 
 <head>
   <meta charset="utf-8">
@@ -10,9 +10,9 @@
   
     
   
-  <meta name="description" content="Looking back at the years between sixteen and twenty-one and how code shaped my early path.">
+  <meta name="description" content="当 Agent 进入群聊，人机协作需要的不只是 benchmark。">
 
-  <title>Live a Little · Part 1 (2016–2021) </title>
+  <title>即时通讯与社会化评估</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -179,27 +179,12 @@
       <ul>
         
         <li>
-          <a class="h2" href="#2016-a-boy-and-his-first-lines-of-code">2016 – A Boy and His First Lines of Code</a>
+          <a class="h2" href="#ji-shi-tong-xun-de-mi-guan">即时通讯的“蜜罐”</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#2017-2018-university-and-first-encounters">2017–2018 University and First Encounters</a>
-          
-        </li>
-        
-        <li>
-          <a class="h2" href="#2019-translation-and-community">2019 – Translation and Community</a>
-          
-        </li>
-        
-        <li>
-          <a class="h2" href="#2020-rust-summer-and-finding-a-direction">2020 – Rust Summer and Finding a Direction</a>
-          
-        </li>
-        
-        <li>
-          <a class="h2" href="#2021-from-failed-exams-to-first-job">2021 – From Failed Exams to First Job</a>
+          <a class="h2" href="#mai-xiang-she-hui-hua-ping-gu">迈向社会化评估</a>
           
         </li>
         
@@ -221,9 +206,11 @@
 
 
 
+  
+
 <header>
   <nav>
-    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
   </nav>
 </header>
 
@@ -238,15 +225,15 @@
 "></div>
       
       <article class="prose">
-        <h1>Live a Little · Part 1 (2016–2021) </h1>
+        <h1>即时通讯与社会化评估</h1>
         <div id="post-info">
           <div id="date">
-            <span id="publish">Oct 20, 2025</span>
+            <span id="publish">Feb 21, 2026</span>
             </div>
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/memoir"><span>#</span>Memoir</a><a class="instant" href="https://psiace.me/tags/career"><span>#</span>Career</a>
+            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/im"><span>#</span>im</a><a class="instant" href="https://psiace.me/tags/collaboration"><span>#</span>collaboration</a><a class="instant" href="https://psiace.me/tags/evaluation"><span>#</span>evaluation</a><a class="instant" href="https://psiace.me/tags/benchmark"><span>#</span>benchmark</a><a class="instant" href="https://psiace.me/tags/bub"><span>#</span>bub</a>
           </div>
           
 
@@ -255,6 +242,8 @@
           
 
 
+
+  
 
 
 
@@ -276,10 +265,10 @@
   
 
 
-  <div class="lang-switch" role="navigation" aria-label="Language">
-    <span class="lang-switch__label">Language:</span>
-    <span class="lang-switch__current">English</span>
-    <a class="lang-switch__link" href="https://psiace.me/zh/posts/live-a-little-part-1/">中文</a> 
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/im-and-socialized-evaluation/">English</a> 
   </div>
 
 
@@ -290,88 +279,24 @@
 
         
 
-        <p><strong>Between Code and Youth</strong></p>
+        <p>这是一篇简单的小短文，主要讨论即时通讯下的人与 Agent 协作，以及为什么更需要社会化评估而不是各种 benchmark。</p>
 <blockquote>
-<p>I'm turning twenty-seven soon.
-By the standards of this era, that already puts me in the “old folks” cohort.
-My second full-time job has just crossed its first anniversary.
-Looking back, I want to talk about the years I spent growing up with code.</p>
+<p>我们目前在群聊之中培育 bub ，并且观察到它和另一个 agent 小伙伴 kapy 的技能传递过程，有感而发。我们在一个多人群聊中同时与三至四个 Agent 一同协作，任务是并发的、断裂的，随时需要为切换做好准备。有些人可能更关心视频、图片的分析，有些人只想听个睡前故事，有些人因为如何利用 livecd 如何修复 Linux 桌面环境而发愁，中间还要夹杂过年的祝愿和风土人情大盘点。另外，这些 agent 都是从 0 开始写的，而不是某一些已经大获流行的实现。</p>
 </blockquote>
-<hr />
-<h2 id="2016-a-boy-and-his-first-lines-of-code">2016 – A Boy and His First Lines of Code<a class="zola-anchor" href="#2016-a-boy-and-his-first-lines-of-code" aria-label="Anchor link for: 2016-a-boy-and-his-first-lines-of-code" style="visibility: hidden;"></a>
+<h2 id="ji-shi-tong-xun-de-mi-guan">即时通讯的“蜜罐”<a class="zola-anchor" href="#ji-shi-tong-xun-de-mi-guan" aria-label="Anchor link for: ji-shi-tong-xun-de-mi-guan" style="visibility: hidden;"></a>
 </h2>
-<p>Back in 2016, I was a book addict, devouring door-stopper web novels by the truckload.
-Ruby was everywhere in China, so I tinkered with Rails and deployed a Jekyll site on GitHub Pages.
-Wanting prettier UI nudged me into HTML basics.
-I even snuck in a full read of <em>Digital Design and Computer Architecture</em> — a Verilog HDL and computer architecture primer.
-I barely understood it, but teenage bravado kept me going.</p>
-<hr />
-<h2 id="2017-2018-university-and-first-encounters">2017–2018 University and First Encounters<a class="zola-anchor" href="#2017-2018-university-and-first-encounters" aria-label="Anchor link for: 2017-2018-university-and-first-encounters" style="visibility: hidden;"></a>
+<p>OpenClaw 等 bot 的流行，大抵并不是因为 IM 在任务分发上的优势。尽管长时间以来大多数 Agent 程序都是以对话形式存在的，但我更愿意将其视作“入口的胜利”，人类最熟悉的就是各种输入框和对话框，最顺手，使用也最频繁。</p>
+<p>IM 比这些更近一步，因为它几乎是现代人类生活的一部分，交互天然是异步的，预期也随之降低，毕竟现在多了一个能够 24 小时响应呼唤，帮你完成任务的伙伴。在你熟悉的界面，原生的通知和“随口一问”的心理预期，让一切变得似乎触手可及，甚至只要一条短消息，就能覆盖过去需要浏览网页、打开编辑器才能完成的大多数任务。</p>
+<p>但 IM 并不是天然的协作模型，反而是由碎片式的多轮异步会话组成的。一条对话流内很难承载完整的协作和关系网络，当你突然为之前某个任务取得关键进度高兴的时候，Agent 可能会自然地接过话来，它还在认真地为某个不再重要的线程欢呼，它已经迷失在上下文之中了。</p>
+<p>“我们需要一个新的 IM”是个很诱人的误解。IM 只是通道的一部分，一个成本相对更低也更友好的入口。一个更会聊天的 bot 或者一个更像协作工具的 IM 无法给你想要的一切。上下文不是必须背在身上的历史包袱，而应该是一次次按需构造出来的工作集。协作的对象和状态需要更明确和良好的表达形式和交互范式，就像过去我们仍然不断地创建看板、TodoList 那样。</p>
+<p>Agent 的世界不应该在聊天记录里。</p>
+<h2 id="mai-xiang-she-hui-hua-ping-gu">迈向社会化评估<a class="zola-anchor" href="#mai-xiang-she-hui-hua-ping-gu" aria-label="Anchor link for: mai-xiang-she-hui-hua-ping-gu" style="visibility: hidden;"></a>
 </h2>
-<p>I entered university in 2017, majoring in Computer Science and Technology.
-Campus was huge; even the pre-pandemic shuttle only covered half of it.
-Math never came easy, yet coding let me build things, so I stuck with it.</p>
-<p>In 2018 I tried to take algorithms and English seriously while already living inside Linux.
-I devoured GNU and Free Software Foundation histories and helped the GNU.org proofread articles.
-I barely knew tools beyond basic git, so seniors merged patches for me.
-Mailing lists introduced me to Junyu, whose WebP image service would later go viral on Twitter.</p>
-<p>That year I also wrote to the fresh <a rel="nofollow noreferrer" href="https://leetcode.cn/">LeetCode China</a> launch to volunteer for solution translations.
-Hercy sent my first official reply, and Winston helped me land the gig.
-Seven years on, we’re still friends.</p>
-<p>Of course 2018 had more stories:
-I failed Calculus yet met my girlfriend.
-That autumn I watched <em>Crystal Sky of Yesterday</em> with studio friends, then said on the way out:</p>
-<blockquote>
-<p>“This movie should be watched with someone special.”
-I bought two more tickets to rewatch it with a junior from the club —
-seven years later we’re still together.</p>
-</blockquote>
-<p>Technically, in 2018 I reset my GitHub account for the third time, experimented with Servo, learned Cargo commands, and fixed README build steps.
-I never imagined a future job would have me writing Rust for real.</p>
-<hr />
-<h2 id="2019-translation-and-community">2019 – Translation and Community<a class="zola-anchor" href="#2019-translation-and-community" aria-label="Anchor link for: 2019-translation-and-community" style="visibility: hidden;"></a>
-</h2>
-<p>Translation carried me farther than I expected.
-In 2019 <a rel="nofollow noreferrer" href="https://linux.cn/lctt/">LCTT</a> was still the most vibrant Linux community in China.
-There I met Wang and teacher Bai Huancheng; we even planned a book that never shipped, yet that collaboration remains unforgettable.</p>
-<p>Python was booming.
-I picked up Flask, Django, and FastAPI and became a maintainer of <a rel="nofollow noreferrer" href="https://github.com/audreyfeldroy/cookiecutter-pypackage">audreyfeldroy/cookiecutter-pypackage</a>, a project with thousands of stars.
-Audrey Feldroy and Daniel Roy “Pydanny” Greenfeld still run that legendary two-person shop.</p>
-<p>By year end I finished the compiler course, read <em>Crafting Interpreters</em>, and built <a rel="nofollow noreferrer" href="https://github.com/PsiACE/meco">meco</a>, a C project template, plus the toy language <a rel="nofollow noreferrer" href="https://github.com/PsiACE/emo">emo</a>.
-I also tried Neo4j and NebulaGraph, building a graph-visualization project.
-I had no idea I’d later work at a graph database company.</p>
-<hr />
-<h2 id="2020-rust-summer-and-finding-a-direction">2020 – Rust Summer and Finding a Direction<a class="zola-anchor" href="#2020-rust-summer-and-finding-a-direction" aria-label="Anchor link for: 2020-rust-summer-and-finding-a-direction" style="visibility: hidden;"></a>
-</h2>
-<p>I told myself I was preparing for graduate school in 2020, yet my mind stayed half in code.
-I shifted from Python to Rust and joined the first <a rel="nofollow noreferrer" href="https://summer-ospp.ac.cn/">Open Source Promotion Plan (OSPP)</a> to build <a rel="nofollow noreferrer" href="https://github.com/casbin-rs/casbin-raft">casbin-raft</a>.
-That’s where I met Jiang Cheng and Hackerchai — Jiang later wrote a recommendation letter, and chai went on to Kong.
-My connection with OSPP ran even deeper, continuing to this day.</p>
-<p>I also translated a chapter of <em>Writing an OS in Rust</em> and met Luo Jia, creator of <a rel="nofollow noreferrer" href="https://github.com/rustsbi/rustsbi">RustSBI</a>.
-nrc’s <em>“Early Impressions of Go from a Rust Programmer”</em> was another piece I translated.
-Their VLDB paper became the backbone of my thesis proposal, and with permission I published my notes at <a rel="nofollow noreferrer" href="https://github.com/psiace/tidb-a-raft-based-htap-database">PsiACE/TiDB-A-Raft-based-HTAP-Database</a>.</p>
-<p>My thesis was a Rust-based distributed KV store built with Raft + Bitcask.
-If you know PingCAP, you can guess the inspiration.
-I studied <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/openraft">async-raft</a> — the predecessor of databend/openraft — and contributed to PingCAP projects.
-I donated to the inaugural <a rel="nofollow noreferrer" href="https://rustcc.cn/2020rustchinaconf/">Rust China Conf 2020</a> and later edited the Rust Chinese Community Daily for a few years.</p>
-<hr />
-<h2 id="2021-from-failed-exams-to-first-job">2021 – From Failed Exams to First Job<a class="zola-anchor" href="#2021-from-failed-exams-to-first-job" aria-label="Anchor link for: 2021-from-failed-exams-to-first-job" style="visibility: hidden;"></a>
-</h2>
-<p>The exam was a mess — I was still fixing lint in <a rel="nofollow noreferrer" href="https://github.com/xi-editor/xi-editor">xi-editor</a> during review weeks.
-I interviewed with Wasmedge for an internship, learned about WebAssembly and the ERC20 standard, and my solution was eventually adopted by the community.
-And forked <a rel="nofollow noreferrer" href="https://github.com/PsiACE/riteraft">riteraft</a> and <a rel="nofollow noreferrer" href="https://github.com/PsiACE/ritelinked">ritelinked</a> from Meilisearch and Hashlink, respectively, earning a modest following.
-I also interviewed with PingCAP for <a rel="nofollow noreferrer" href="https://github.com/ti-community-infra/tichi">TiChi</a>, learning Prow deployment the hard way.</p>
-<p>Meanwhile I contributed to <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/databend">Databend</a> across CI, fuzzing, and upstream Arrow and SQL parser changes.
-Back then Databend had maybe ten people.
-I added BohuTANG on WeChat just to learn, yet after my thesis defense he invited me to join.
-We met in Wuhan, and his founder energy was blindingly bright.
-During June and July I sent around forty PRs upstream and downstream.
-That’s how I joined a team determined to build the “Snowflake of China.”
-My first real engineering job began.</p>
-<hr />
-<blockquote>
-<p><em>To be continued — Part 2 will cover 2022 to 2025, from Databend to Apache OpenDAL and beyond.</em></p>
-</blockquote>
+<p>每一次新的基础模型发布，我们就不得不为之欢呼或者沮丧，因为模型再次在编程任务、数学等具备挑战性的艰难任务上战胜了人类，并不断刷新同类创造的纪录。</p>
+<p>我无意批判这一切，benchmark 当然是具备明确价值的：可复现、可比较、标准化、规模化，我们正视并重视这些结果。在人类有历史以来，我们有一套相似的机制来作为能力评估的参考系，就像你不得不应付考试，然后开始在试卷上涂鸦一样。</p>
+<p>但是，当 agent 进入 IM ，进入群聊，进入人类社会，它需要解决所谓的“真实任务”，或者说，它要面对的不再是干净的题目，而是脏的生活。benchmark 程序很难覆盖这些：残缺的上下文、模糊的任务意图、并行的主题，勾兑有时是在其他空间发生的。Agent 无法知道一切，也无需回应所有问题，但它必须博得大家的喜爱，能力问题也随之变成了共处问题。</p>
+<p>社会化评估是一件平凡且质朴的事情，将 Agent 放入人类的日常，让它面对打断、冷场、跑题、情绪化表达和不对称的信息。看它怎么在不确定的上下文中左右支绌，并且将大部分任务尽力推进，就像我们和人协作那样。社会化评估很难用分数概括，也无法形成具体的榜单，但它是对人和 Agent 协作的直观洞察，你会知道你有多大意愿接受它进入你的生活。</p>
+<p>OpenClaw 这种形态将 Agent 推到了一个新的位置，它不再是一个需要跳转的工具，而是沟通的一部分。问题总是会解决的，但是否“值得”成为新的考量，即便是最聪明的模型也不得不持续减少它对问题背景的假设。社会化评估将会逼着 Agent 承认真实世界的形状，然后在这个形状里活下来。</p>
 
       </article>
 
@@ -388,6 +313,8 @@ My first real engineering job began.</p>
     
   
 
+
+  
 
 
 
@@ -410,14 +337,14 @@ My first real engineering job began.</p>
   data-category-id="DIC_kwDOKYGbpM4CZxPW"
   data-mapping="specific"
   
-    data-term="live-a-little-part-1"
+    data-term="im-and-socialized-evaluation"
   
   data-strict="0"
   data-reactions-enabled="1"
   data-emit-metadata="0"
   data-input-position="top"
   data-theme="https://psiace.me/giscus_light.css"
-  data-lang="en"
+  data-lang="zh-CN"
   data-loading="lazy"
   crossorigin="anonymous"
   async

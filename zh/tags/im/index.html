@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="zh">
+<html lang="
+
+en">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
   
-  
-    
-  
-  <meta name="description" content="回顾 ACP Python SDK 从小实验成长为官方项目的过程，并聊聊新的阶段。">
+  <meta name="description" content="im">
 
-  <title>Agent Client Protocol Python SDK 的新篇章</title>
+  <title>Posts</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -144,15 +143,10 @@
 
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
-
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
-
-
-
   
 </head>
 
-<body class="post">
+<body class="tag-single">
   
   <script>
     const theme = sessionStorage.getItem('theme');
@@ -171,168 +165,32 @@
 
 
 <div id="wrapper">
-  <div id="blank"></div>
-  <aside>
-    
-    
-    
-    <button id="back-to-top" aria-label="back to top">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-
-    </button>
-    
-  </aside>
-  <main>
-    
+  
 
   
 
 
-
-  
 
 <header>
   <nav>
-    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;tags">← Back</a>
   </nav>
 </header>
 
-
-    <div>
+  <main class="layout-list">
+    <div class="title">
+      <span># im</span>
+    </div>
+    <div class="post-list">
       
-      
-      
-      
-      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
-" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
-"></div>
-      
-      <article class="prose">
-        <h1>Agent Client Protocol Python SDK 的新篇章</h1>
-        <div id="post-info">
-          <div id="date">
-            <span id="publish">Nov 7, 2025</span>
-            </div>
-
-          
-          <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/agent-client-protocol"><span>#</span>agent-client-protocol</a><a class="instant" href="https://psiace.me/tags/python"><span>#</span>python</a><a class="instant" href="https://psiace.me/tags/sdk"><span>#</span>sdk</a><a class="instant" href="https://psiace.me/tags/open-source"><span>#</span>open-source</a><a class="instant" href="https://psiace.me/tags/community"><span>#</span>community</a>
-          </div>
-          
-
-          
-          
-          
-
-
-
-  
-
-
-
-  
-
-
-
-
-  
-
-  
-    
-    
-    
-      
-    
-    
-    
-  
-
-
-  <div class="lang-switch" role="navigation" aria-label="语言">
-    <span class="lang-switch__label">语言:</span>
-    <span class="lang-switch__current">中文</span>
-    <a class="lang-switch__link" href="https://psiace.me/posts/acp-python-sdk-new-chapter/">English</a> 
-  </div>
-
-
-        </div>
-
-        
-        
-
-        
-
-        <p>当我最初开始编写 <strong><a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol/python-sdk">Agent Client Protocol Python SDK</a></strong> 时，它只是一个出于好奇的小项目。
-我想弄清楚 <em>coding agents</em> 是如何交流的——状态、意图与消息在客户端和智能体之间如何流动。</p>
-<p>随着时间推移，它逐渐成长为一个真正有用的项目。
-越来越多的开发者开始使用它，从 <strong>Moonshot</strong> 到其他探索智能体工作流的公司。
-SDK 的架构变得稳定，并持续与 ACP 规范保持同步，成为多种实际集成的基础。</p>
-<p>今天，是一个新的开始。
-Python SDK 已经正式迁移到 <strong><a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol">agentclientprotocol</a></strong> 组织下，与 TypeScript、Rust、Kotlin SDK 一起成为官方生态的一部分。</p>
-<p>我会继续在新组织下维护和改进它，专注于让它更加可靠、简洁、易于集成，让更多开发者能够轻松构建智能体系统。</p>
-<p>特别感谢 <strong>Sergey Ignatov</strong>、<strong>Anna</strong> 和 <strong>Ben</strong> 在整个迁移过程中给予的信任与支持，也感谢所有曾经使用、贡献或反馈过这个项目的开发者们。</p>
-<p>这个项目最初只是一个实验，如今它已成为一个共同的努力。
-愿我们一起迎接新的篇章。</p>
-<p>— <strong>尚卓燃（PsiACE）</strong>
-Maintainer, ACP Python SDK</p>
-
-      </article>
-
-      
-      
-
-      
-      
-      <div class="giscus"></div>
-      
-
-
-  
-    
-  
-
-
-  
-
-
-
-
-
-
-
-
-  
-    
-    
-  
-
-
-<script
-  src="https://giscus.app/client.js"
-  data-repo="PsiACE/psiace"
-  data-repo-id="R_kgDOKYGbpA"
-  data-category="General"
-  data-category-id="DIC_kwDOKYGbpM4CZxPW"
-  data-mapping="specific"
-  
-    data-term="acp-python-sdk-new-chapter"
-  
-  data-strict="0"
-  data-reactions-enabled="1"
-  data-emit-metadata="0"
-  data-input-position="top"
-  data-theme="https://psiace.me/giscus_light.css"
-  data-lang="zh-CN"
-  data-loading="lazy"
-  crossorigin="anonymous"
-  async
-></script>
-
+      <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;im-and-socialized-evaluation&#x2F;">
+        <span>即时通讯与社会化评估</span>
+        <span class="date">Feb 21, 2026</span>
+      </a>
       
     </div>
-
-    
+  </main>
+  
 
 
 <footer>
@@ -388,13 +246,9 @@ Maintainer, ACP Python SDK</p>
 
 
 
-  </main>
 </div>
 
   
-<script src="/js/lightense.min.js"></script>
-
-
   <script src="https://psiace.me/js/main.js"></script>
 </body>
 

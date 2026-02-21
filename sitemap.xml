@@ -44,6 +44,10 @@
         <lastmod>2025-07-16</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/posts/im-and-socialized-evaluation/</loc>
+        <lastmod>2026-02-21</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/posts/integrate-mcp-tools-into-llamaindex/</loc>
         <lastmod>2025-02-11</lastmod>
     </url>
@@ -114,6 +118,9 @@
         <loc>https://psiace.me/tags/architecture/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/benchmark/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/bub/</loc>
     </url>
     <url>
@@ -127,6 +134,9 @@
     </url>
     <url>
         <loc>https://psiace.me/tags/coding/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/tags/collaboration/</loc>
     </url>
     <url>
         <loc>https://psiace.me/tags/community/</loc>
@@ -144,6 +154,9 @@
         <loc>https://psiace.me/tags/engineering-confidence/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/evaluation/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/event-driven/</loc>
     </url>
     <url>
@@ -151,6 +164,9 @@
     </url>
     <url>
         <loc>https://psiace.me/tags/huey/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/tags/im/</loc>
     </url>
     <url>
         <loc>https://psiace.me/tags/llama-index/</loc>
@@ -289,6 +305,10 @@
         <lastmod>2025-07-16</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/zh/posts/im-and-socialized-evaluation/</loc>
+        <lastmod>2026-02-21</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/posts/integrate-mcp-tools-into-llamaindex/</loc>
         <lastmod>2025-02-11</lastmod>
     </url>
@@ -359,6 +379,9 @@
         <loc>https://psiace.me/zh/tags/architecture/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/zh/tags/benchmark/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/tags/bub/</loc>
     </url>
     <url>
@@ -372,6 +395,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/coding/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/collaboration/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/community/</loc>
@@ -389,6 +415,9 @@
         <loc>https://psiace.me/zh/tags/engineering-confidence/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/zh/tags/evaluation/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/tags/event-driven/</loc>
     </url>
     <url>
@@ -396,6 +425,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/huey/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/im/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/llama-index/</loc>
