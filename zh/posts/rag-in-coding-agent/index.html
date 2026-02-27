@@ -179,29 +179,43 @@
       <ul>
         
         <li>
-          <a class="h2" href="#wei-shen-me-dan-kao-llm-bu-gou">为什么单靠 LLM 不够</a>
+          <a class="h2" href="#tl-dr">TL;DR</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#yi-ge-wan-zheng-de-rag-bian-cheng-xun-huan">一个完整的 RAG 编程循环</a>
+          <a class="h2" href="#xie-dai-ma-de-zhen-shi-tong-dian">写代码的真实痛点</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#coding-agent-dao-di-shi-shen-me">Coding Agent 到底是什么</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#rag-zen-me-rang-bian-cheng-zhu-shou-bian-cong-ming">RAG 怎么让编程助手变聪明</a>
           
           <ul>
             
             <li>
-              <a class="h3" href="#ren-wu-cheng-qing">任务澄清</a>
+              <a class="h3" href="#1-gao-qing-chu-ni-yao-gan-shen-me">1. 搞清楚你要干什么</a>
             </li>
             
             <li>
-              <a class="h3" href="#shou-ji-shang-xia-wen">收集上下文</a>
+              <a class="h3" href="#2-shou-ji-xiang-guan-zi-liao">2. 收集相关资料</a>
             </li>
             
             <li>
-              <a class="h3" href="#sheng-cheng-sha-xiang-yan-zheng">生成 + 沙箱验证</a>
+              <a class="h3" href="#3-xie-dai-ma-bing-ce-shi">3. 写代码并测试</a>
             </li>
             
             <li>
-              <a class="h3" href="#jiao-fu">交付</a>
+              <a class="h3" href="#4-chu-li-cheng-gong-he-shi-bai">4. 处理成功和失败</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#5-jiao-fu-cheng-guo">5. 交付成果</a>
             </li>
             
           </ul>
@@ -209,12 +223,22 @@
         </li>
         
         <li>
-          <a class="h2" href="#rag-zhen-zheng-jie-jue-de-tong-dian">RAG 真正解决的痛点</a>
+          <a class="h2" href="#zui-da-de-keng-shen-me-shi-hou-qu-cha-zi-liao">最大的坑：什么时候去查资料？</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#jian-yi-de-zui-jia-shi-jian">建议的最佳实践</a>
+          <a class="h2" href="#shen-me-xin-xi-gai-cun-shen-me-gai-diu">什么信息该存，什么该丢</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#xiang-shi-shi-de-hua-cong-jian-dan-kai-shi">想试试的话，从简单开始</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#xie-zai-zui-hou">写在最后</a>
           
         </li>
         
@@ -283,8 +307,6 @@
 
 
   
-
-  
     
     
     
@@ -292,6 +314,8 @@
     
     
     
+  
+
   
 
 
@@ -309,88 +333,140 @@
 
         
 
-        <h2 id="wei-shen-me-dan-kao-llm-bu-gou">为什么单靠 LLM 不够<a class="zola-anchor" href="#wei-shen-me-dan-kao-llm-bu-gou" aria-label="Anchor link for: wei-shen-me-dan-kao-llm-bu-gou" style="visibility: hidden;"></a>
+        <blockquote>
+<p>我的日常工作是和 RAG 打交道，最近 Coding Agent 大热，Claude Code 、Cursor 这样的工具已经成为了研发必备的效率神器，于是尝试调研和学习了一下，抛砖引玉。</p>
+</blockquote>
+<h2 id="tl-dr">TL;DR<a class="zola-anchor" href="#tl-dr" aria-label="Anchor link for: tl-dr" style="visibility: hidden;"></a>
 </h2>
-<p>写代码最费时的地方不是敲键盘，而是：</p>
+<p>Coding Agent 中其实不少环节都可以用到 RAG（检索增强生成），把"查资料"和"写代码"这两件事结合起来。具体来说：</p>
 <ul>
-<li>看懂庞大的旧代码；</li>
-<li>在仓库里定位相关文件；</li>
-<li>理解框架的各种约定；</li>
-<li>排查莫名其妙的错误日志。</li>
+<li><strong>理解你想干什么</strong>：分析需求，找到相关代码和文档</li>
+<li><strong>快速定位文件</strong>：在大项目里找到关键模块</li>
+<li><strong>写出合适的代码</strong>：基于实际情况和最佳实践</li>
+<li><strong>帮你调试</strong>：分析错误，搜索解决方案</li>
 </ul>
-<p>LLM 虽然能“续写代码”，但不了解上下文，很容易耍流氓。引入 RAG（Retrieval-Augmented Generation）后，助手可以先检索，再生成——像是一个随叫随到的资深同事。</p>
-<h2 id="yi-ge-wan-zheng-de-rag-bian-cheng-xun-huan">一个完整的 RAG 编程循环<a class="zola-anchor" href="#yi-ge-wan-zheng-de-rag-bian-cheng-xun-huan" aria-label="Anchor link for: yi-ge-wan-zheng-de-rag-bian-cheng-xun-huan" style="visibility: hidden;"></a>
+<p>说白了，就是让编程助手从"代码生成器"变成真正的"软件工程师"。</p>
+<hr />
+<h2 id="xie-dai-ma-de-zhen-shi-tong-dian">写代码的真实痛点<a class="zola-anchor" href="#xie-dai-ma-de-zhen-shi-tong-dian" aria-label="Anchor link for: xie-dai-ma-de-zhen-shi-tong-dian" style="visibility: hidden;"></a>
 </h2>
-<pre data-lang="mermaid" class="language-mermaid z-code"><code class="language-mermaid" data-lang="mermaid"><span class="z-text z-plain">graph LR
-</span><span class="z-text z-plain">   subgraph TaskInit [1. 任务澄清]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       A[读懂需求] --&gt; B[准备环境]
-</span><span class="z-text z-plain">       B --&gt; C[扫描代码库]
-</span><span class="z-text z-plain">       B --&gt; D[加载规范 &amp; 文档]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph ContextBuild [2. 收集上下文]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       E[查框架/库文档]
-</span><span class="z-text z-plain">       E --&gt; F[找类似代码]
-</span><span class="z-text z-plain">       F --&gt; G[搜问答平台]
-</span><span class="z-text z-plain">       G --&gt; H[拼出知识 Soup]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph CodeWork [3. 生成与验证]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       I[生成补丁] --&gt; J[沙箱运行]
-</span><span class="z-text z-plain">       J --&gt; K[记录结果]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph HandleFeedback [4. 处理反馈]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       L[成功 ✅]
-</span><span class="z-text z-plain">       M[失败 ❌ → 诊断 &amp; 修复]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph Finish [5. 收尾]
-</span><span class="z-text z-plain">       N[交付补丁 + 说明]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   TaskInit --&gt; ContextBuild --&gt; CodeWork --&gt; HandleFeedback
-</span><span class="z-text z-plain">   K --&gt;|成功| L --&gt; Finish
-</span><span class="z-text z-plain">   K --&gt;|失败| M -.-&gt; ContextBuild
-</span></code></pre>
-<h3 id="ren-wu-cheng-qing">任务澄清<a class="zola-anchor" href="#ren-wu-cheng-qing" aria-label="Anchor link for: ren-wu-cheng-qing" style="visibility: hidden;"></a>
-</h3>
-<p>助手先问清楚：“你要的认证是 JWT 还是 OAuth？”、“这个项目用的是 FastAPI 还是 Django？”同时建立工作目录、读取配置、构建代码索引地图。</p>
-<h3 id="shou-ji-shang-xia-wen">收集上下文<a class="zola-anchor" href="#shou-ji-shang-xia-wen" aria-label="Anchor link for: shou-ji-shang-xia-wen" style="visibility: hidden;"></a>
-</h3>
+<p>作为一个软件工程师，大部分时间我们都在干这些事：</p>
 <ul>
-<li>官方文档、内部 Wiki；</li>
-<li>仓库里已有的相似实现；</li>
-<li>StackOverflow / GitHub Issues 等社区问答；</li>
-<li>团队自定义的编码规范。</li>
+<li>搞懂一个巨大项目是怎么工作的</li>
+<li>在几百个文件里找到那个该死的模块</li>
+<li>看着莫名其妙的报错发呆</li>
+<li>学新框架新工具</li>
 </ul>
-<p>这些信息拼成“知识汤”，保证后续的代码生成有出处可查。</p>
-<h3 id="sheng-cheng-sha-xiang-yan-zheng">生成 + 沙箱验证<a class="zola-anchor" href="#sheng-cheng-sha-xiang-yan-zheng" aria-label="Anchor link for: sheng-cheng-sha-xiang-yan-zheng" style="visibility: hidden;"></a>
-</h3>
-<p>助手在独立环境里动手改代码、跑测试、收集日志。失败了就把上下文补齐再试，成功了就打包结果。</p>
-<h3 id="jiao-fu">交付<a class="zola-anchor" href="#jiao-fu" aria-label="Anchor link for: jiao-fu" style="visibility: hidden;"></a>
-</h3>
-<p>除了最终代码，还要附上：修改说明、需要人工复核的点、关联的文档链接。这样才算一个可落地的工作流。</p>
-<h2 id="rag-zhen-zheng-jie-jue-de-tong-dian">RAG 真正解决的痛点<a class="zola-anchor" href="#rag-zhen-zheng-jie-jue-de-tong-dian" aria-label="Anchor link for: rag-zhen-zheng-jie-jue-de-tong-dian" style="visibility: hidden;"></a>
+<p><img src="https://psiace.me/zh/posts/rag-in-coding-agent/swe-bench.png" alt="SWE Benchmark" /></p>
+<p>这些事情真的很烦，也很费时间。Coding Agent 应该帮我们处理这些重复劳动，让我们可以自由表达自己的想法。假如你的 “编程搭子” 还不够聪明，理解不了你的代码，找不到对的信息，那几乎只会搞砸一切，更别说帮你调试了。</p>
+<hr />
+<h2 id="coding-agent-dao-di-shi-shen-me">Coding Agent 到底是什么<a class="zola-anchor" href="#coding-agent-dao-di-shi-shen-me" aria-label="Anchor link for: coding-agent-dao-di-shi-shen-me" style="visibility: hidden;"></a>
 </h2>
+<p>想象一下，你要做一个从没做过的功能。通常你会这样：</p>
+<ul>
+<li>先 Google 找例子</li>
+<li>翻框架文档</li>
+<li>在自己项目里搜类似的代码</li>
+<li>上 StackOverflow 看看别人怎么解决的</li>
+</ul>
+<p>Coding Agent 就是一个可以自主执行这些动作的智能体，或者说把这个过程自动化了。它不仅可以充当搜索引擎进行学习，还能把找到的信息组合起来，帮你写代码。</p>
+<p>原理其实很简单：</p>
 <ol>
-<li><strong>定位成本</strong>：海量仓库里精准找到相关文件和上下文。</li>
-<li><strong>解释能力</strong>：能说清“为什么这么写”，而不是只给结论。</li>
-<li><strong>调试反馈</strong>：把报错、日志、外部知识结合在一起分析，而不是盲目试错。</li>
-<li><strong>协作透明度</strong>：知识 Soup 可以存档，方便团队复盘、复用。</li>
+<li><strong>检索（Retrieval）</strong>：找相关的东西——代码、文档、问答</li>
+<li><strong>生成（Generation）</strong>：用这些信息写出新的代码或解决方案</li>
 </ol>
-<h2 id="jian-yi-de-zui-jia-shi-jian">建议的最佳实践<a class="zola-anchor" href="#jian-yi-de-zui-jia-shi-jian" aria-label="Anchor link for: jian-yi-de-zui-jia-shi-jian" style="visibility: hidden;"></a>
+<p>就这两步，但效果比单纯的代码生成器强多了。</p>
+<blockquote>
+<p>当然，为了让一切更加顺利，还需要添加反馈机制。根据调试信息优化并进行修正。</p>
+</blockquote>
+<hr />
+<h2 id="rag-zen-me-rang-bian-cheng-zhu-shou-bian-cong-ming">RAG 怎么让编程助手变聪明<a class="zola-anchor" href="#rag-zen-me-rang-bian-cheng-zhu-shou-bian-cong-ming" aria-label="Anchor link for: rag-zen-me-rang-bian-cheng-zhu-shou-bian-cong-ming" style="visibility: hidden;"></a>
 </h2>
+<p>结合 RAG，编程助手就能处理我们平时遇到的各种问题了。</p>
+<p><img src="https://psiace.me/zh/posts/rag-in-coding-agent/coderag-bench.png" alt="CodeRAG Benchmark" /></p>
+<p>整个过程大概是这样的：</p>
+<h3 id="1-gao-qing-chu-ni-yao-gan-shen-me">1. <strong>搞清楚你要干什么</strong><a class="zola-anchor" href="#1-gao-qing-chu-ni-yao-gan-shen-me" aria-label="Anchor link for: 1-gao-qing-chu-ni-yao-gan-shen-me" style="visibility: hidden;"></a>
+</h3>
+<p>你说"给 API 加个用户认证"，助手得先理解：</p>
 <ul>
-<li><strong>动态检索策略</strong>：通用知识提前缓存，针对性问题再实时检索。</li>
-<li><strong>可观察性</strong>：保留检索到的证据、生成的思路、执行日志，方便人工介入。</li>
-<li><strong>安全护栏</strong>：沙箱执行、写操作白名单、敏感信息脱敏，一个都不能少。</li>
+<li>要 JWT、OAuth 还是别的方案？</li>
+<li>现有代码哪里需要改？</li>
+<li>你用的什么框架？</li>
 </ul>
-<p>RAG 不是银弹，但它让编码助手从“会写代码的聊天机器人”变成“懂上下文的协作者”。当检索、生成、执行、反馈串在一起，开发者才能真正把时间花在创造价值上。</p>
+<p>然后开始工作——去翻文档找例子，把你的需求搞清楚。</p>
+<h3 id="2-shou-ji-xiang-guan-zi-liao">2. <strong>收集相关资料</strong><a class="zola-anchor" href="#2-shou-ji-xiang-guan-zi-liao" aria-label="Anchor link for: 2-shou-ji-xiang-guan-zi-liao" style="visibility: hidden;"></a>
+</h3>
+<p>然后就是搜集阶段，像个勤快的实习生一样，到处找：</p>
+<ul>
+<li><strong>官方文档</strong>：框架的使用指南</li>
+<li><strong>代码例子</strong>：你项目里或者开源项目的类似实现</li>
+<li><strong>社区问答</strong>：StackOverflow、GitHub 上的讨论</li>
+<li><strong>最佳实践</strong>：编码规范和安全建议</li>
+</ul>
+<p>把这些都混在一起，就是传说中的"知识汤"。</p>
+<h3 id="3-xie-dai-ma-bing-ce-shi">3. <strong>写代码并测试</strong><a class="zola-anchor" href="#3-xie-dai-ma-bing-ce-shi" aria-label="Anchor link for: 3-xie-dai-ma-bing-ce-shi" style="visibility: hidden;"></a>
+</h3>
+<p>有了这些资料，助手就能写出比较靠谱的代码了。但它不会直接给你，而是先在沙箱里跑一遍：</p>
+<ul>
+<li>看看有没有明显的错误</li>
+<li>确认确实能解决你的问题</li>
+<li>有问题的话马上调整</li>
+</ul>
+<h3 id="4-chu-li-cheng-gong-he-shi-bai">4. <strong>处理成功和失败</strong><a class="zola-anchor" href="#4-chu-li-cheng-gong-he-shi-bai" aria-label="Anchor link for: 4-chu-li-cheng-gong-he-shi-bai" style="visibility: hidden;"></a>
+</h3>
+<p>代码跑通了当然好，但如果出错了，它不会放弃：</p>
+<ul>
+<li>分析错误信息</li>
+<li>去找类似问题的解决方案</li>
+<li>用新信息再试一遍</li>
+</ul>
+<p>这个循环让 Coding Agent 变得靠谱多了。</p>
+<h3 id="5-jiao-fu-cheng-guo">5. <strong>交付成果</strong><a class="zola-anchor" href="#5-jiao-fu-cheng-guo" aria-label="Anchor link for: 5-jiao-fu-cheng-guo" style="visibility: hidden;"></a>
+</h3>
+<p>最后，助手会把完整的解决方案给你——不只是代码，还有说明文档。</p>
+<hr />
+<h2 id="zui-da-de-keng-shen-me-shi-hou-qu-cha-zi-liao">最大的坑：什么时候去查资料？<a class="zola-anchor" href="#zui-da-de-keng-shen-me-shi-hou-qu-cha-zi-liao" aria-label="Anchor link for: zui-da-de-keng-shen-me-shi-hou-qu-cha-zi-liao" style="visibility: hidden;"></a>
+</h2>
+<p>用 RAG 有个很关键的问题：<strong>什么时候该去查资料</strong>？</p>
+<p>太早查可能漏掉重要信息，太晚查又会拖慢速度。我觉得这样比较合理：</p>
+<ul>
+<li>通用的东西（框架文档、编码规范）提前准备好</li>
+<li>具体问题（调试、特殊需求）现查现用</li>
+</ul>
+<p>这样既不会太慢，也不会出错。</p>
+<hr />
+<h2 id="shen-me-xin-xi-gai-cun-shen-me-gai-diu">什么信息该存，什么该丢<a class="zola-anchor" href="#shen-me-xin-xi-gai-cun-shen-me-gai-diu" aria-label="Anchor link for: shen-me-xin-xi-gai-cun-shen-me-gai-diu" style="visibility: hidden;"></a>
+</h2>
+<p>不是所有信息都一样重要。有些东西（比如框架规则）得一直记着，有些（比如这次运行的日志）用完就可以扔了。</p>
+<p><img src="https://psiace.me/zh/posts/rag-in-coding-agent/knowledge-soup.png" alt="Knowledge Soup" /></p>
+<p>这样处理可能会是一个不错的路线：</p>
+<table><thead><tr><th><strong>知识类型</strong></th><th><strong>怎么存</strong></th><th><strong>怎么找</strong></th></tr></thead><tbody>
+<tr><td>编码规范</td><td>一直存着</td><td>知识图谱快速查找</td></tr>
+<tr><td>文档教程</td><td>按版本存</td><td>语义搜索相关部分 + 代码结构映射</td></tr>
+<tr><td>问答和代码库</td><td>先临时后永久</td><td>API 查询 + 缓存</td></tr>
+<tr><td>运行时反馈</td><td>临时存储</td><td>即时检索和更新</td></tr>
+</tbody></table>
+<p>这样既不会太慢，也不会占太多空间。</p>
+<blockquote>
+<p>执行的上下文越长，无效的信息越多，也需要及时压缩和截断，保留真正有效的部分。</p>
+</blockquote>
+<hr />
+<h2 id="xiang-shi-shi-de-hua-cong-jian-dan-kai-shi">想试试的话，从简单开始<a class="zola-anchor" href="#xiang-shi-shi-de-hua-cong-jian-dan-kai-shi" aria-label="Anchor link for: xiang-shi-shi-de-hua-cong-jian-dan-kai-shi" style="visibility: hidden;"></a>
+</h2>
+<p>如果你也想写个编程助手，但不想搞得太复杂，可以这样开始：</p>
+<p><img src="https://psiace.me/zh/posts/rag-in-coding-agent/swe-agent.png" alt="SWE Agent" /></p>
+<ol>
+<li>先写一些规则和提示词</li>
+<li>用简单的搜索工具找文档</li>
+<li>写个脚本查 StackOverflow</li>
+<li>用 <code>grep</code>、<code>lint</code> 这些工具收集反馈</li>
+</ol>
+<p>这样就有个基础版本了，后面再慢慢改进。</p>
+<hr />
+<h2 id="xie-zai-zui-hou">写在最后<a class="zola-anchor" href="#xie-zai-zui-hou" aria-label="Anchor link for: xie-zai-zui-hou" style="visibility: hidden;"></a>
+</h2>
+<p>Coding Agent 确实在改变编程的方式。它把"查资料"和"写代码"结合起来，让编程助手真正能帮上忙——理解你的需求、找到相关文件、写出能用的代码、帮你调试问题。</p>
+<p>不管你是新手还是老手，这些效率工具总归能让工作轻松一些。如果你想自己搞一个，建议从简单的开始，慢慢试验。反正现在这个领域变化很快，说不定你就能做出下一个爆款工具。</p>
+<p>总之，这个方向还是很有意思的，值得关注。</p>
 
       </article>
 

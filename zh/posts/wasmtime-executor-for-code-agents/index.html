@@ -12,7 +12,7 @@
   
   <meta name="description" content="周末写的一个 Wasmtime Python 执行器：让代码智能体在本地沙箱里跑起来，又安全又可控。">
 
-  <title>用 WebAssembly 给代码智能体套上安全带</title>
+  <title>用 WebAssembly 为 Code Agent 范式构建安全沙箱</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -179,32 +179,42 @@
       <ul>
         
         <li>
-          <a class="h2" href="#bei-jing-dai-ma-zhi-neng-ti-de-yong-gan-xing-wei">背景：代码智能体的“勇敢”行为</a>
+          <a class="h2" href="#an-quan-tiao-zhan">安全挑战</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#wei-shen-me-xuan-webassembly">为什么选 WebAssembly</a>
+          <a class="h2" href="#webassembly-de-an-quan-you-shi">WebAssembly 的安全优势</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#zhou-mo-zuo-pin-chang-zhe-yang">周末作品长这样</a>
+          <a class="h2" href="#ji-shu-shi-xian">技术实现</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#you-que-dian-yi-lan">优缺点一览</a>
+          <a class="h2" href="#ji-shu-ping-gu">技术评估</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#neng-bu-neng-zhi-jie-shang-sheng-chan">能不能直接上生产？</a>
+          <a class="h2" href="#sheng-chan-jiu-xu-xing">生产就绪性</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#dai-ma-yu-zi-liao">代码与资料</a>
+          <a class="h2" href="#ji-shu-jia-zhi">技术价值</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#jin-yi-bu-tan-suo">进一步探索</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#can-kao-zi-liao">参考资料</a>
           
         </li>
         
@@ -245,7 +255,7 @@
 "></div>
       
       <article class="prose">
-        <h1>用 WebAssembly 给代码智能体套上安全带</h1>
+        <h1>用 WebAssembly 为 Code Agent 范式构建安全沙箱</h1>
         <div id="post-info">
           <div id="date">
             <span id="publish">Jul 8, 2025</span>
@@ -299,20 +309,32 @@
 
         
 
-        <h2 id="bei-jing-dai-ma-zhi-neng-ti-de-yong-gan-xing-wei">背景：代码智能体的“勇敢”行为<a class="zola-anchor" href="#bei-jing-dai-ma-zhi-neng-ti-de-yong-gan-xing-wei" aria-label="Anchor link for: bei-jing-dai-ma-zhi-neng-ti-de-yong-gan-xing-wei" style="visibility: hidden;"></a>
+        <p>Code Agent（代码代理范式）的能力令人惊叹，但安全性问题同样令人担忧。在我测试第一个 Code Agent 时，它很快就尝试安装包、访问环境变量，甚至想要读取系统文件。<strong>我们需要一个真正安全的执行环境。</strong></p>
+<h2 id="an-quan-tiao-zhan">安全挑战<a class="zola-anchor" href="#an-quan-tiao-zhan" aria-label="Anchor link for: an-quan-tiao-zhan" style="visibility: hidden;"></a>
 </h2>
-<p>第一次让 AI 智能体执行代码，不到五分钟它就尝试扫 <code>/etc/passwd</code>、安装莫名其妙的包、跑无限循环。要让这种系统可用，第一件事就是控制执行环境。</p>
-<p>Hugging Face 的 <a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents">smolagents</a> 已经提供了远程执行、Deno + Pyodide 等多种方案，但我想要一个<strong>纯本地、易嵌入</strong>的执行器，于是有了这个 Wasmtime Python Executor。</p>
-<h2 id="wei-shen-me-xuan-webassembly">为什么选 WebAssembly<a class="zola-anchor" href="#wei-shen-me-xuan-webassembly" aria-label="Anchor link for: wei-shen-me-xuan-webassembly" style="visibility: hidden;"></a>
-</h2>
+<p>代码执行型 AI 代理（Code Agent 范式）确实能完成很多任务——数据分析、数学计算、代码调试。但它们缺乏对系统边界的认知，可能带来严重的安全风险。</p>
+<p>典型的安全威胁场景：</p>
 <ul>
-<li><strong>能力最小化</strong>：WASM 默认没有文件、网络、系统访问，授权什么才有什么。</li>
-<li><strong>资源计量</strong>：可以限制 CPU、内存、运行时间。</li>
-<li><strong>可移植</strong>：今天跑 Python，明天换 JS、Ruby 也能适配。</li>
-<li><strong>确定性</strong>：相同输入输出一致，方便调试和审计。</li>
+<li><strong>权限越界</strong>：尝试访问 <code>/etc/passwd</code>、系统环境变量</li>
+<li><strong>恶意包安装</strong>：从被污染的 PyPI 源安装恶意包</li>
+<li><strong>资源耗尽</strong>：无限循环、内存泄漏导致系统崩溃</li>
+<li><strong>网络攻击</strong>：发起 DDoS、端口扫描等恶意行为</li>
 </ul>
-<h2 id="zhou-mo-zuo-pin-chang-zhe-yang">周末作品长这样<a class="zola-anchor" href="#zhou-mo-zuo-pin-chang-zhe-yang" aria-label="Anchor link for: zhou-mo-zuo-pin-chang-zhe-yang" style="visibility: hidden;"></a>
+<p>像 <a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents/blob/main/src/smolagents/remote_executors.py">Hugging Face smolagents</a> 之类的项目已经意识到了这个问题，提供了多种执行器选项来平衡功能性和安全性。</p>
+<h2 id="webassembly-de-an-quan-you-shi">WebAssembly 的安全优势<a class="zola-anchor" href="#webassembly-de-an-quan-you-shi" aria-label="Anchor link for: webassembly-de-an-quan-you-shi" style="visibility: hidden;"></a>
 </h2>
+<p>WebAssembly 的核心价值不在于性能，而在于<strong>原生安全设计</strong>。作为从浏览器安全模型发展而来的技术，WASM 提供了：</p>
+<ol>
+<li><strong>能力安全模型</strong>：基于最小权限原则，只能访问明确授权的资源</li>
+<li><strong>细粒度资源控制</strong>：精确监控 CPU 使用、内存分配、网络访问</li>
+<li><strong>执行确定性</strong>：相同的输入总是产生相同的输出，便于审计</li>
+<li><strong>语言无关性</strong>：支持多种编程语言的安全执行</li>
+</ol>
+<p>Simon Willison 在他的 <a rel="nofollow noreferrer" href="https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox">TIL 文章</a> 中详细探讨了这个方案，<a rel="nofollow noreferrer" href="https://news.ycombinator.com/item?id=34581487">Hacker News 社区也有深入讨论</a>。</p>
+<p>虽然 <a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents">Hugging Face smolagents</a> 已经提供了基于 Pyodide 和 Deno 的 <code>WasmExecutor</code>，但我想探索一个基于 wasmtime 的本地执行方案，看看有什么不同的技术权衡。</p>
+<h2 id="ji-shu-shi-xian">技术实现<a class="zola-anchor" href="#ji-shu-shi-xian" aria-label="Anchor link for: ji-shu-shi-xian" style="visibility: hidden;"></a>
+</h2>
+<p>基于 wasmtime-py 和 VMware 的 Python WASM 运行时，我实现了一个简单的沙箱执行器：</p>
 <pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">wasmtime_executor</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">WasmtimePythonExecutor</span></span>
 </span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">smolagents</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">CodeAgent</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">InferenceClientModel</span></span>
 </span><span class="z-source z-python">
@@ -330,45 +352,54 @@
 </span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">additional_authorized_imports</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-sequence z-list z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">math<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">json<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
 </span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
 </span><span class="z-source z-python">
-</span><span class="z-source z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-support z-function z-builtin z-python">print</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">run</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Calculate the square root of 125<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
+</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">result</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">run</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Calculate the square root of 125<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
 </span></code></pre>
-<p>做法：</p>
-<ol>
-<li>使用 VMware 提供的 Python WASM 发行版；</li>
-<li>借助 <code>wasmtime-py</code> 在本地加载；</li>
-<li>实现 smolagents 期望的执行器接口；</li>
-<li>支持白名单 import、输出截断、状态持久化等基础功能。</li>
-</ol>
-<h2 id="you-que-dian-yi-lan">优缺点一览<a class="zola-anchor" href="#you-que-dian-yi-lan" aria-label="Anchor link for: you-que-dian-yi-lan" style="visibility: hidden;"></a>
+<p>核心实现思路：利用 VMware 提供的 Python WASM 二进制文件，通过 wasmtime-py 进行运行时管理，并实现与 smolagents 的兼容层。关键的技术差异在于<strong>本地执行</strong>，避免了对外部 Deno 运行时的依赖。</p>
+<h2 id="ji-shu-ping-gu">技术评估<a class="zola-anchor" href="#ji-shu-ping-gu" aria-label="Anchor link for: ji-shu-ping-gu" style="visibility: hidden;"></a>
 </h2>
-<table><thead><tr><th>项目</th><th>现在就能用的</th><th>需要改进的</th></tr></thead><tbody>
-<tr><td>兼容性</td><td>可直接接入 smolagents，接口一致</td><td>Python 生态受限，缺包需要自己打</td></tr>
-<tr><td>安全性</td><td>默认隔离，权限收敛</td><td>还缺更精细的文件/网络授权策略</td></tr>
-<tr><td>体验</td><td>完全本地、无外部依赖，错误信息清晰</td><td>长时间运行性能一般，镜像下载稍麻烦</td></tr>
-</tbody></table>
-<h2 id="neng-bu-neng-zhi-jie-shang-sheng-chan">能不能直接上生产？<a class="zola-anchor" href="#neng-bu-neng-zhi-jie-shang-sheng-chan" aria-label="Anchor link for: neng-bu-neng-zhi-jie-shang-sheng-chan" style="visibility: hidden;"></a>
+<p><strong>优势方面：</strong></p>
+<ul>
+<li>与 smolagents 框架的无缝集成</li>
+<li>基础 Python 操作的良好支持</li>
+<li>完善的错误处理和异常捕获</li>
+<li>执行状态的有效隔离和持久化</li>
+<li><strong>本地化部署</strong>，减少网络依赖</li>
+</ul>
+<p><strong>技术权衡：</strong></p>
+<ul>
+<li>安全隔离 vs Python 生态系统限制</li>
+<li>执行安全性 vs 性能开销</li>
+<li>确定性执行 vs 配置复杂性</li>
+<li><strong>本地控制</strong> vs 远程服务调用</li>
+</ul>
+<h2 id="sheng-chan-jiu-xu-xing">生产就绪性<a class="zola-anchor" href="#sheng-chan-jiu-xu-xing" aria-label="Anchor link for: sheng-chan-jiu-xu-xing" style="visibility: hidden;"></a>
 </h2>
-<p>暂时不行，这是个 weekend hack。但它验证了这个思路：</p>
+<p><strong>当前状态：实验性项目</strong>。这个实现主要用于概念验证和技术探索。</p>
+<p>生产环境部署需要解决的关键问题：</p>
 <ul>
-<li>WebAssembly 可以成为代码智能体的“安全带”；</li>
-<li>不需要引入 Deno、远程服务，也能实现沙箱；</li>
-<li>可以把现有 Agent 框架的执行端换成 Wasmtime，安全性和可控性都会提升。</li>
+<li>资源限制和配额管理</li>
+<li>包依赖管理和安全扫描</li>
+<li>性能优化和缓存策略</li>
+<li>完整的审计日志和监控</li>
+<li>安全漏洞的持续评估</li>
 </ul>
-<p>如果要投入生产，需要：</p>
-<ul>
-<li>更完善的资源配额与杀死策略；</li>
-<li>包管理/缓存机制；</li>
-<li>日志、审计链路；</li>
-<li>安全审查和长时间压力测试。</li>
-</ul>
-<h2 id="dai-ma-yu-zi-liao">代码与资料<a class="zola-anchor" href="#dai-ma-yu-zi-liao" aria-label="Anchor link for: dai-ma-yu-zi-liao" style="visibility: hidden;"></a>
+<p>但对于技术研究、原型验证、理解安全边界？这个实现提供了很好的起点。</p>
+<h2 id="ji-shu-jia-zhi">技术价值<a class="zola-anchor" href="#ji-shu-jia-zhi" aria-label="Anchor link for: ji-shu-jia-zhi" style="visibility: hidden;"></a>
+</h2>
+<p>这个项目的真正价值不在于具体的实现代码，而在于证明了<strong>Code Agent 范式存在多种安全沙箱方案</strong>。虽然 smolagents 提供了基于 Pyodide 的 Deno 沙箱，wasmtime 为本地执行提供了另一种技术选择。开发者可以基于现有的代理框架，添加安全边界，保持功能完整性，同时探索不同的技术权衡。</p>
+<h2 id="jin-yi-bu-tan-suo">进一步探索<a class="zola-anchor" href="#jin-yi-bu-tan-suo" aria-label="Anchor link for: jin-yi-bu-tan-suo" style="visibility: hidden;"></a>
+</h2>
+<p>完整的实现代码和详细文档在我的 <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor">Wasmtime 执行器项目</a> 中。代码虽然粗糙，但功能完整。欢迎克隆、测试、改进。</p>
+<p>理解 Code Agent 范式安全挑战的最佳方式就是动手实践。即使是简单的概念验证项目，也能带来深刻的技术洞察。</p>
+<hr />
+<h2 id="can-kao-zi-liao">参考资料<a class="zola-anchor" href="#can-kao-zi-liao" aria-label="Anchor link for: can-kao-zi-liao" style="visibility: hidden;"></a>
 </h2>
 <ul>
-<li>Demo 仓库：<a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor">psiace/demo/wasmtime-executor</a></li>
-<li>参考项目：<a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents">smolagents</a>、<a rel="nofollow noreferrer" href="https://github.com/vmware-labs/webassembly-language-runtimes">VMware WASM Runtimes</a></li>
-<li>灵感来源：Simon Willison 的 <a rel="nofollow noreferrer" href="https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox">WASM Python Sandbox</a></li>
+<li><a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents">Hugging Face smolagents</a></li>
+<li><a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor">Wasmtime 执行器项目</a></li>
+<li><a rel="nofollow noreferrer" href="https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox">Simon Willison 的 WASM Python 沙箱</a></li>
+<li><a rel="nofollow noreferrer" href="https://github.com/vmware-labs/webassembly-language-runtimes">VMware WebAssembly 语言运行时</a></li>
 </ul>
-<p>如果你也在思考“让 AI 安全执行代码”的方案，不妨先写一个属于你的沙箱。造轮子是理解问题最快的方式。</p>
 
       </article>
 
