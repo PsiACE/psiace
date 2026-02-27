@@ -1,5 +1,5 @@
 +++
-title = "Agent 没有什么秘密"
+title = "Agent 没有秘密可言"
 description = "事件、队列、CRUD，再叠一层模型协作。先把反馈闭环跑通，比任何玄学包装都重要。"
 date = 2025-08-14
 slug = "agent-has-no-secret"
@@ -12,62 +12,44 @@ lang = "zh"
 mermaid = true
 +++
 
-> 我是 [PsiACE](https://github.com/PsiACE)。这些年围着 Agent 和 RAG 打转，最后的共识只有一句：**少谈玄学，多把反馈闭环跑起来**。系统要能自证、能回放、能换件，这才叫工程。
+> 我是 PsiACE。最近我的工作主要围绕 Agent 与 RAG 展开：**少谈玄学，多把闭环跑通**，多让系统说得清楚、跑得稳定、可被回放与切换。
 
-## 三句话先交代清楚
+## TL;DR
 
-- **Agent 不是新宗教。** 底层还是事件、队列、CRUD，只是多了一层模型协作。
-- **总线要讲故事。** EventBus 把 `agent.*` 和 `huey.*` 串起来，事件实时打点，最后用 Cascade Viewer 把因果和时间线复盘。
-- **先给 demo 再谈理念。** 我准备了一个单文件脚本，跑起来就能看到闭环、再决定要不要包装。
+- **Agent 不是新宗教**。它依然是事件、队列、CRUD 的工程实践，再加一层模型协作。
+- 共用一条 EventBus，把 `agent.*` 与 `huey.*` 事件打通；每条事件立即打印；最后用 Cascade 树复盘因果与时间。
+- **单文件 Demo，打开即跑**：先看事件，后看因果，最后看结果。
 
 ![Cascade Viewer](cascade-viewer.png)
 
 ---
 
-## 为什么要把细节摊开讲
+## 为什么写这个（以及为什么这么写）
 
-过去一年接触 Agent 相关项目，总有人问：“到底要不要上多智能体协作？”、“模型能不能自己规划？” 但真正让系统可靠的，是那些看似朴素的工程功夫：
+- 我不想再讨论"如何画出一个复杂的 Agent 架构图"。我更关心"**如何让系统解释得清楚、失败得优雅、复盘得明白**"。
+- 这篇文章附带一个单文件 Demo：共享总线、严格 ReACT、因果与时间合并呈现、即时可观测。**开箱即用**。
 
-- 事件怎么流转？
-- 失败是怎么被记录、被回放的？
-- 观察信息是不是足够让人看懂？
+## 我怎么做的
 
-所以我换个角度写这篇文章：不再展开概念，而是以一个可跑的 demo 为骨架，讲清楚“如何把 Agent 做得像个正经服务”。
+### 核心设计原则
 
-## 架构是这样落地的
+- **共享 EventBus**：Agent、ToolExecutor、Storage 都向同一条总线发事件。
+- **严格 ReACT**：Thought → Action → Action Input → Observation → Final Answer。
+- **因果 + 时间**：每轮用户输入推进 `tick`；每次 Observation 再推进 `tick`；`Action → huey.* → Observation` 通过 parent-child 串起来。
+- **即时可观测**：每条事件实时打印；最后用树形 Cascade Viewer 做分时复盘。
 
-### 设计原则
+### 事件流（概览）
 
-- **只有一个事件总线。** Agent、ToolExecutor、Storage 全都往 EventBus 写事件，不分支、不隐蔽。
-- **遵循 ReACT 流程。** Thought → Action → Action Input → Observation → Final Answer，让模型有章可循，工具有证可查。
-- **因果与时序同时可见。** 每次用户输入推进 `tick`，每个 Observation 也推进 `tick`；`Action → huey.* → Observation` 用父子关系串起来。
-- **观察必须即时。** 事件第一时间打印日志，最后再用 Cascade Viewer 纵览整场对话。
+![The Agent Loop](cascade-viewer.png)
 
-### 事件流一览
+## 这和"传统架构"有什么不同？
 
-```mermaid
-graph TD
-  User([User]) --> Agent
-  Agent -->|publish Action| EventBus
-  EventBus -->|agent.action| ToolExecutor
-  ToolExecutor -->|huey.task| Huey
-  Huey --> Storage[(EventureMemoryStorage)]
-  Storage -->|huey.queue.* / huey.data.*| EventBus
-  ToolExecutor -->|publish Observation| EventBus
-  EventBus --> Agent
-  EventBus --> EventLog
-  EventLog --> Renderer[Cascade Viewer]
-```
+- **没有不同**：事件、队列、CRUD，本来就在；只是把模型作为协作者接了进来。
+- **也不浮夸**：没有"智能"也不会失效的设计；它可靠、可解释，也更容易落地。
 
-## 和“传统架构”有哪些区别？
+## 极简骨架（节选）
 
-- **底子没变。** 事件、队列、CRUD 这些“老面孔”依然在，只是我们把模型也当成协作者，纳入同一套流程。
-- **拒绝玄乎。** 把“智能”两个字抹掉，系统照样能跑，这才叫可靠、可解释、可维护。
-- **观测逻辑更丰富。** 传统队列只关心任务状态，这里我们得把“模型想了什么”“调用了什么”“拿到的结果是什么”都记下来。
-
-## 最小骨架长什么样
-
-### 事件驱动的存储封装
+### Event-driven storage wrapper
 
 ```python
 class EventureMemoryStorage(MemoryStorage):
@@ -83,7 +65,7 @@ class EventureMemoryStorage(MemoryStorage):
         })
 ```
 
-### 自带说明书的小工具
+### Tool with self-description
 
 ```python
 def tool_echo(params: dict) -> dict:
@@ -91,7 +73,7 @@ def tool_echo(params: dict) -> dict:
     return {"ok": True, "echo": str(params.get("text", ""))}
 ```
 
-### ReACT 回路的心跳
+### ReACT loop（核心思想）
 
 ```python
 while True:
@@ -108,40 +90,38 @@ while True:
     return assistant
 ```
 
-## 做项目时我守的几条线
+## 我遵循的几个原则
 
-- **先把反馈闭环跑通，再谈炫技。** 事件 → 队列 → 状态变更 → ReACT，通了再想优化。
-- **因果与时序是一等公民。** `tick` 表示节奏，父子关系标记触发链。
-- **观测优先。** 系统能自我解释，调优才有地基。
-- **保持可换。** 总线稳定，后端可以换（内存 ↔ Redis），模型可以换（不同厂商 / 版本）。
+- **先闭环，后花活**：先把"事件→队列→状态变化→ReACT"打通，再谈优化。
+- **因果与时间是工程的一等公民**：tick 表达更新周期；parent-child 表达触发链。
+- **可观测性优先**：当系统能解释自己，优化才有基础。
+- **可替换**：总线稳定，后端可换（内存→Redis），模型可换（供应商/版本）。
 
-## 现场演示：单终端就能跑
+## 如何运行（单终端）
 
-### 代码在哪
+### 代码位置
 
-到 [PsiACE/psiace](https://github.com/PsiACE/psiace) 项目的 `demo` 目录拿最新版本：
+请点击【阅读原文】跳转：
 
 - [agent_has_no_secret.py](https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/agent_has_no_secret.py)
 - [README.md](https://github.com/PsiACE/psiace/blob/main/demo/agent-has-no-secret/README.md)
 
-### 运行方式
+### 运行步骤
 
-1. 配好 `.env`（推荐 OpenRouter，OpenAI 也行）
+1. 配置 `.env`（OpenRouter 推荐；OpenAI 也可）
 2. `python agent_has_no_secret.py`
 
-### 屏幕上会看到
+### 你将看到什么
 
-- **实时事件流**（带颜色）：`user.input`、`agent.thought`、`agent.action`、`huey.data.*`、`agent.observation` …
+- **实时事件流**：`user.input`、`agent.thought`、`agent.action`、`huey.data.*`、`agent.observation` …
 - 绿色的 **Final Answer** 面板
-- **树状 Cascade Viewer** 按 tick 分组：`agent.action` 下面能看到 `huey.data.*` 与 `agent.observation` 的父子链
+- 按 tick 分组的**树形 Cascade Viewer**：在 `agent.action` 下能看到 `huey.data.*` 与 `agent.observation` 的父子层级
 
 ---
 
 ## 写在最后
 
-我喜欢那种**讲得清楚又做得出来**的工程师。Agent 没什么神秘：
+我更钦佩能把东西"**说清楚、跑起来**"的工程师。Agent 没有秘密可言：
 
-- 先让反馈闭环转起来，再谈“更智能”；
-- 先把因果链和成本摊开，再谈“更聪明”。
-
-搞 Agent，别膜拜神秘感，就和那些能当场拆给你看、并立刻跑给你看的人站在一边。
+- 先把闭环打通，再考虑花活；
+- 先让因果与代价可见，再谈"更聪明"。
