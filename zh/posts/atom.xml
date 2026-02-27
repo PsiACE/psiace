@@ -1563,11 +1563,11 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
         <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/announcing-nebulagraph-mcp-server-v010/"/>
         <id>https://psiace.me/zh/posts/announcing-nebulagraph-mcp-server-v010/</id>
         
-        <content type="html" xml:base="https://psiace.me/zh/posts/announcing-nebulagraph-mcp-server-v010/">&lt;h2 id=&quot;yi-bei-jing&quot;&gt;▌一、背景&lt;a class=&quot;zola-anchor&quot; href=&quot;#yi-bei-jing&quot; aria-label=&quot;Anchor link for: yi-bei-jing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+        <content type="html" xml:base="https://psiace.me/zh/posts/announcing-nebulagraph-mcp-server-v010/">&lt;h2 id=&quot;yi-bei-jing&quot;&gt;一、背景&lt;a class=&quot;zola-anchor&quot; href=&quot;#yi-bei-jing&quot; aria-label=&quot;Anchor link for: yi-bei-jing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;过去几周，Model Context Protocol (MCP) 在技术社区中引发了广泛的讨论和关注。借此机会，我参与了几个相关的开源项目，包括为 &lt;strong&gt;LlamaIndex 官方仓库贡献了 McpToolSpec 实现&lt;&#x2F;strong&gt;，以及和 Xuanwo、FrostMing 合作开发了一版 &lt;strong&gt;Model Context Protocol Server for Apache OpenDAL™&lt;&#x2F;strong&gt;。&lt;&#x2F;p&gt;
 &lt;p&gt;MCP 是目前唯一一个在生态上具有优势的标准。在这一背景下，我们 &lt;strong&gt;基于 NebulaGraph 3.x 实现了一个简单的 NebulaGraph MCP Server，作为 NebulaGraph X MCP 生态中的第一个基础组件，供大家探索 AI 与图数据库结合的可能性&lt;&#x2F;strong&gt;，希望能够看到更多在这个模式下的有趣工作。&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;er-model-context-protocol-mcp&quot;&gt;▌二、Model Context Protocol (MCP)&lt;a class=&quot;zola-anchor&quot; href=&quot;#er-model-context-protocol-mcp&quot; aria-label=&quot;Anchor link for: er-model-context-protocol-mcp&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;er-model-context-protocol-mcp&quot;&gt;二、Model Context Protocol (MCP)&lt;a class=&quot;zola-anchor&quot; href=&quot;#er-model-context-protocol-mcp&quot; aria-label=&quot;Anchor link for: er-model-context-protocol-mcp&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;MCP 是由 Anthropic 团队推出的一项开放协议，旨在为 AI 系统提供统一的、高效的方式访问多种数据资源。通过采用客户端-服务器架构，MCP 将数据访问标准化，解决了传统 AI 系统在不同数据源之间的碎片化问题。&lt;&#x2F;p&gt;
 &lt;h3 id=&quot;mcp-he-xin-te-dian&quot;&gt;MCP 核心特点&lt;a class=&quot;zola-anchor&quot; href=&quot;#mcp-he-xin-te-dian&quot; aria-label=&quot;Anchor link for: mcp-he-xin-te-dian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
@@ -1578,7 +1578,7 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
 &lt;li&gt;&lt;strong&gt;灵活的架构&lt;&#x2F;strong&gt;：通过定义客户端和服务端的交互协议，MCP 为开发者提供了构建可扩展、可复用系统的基础。&lt;&#x2F;li&gt;
 &lt;&#x2F;ol&gt;
 &lt;p&gt;虽然目前在安全性和可靠性上仍有一些挑战，但随着协议规范的完善和成熟开发模式的引入，这些问题将逐步得到解决。&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;san-nebulagraph-mcp-server-gong-neng&quot;&gt;▌三、NebulaGraph MCP Server 功能&lt;a class=&quot;zola-anchor&quot; href=&quot;#san-nebulagraph-mcp-server-gong-neng&quot; aria-label=&quot;Anchor link for: san-nebulagraph-mcp-server-gong-neng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;san-nebulagraph-mcp-server-gong-neng&quot;&gt;三、NebulaGraph MCP Server 功能&lt;a class=&quot;zola-anchor&quot; href=&quot;#san-nebulagraph-mcp-server-gong-neng&quot; aria-label=&quot;Anchor link for: san-nebulagraph-mcp-server-gong-neng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;由于最近一段时间一直围绕 GraphRAG 和 Agentic Workflow 做一些工作，利用大模型和智能体进行图上数据的洞见和挖掘是一个非常重要的议题。为此，我快速开发了 NebulaGraph MCP Server，以支持 NebulaGraph 3.x 作为工具接入 MCP 生态，供语言模型（如 Claude、GPT 等）调用和使用。&lt;&#x2F;p&gt;
 &lt;p&gt;目前 &lt;strong&gt;NebulaGraph MCP Server 基于 FastMCP 实现，遵循 MCP 的核心规范，旨在提供高效、轻量的图数据库连接服务。&lt;&#x2F;strong&gt; 通过将 NebulaGraph 的功能暴露为标准化的工具接口，该 Server 能够让大模型轻松调用 NebulaGraph 数据，实现简单的图探索任务。&lt;&#x2F;p&gt;
@@ -1603,7 +1603,7 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
 &lt;&#x2F;ul&gt;
 &lt;p&gt;为了展示它的效果，我基于 LlamaIndex 中的 McpToolSpec 和 ReActAgent 构建了一个简单的示例，下面是对应的截图：&lt;&#x2F;p&gt;
 &lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;announcing-nebulagraph-mcp-server-v010&#x2F;llamaindex-with-nebulagraph-mcp.png&quot; alt=&quot;LlamaIndex with NebulaGraph MCP&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;si-jie-yu&quot;&gt;▌四、结语&lt;a class=&quot;zola-anchor&quot; href=&quot;#si-jie-yu&quot; aria-label=&quot;Anchor link for: si-jie-yu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;si-jie-yu&quot;&gt;四、结语&lt;a class=&quot;zola-anchor&quot; href=&quot;#si-jie-yu&quot; aria-label=&quot;Anchor link for: si-jie-yu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;&lt;strong&gt;NebulaGraph MCP Server&lt;&#x2F;strong&gt; 是对 MCP 生态的一个初步尝试，旨在为语言模型和图数据库的结合提供一个起点。随着协议的逐步成熟和生态的扩展，我们期待它能够在更多真实场景中发挥价值。如果您对这一方向感兴趣，欢迎一起探索、尝试！&lt;&#x2F;p&gt;
 </content>
@@ -1625,12 +1625,12 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
         <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/integrate-mcp-tools-into-llamaindex/"/>
         <id>https://psiace.me/zh/posts/integrate-mcp-tools-into-llamaindex/</id>
         
-        <content type="html" xml:base="https://psiace.me/zh/posts/integrate-mcp-tools-into-llamaindex/">&lt;h2 id=&quot;yi-qian-yan&quot;&gt;▌一、前言&lt;a class=&quot;zola-anchor&quot; href=&quot;#yi-qian-yan&quot; aria-label=&quot;Anchor link for: yi-qian-yan&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+        <content type="html" xml:base="https://psiace.me/zh/posts/integrate-mcp-tools-into-llamaindex/">&lt;h2 id=&quot;yi-qian-yan&quot;&gt;一、前言&lt;a class=&quot;zola-anchor&quot; href=&quot;#yi-qian-yan&quot; aria-label=&quot;Anchor link for: yi-qian-yan&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;本文主要介绍了如何将 MCP（Model Context Protocol，模型上下文协议）工具转换为可以直接使用的 LlamaIndex 工具，使 LlamaIndex 用户能像使用 Claude, Cursor 等现代 AI 应用一样无缝集成这些服务。&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;er-ji-shu-bei-jing&quot;&gt;▌二、技术背景&lt;a class=&quot;zola-anchor&quot; href=&quot;#er-ji-shu-bei-jing&quot; aria-label=&quot;Anchor link for: er-ji-shu-bei-jing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;er-ji-shu-bei-jing&quot;&gt;二、技术背景&lt;a class=&quot;zola-anchor&quot; href=&quot;#er-ji-shu-bei-jing&quot; aria-label=&quot;Anchor link for: er-ji-shu-bei-jing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
-&lt;h3 id=&quot;2-1-shen-me-shi-mcp-xie-yi&quot;&gt;2.1 什么是 MCP 协议 ？&lt;a class=&quot;zola-anchor&quot; href=&quot;#2-1-shen-me-shi-mcp-xie-yi&quot; aria-label=&quot;Anchor link for: 2-1-shen-me-shi-mcp-xie-yi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h3 id=&quot;2-1-shen-me-shi-mcp-xie-yi&quot;&gt;2.1 什么是 MCP 协议？&lt;a class=&quot;zola-anchor&quot; href=&quot;#2-1-shen-me-shi-mcp-xie-yi&quot; aria-label=&quot;Anchor link for: 2-1-shen-me-shi-mcp-xie-yi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h3&gt;
 &lt;p&gt;MCP（模型上下文协议，https:&#x2F;&#x2F;modelcontextprotocol.io）是面向 AI 应用交互的服务构建协议。开发者可通过该协议构建具备数据资源（resources）、功能工具（tools）和提示模板（prompts）的服务端点。例如，我们可以定义获取 IP 详细信息的 fetch_ipinfo 工具：&lt;&#x2F;p&gt;
 &lt;pre data-lang=&quot;python&quot; class=&quot;language-python z-code&quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;z-source z-python&quot;&gt;&lt;span class=&quot;z-meta z-annotation z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-annotation z-python&quot;&gt;@&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-annotation z-function z-python&quot;&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-annotation z-function z-python&quot;&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;mcp&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-accessor z-dot z-python&quot;&gt;.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-variable z-annotation z-function z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;tool&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-annotation z-function z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-arguments z-begin z-python&quot;&gt;(&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-annotation z-function z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-arguments z-end z-python&quot;&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -1687,7 +1687,7 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
 &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-python&quot;&gt;&lt;span class=&quot;z-meta z-function-call z-arguments z-python&quot;&gt;    &lt;span class=&quot;z-variable z-parameter z-python&quot;&gt;storage_context&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword z-operator z-assignment z-python&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;storage_context&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-arguments z-python&quot;&gt;,&lt;&#x2F;span&gt;
 &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-python&quot;&gt;&lt;span class=&quot;z-meta z-function-call z-arguments z-python&quot;&gt;&lt;span class=&quot;z-punctuation z-section z-arguments z-end z-python&quot;&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;h2 id=&quot;san-wei-shen-me-xu-yao-jiang-mcp-ji-cheng-zhi-llamaindex&quot;&gt;▌三、为什么需要将 MCP 集成至 LlamaIndex&lt;a class=&quot;zola-anchor&quot; href=&quot;#san-wei-shen-me-xu-yao-jiang-mcp-ji-cheng-zhi-llamaindex&quot; aria-label=&quot;Anchor link for: san-wei-shen-me-xu-yao-jiang-mcp-ji-cheng-zhi-llamaindex&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;san-wei-shen-me-xu-yao-jiang-mcp-ji-cheng-zhi-llamaindex&quot;&gt;三、为什么需要将 MCP 集成至 LlamaIndex&lt;a class=&quot;zola-anchor&quot; href=&quot;#san-wei-shen-me-xu-yao-jiang-mcp-ji-cheng-zhi-llamaindex&quot; aria-label=&quot;Anchor link for: san-wei-shen-me-xu-yao-jiang-mcp-ji-cheng-zhi-llamaindex&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;在实际 AI 应用开发中，集成 MCP 工具主要解决以下需求：&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -1696,7 +1696,7 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
 &lt;li&gt;自动化管理：通过自动转换机制实现 MCP 工具到 LlamaIndex FunctionTool 对象的映射，便于 Agent 自动调度&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;该集成方案可以有效降低开发成本，同时发挥 LlamaIndex 在上下文管理和对话生成方面的优势。&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;si-ji-shu-shi-xian-fang-an&quot;&gt;▌四、技术实现方案&lt;a class=&quot;zola-anchor&quot; href=&quot;#si-ji-shu-shi-xian-fang-an&quot; aria-label=&quot;Anchor link for: si-ji-shu-shi-xian-fang-an&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;si-ji-shu-shi-xian-fang-an&quot;&gt;四、技术实现方案&lt;a class=&quot;zola-anchor&quot; href=&quot;#si-ji-shu-shi-xian-fang-an&quot; aria-label=&quot;Anchor link for: si-ji-shu-shi-xian-fang-an&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;实现流程包含三个关键阶段：&lt;&#x2F;p&gt;
 &lt;ul&gt;
@@ -1704,7 +1704,7 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
 &lt;li&gt;适配器构建：定义 MCPToolAdapter 类，将 MCP 工具元数据转换为 LlamaIndex 的 FunctionTool 对象&lt;&#x2F;li&gt;
 &lt;li&gt;智能代理集成：在 LlamaIndex Agent 中加载转换后的工具，实现自动化调用&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h2 id=&quot;wu-he-xin-dai-ma-jie-xi&quot;&gt;▌五、核心代码解析&lt;a class=&quot;zola-anchor&quot; href=&quot;#wu-he-xin-dai-ma-jie-xi&quot; aria-label=&quot;Anchor link for: wu-he-xin-dai-ma-jie-xi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;wu-he-xin-dai-ma-jie-xi&quot;&gt;五、核心代码解析&lt;a class=&quot;zola-anchor&quot; href=&quot;#wu-he-xin-dai-ma-jie-xi&quot; aria-label=&quot;Anchor link for: wu-he-xin-dai-ma-jie-xi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;h3 id=&quot;xie-yi-zhuan-huan-gua-pei-qi&quot;&gt;协议转换适配器&lt;a class=&quot;zola-anchor&quot; href=&quot;#xie-yi-zhuan-huan-gua-pei-qi&quot; aria-label=&quot;Anchor link for: xie-yi-zhuan-huan-gua-pei-qi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h3&gt;
@@ -1764,7 +1764,7 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
 &lt;li&gt;协议抽象层：通过适配器模式解耦 MCP 协议与 LlamaIndex 框架，保证系统扩展性&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;p&gt;将 MCP 工具的输入参数转换为 Pydantic 模型的原因在于：MCP 工具使用 JSON Schema 格式定义输入参数（在工具对象的 inputSchema 中，类型为 Dict[str, Any] ），而 create_model_from_json_schema 函数将其转换为 Pydantic 模型，该模型用作 LlamaIndex 中 FunctionTool 的 fn_schema。&lt;&#x2F;p&gt;
-&lt;h2 id=&quot;liu-llamaindex-zhong-de-mcp-gong-ju-diao-yong-shi-jian&quot;&gt;▌六、LlamaIndex 中的 MCP 工具调用实践&lt;a class=&quot;zola-anchor&quot; href=&quot;#liu-llamaindex-zhong-de-mcp-gong-ju-diao-yong-shi-jian&quot; aria-label=&quot;Anchor link for: liu-llamaindex-zhong-de-mcp-gong-ju-diao-yong-shi-jian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;liu-llamaindex-zhong-de-mcp-gong-ju-diao-yong-shi-jian&quot;&gt;六、LlamaIndex 中的 MCP 工具调用实践&lt;a class=&quot;zola-anchor&quot; href=&quot;#liu-llamaindex-zhong-de-mcp-gong-ju-diao-yong-shi-jian&quot; aria-label=&quot;Anchor link for: liu-llamaindex-zhong-de-mcp-gong-ju-diao-yong-shi-jian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;以下代码来自 llamaindex_mcp_example.py，完整展示了 MCPToolAdapter 与 LlamaIndex 的集成方式：&lt;&#x2F;p&gt;
 &lt;pre data-lang=&quot;python&quot; class=&quot;language-python z-code&quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;z-source z-python&quot;&gt;&lt;span class=&quot;z-meta z-statement z-import z-python&quot;&gt;&lt;span class=&quot;z-keyword z-control z-import z-python&quot;&gt;import&lt;&#x2F;span&gt; &lt;span class=&quot;z-meta z-qualified-name z-python&quot;&gt;&lt;span class=&quot;z-meta z-generic-name z-python&quot;&gt;os&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
@@ -1875,7 +1875,7 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
 &lt;&#x2F;ul&gt;
 &lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
-&lt;h2 id=&quot;qi-yun-xing-demo&quot;&gt;▌七、运行 Demo&lt;a class=&quot;zola-anchor&quot; href=&quot;#qi-yun-xing-demo&quot; aria-label=&quot;Anchor link for: qi-yun-xing-demo&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;qi-yun-xing-demo&quot;&gt;七、运行 Demo&lt;a class=&quot;zola-anchor&quot; href=&quot;#qi-yun-xing-demo&quot; aria-label=&quot;Anchor link for: qi-yun-xing-demo&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;h3 id=&quot;7-1-biao-zhun-shu-ru-shu-chu-mo-shi&quot;&gt;7.1 标准输入输出模式&lt;a class=&quot;zola-anchor&quot; href=&quot;#7-1-biao-zhun-shu-ru-shu-chu-mo-shi&quot; aria-label=&quot;Anchor link for: 7-1-biao-zhun-shu-ru-shu-chu-mo-shi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h3&gt;
@@ -1904,7 +1904,7 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
 &lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-shell z-bash&quot;&gt;&lt;span class=&quot;z-comment z-line z-number-sign z-shell&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment z-begin z-shell&quot;&gt;#&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment z-line z-number-sign z-shell&quot;&gt; 终端2：运行客户端&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment z-line z-number-sign z-shell&quot;&gt;
 &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-shell z-bash&quot;&gt;&lt;span class=&quot;z-meta z-function-call z-shell&quot;&gt;&lt;span class=&quot;z-variable z-function z-shell&quot;&gt;python&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-meta z-function-call z-arguments z-shell&quot;&gt; llamaindex_mcp_example.py&lt;span class=&quot;z-variable z-parameter z-option z-shell&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-parameter z-shell&quot;&gt; --&lt;&#x2F;span&gt;client_type&lt;&#x2F;span&gt; sse&lt;&#x2F;span&gt;
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;h2 id=&quot;ba-ji-shu-fang-an-zong-jie&quot;&gt;▌八、技术方案总结&lt;a class=&quot;zola-anchor&quot; href=&quot;#ba-ji-shu-fang-an-zong-jie&quot; aria-label=&quot;Anchor link for: ba-ji-shu-fang-an-zong-jie&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;h2 id=&quot;ba-ji-shu-fang-an-zong-jie&quot;&gt;八、技术方案总结&lt;a class=&quot;zola-anchor&quot; href=&quot;#ba-ji-shu-fang-an-zong-jie&quot; aria-label=&quot;Anchor link for: ba-ji-shu-fang-an-zong-jie&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h2&gt;
 &lt;p&gt;通过以下三步实现深度集成：&lt;&#x2F;p&gt;
 &lt;h3 id=&quot;xie-yi-tong-xin-ceng&quot;&gt;协议通信层&lt;a class=&quot;zola-anchor&quot; href=&quot;#xie-yi-tong-xin-ceng&quot; aria-label=&quot;Anchor link for: xie-yi-tong-xin-ceng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
