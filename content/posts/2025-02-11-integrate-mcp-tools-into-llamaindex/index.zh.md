@@ -11,13 +11,13 @@ tags = ["MCP", "LlamaIndex", "Python"]
 lang = "zh"
 +++
 
-## ▌一、前言
+## 一、前言
 
 本文主要介绍了如何将 MCP（Model Context Protocol，模型上下文协议）工具转换为可以直接使用的 LlamaIndex 工具，使 LlamaIndex 用户能像使用 Claude, Cursor 等现代 AI 应用一样无缝集成这些服务。
 
-## ▌二、技术背景
+## 二、技术背景
 
-### 2.1 什么是 MCP 协议 ？
+### 2.1 什么是 MCP 协议？
 
 MCP（模型上下文协议，https://modelcontextprotocol.io）是面向 AI 应用交互的服务构建协议。开发者可通过该协议构建具备数据资源（resources）、功能工具（tools）和提示模板（prompts）的服务端点。例如，我们可以定义获取 IP 详细信息的 fetch_ipinfo 工具：
 
@@ -84,7 +84,7 @@ graph_rag_query_engine = KnowledgeGraphRAGQueryEngine(
 )
 ```
 
-## ▌三、为什么需要将 MCP 集成至 LlamaIndex
+## 三、为什么需要将 MCP 集成至 LlamaIndex
 
 在实际 AI 应用开发中，集成 MCP 工具主要解决以下需求：
 
@@ -94,7 +94,7 @@ graph_rag_query_engine = KnowledgeGraphRAGQueryEngine(
 
 该集成方案可以有效降低开发成本，同时发挥 LlamaIndex 在上下文管理和对话生成方面的优势。
 
-## ▌四、技术实现方案
+## 四、技术实现方案
 
 实现流程包含三个关键阶段：
 
@@ -102,7 +102,7 @@ graph_rag_query_engine = KnowledgeGraphRAGQueryEngine(
 - 适配器构建：定义 MCPToolAdapter 类，将 MCP 工具元数据转换为 LlamaIndex 的 FunctionTool 对象
 - 智能代理集成：在 LlamaIndex Agent 中加载转换后的工具，实现自动化调用
 
-## ▌五、核心代码解析
+## 五、核心代码解析
 
 ### 协议转换适配器
 
@@ -168,7 +168,7 @@ async def fetch_ipinfo_wrapper(**kwargs):
 
 将 MCP 工具的输入参数转换为 Pydantic 模型的原因在于：MCP 工具使用 JSON Schema 格式定义输入参数（在工具对象的 inputSchema 中，类型为 Dict[str, Any] ），而 create_model_from_json_schema 函数将其转换为 Pydantic 模型，该模型用作 LlamaIndex 中 FunctionTool 的 fn_schema。
 
-## ▌六、LlamaIndex 中的 MCP 工具调用实践
+## 六、LlamaIndex 中的 MCP 工具调用实践
 
 以下代码来自 llamaindex_mcp_example.py，完整展示了 MCPToolAdapter 与 LlamaIndex 的集成方式：
 
@@ -272,7 +272,7 @@ if __name__ == "__main__":
   - 将用户输入封装为标准化 ChatMessage
   - 通过 agent.achat() 触发自动化工具调用链
 
-## ▌七、运行 Demo
+## 七、运行 Demo
 
 ### 7.1 标准输入输出模式
 
@@ -307,7 +307,7 @@ python mcp_server.py --server_type sse
 python llamaindex_mcp_example.py --client_type sse
 ```
 
-## ▌八、技术方案总结
+## 八、技术方案总结
 
 通过以下三步实现深度集成：
 
