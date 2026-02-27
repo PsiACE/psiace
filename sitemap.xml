@@ -44,6 +44,10 @@
         <lastmod>2025-07-16</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/posts/carpenter-hammer-nail/</loc>
+        <lastmod>2026-02-27</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/posts/im-and-socialized-evaluation/</loc>
         <lastmod>2026-02-21</lastmod>
     </url>
@@ -133,6 +137,9 @@
         <loc>https://psiace.me/tags/code-agents/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/coding-agent/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/coding/</loc>
     </url>
     <url>
@@ -206,6 +213,9 @@
     </url>
     <url>
         <loc>https://psiace.me/tags/openai/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/tags/openclaw/</loc>
     </url>
     <url>
         <loc>https://psiace.me/tags/orchestration/</loc>
@@ -305,6 +315,10 @@
         <lastmod>2025-07-16</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/zh/posts/carpenter-hammer-nail/</loc>
+        <lastmod>2026-02-27</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/posts/im-and-socialized-evaluation/</loc>
         <lastmod>2026-02-21</lastmod>
     </url>
@@ -394,6 +408,9 @@
         <loc>https://psiace.me/zh/tags/code-agents/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/zh/tags/coding-agent/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/tags/coding/</loc>
     </url>
     <url>
@@ -467,6 +484,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/openai/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/openclaw/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/orchestration/</loc>

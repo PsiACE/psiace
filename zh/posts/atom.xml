@@ -5,8 +5,120 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/zh/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2026-02-21T00:00:00+00:00</updated>
+    <updated>2026-02-27T00:00:00+00:00</updated>
     <id>https://psiace.me/zh/posts/atom.xml</id>
+    <entry xml:lang="zh">
+        <title>木匠，锤子，钉子</title>
+        <published>2026-02-27T00:00:00+00:00</published>
+        <updated>2026-02-27T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/carpenter-hammer-nail/"/>
+        <id>https://psiace.me/zh/posts/carpenter-hammer-nail/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/carpenter-hammer-nail/">&lt;blockquote&gt;
+&lt;p&gt;这篇文章继续献给 bub ，一个在群聊中生活的 agent ，来讲讲背后的问题、范式和模型变迁。
+&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kemingy&quot;&gt;kemingy&lt;&#x2F;a&gt; 吐嘈过：“你的文章疑似太发散了，脱离了科技写作的范畴，需要额外的 context，也不一定能对得上”。
+好在本次是要在公司内部做一个分享开始撰写的，所以难得正经地会走一下流程。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;qian-yan&quot;&gt;前言&lt;a class=&quot;zola-anchor&quot; href=&quot;#qian-yan&quot; aria-label=&quot;Anchor link for: qian-yan&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;大家好，我是 PsiACE，花名泉达。以前做数据库，做 RAG，做 Agent，做开源，现在在 OceanBase 做开源生态相关的工作。欢迎关注我的 &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&#x2F;&quot;&gt;GitHub&lt;&#x2F;a&gt; 。&lt;&#x2F;p&gt;
+&lt;p&gt;即便只是在 coding agent 这个子领域上，我至少做过 rag、沙箱、agent、protocol 几个方向，其中 &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;agentclientprotocol&#x2F;python-sdk&quot;&gt;agent-client-protocol&lt;&#x2F;a&gt; 在整个 python 生态下载量大概前万名（1.2%），而这些都不曾是我的主业。&lt;&#x2F;p&gt;
+&lt;p&gt;今天分享主要是我过去几年做 Agent 和最近重新拾起 &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;psiace&#x2F;bub&quot;&gt;bub&lt;&#x2F;a&gt; 的一些想法和经验的投影。bub 在短短的几天内从一个简单的 Coding Agent 开始，独立地演化成某种类似 OpenClaw 但不同的形态。&lt;&#x2F;p&gt;
+&lt;p&gt;最近的视角会更多偏产品经理一些，所以这次不会涉及特别深入的技术点。在进入正题前，先让我们看看这个标题，《木匠，锤子，钉子》：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;一个人有了锤子，就会看什么都像钉子。&lt;&#x2F;li&gt;
+&lt;li&gt;但如果一个有锤子的人能够分辨哪些东西是钉子，就成功了。&lt;&#x2F;li&gt;
+&lt;li&gt;当我有了锤子的时候，不是钉子的东西就不多了。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;也欢迎大家阅读我的历史文章。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;ru-he-de-dao-yi-ge-coding-agent&quot;&gt;如何得到一个 Coding Agent&lt;a class=&quot;zola-anchor&quot; href=&quot;#ru-he-de-dao-yi-ge-coding-agent&quot; aria-label=&quot;Anchor link for: ru-he-de-dao-yi-ge-coding-agent&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;大部分人应该都用过 Coding Agent ，Cursor、Codex、Claude Code 。&lt;&#x2F;p&gt;
+&lt;p&gt;Agent 大致可以看作模型 + 工具 + 循环调用。那么一个 Coding Agent 该是什么样子？&lt;&#x2F;p&gt;
+&lt;p&gt;最近很火的 Pi ，也是 OpenClaw 内置的 Agent ，里面提供的是 bash，read，write，edit 四个工具，甚至因为其简洁性而一时被热捧。看起来很简单，但是在去年 7 月份，bub 的第一版实现里，提供的也是这几个工具。而 bub 也不是这个故事的原创。更早的时间线上，大概 2025.04 月份，ampcode 就指出了这一点。&lt;&#x2F;p&gt;
+&lt;p&gt;为什么是这四个工具？读和写是基本能力，代表的就是输入和输出。edit 看似是写的优化，实质上提供的是精准介入的能力，并且有效缩短反馈的链路长度。bash ，则是对接现有庞大命令行和可编程工具的桥梁，能够避免造更多不必要的轮子。&lt;&#x2F;p&gt;
+&lt;p&gt;欢迎阅读 - &lt;a href=&quot;&#x2F;zh&#x2F;posts&#x2F;baby-step-coding-agent&#x2F;&quot;&gt;Baby Steps: 用 Python 实现一个能自举的 Coding Agent&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;liao-liao-rag-ji-qi-gua-yong-xing&quot;&gt;聊聊 RAG 及其适用性&lt;a class=&quot;zola-anchor&quot; href=&quot;#liao-liao-rag-ji-qi-gua-yong-xing&quot; aria-label=&quot;Anchor link for: liao-liao-rag-ji-qi-gua-yong-xing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;如果要沿着这个方向继续，我们还会看到一些有意思的话题，比如 RAG。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;顺带一提，我在之前公司和同事们一起设计和实现的 fusiongraphrag ，是文档领域少有的具备落地能力的 graphrag 方案。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;R 代表查询，是一个非常宽泛的箩筐，导致我不得不用朴素 RAG 之类的说法来代替以向量、全文或者混合检索为代表的 RAG 策略。&lt;&#x2F;p&gt;
+&lt;p&gt;朴素 RAG 并不总是有效：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;对于频繁变更的代码库而言，为其建立向量和全文索引的成本会自然放大，而且由于存在分块等处理逻辑，甚至可能阻塞正常的开发流程。比如早期 cursor 在大型代码库上需要浪费相当多的资源和时间，以及面对召回新鲜度问题。&lt;&#x2F;li&gt;
+&lt;li&gt;另一个严重的问题在于语义的难以弥合，由于训练语料以及自然语言与代码之间的天然差异，常见的 embedding 模型很难对代码起到有效表征，导致会退化到全文检索，依赖关键词和转换后的关键词命中。可以看到，jina 在出售之前曾经为了解决这个问题专门设计并发布了一个针对代码和自然语言对齐的嵌入模型。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;所以 grep + 读 + Agent Loop，成为了一个更巧妙、更符合直觉、也更有效的方案，大概是由 aider 在 2024 年首次论证并验证。类似的引入 Agent Loop 的 RAG 方案大体上有段时间被称为 Agentic RAG。&lt;&#x2F;p&gt;
+&lt;p&gt;当然朴素 RAG 在这个场景下并不是完全没有优势，如果代码和注释本身语义良好，表征充分，又不会频繁变化：比如已经发布的版本化代码库和上游依赖；或者仅仅专注在文档，特别是规范和共识性质的文档上。&lt;&#x2F;p&gt;
+&lt;p&gt;欢迎阅读：&lt;a href=&quot;&#x2F;zh&#x2F;posts&#x2F;rag-in-coding-agent&#x2F;&quot;&gt;当 RAG 遇上编程助手&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;openclaw-he-bub-bei-hou-de-bu-tong-fan-shi&quot;&gt;OpenClaw 和 Bub 背后的不同范式&lt;a class=&quot;zola-anchor&quot; href=&quot;#openclaw-he-bub-bei-hou-de-bu-tong-fan-shi&quot; aria-label=&quot;Anchor link for: openclaw-he-bub-bei-hou-de-bu-tong-fan-shi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;在继续讨论会话、Memory 和 Context 之前，我们可以抽一点时间来聊聊 OpenClaw。尽管我直到昨天才第一次看到“活着”的 OpenClaw 实例（由 MaxClaw 驱动）。&lt;&#x2F;p&gt;
+&lt;p&gt;OpenClaw 的定位是个人助手，助手意味着进入生活。或者说，你可以考虑把它当成支持点外卖购物的千问或者问你今天这个文档怎么写的朋友。而且大多数能力都有办法通过所谓的 skills 进行扩展，这些和模型能力，Agent 技术发展，以及现在的 AI 应用趋势是分不开的，但是一个打通路径的先行者，带来的是更广阔的想像空间。&lt;&#x2F;p&gt;
+&lt;p&gt;但，“个人” 是 OpenClaw 的局限性。&lt;&#x2F;p&gt;
+&lt;p&gt;Bub ，至少目前看到的 Bub ，是为多人或者多 Agent 协作设计的。我们 Day 1 就在群聊的场景下生存，当然也能够适应单独对个人的需求。&lt;&#x2F;p&gt;
+&lt;p&gt;要适应多人和群聊，其实有两个比较关键的点：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;树立身份认知&lt;&#x2F;li&gt;
+&lt;li&gt;提供有效沟通&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;前者意味着要分辨甚至了解对话中参与的大多数以及自身，后者意味着要面对残缺的上下文、模糊的任务意图、并行的主题。&lt;&#x2F;p&gt;
+&lt;p&gt;就像我在另一篇文章讲的那样，Agent 甚至不需要回应所有消息，能力问题变成了共处问题。&lt;&#x2F;p&gt;
+&lt;p&gt;欢迎阅读 - &lt;a href=&quot;&#x2F;zh&#x2F;posts&#x2F;im-and-socialized-evaluation&#x2F;&quot;&gt;即时通讯与社会化评估&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;hui-hua-ji-yi-yu-shang-xia-wen&quot;&gt;会话、记忆与上下文&lt;a class=&quot;zola-anchor&quot; href=&quot;#hui-hua-ji-yi-yu-shang-xia-wen&quot; aria-label=&quot;Anchor link for: hui-hua-ji-yi-yu-shang-xia-wen&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;过去的设计源于一个朴素假设：一个会话对应一个任务。为了让有限窗口容纳更长交互，我们发明了 compact、summary；为了让能共享相同的上下文，我们发明了 fork 和 merge；为了让任务能接力，我们有了 handoff。&lt;&#x2F;p&gt;
+&lt;p&gt;当会话边界被打破，Memory 系统被寄予厚望：提取偏好、检索记忆、填充模板，试图让 Agent 在不同会话间保持“人格”一致。&lt;&#x2F;p&gt;
+&lt;p&gt;而 Context 则是个更大的箩筐，试图装下会话、Memory、RAG、实时查询……用复杂策略填充那个有限的窗口。&lt;&#x2F;p&gt;
+&lt;p&gt;这些手段都在试图回答同一个问题：如何在有限窗口里，延续无限的历史？&lt;&#x2F;p&gt;
+&lt;p&gt;问题在于，所有精巧设计都建立在一个共同假设上：“状态必须被延续，历史不能丢”。&lt;&#x2F;p&gt;
+&lt;p&gt;但这个假设代价沉重：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;会话是硬隔离，跨会话无感知，群聊里多话题并行更是无所适从。&lt;&#x2F;li&gt;
+&lt;li&gt;Memory 会漂移，校准成本远超预期；你需要信任一个失败不能影响系统表现的旁路。&lt;&#x2F;li&gt;
+&lt;li&gt;上下文默认历史是递增函数，需要不断管理膨胀。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;我们默认系统必须记住一切，于是引入缓存、压缩、分叉。每层机制都在修补同一个前提，但事实是它们永远无法携带足够多的、真实的历史。&lt;&#x2F;p&gt;
+&lt;p&gt;欢迎阅读 - &lt;a href=&quot;&#x2F;zh&#x2F;posts&#x2F;prometheus-bound&#x2F;&quot;&gt;被缚的普罗米修斯&lt;&#x2F;a&gt;。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;yong-zhi-dai-he-mao-dian-zhong-xin-jian-li-wen-ti-mo-xing&quot;&gt;用纸带和锚点重新建立问题模型&lt;a class=&quot;zola-anchor&quot; href=&quot;#yong-zhi-dai-he-mao-dian-zhong-xin-jian-li-wen-ti-mo-xing&quot; aria-label=&quot;Anchor link for: yong-zhi-dai-he-mao-dian-zhong-xin-jian-li-wen-ti-mo-xing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;换个角度：历史不是必须继承的负担，而是可以按需读取的素材库。&lt;&#x2F;p&gt;
+&lt;p&gt;Tape 的设计很简单：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;一条无尽的纸带：只有一个永续的会话。所有交互作为事实被追加写入日志，永不修改。&lt;&#x2F;li&gt;
+&lt;li&gt;锚点，而非记忆：阶段切换时，把必要的最小状态打包成锚点写入。重建从新锚点开始，历史仍在，但不必加载。&lt;&#x2F;li&gt;
+&lt;li&gt;上下文装配，而非继承：新任务出现，只做两件事——探索（检索原始片段）与选择（装配最小充分的上下文）。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Tape 的意义，不是发明更聪明的“记忆技巧”，而是减少假设。状态不必延续，历史不必默认继承。任务出现，构造上下文；任务结束，结束。下一轮，重新开始。&lt;&#x2F;p&gt;
+&lt;p&gt;回过头来看纸带和锚点的设计，我觉得这至少为我们研究上下文管理问题提供了一个新的模型，它易于理解，但又具备足够的表达力能够表征当前主流的解决方案，我们可以在这样的前提和假设下重新思考和前进。&lt;&#x2F;p&gt;
+&lt;p&gt;欢迎阅读 - &lt;a href=&quot;&#x2F;zh&#x2F;posts&#x2F;reinvent-the-punch-tape&#x2F;&quot;&gt;重新发明打孔纸带&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;wei-sheng&quot;&gt;尾声&lt;a class=&quot;zola-anchor&quot; href=&quot;#wei-sheng&quot; aria-label=&quot;Anchor link for: wei-sheng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;再回到标题上：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;工具一旦进入手里，也会进入脑子。能力会反过来定义问题。&lt;&#x2F;li&gt;
+&lt;li&gt;知道什么时候不敲，是一种对冲工具偏见的能力。&lt;&#x2F;li&gt;
+&lt;li&gt;一旦你真的理解了什么是钉子，认知到锤子的边界。你会主动选择去面对那些“本质上就是钉子”的问题。&lt;&#x2F;li&gt;
+&lt;li&gt;或者，换一把新锤子。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;题外话，直到今天，我仍然没有看过 codex &#x2F; pi-mono &#x2F; nanobot &#x2F; openclaw 是如何实现的。&lt;&#x2F;p&gt;
+&lt;p&gt;特别感谢 &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;frostming&quot;&gt;frostming&lt;&#x2F;a&gt;，感谢 &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;yihong0618&quot;&gt;yihong0618&lt;&#x2F;a&gt;、&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;psiace&#x2F;bub&quot;&gt;bub&lt;&#x2F;a&gt; 和其贡献者们。&lt;&#x2F;p&gt;
+&lt;p&gt;感谢 alma、kapy、葫芦娃和这些 Agent 背后的创造者。&lt;&#x2F;p&gt;
+&lt;p&gt;谢谢大家。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="zh">
         <title>即时通讯与社会化评估</title>
         <published>2026-02-21T00:00:00+00:00</published>

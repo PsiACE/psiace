@@ -5,8 +5,121 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2026-02-21T00:00:00+00:00</updated>
+    <updated>2026-02-27T00:00:00+00:00</updated>
     <id>https://psiace.me/posts/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Carpenter, Hammer, Nail</title>
+        <published>2026-02-27T00:00:00+00:00</published>
+        <updated>2026-02-27T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/carpenter-hammer-nail/"/>
+        <id>https://psiace.me/posts/carpenter-hammer-nail/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/carpenter-hammer-nail/">&lt;blockquote&gt;
+&lt;p&gt;This post is dedicated to bub, an agent that lives in group chats. I want to talk about the problems, paradigms, and model shifts behind it.
+&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kemingy&quot;&gt;kemingy&lt;&#x2F;a&gt; once roasted me: &quot;Your writing feels too divergent. It drifts away from technical writing, needs extra context, and still may not align.&quot;
+Luckily, this time I started from preparing an internal company talk, so I finally followed a proper structure.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;preface&quot;&gt;Preface&lt;a class=&quot;zola-anchor&quot; href=&quot;#preface&quot; aria-label=&quot;Anchor link for: preface&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Hi, I’m PsiACE. I used to work on databases, RAG, agents, and open source. Now I work on open-source ecosystem projects at OceanBase. You can find me on &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&#x2F;&quot;&gt;GitHub&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Even within the coding-agent subdomain alone, I’ve worked on RAG, sandboxing, agents, and protocols. For example, &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;agentclientprotocol&#x2F;python-sdk&quot;&gt;agent-client-protocol&lt;&#x2F;a&gt; ranks around top 10k downloads in the Python ecosystem (about 1.2%), and none of this was ever my official day job.&lt;&#x2F;p&gt;
+&lt;p&gt;Today’s sharing is a projection of my thoughts and experiences from years of working on agents, plus my recent restart of &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;psiace&#x2F;bub&quot;&gt;bub&lt;&#x2F;a&gt;. In just a few days, bub evolved from a simple coding agent into a form that feels OpenClaw-like, but not the same.&lt;&#x2F;p&gt;
+&lt;p&gt;My current lens is somewhat more product-oriented, so this won’t dive too deep into hardcore implementation details. Before we go further, let’s look at the title: &lt;em&gt;Carpenter, Hammer, Nail&lt;&#x2F;em&gt;:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;If someone has a hammer, everything starts to look like a nail.&lt;&#x2F;li&gt;
+&lt;li&gt;If someone with a hammer can tell what is actually a nail, that’s success.&lt;&#x2F;li&gt;
+&lt;li&gt;Once I have a hammer, fewer and fewer things look like “not a nail.”&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;You are also welcome to read my previous posts.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;how-to-get-a-coding-agent&quot;&gt;How to Get a Coding Agent&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-to-get-a-coding-agent&quot; aria-label=&quot;Anchor link for: how-to-get-a-coding-agent&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Most people have used coding agents: Cursor, Codex, Claude Code.&lt;&#x2F;p&gt;
+&lt;p&gt;An agent is roughly model + tools + looped calls. So what should a coding agent look like?&lt;&#x2F;p&gt;
+&lt;p&gt;Pi, which is hot recently and built into OpenClaw, exposes four tools: bash, read, write, edit. Its simplicity made people love it. It looks simple, but in July last year, bub’s first version also had these exact tools. And bub was not the origin of this story. Earlier on the timeline, around 2025-04, ampcode had already pointed this out.&lt;&#x2F;p&gt;
+&lt;p&gt;Why these four tools?&lt;&#x2F;p&gt;
+&lt;p&gt;Read and write are base abilities: input and output. Edit looks like a write optimization, but in practice it gives precise intervention and shortens the feedback loop. Bash is the bridge to the vast CLI and programmable tooling ecosystem, preventing us from reinventing unnecessary wheels.&lt;&#x2F;p&gt;
+&lt;p&gt;Recommended reading: &lt;a href=&quot;&#x2F;posts&#x2F;baby-step-coding-agent&#x2F;&quot;&gt;Building a Self-Bootstrapping Coding Agent in Python&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;rag-and-its-applicability&quot;&gt;RAG and Its Applicability&lt;a class=&quot;zola-anchor&quot; href=&quot;#rag-and-its-applicability&quot; aria-label=&quot;Anchor link for: rag-and-its-applicability&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;If we keep going in this direction, we quickly hit another topic: RAG.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Side note: at my previous company, my teammates and I designed and implemented fusiongraphrag, one of the few GraphRAG solutions in the document domain that was truly deployable.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;The “R” means retrieval, which is a very broad basket. That’s why I sometimes need terms like “naive RAG” to refer specifically to vector, full-text, or hybrid retrieval strategies.&lt;&#x2F;p&gt;
+&lt;p&gt;Naive RAG is not always effective:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;In frequently changing codebases, building vector&#x2F;full-text indexes naturally amplifies cost. Chunking and indexing pipelines can even block normal development flow. Early Cursor on very large repos is a typical example: expensive indexing, long wait time, freshness issues.&lt;&#x2F;li&gt;
+&lt;li&gt;Another severe issue is semantic mismatch. Due to training data and the natural gap between natural language and code, common embedding models often fail to represent code effectively. The system falls back to full-text retrieval and keyword-based matching. Before being acquired, Jina had released a dedicated embedding model for code-natural-language alignment exactly to address this.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;So grep + read + agent loop became a more clever, intuitive, and effective solution, first argued and validated by aider in 2024. For a while, this kind of RAG with explicit agent loops was commonly called Agentic RAG.&lt;&#x2F;p&gt;
+&lt;p&gt;Of course, naive RAG still has advantages in this scenario when code and comments already have good semantics, strong representation, and low change frequency: for example, released versioned repositories, upstream dependencies, or document-focused corpora, especially specs and consensus documents.&lt;&#x2F;p&gt;
+&lt;p&gt;Recommended reading: &lt;a href=&quot;&#x2F;posts&#x2F;rag-in-coding-agent&#x2F;&quot;&gt;RAG in Coding Agents: Making Smarter Programming Assistants&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;different-paradigms-behind-openclaw-and-bub&quot;&gt;Different Paradigms Behind OpenClaw and Bub&lt;a class=&quot;zola-anchor&quot; href=&quot;#different-paradigms-behind-openclaw-and-bub&quot; aria-label=&quot;Anchor link for: different-paradigms-behind-openclaw-and-bub&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Before we continue into session, memory, and context, let’s briefly talk about OpenClaw (even though I only saw my first “alive” OpenClaw instance yesterday, driven by MaxClaw).&lt;&#x2F;p&gt;
+&lt;p&gt;OpenClaw positions itself as a personal assistant. Assistant means entering daily life. You can think of it like a friend who helps order food or tells you how to write today’s document. Most abilities can be extended through skills. This is deeply tied to model capability, agent progress, and current AI application trends. But when someone opens a real path, the imagination space gets much bigger.&lt;&#x2F;p&gt;
+&lt;p&gt;Still, “personal” is OpenClaw’s limitation.&lt;&#x2F;p&gt;
+&lt;p&gt;Bub, at least the Bub we have right now, is designed for multi-human or multi-agent collaboration. We started day one in group chats, while still being able to serve one-on-one needs.&lt;&#x2F;p&gt;
+&lt;p&gt;To survive in group and multi-party settings, two things matter:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Build identity awareness.&lt;&#x2F;li&gt;
+&lt;li&gt;Provide effective communication.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The first means distinguishing and understanding most participants, including self. The second means dealing with incomplete context, vague intent, and parallel topics.&lt;&#x2F;p&gt;
+&lt;p&gt;As I wrote elsewhere, an agent does not even need to respond to every message. Capability becomes a coexistence problem.&lt;&#x2F;p&gt;
+&lt;p&gt;Recommended reading: &lt;a href=&quot;&#x2F;posts&#x2F;im-and-socialized-evaluation&#x2F;&quot;&gt;Instant Messaging and Socialized Evaluation&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;session-memory-and-context&quot;&gt;Session, Memory, and Context&lt;a class=&quot;zola-anchor&quot; href=&quot;#session-memory-and-context&quot; aria-label=&quot;Anchor link for: session-memory-and-context&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Older designs came from a simple assumption: one session maps to one task. To fit longer interactions into limited windows, we invented compact and summary. To share context branches, we invented fork and merge. To hand over tasks, we got handoff.&lt;&#x2F;p&gt;
+&lt;p&gt;When session boundaries started breaking, memory systems were expected to save us: extract preferences, retrieve memories, fill templates, keep an agent “personality” consistent across sessions.&lt;&#x2F;p&gt;
+&lt;p&gt;Then context became an even bigger basket, trying to hold sessions, memory, RAG, real-time queries, and everything else with increasingly complex filling strategies.&lt;&#x2F;p&gt;
+&lt;p&gt;All these mechanisms try to answer one question: how do we extend infinite history in a finite window?&lt;&#x2F;p&gt;
+&lt;p&gt;The issue is that all elegant designs share the same assumption: state must persist, history must not be dropped.&lt;&#x2F;p&gt;
+&lt;p&gt;That assumption is expensive:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Sessions are hard-isolated, so cross-session awareness is weak; multi-topic group chat is even harder.&lt;&#x2F;li&gt;
+&lt;li&gt;Memory drifts, and calibration cost is far higher than expected; you must trust a sidecar that should not break system behavior even when it fails.&lt;&#x2F;li&gt;
+&lt;li&gt;Context management assumes history is monotonic growth, so inflation must always be managed.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;We assume the system must remember everything, then add caching, compression, branching. Each layer patches the same premise. But they still cannot carry enough true history.&lt;&#x2F;p&gt;
+&lt;p&gt;Recommended reading: &lt;a href=&quot;&#x2F;posts&#x2F;prometheus-bound&#x2F;&quot;&gt;Prometheus Bound&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;reframing-with-tape-and-anchors&quot;&gt;Reframing with Tape and Anchors&lt;a class=&quot;zola-anchor&quot; href=&quot;#reframing-with-tape-and-anchors&quot; aria-label=&quot;Anchor link for: reframing-with-tape-and-anchors&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;A different angle: history is not a burden that must be inherited. It can be a material library loaded on demand.&lt;&#x2F;p&gt;
+&lt;p&gt;Tape is simple:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;One endless tape: one perpetual session. Every interaction is appended to logs as facts, never mutated.&lt;&#x2F;li&gt;
+&lt;li&gt;Anchors instead of memory: at phase transitions, write the minimal required state as anchors. Rebuild starts from the latest anchor. History stays, but does not need to be fully loaded.&lt;&#x2F;li&gt;
+&lt;li&gt;Context assembly instead of inheritance: when a new task arrives, do two things only: explore (retrieve raw fragments) and choose (assemble minimally sufficient context).&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The value of tape is not inventing a smarter memory trick. It is reducing assumptions. State does not need to persist forever. History does not need default inheritance. Task appears, construct context. Task ends, end it. Next round, start again.&lt;&#x2F;p&gt;
+&lt;p&gt;Looking back, tape + anchor gives us a useful model for context management research: easy to understand, expressive enough to represent mainstream solutions, and good enough for rethinking future designs.&lt;&#x2F;p&gt;
+&lt;p&gt;Recommended reading: &lt;a href=&quot;&#x2F;posts&#x2F;reinvent-the-punch-tape&#x2F;&quot;&gt;Reinventing the Punch Tape&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;closing&quot;&gt;Closing&lt;a class=&quot;zola-anchor&quot; href=&quot;#closing&quot; aria-label=&quot;Anchor link for: closing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Back to the title:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Once tools enter your hand, they also enter your mind. Capability starts defining problems.&lt;&#x2F;li&gt;
+&lt;li&gt;Knowing when &lt;em&gt;not&lt;&#x2F;em&gt; to hammer is a key skill against tool bias.&lt;&#x2F;li&gt;
+&lt;li&gt;Once you truly understand what counts as a nail, and where the hammer ends, you will actively choose problems that are “essentially nails.”&lt;&#x2F;li&gt;
+&lt;li&gt;Or switch to a new hammer.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Side note: until today, I still have not read the implementations of codex &#x2F; pi-mono &#x2F; nanobot &#x2F; openclaw.&lt;&#x2F;p&gt;
+&lt;p&gt;Special thanks to &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;frostming&quot;&gt;frostming&lt;&#x2F;a&gt;, &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;yihong0618&quot;&gt;yihong0618&lt;&#x2F;a&gt;, &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;psiace&#x2F;bub&quot;&gt;bub&lt;&#x2F;a&gt;, and all its contributors.&lt;&#x2F;p&gt;
+&lt;p&gt;Thanks to alma, kapy, huluwa, and the creators behind these agents.&lt;&#x2F;p&gt;
+&lt;p&gt;Thank you all.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Instant Messaging and Socialized Evaluation</title>
         <published>2026-02-21T00:00:00+00:00</published>

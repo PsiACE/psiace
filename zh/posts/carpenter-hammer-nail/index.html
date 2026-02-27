@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="从 Coding Agent、RAG 到会话与上下文：围绕 bub 的一次问题复盘与范式思考。">
+
+  <title>木匠，锤子，钉子</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#qian-yan">前言</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#ru-he-de-dao-yi-ge-coding-agent">如何得到一个 Coding Agent</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#liao-liao-rag-ji-qi-gua-yong-xing">聊聊 RAG 及其适用性</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#openclaw-he-bub-bei-hou-de-bu-tong-fan-shi">OpenClaw 和 Bub 背后的不同范式</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#hui-hua-ji-yi-yu-shang-xia-wen">会话、记忆与上下文</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#yong-zhi-dai-he-mao-dian-zhong-xin-jian-li-wen-ti-mo-xing">用纸带和锚点重新建立问题模型</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#wei-sheng">尾声</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>木匠，锤子，钉子</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Feb 27, 2026</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/bub"><span>#</span>bub</a><a class="instant" href="https://psiace.me/tags/coding-agent"><span>#</span>coding-agent</a><a class="instant" href="https://psiace.me/tags/rag"><span>#</span>rag</a><a class="instant" href="https://psiace.me/tags/context"><span>#</span>context</a><a class="instant" href="https://psiace.me/tags/memory"><span>#</span>memory</a><a class="instant" href="https://psiace.me/tags/openclaw"><span>#</span>openclaw</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/carpenter-hammer-nail/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <blockquote>
+<p>这篇文章继续献给 bub ，一个在群聊中生活的 agent ，来讲讲背后的问题、范式和模型变迁。
+<a rel="nofollow noreferrer" href="https://github.com/kemingy">kemingy</a> 吐嘈过：“你的文章疑似太发散了，脱离了科技写作的范畴，需要额外的 context，也不一定能对得上”。
+好在本次是要在公司内部做一个分享开始撰写的，所以难得正经地会走一下流程。</p>
+</blockquote>
+<h2 id="qian-yan">前言<a class="zola-anchor" href="#qian-yan" aria-label="Anchor link for: qian-yan" style="visibility: hidden;"></a>
+</h2>
+<p>大家好，我是 PsiACE，花名泉达。以前做数据库，做 RAG，做 Agent，做开源，现在在 OceanBase 做开源生态相关的工作。欢迎关注我的 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/">GitHub</a> 。</p>
+<p>即便只是在 coding agent 这个子领域上，我至少做过 rag、沙箱、agent、protocol 几个方向，其中 <a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol/python-sdk">agent-client-protocol</a> 在整个 python 生态下载量大概前万名（1.2%），而这些都不曾是我的主业。</p>
+<p>今天分享主要是我过去几年做 Agent 和最近重新拾起 <a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a> 的一些想法和经验的投影。bub 在短短的几天内从一个简单的 Coding Agent 开始，独立地演化成某种类似 OpenClaw 但不同的形态。</p>
+<p>最近的视角会更多偏产品经理一些，所以这次不会涉及特别深入的技术点。在进入正题前，先让我们看看这个标题，《木匠，锤子，钉子》：</p>
+<ul>
+<li>一个人有了锤子，就会看什么都像钉子。</li>
+<li>但如果一个有锤子的人能够分辨哪些东西是钉子，就成功了。</li>
+<li>当我有了锤子的时候，不是钉子的东西就不多了。</li>
+</ul>
+<p>也欢迎大家阅读我的历史文章。</p>
+<h2 id="ru-he-de-dao-yi-ge-coding-agent">如何得到一个 Coding Agent<a class="zola-anchor" href="#ru-he-de-dao-yi-ge-coding-agent" aria-label="Anchor link for: ru-he-de-dao-yi-ge-coding-agent" style="visibility: hidden;"></a>
+</h2>
+<p>大部分人应该都用过 Coding Agent ，Cursor、Codex、Claude Code 。</p>
+<p>Agent 大致可以看作模型 + 工具 + 循环调用。那么一个 Coding Agent 该是什么样子？</p>
+<p>最近很火的 Pi ，也是 OpenClaw 内置的 Agent ，里面提供的是 bash，read，write，edit 四个工具，甚至因为其简洁性而一时被热捧。看起来很简单，但是在去年 7 月份，bub 的第一版实现里，提供的也是这几个工具。而 bub 也不是这个故事的原创。更早的时间线上，大概 2025.04 月份，ampcode 就指出了这一点。</p>
+<p>为什么是这四个工具？读和写是基本能力，代表的就是输入和输出。edit 看似是写的优化，实质上提供的是精准介入的能力，并且有效缩短反馈的链路长度。bash ，则是对接现有庞大命令行和可编程工具的桥梁，能够避免造更多不必要的轮子。</p>
+<p>欢迎阅读 - <a href="/zh/posts/baby-step-coding-agent/">Baby Steps: 用 Python 实现一个能自举的 Coding Agent</a></p>
+<h2 id="liao-liao-rag-ji-qi-gua-yong-xing">聊聊 RAG 及其适用性<a class="zola-anchor" href="#liao-liao-rag-ji-qi-gua-yong-xing" aria-label="Anchor link for: liao-liao-rag-ji-qi-gua-yong-xing" style="visibility: hidden;"></a>
+</h2>
+<p>如果要沿着这个方向继续，我们还会看到一些有意思的话题，比如 RAG。</p>
+<blockquote>
+<p>顺带一提，我在之前公司和同事们一起设计和实现的 fusiongraphrag ，是文档领域少有的具备落地能力的 graphrag 方案。</p>
+</blockquote>
+<p>R 代表查询，是一个非常宽泛的箩筐，导致我不得不用朴素 RAG 之类的说法来代替以向量、全文或者混合检索为代表的 RAG 策略。</p>
+<p>朴素 RAG 并不总是有效：</p>
+<ul>
+<li>对于频繁变更的代码库而言，为其建立向量和全文索引的成本会自然放大，而且由于存在分块等处理逻辑，甚至可能阻塞正常的开发流程。比如早期 cursor 在大型代码库上需要浪费相当多的资源和时间，以及面对召回新鲜度问题。</li>
+<li>另一个严重的问题在于语义的难以弥合，由于训练语料以及自然语言与代码之间的天然差异，常见的 embedding 模型很难对代码起到有效表征，导致会退化到全文检索，依赖关键词和转换后的关键词命中。可以看到，jina 在出售之前曾经为了解决这个问题专门设计并发布了一个针对代码和自然语言对齐的嵌入模型。</li>
+</ul>
+<p>所以 grep + 读 + Agent Loop，成为了一个更巧妙、更符合直觉、也更有效的方案，大概是由 aider 在 2024 年首次论证并验证。类似的引入 Agent Loop 的 RAG 方案大体上有段时间被称为 Agentic RAG。</p>
+<p>当然朴素 RAG 在这个场景下并不是完全没有优势，如果代码和注释本身语义良好，表征充分，又不会频繁变化：比如已经发布的版本化代码库和上游依赖；或者仅仅专注在文档，特别是规范和共识性质的文档上。</p>
+<p>欢迎阅读：<a href="/zh/posts/rag-in-coding-agent/">当 RAG 遇上编程助手</a></p>
+<h2 id="openclaw-he-bub-bei-hou-de-bu-tong-fan-shi">OpenClaw 和 Bub 背后的不同范式<a class="zola-anchor" href="#openclaw-he-bub-bei-hou-de-bu-tong-fan-shi" aria-label="Anchor link for: openclaw-he-bub-bei-hou-de-bu-tong-fan-shi" style="visibility: hidden;"></a>
+</h2>
+<p>在继续讨论会话、Memory 和 Context 之前，我们可以抽一点时间来聊聊 OpenClaw。尽管我直到昨天才第一次看到“活着”的 OpenClaw 实例（由 MaxClaw 驱动）。</p>
+<p>OpenClaw 的定位是个人助手，助手意味着进入生活。或者说，你可以考虑把它当成支持点外卖购物的千问或者问你今天这个文档怎么写的朋友。而且大多数能力都有办法通过所谓的 skills 进行扩展，这些和模型能力，Agent 技术发展，以及现在的 AI 应用趋势是分不开的，但是一个打通路径的先行者，带来的是更广阔的想像空间。</p>
+<p>但，“个人” 是 OpenClaw 的局限性。</p>
+<p>Bub ，至少目前看到的 Bub ，是为多人或者多 Agent 协作设计的。我们 Day 1 就在群聊的场景下生存，当然也能够适应单独对个人的需求。</p>
+<p>要适应多人和群聊，其实有两个比较关键的点：</p>
+<ul>
+<li>树立身份认知</li>
+<li>提供有效沟通</li>
+</ul>
+<p>前者意味着要分辨甚至了解对话中参与的大多数以及自身，后者意味着要面对残缺的上下文、模糊的任务意图、并行的主题。</p>
+<p>就像我在另一篇文章讲的那样，Agent 甚至不需要回应所有消息，能力问题变成了共处问题。</p>
+<p>欢迎阅读 - <a href="/zh/posts/im-and-socialized-evaluation/">即时通讯与社会化评估</a></p>
+<h2 id="hui-hua-ji-yi-yu-shang-xia-wen">会话、记忆与上下文<a class="zola-anchor" href="#hui-hua-ji-yi-yu-shang-xia-wen" aria-label="Anchor link for: hui-hua-ji-yi-yu-shang-xia-wen" style="visibility: hidden;"></a>
+</h2>
+<p>过去的设计源于一个朴素假设：一个会话对应一个任务。为了让有限窗口容纳更长交互，我们发明了 compact、summary；为了让能共享相同的上下文，我们发明了 fork 和 merge；为了让任务能接力，我们有了 handoff。</p>
+<p>当会话边界被打破，Memory 系统被寄予厚望：提取偏好、检索记忆、填充模板，试图让 Agent 在不同会话间保持“人格”一致。</p>
+<p>而 Context 则是个更大的箩筐，试图装下会话、Memory、RAG、实时查询……用复杂策略填充那个有限的窗口。</p>
+<p>这些手段都在试图回答同一个问题：如何在有限窗口里，延续无限的历史？</p>
+<p>问题在于，所有精巧设计都建立在一个共同假设上：“状态必须被延续，历史不能丢”。</p>
+<p>但这个假设代价沉重：</p>
+<ul>
+<li>会话是硬隔离，跨会话无感知，群聊里多话题并行更是无所适从。</li>
+<li>Memory 会漂移，校准成本远超预期；你需要信任一个失败不能影响系统表现的旁路。</li>
+<li>上下文默认历史是递增函数，需要不断管理膨胀。</li>
+</ul>
+<p>我们默认系统必须记住一切，于是引入缓存、压缩、分叉。每层机制都在修补同一个前提，但事实是它们永远无法携带足够多的、真实的历史。</p>
+<p>欢迎阅读 - <a href="/zh/posts/prometheus-bound/">被缚的普罗米修斯</a>。</p>
+<h2 id="yong-zhi-dai-he-mao-dian-zhong-xin-jian-li-wen-ti-mo-xing">用纸带和锚点重新建立问题模型<a class="zola-anchor" href="#yong-zhi-dai-he-mao-dian-zhong-xin-jian-li-wen-ti-mo-xing" aria-label="Anchor link for: yong-zhi-dai-he-mao-dian-zhong-xin-jian-li-wen-ti-mo-xing" style="visibility: hidden;"></a>
+</h2>
+<p>换个角度：历史不是必须继承的负担，而是可以按需读取的素材库。</p>
+<p>Tape 的设计很简单：</p>
+<ul>
+<li>一条无尽的纸带：只有一个永续的会话。所有交互作为事实被追加写入日志，永不修改。</li>
+<li>锚点，而非记忆：阶段切换时，把必要的最小状态打包成锚点写入。重建从新锚点开始，历史仍在，但不必加载。</li>
+<li>上下文装配，而非继承：新任务出现，只做两件事——探索（检索原始片段）与选择（装配最小充分的上下文）。</li>
+</ul>
+<p>Tape 的意义，不是发明更聪明的“记忆技巧”，而是减少假设。状态不必延续，历史不必默认继承。任务出现，构造上下文；任务结束，结束。下一轮，重新开始。</p>
+<p>回过头来看纸带和锚点的设计，我觉得这至少为我们研究上下文管理问题提供了一个新的模型，它易于理解，但又具备足够的表达力能够表征当前主流的解决方案，我们可以在这样的前提和假设下重新思考和前进。</p>
+<p>欢迎阅读 - <a href="/zh/posts/reinvent-the-punch-tape/">重新发明打孔纸带</a></p>
+<h2 id="wei-sheng">尾声<a class="zola-anchor" href="#wei-sheng" aria-label="Anchor link for: wei-sheng" style="visibility: hidden;"></a>
+</h2>
+<p>再回到标题上：</p>
+<ul>
+<li>工具一旦进入手里，也会进入脑子。能力会反过来定义问题。</li>
+<li>知道什么时候不敲，是一种对冲工具偏见的能力。</li>
+<li>一旦你真的理解了什么是钉子，认知到锤子的边界。你会主动选择去面对那些“本质上就是钉子”的问题。</li>
+<li>或者，换一把新锤子。</li>
+</ul>
+<p>题外话，直到今天，我仍然没有看过 codex / pi-mono / nanobot / openclaw 是如何实现的。</p>
+<p>特别感谢 <a rel="nofollow noreferrer" href="https://github.com/frostming">frostming</a>，感谢 <a rel="nofollow noreferrer" href="https://github.com/yihong0618">yihong0618</a>、<a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a> 和其贡献者们。</p>
+<p>感谢 alma、kapy、葫芦娃和这些 Agent 背后的创造者。</p>
+<p>谢谢大家。</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="carpenter-hammer-nail"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>
