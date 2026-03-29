@@ -5,8 +5,103 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2026-02-27T00:00:00+00:00</updated>
+    <updated>2026-03-30T00:00:00+00:00</updated>
     <id>https://psiace.me/posts/atom.xml</id>
+    <entry xml:lang="en">
+        <title>The Code of Hammurabi</title>
+        <published>2026-03-30T00:00:00+00:00</published>
+        <updated>2026-03-30T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/posts/hammurabi-code/"/>
+        <id>https://psiace.me/posts/hammurabi-code/</id>
+        
+        <content type="html" xml:base="https://psiace.me/posts/hammurabi-code/">&lt;blockquote&gt;
+&lt;p&gt;Today I want to talk about a few design ideas in &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;bubbuild&#x2F;bub&quot;&gt;bub&lt;&#x2F;a&gt; that have endured to this day, along with some of my thoughts on interaction between humans and agents.
+You have probably seen this project mentioned more than once in my previous writing, so besides understanding its design, I also hope you will take the time to read some of its code.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;a class=&quot;zola-anchor&quot; href=&quot;#introduction&quot; aria-label=&quot;Anchor link for: introduction&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Historical accounts tell us that the Babylonian king Hammurabi had his law code inscribed on black basalt nearly 3,700 years ago.&lt;&#x2F;p&gt;
+&lt;p&gt;What, then, was written in that code?
+The best-known line is probably &quot;an eye for an eye, a tooth for a tooth.&quot;
+The Louvre describes one part of it this way:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Article 196 states: &quot;If a man destroys the eye of another man of equal rank, they shall destroy his eye.&quot;
+This article is prominently featured in the augmented reality experience.
+It vividly illustrates a notion of compensation for injury that was characteristic of Semitic societies in the ancient Near East, later giving rise to the principle commonly summarized as &quot;an eye for an eye, a tooth for a tooth.&quot;
+In reality, however, the rule was not meant to encourage revenge, but to require that punishment remain strictly proportionate to the offense, neither too light nor too severe.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;One is about law, the other about interaction, but they share the same underlying idea: strict proportionality, neither too much nor too little.
+That is also the central theme of this essay.&lt;&#x2F;p&gt;
+&lt;p&gt;To make the point easier to follow, let us begin with a few small design choices.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;different-views-consistent-behavior&quot;&gt;Different Views, Consistent Behavior&lt;a class=&quot;zola-anchor&quot; href=&quot;#different-views-consistent-behavior&quot; aria-label=&quot;Anchor link for: different-views-consistent-behavior&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;In most systems, the interaction views available to humans and agents are completely asymmetric: both can send text and images, but only the agent can call tools.
+As a result, it is difficult for a human to directly experience, understand, or reproduce agent behavior in its actual environment.&lt;&#x2F;p&gt;
+&lt;p&gt;Bub takes a different approach.
+Its tool system is shared by both humans and Bub itself: inputs that begin with a comma, known as Comma Commands, are forwarded as the corresponding tool calls, while unknown commands fall back to Shell.
+The views may differ, but from Bub&#x27;s perspective, Function Calling and what humans see as Comma Commands correspond to the same behavior.&lt;&#x2F;p&gt;
+&lt;p&gt;In day-to-day interaction with Bub, when the context is already in poor shape but Bub has not triggered auto handoff in time, we often manually run &lt;code&gt;,tape.info&lt;&#x2F;code&gt; and &lt;code&gt;,tape.handoff&lt;&#x2F;code&gt;.
+That is, in fact, the natural way Bub manages its own context.
+Through that shared mechanism, humans and agents naturally develop the same intuition about load and state, and we can directly observe the concrete impact different tools have on Bub.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;P.S. The idea of Comma Commands comes from a 2009 essay, &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;rhodesmill.org&#x2F;brandon&#x2F;2009&#x2F;commands-with-comma&#x2F;&quot;&gt;&lt;em&gt;Start all of your commands with a comma&lt;&#x2F;em&gt;&lt;&#x2F;a&gt;.
+One reason for introducing it early on, besides ensuring consistent behavior, was to make Bub feel at home in the command line.
+After all, the command line remains one of the interfaces programmers know best.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;symmetry-of-information&quot;&gt;Symmetry of Information&lt;a class=&quot;zola-anchor&quot; href=&quot;#symmetry-of-information&quot; aria-label=&quot;Anchor link for: symmetry-of-information&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Most systems we have seen in the past were effectively unobservable to both users and agents: stitched-together prompts, invisible memory, and opaque system state.
+Users could see that the result was wrong, but had no access to the basis on which it was produced.
+In that situation, interaction with an agent loses much of its meaning, because the participants are no longer operating on shared context.&lt;&#x2F;p&gt;
+&lt;p&gt;In Bub, all behavior and the state associated with it are recorded on tape, and behavior is allowed to depend only on visible context.
+This is deliberate.
+Although the context still has to be assembled, the amount of information available to humans and agents is the same; working from the same underlying data, both can understand behavior and verify state.&lt;&#x2F;p&gt;
+&lt;p&gt;Put differently, context and observability are structurally aligned.
+The context itself is already a natural expression of tracing.
+Beyond exporting a familiar Trace UI through dashboards, Bub can also inspect and analyze its own behavior.&lt;&#x2F;p&gt;
+&lt;p&gt;One scenario I use frequently is to have Bub go back through poor performances in a group-chat conversation, extract and analyze the relevant execution paths from the actual exchange, determine what caused the failure, and even draw the corresponding DAG.
+Because the data underlying that analysis is visible to me as well, no additional trust assumption is required, and real collaboration becomes possible.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;To avoid making this sound too self-contained, here is another example: both codex and bub support a Dollar Mention mechanism, where &lt;code&gt;$&lt;&#x2F;code&gt; triggers the progressive loading of skills and loads specific content from skill files into the current context.
+This is a typical form of prompt augmentation.
+What matters more, however, is that the loaded content is equally visible to humans and agents.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;equality-between-the-participants&quot;&gt;Equality Between the Participants&lt;a class=&quot;zola-anchor&quot; href=&quot;#equality-between-the-participants&quot; aria-label=&quot;Anchor link for: equality-between-the-participants&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Traditionally, dialogue between humans and agents is represented as a session, but control over the session belongs only to the human: when a task changes, when the context drifts out of control, and so on.
+This further deepens the asymmetry.
+The human is expected not only to know everything, but also to manage everything; the top-level user instruction must usually be precise and free of major drift or conflict, while the agent can do nothing but obey within the confines of the session.&lt;&#x2F;p&gt;
+&lt;p&gt;The problem with the session model is that it carries an implicit assumption: interaction revolves around a single subject.
+That works in a single-user system, but once multiple participants are present, context no longer serves one subject alone, nor can it guarantee task isolation or linear behavior.
+If the boundary remains the session, then someone must take responsibility for coordination and maintenance, and that role usually falls to the human.&lt;&#x2F;p&gt;
+&lt;p&gt;Bub was designed with a different goal from the outset.
+A group-chat environment places much higher demands on the agency of each participant.
+In Bub&#x27;s model, interaction is organized around &lt;code&gt;turn&lt;&#x2F;code&gt;.
+It does not belong to any one subject; it is simply an action taken within the current context.
+With the help of anchor and handoff, Bub can also control the boundaries of the flow in a natural way.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;When we talk about interaction, we often overlook the equality of the two sides involved.
+We say interaction should be human-centered, and now we also say it should serve agents, but interaction itself is something that happens between the participants.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;interaction-not-the-design-of-interaction&quot;&gt;Interaction, Not the Design of Interaction&lt;a class=&quot;zola-anchor&quot; href=&quot;#interaction-not-the-design-of-interaction&quot; aria-label=&quot;Anchor link for: interaction-not-the-design-of-interaction&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;We often speak of &quot;interaction design,&quot; but when interaction actually takes place, no participant can easily determine its final form.
+More often than not, each side simply bears it as it unfolds.&lt;&#x2F;p&gt;
+&lt;p&gt;What Bub does is not to propose a new mode of interaction, but to acknowledge the existence of interaction itself and establish constraints around it.&lt;&#x2F;p&gt;
+&lt;p&gt;This is where the article ought to end.
+It is late into the night once again.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Carpenter, Hammer, Nail</title>
         <published>2026-02-27T00:00:00+00:00</published>

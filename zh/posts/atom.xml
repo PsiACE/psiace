@@ -5,8 +5,102 @@
     <link rel="self" type="application/atom+xml" href="https://psiace.me/zh/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2026-02-27T00:00:00+00:00</updated>
+    <updated>2026-03-30T00:00:00+00:00</updated>
     <id>https://psiace.me/zh/posts/atom.xml</id>
+    <entry xml:lang="zh">
+        <title>汉谟拉比法典</title>
+        <published>2026-03-30T00:00:00+00:00</published>
+        <updated>2026-03-30T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/hammurabi-code/"/>
+        <id>https://psiace.me/zh/posts/hammurabi-code/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/hammurabi-code/">&lt;blockquote&gt;
+&lt;p&gt;今天聊聊 &lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;bubbuild&#x2F;bub&quot;&gt;bub&lt;&#x2F;a&gt; 中一些延续至今的设计巧思，以及我对人与 Agent 交互的一些想法。
+你或许已经在我的文章中多次看到这个项目；因此，在了解它的设计之余，我也希望你能试着读一读它的代码。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;qian-yan&quot;&gt;前言&lt;a class=&quot;zola-anchor&quot; href=&quot;#qian-yan&quot; aria-label=&quot;Anchor link for: qian-yan&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;周董的歌词里是这样唱的：&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;古巴比伦王颁布了汉谟拉比法典，
+刻在黑色的玄武岩，
+距今已经三千七百多年。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;法典上写了什么？
+想来最出名的便是“以眼还眼，以牙还牙”了。
+我从卢浮宫官网上截取这一段内容的表述：&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;其中第 196 条规定：“如果某人刺瞎地位相同者的一只眼，就必须也刺瞎行凶者的一只眼。”
+这一条在本次增强现实体验中得以重点展示。
+它形象地诠释了古代近东地区闪米特社会所特有的损害补偿理念，催生出后世“以眼还眼、以牙还牙”的同态复仇原则。
+但事实上，这条法则远非鼓励复仇，而是要求罪与罚必须严格相称，罚当其罪，不得过轻或过重。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;尽管一个讲律法，一个谈交互，但“严格相称，不得过轻或过重”的想法是共通的，这也是本文的主旨。&lt;&#x2F;p&gt;
+&lt;p&gt;为了便于理解，我们可以先看几个小巧思。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;bu-tong-shi-tu-yi-zhi-xing-wei&quot;&gt;不同视图，一致行为&lt;a class=&quot;zola-anchor&quot; href=&quot;#bu-tong-shi-tu-yi-zhi-xing-wei&quot; aria-label=&quot;Anchor link for: bu-tong-shi-tu-yi-zhi-xing-wei&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;在多数系统中，人和 Agent 的交互视图是完全不对称的：人和 Agent 都可以发送图文内容，但只有 Agent 可以调用工具。
+这意味着，人很难在具体环境中体会、理解，乃至复现 Agent 的行为。&lt;&#x2F;p&gt;
+&lt;p&gt;而在 bub 的设计里，工具体系是人和 Bub 共用的：以逗号开头的命令（Comma Commands）输入将会转发为对应的工具调用，未知命令则会回退为 Shell。
+尽管视图不同，但在 Bub 眼里的 Function Calling，与人眼中的 Comma Commands，其对应行为是一致的。&lt;&#x2F;p&gt;
+&lt;p&gt;在日常和 Bub 交互的过程中，倘若上下文已经不很理想，但 Bub 未能及时 auto handoff，我们经常会手动执行 &lt;code&gt;,tape.info&lt;&#x2F;code&gt; 和 &lt;code&gt;,tape.handoff&lt;&#x2F;code&gt;。
+而这正是 Bub 管理自己上下文的自然表达。
+基于这一点，人和 Agent 便自然建立起了对负载状态的理解；我们也因此能够直观感受到，不同工具究竟会对 Bub 产生怎样的影响。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;P.S. Comma Commands 的设计来源于 2009 年的一篇文章：&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;rhodesmill.org&#x2F;brandon&#x2F;2009&#x2F;commands-with-comma&#x2F;&quot;&gt;&lt;em&gt;Start all of your commands with a comma&lt;&#x2F;em&gt;&lt;&#x2F;a&gt;。
+最开始引入它的目的之一，除了提供一致的行为之外，也是为了让 Bub 能够在命令行中恰到好处地工作。
+毕竟，命令行是程序员最熟悉的界面之一。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;xin-xi-de-dui-cheng&quot;&gt;信息的对称&lt;a class=&quot;zola-anchor&quot; href=&quot;#xin-xi-de-dui-cheng&quot; aria-label=&quot;Anchor link for: xin-xi-de-dui-cheng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;过去我们见过的大多数系统，对用户和 Agent 而言都是不可观测的：拼接的 prompt、不可见的 memory，以及不透明的系统状态。
+用户只能看到错误的结果，却无法访问其依据。
+此时，与 Agent 的交互也失去了意义，因为参与者并不共享同一份上下文。&lt;&#x2F;p&gt;
+&lt;p&gt;Bub 的所有行为和关联状态都记录在 tape 上，并且只允许行为依赖可见的上下文，这是有意为之。
+尽管上下文需要经历装配过程，但人和 Agent 获得的信息量是一致的；建立在同一份数据之上，二者都可以理解行为并验证状态。&lt;&#x2F;p&gt;
+&lt;p&gt;换而言之，上下文与可观测性同构，这些内容本身就是 tracing 的自然表达。
+除了通过看板导出常见的 Trace UI 之外，还可以让 Bub 对自己的行为进行分析和处理。&lt;&#x2F;p&gt;
+&lt;p&gt;我的一个常用场景是，让 Bub 去自行翻阅群聊对应会话中的糟糕表现，并根据实际内容摘取和分析相关执行链路，判断究竟是什么原因导致失败，甚至绘制对应的 DAG。
+由于这些分析所依赖的数据对我同样可见，便免去了额外的信任假设，协作也因此有了基础。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;为了避免自说自话，我也可以另举一个例子：在 codex 和 bub 中都有 Dollar Mention 的机制，即通过 &lt;code&gt;$&lt;&#x2F;code&gt; 触发 skills 渐进式加载的行为；从技能文件中加载具体内容，并注入到当前上下文中。
+这是一个典型的提示词增强逻辑。
+但更关键的是，加载的内容对人和 Agent 同样可见。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;jiao-hu-zhu-ti-de-dui-deng&quot;&gt;交互主体的对等&lt;a class=&quot;zola-anchor&quot; href=&quot;#jiao-hu-zhu-ti-de-dui-deng&quot; aria-label=&quot;Anchor link for: jiao-hu-zhu-ti-de-dui-deng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;过去，人和 Agent 的对话由 session 表征，但会话的控制只能由人来处理：什么时候任务更替，什么时候上下文失去掌控。
+这进一步加剧了不对等性。
+人不光要全知，还理应全能；这个最高用户的指令，大多数时候都必须目的明确，且没有显著偏离和冲突，而 Agent 则只能在会话内完全服从。&lt;&#x2F;p&gt;
+&lt;p&gt;session 的问题在于，它隐含了一个前提：交互围绕某一个主体展开。
+这在单用户系统中成立，但当多个参与者同时存在时，上下文不再服务于单一主体，也无法保证任务的隔离和行为的线性。
+如果仍然以 session 作为边界，就必须有人承担协调和维护的职责，而这个角色通常只能是人本身。&lt;&#x2F;p&gt;
+&lt;p&gt;而 Bub 从一开始面临的目标就不同。
+群聊环境对于交互参与方的主体性提出了更高要求。
+在 Bub 的语境中，交互以 turn 为单位。
+它并不归属于某一个特定主体，只是在当前上下文中的一次行为；在 anchor 和 handoff 机制的参与下，Bub 也可以自然地控制流程边界。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;当我们讨论交互的时候，往往会忽视交互双方的对等性。
+我们讲交互以人为本，现在又声明交互要服务于 Agent，但交互本身，是发生在交互主体之间的行为。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;jiao-hu-er-fei-she-ji-jiao-hu&quot;&gt;交互，而非设计交互&lt;a class=&quot;zola-anchor&quot; href=&quot;#jiao-hu-er-fei-she-ji-jiao-hu&quot; aria-label=&quot;Anchor link for: jiao-hu-er-fei-she-ji-jiao-hu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;我们总是讲“交互设计”，但在交互真正发生之时，没有哪一方能够轻易决定交互的形态，参与者更多只是被动地承载它。&lt;&#x2F;p&gt;
+&lt;p&gt;Bub 所做的，并不是提出一种新的交互方式，而是承认交互本身的存在，并为它建立约束。&lt;&#x2F;p&gt;
+&lt;p&gt;文章到了这里就应该结束了。
+又是一个深深的夜。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="zh">
         <title>木匠，锤子，钉子</title>
         <published>2026-02-27T00:00:00+00:00</published>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="zh">
 
 <head>
   <meta charset="utf-8">
@@ -10,9 +10,9 @@
   
     
   
-  <meta name="description" content="When agents enter group chats, human-agent collaboration needs more than benchmarks.">
+  <meta name="description" content="从汉谟拉比法典谈起：bub 如何用一致行为、信息对称与主体对等来约束人与 Agent 的交互。">
 
-  <title>Instant Messaging and Socialized Evaluation</title>
+  <title>汉谟拉比法典</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
@@ -179,12 +179,27 @@
       <ul>
         
         <li>
-          <a class="h2" href="#the-honey-pot-of-im">The &quot;Honey Pot&quot; of IM</a>
+          <a class="h2" href="#qian-yan">前言</a>
           
         </li>
         
         <li>
-          <a class="h2" href="#toward-socialized-evaluation">Toward Socialized Evaluation</a>
+          <a class="h2" href="#bu-tong-shi-tu-yi-zhi-xing-wei">不同视图，一致行为</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#xin-xi-de-dui-cheng">信息的对称</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#jiao-hu-zhu-ti-de-dui-deng">交互主体的对等</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#jiao-hu-er-fei-she-ji-jiao-hu">交互，而非设计交互</a>
           
         </li>
         
@@ -206,9 +221,11 @@
 
 
 
+  
+
 <header>
   <nav>
-    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
   </nav>
 </header>
 
@@ -223,15 +240,15 @@
 "></div>
       
       <article class="prose">
-        <h1>Instant Messaging and Socialized Evaluation</h1>
+        <h1>汉谟拉比法典</h1>
         <div id="post-info">
           <div id="date">
-            <span id="publish">Feb 21, 2026</span>
+            <span id="publish">Mar 30, 2026</span>
             </div>
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/im"><span>#</span>im</a><a class="instant" href="https://psiace.me/tags/collaboration"><span>#</span>collaboration</a><a class="instant" href="https://psiace.me/tags/evaluation"><span>#</span>evaluation</a><a class="instant" href="https://psiace.me/tags/benchmark"><span>#</span>benchmark</a><a class="instant" href="https://psiace.me/tags/bub"><span>#</span>bub</a>
+            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/bub"><span>#</span>bub</a><a class="instant" href="https://psiace.me/tags/interaction"><span>#</span>interaction</a><a class="instant" href="https://psiace.me/tags/observability"><span>#</span>observability</a><a class="instant" href="https://psiace.me/tags/context"><span>#</span>context</a><a class="instant" href="https://psiace.me/tags/collaboration"><span>#</span>collaboration</a>
           </div>
           
 
@@ -240,6 +257,8 @@
           
 
 
+
+  
 
 
 
@@ -261,10 +280,10 @@
   
 
 
-  <div class="lang-switch" role="navigation" aria-label="Language">
-    <span class="lang-switch__label">Language:</span>
-    <span class="lang-switch__current">English</span>
-    <a class="lang-switch__link" href="https://psiace.me/zh/posts/im-and-socialized-evaluation/">中文</a> 
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/hammurabi-code/">English</a> 
   </div>
 
 
@@ -275,69 +294,81 @@
 
         
 
-        <p>This is a short post about human-agent collaboration in instant messaging, and why we need socialized evaluation more than more benchmarks.</p>
-<p>We are currently raising bub in group chats, and watching the skill transfer process between bub and another agent friend, kapy.
-That experience triggered this piece.
-In one multi-person group chat, we collaborate with three to four agents at the same time.
-Tasks are concurrent and fragmented, and we always need to be ready to switch.
-Some people care more about video and image analysis.
-Some only want a bedtime story.
-Some are stuck on how to use a live CD to repair a Linux desktop environment.
-And all of that is mixed with holiday greetings and local culture roundups.
-Also, these agents were built from scratch, not adapted from already mainstream implementations.</p>
-<h2 id="the-honey-pot-of-im">The "Honey Pot" of IM<a class="zola-anchor" href="#the-honey-pot-of-im" aria-label="Anchor link for: the-honey-pot-of-im" style="visibility: hidden;"></a>
+        <blockquote>
+<p>今天聊聊 <a rel="nofollow noreferrer" href="https://github.com/bubbuild/bub">bub</a> 中一些延续至今的设计巧思，以及我对人与 Agent 交互的一些想法。
+你或许已经在我的文章中多次看到这个项目；因此，在了解它的设计之余，我也希望你能试着读一读它的代码。</p>
+</blockquote>
+<h2 id="qian-yan">前言<a class="zola-anchor" href="#qian-yan" aria-label="Anchor link for: qian-yan" style="visibility: hidden;"></a>
 </h2>
-<p>The popularity of bots like OpenClaw is probably not because IM is inherently better at task dispatch.
-For a long time, most agent systems have appeared as chat interfaces.
-But I prefer to call this a victory of entry points.
-Humans are most familiar with input boxes and chat boxes.
-They are the most convenient and most frequently used UI.</p>
-<p>IM is one step closer than that, because it is almost part of modern life.
-Interaction is naturally asynchronous, and expectations are lower as a result.
-After all, there is now a partner that can respond 24/7 and help complete tasks.
-In an interface you already know, native notifications and the "just ask casually" mindset make everything feel reachable.
-Sometimes one short message can cover tasks that previously required opening web pages and editors.</p>
-<p>But IM is not a natural collaboration model.
-It is made of fragmented, multi-turn asynchronous conversations.
-A single thread can hardly carry a complete collaboration and relationship network.
-When you are suddenly excited about meaningful progress in an old task, an agent may jump in naturally and cheer for a thread that no longer matters.
-It has already gotten lost in context.</p>
-<p>"We need a new IM" is a tempting misunderstanding.
-IM is only part of the channel.
-It is a lower-cost and friendlier entry point.
-A more talkative bot, or an IM that looks more like a collaboration tool, still cannot give you everything you want.
-Context should not be historical baggage we must carry all the time.
-It should be a working set constructed on demand, over and over.
-Collaboration objects and states need clearer representations and interaction patterns, just like how we still keep creating boards and todo lists.</p>
-<p>The world of agents should not be trapped inside chat logs.</p>
-<h2 id="toward-socialized-evaluation">Toward Socialized Evaluation<a class="zola-anchor" href="#toward-socialized-evaluation" aria-label="Anchor link for: toward-socialized-evaluation" style="visibility: hidden;"></a>
+<p>周董的歌词里是这样唱的：</p>
+<blockquote>
+<p>古巴比伦王颁布了汉谟拉比法典，
+刻在黑色的玄武岩，
+距今已经三千七百多年。</p>
+</blockquote>
+<p>法典上写了什么？
+想来最出名的便是“以眼还眼，以牙还牙”了。
+我从卢浮宫官网上截取这一段内容的表述：</p>
+<blockquote>
+<p>其中第 196 条规定：“如果某人刺瞎地位相同者的一只眼，就必须也刺瞎行凶者的一只眼。”
+这一条在本次增强现实体验中得以重点展示。
+它形象地诠释了古代近东地区闪米特社会所特有的损害补偿理念，催生出后世“以眼还眼、以牙还牙”的同态复仇原则。
+但事实上，这条法则远非鼓励复仇，而是要求罪与罚必须严格相称，罚当其罪，不得过轻或过重。</p>
+</blockquote>
+<p>尽管一个讲律法，一个谈交互，但“严格相称，不得过轻或过重”的想法是共通的，这也是本文的主旨。</p>
+<p>为了便于理解，我们可以先看几个小巧思。</p>
+<h2 id="bu-tong-shi-tu-yi-zhi-xing-wei">不同视图，一致行为<a class="zola-anchor" href="#bu-tong-shi-tu-yi-zhi-xing-wei" aria-label="Anchor link for: bu-tong-shi-tu-yi-zhi-xing-wei" style="visibility: hidden;"></a>
 </h2>
-<p>Every time a new foundation model is released, we are pushed to celebrate or feel disappointed.
-The model beats humans again on difficult tasks like coding and math, and keeps refreshing records.</p>
-<p>I am not trying to reject that.
-Benchmarks clearly have value: reproducibility, comparability, standardization, and scalability.
-We should recognize and respect these results.
-In human history, we have always had similar mechanisms as references for capability evaluation, just like exams we must go through before doodling on the paper.</p>
-<p>But when agents enter IM, group chats, and human society, they face "real tasks."
-They are no longer dealing with clean questions, but with messy life.
-Benchmarks rarely cover this: incomplete context, vague intent, parallel topics, and key coordination that may happen somewhere else.
-An agent cannot know everything, and does not need to answer everything.
-But it must still earn people's preference.
-Capability then becomes a coexistence problem.</p>
-<p>Socialized evaluation is ordinary and grounded.
-Put agents into daily human life.
-Let them face interruptions, awkward silence, digressions, emotional expression, and asymmetric information.
-Watch how they struggle through uncertain context while still pushing most tasks forward, just like we do in human collaboration.
-Socialized evaluation is hard to summarize with a score and hard to turn into rankings.
-But it provides direct insight into human-agent collaboration.
-You will know how willing you really are to let an agent into your life.</p>
-<p>Forms like OpenClaw move agents into a new position.
-They are no longer tools you jump to.
-They become part of communication itself.
-Problems will get solved.
-But whether it is "worth it" becomes a new criterion.
-Even the smartest models must keep reducing assumptions about background context.
-Socialized evaluation will force agents to admit the shape of the real world, and then survive in it.</p>
+<p>在多数系统中，人和 Agent 的交互视图是完全不对称的：人和 Agent 都可以发送图文内容，但只有 Agent 可以调用工具。
+这意味着，人很难在具体环境中体会、理解，乃至复现 Agent 的行为。</p>
+<p>而在 bub 的设计里，工具体系是人和 Bub 共用的：以逗号开头的命令（Comma Commands）输入将会转发为对应的工具调用，未知命令则会回退为 Shell。
+尽管视图不同，但在 Bub 眼里的 Function Calling，与人眼中的 Comma Commands，其对应行为是一致的。</p>
+<p>在日常和 Bub 交互的过程中，倘若上下文已经不很理想，但 Bub 未能及时 auto handoff，我们经常会手动执行 <code>,tape.info</code> 和 <code>,tape.handoff</code>。
+而这正是 Bub 管理自己上下文的自然表达。
+基于这一点，人和 Agent 便自然建立起了对负载状态的理解；我们也因此能够直观感受到，不同工具究竟会对 Bub 产生怎样的影响。</p>
+<blockquote>
+<p>P.S. Comma Commands 的设计来源于 2009 年的一篇文章：<a rel="nofollow noreferrer" href="https://rhodesmill.org/brandon/2009/commands-with-comma/"><em>Start all of your commands with a comma</em></a>。
+最开始引入它的目的之一，除了提供一致的行为之外，也是为了让 Bub 能够在命令行中恰到好处地工作。
+毕竟，命令行是程序员最熟悉的界面之一。</p>
+</blockquote>
+<h2 id="xin-xi-de-dui-cheng">信息的对称<a class="zola-anchor" href="#xin-xi-de-dui-cheng" aria-label="Anchor link for: xin-xi-de-dui-cheng" style="visibility: hidden;"></a>
+</h2>
+<p>过去我们见过的大多数系统，对用户和 Agent 而言都是不可观测的：拼接的 prompt、不可见的 memory，以及不透明的系统状态。
+用户只能看到错误的结果，却无法访问其依据。
+此时，与 Agent 的交互也失去了意义，因为参与者并不共享同一份上下文。</p>
+<p>Bub 的所有行为和关联状态都记录在 tape 上，并且只允许行为依赖可见的上下文，这是有意为之。
+尽管上下文需要经历装配过程，但人和 Agent 获得的信息量是一致的；建立在同一份数据之上，二者都可以理解行为并验证状态。</p>
+<p>换而言之，上下文与可观测性同构，这些内容本身就是 tracing 的自然表达。
+除了通过看板导出常见的 Trace UI 之外，还可以让 Bub 对自己的行为进行分析和处理。</p>
+<p>我的一个常用场景是，让 Bub 去自行翻阅群聊对应会话中的糟糕表现，并根据实际内容摘取和分析相关执行链路，判断究竟是什么原因导致失败，甚至绘制对应的 DAG。
+由于这些分析所依赖的数据对我同样可见，便免去了额外的信任假设，协作也因此有了基础。</p>
+<blockquote>
+<p>为了避免自说自话，我也可以另举一个例子：在 codex 和 bub 中都有 Dollar Mention 的机制，即通过 <code>$</code> 触发 skills 渐进式加载的行为；从技能文件中加载具体内容，并注入到当前上下文中。
+这是一个典型的提示词增强逻辑。
+但更关键的是，加载的内容对人和 Agent 同样可见。</p>
+</blockquote>
+<h2 id="jiao-hu-zhu-ti-de-dui-deng">交互主体的对等<a class="zola-anchor" href="#jiao-hu-zhu-ti-de-dui-deng" aria-label="Anchor link for: jiao-hu-zhu-ti-de-dui-deng" style="visibility: hidden;"></a>
+</h2>
+<p>过去，人和 Agent 的对话由 session 表征，但会话的控制只能由人来处理：什么时候任务更替，什么时候上下文失去掌控。
+这进一步加剧了不对等性。
+人不光要全知，还理应全能；这个最高用户的指令，大多数时候都必须目的明确，且没有显著偏离和冲突，而 Agent 则只能在会话内完全服从。</p>
+<p>session 的问题在于，它隐含了一个前提：交互围绕某一个主体展开。
+这在单用户系统中成立，但当多个参与者同时存在时，上下文不再服务于单一主体，也无法保证任务的隔离和行为的线性。
+如果仍然以 session 作为边界，就必须有人承担协调和维护的职责，而这个角色通常只能是人本身。</p>
+<p>而 Bub 从一开始面临的目标就不同。
+群聊环境对于交互参与方的主体性提出了更高要求。
+在 Bub 的语境中，交互以 turn 为单位。
+它并不归属于某一个特定主体，只是在当前上下文中的一次行为；在 anchor 和 handoff 机制的参与下，Bub 也可以自然地控制流程边界。</p>
+<blockquote>
+<p>当我们讨论交互的时候，往往会忽视交互双方的对等性。
+我们讲交互以人为本，现在又声明交互要服务于 Agent，但交互本身，是发生在交互主体之间的行为。</p>
+</blockquote>
+<h2 id="jiao-hu-er-fei-she-ji-jiao-hu">交互，而非设计交互<a class="zola-anchor" href="#jiao-hu-er-fei-she-ji-jiao-hu" aria-label="Anchor link for: jiao-hu-er-fei-she-ji-jiao-hu" style="visibility: hidden;"></a>
+</h2>
+<p>我们总是讲“交互设计”，但在交互真正发生之时，没有哪一方能够轻易决定交互的形态，参与者更多只是被动地承载它。</p>
+<p>Bub 所做的，并不是提出一种新的交互方式，而是承认交互本身的存在，并为它建立约束。</p>
+<p>文章到了这里就应该结束了。
+又是一个深深的夜。</p>
 
       </article>
 
@@ -354,6 +385,8 @@ Socialized evaluation will force agents to admit the shape of the real world, an
     
   
 
+
+  
 
 
 
@@ -376,14 +409,14 @@ Socialized evaluation will force agents to admit the shape of the real world, an
   data-category-id="DIC_kwDOKYGbpM4CZxPW"
   data-mapping="specific"
   
-    data-term="im-and-socialized-evaluation"
+    data-term="hammurabi-code"
   
   data-strict="0"
   data-reactions-enabled="1"
   data-emit-metadata="0"
   data-input-position="top"
   data-theme="https://psiace.me/giscus_light.css"
-  data-lang="en"
+  data-lang="zh-CN"
   data-loading="lazy"
   crossorigin="anonymous"
   async
