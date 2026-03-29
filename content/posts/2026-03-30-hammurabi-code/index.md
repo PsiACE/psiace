@@ -98,3 +98,4 @@ What Bub does is not to propose a new mode of interaction, but to acknowledge th
 
 This is where the article ought to end.
 It is late into the night once again.
+Welcome to follow and star Bub: <https://github.com/bubbuild/bub>.
