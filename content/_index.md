@@ -28,10 +28,12 @@ date_format = "%b %-d, %Y"
 Hi, I'm PsiACE — an open source engineer
 working at the intersection of data infrastructure and generative AI.
 
-I'm currently a Senior Engineer at OceanBase (Ant Group),
-building database-native agent capabilities around the OceanBase ecosystem.
-Before that I worked on the GenAI platform at NebulaGraph,
-and helped build Databend as a founding engineer.
+I maintain the [Agent Client Protocol Python SDK](https://github.com/agentclientprotocol/python-sdk).
+I also work on [bub](https://github.com/bubbuild/bub),
+a hook-first runtime for agents that live alongside people,
+and [tape.systems](https://tape.systems),
+a minimal model for constructing context from append-only tapes,
+anchors, handoffs, and views.
 
 I'm an ASF Member,
-and a contributor to several Apache projects including OpenDAL.
+and a contributor to several Apache projects including [Apache OpenDAL](https://github.com/apache/opendal).
