@@ -9,7 +9,7 @@ footer = false
 
 name = "尚卓燃"
 id = "psiace"
-bio = "ASF Member · OceanBase（蚂蚁集团）高级工程师"
+bio = "ASF Member · Senior Engineer @ OceanBase (Ant Group)"
 avatar = "img/avatar.png"
 links = [
     { name = "GitHub", icon = "github", url = "https://github.com/psiace" },
