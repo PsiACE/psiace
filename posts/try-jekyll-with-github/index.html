@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="A quick start for Jekyll and GitHub Pages, including themes and customization.">
+
+  <title>Trying Jekyll with GitHub Pages</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#deploying-a-local-jekyll-github-pages-environment">Deploying a Local Jekyll&#x2F;GitHub Pages Environment</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#enabling-github-pages-user-pages">Enabling GitHub Pages User Pages</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#using-excellent-jekyll-themes">Using Excellent Jekyll Themes</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#the-structure-of-a-jekyll-theme">The Structure of a Jekyll Theme</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#third-party-services-and-custom-configuration">Third-Party Services and Custom Configuration</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#general-configuration">General Configuration</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#third-party-services">Third-Party Services</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#publishing-your-page">Publishing Your Page :)</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Trying Jekyll with GitHub Pages</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Jul 14, 2018</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/jekyll"><span>#</span>Jekyll</a><a class="instant" href="https://psiace.me/tags/github-pages"><span>#</span>GitHub Pages</a><a class="instant" href="https://psiace.me/tags/static-site-generator"><span>#</span>Static Site Generator</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/try-jekyll-with-github/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <p><em>This article helps you get started quickly. To avoid spending too much time on introductions, please check the official websites and documentation for the parts you are interested in.</em></p>
+<p><a rel="nofollow noreferrer external" href="https://jekyllrb.com">Jekyll</a> is an excellent static site generator, and <a rel="nofollow noreferrer external" href="https://pages.github.com">GitHub Pages</a> is a static page hosting service provided by <strong>GitHub</strong>. With them, we can easily build websites for projects or organizations, and we can also publish our own blogs and resumes.</p>
+<p>One of the biggest advantages of using Jekyll and GitHub Pages together is that you can focus only on content. Many excellent designers and developers have made a large number of beautiful and practical themes for Jekyll, while GitHub saves us the cost of buying servers. The only limitation may be that we need third-party services for features such as comments and online forms.</p>
+<p>This article introduces the following topics:</p>
+<ul>
+<li>Deploying a local Jekyll/GitHub Pages environment</li>
+<li>Enabling the GitHub Pages user page service</li>
+<li>Using excellent Jekyll themes</li>
+<li>The structure of a Jekyll theme</li>
+<li>Some third-party services and personalized configuration</li>
+<li>Publishing your page :)</li>
+</ul>
+<p>All right, let us begin. Have fun.</p>
+<h2 id="deploying-a-local-jekyll-github-pages-environment">Deploying a Local Jekyll/GitHub Pages Environment<a class="zola-anchor" href="#deploying-a-local-jekyll-github-pages-environment" aria-label="Anchor link for: deploying-a-local-jekyll-github-pages-environment" style="visibility: hidden;"></a>
+</h2>
+<p>First, we need a computer connected to the internet. If you do not have one, do not worry. I may add a section later about how to complete this work with a phone.</p>
+<p>You need to install the Ruby environment first. Here is the command-line installation method for Fedora:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> dnf</span><span class="z-string"> install</span><span class="z-string"> ruby</span><span class="z-string"> ruby-devel</span></span></code></pre>
+<p>If you use Ubuntu, replace the command with:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> apt-get</span><span class="z-string"> install</span><span class="z-string"> ruby</span><span class="z-string"> ruby-dev</span></span></code></pre>
+<p>As for <code>[Y/N]</code>, of course we choose Y :)</p>
+<p>If you use Windows or another operating system, please refer to the <a rel="nofollow noreferrer external" href="https://www.ruby-lang.org">Ruby website</a>, where you can easily find the installation method.</p>
+<p>Next, create a local environment using the dependency approach recommended by GitHub Pages. Install Bundler first, then use the <code>github-pages</code> gem in the project to align with the GitHub Pages environment:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">gem</span><span class="z-string"> install</span><span class="z-string"> bundler</span></span>
+<span class="giallo-l"><span class="z-entity z-name">mkdir</span><span class="z-string"> myblog</span></span>
+<span class="giallo-l"><span class="z-support">cd</span><span class="z-string"> myblog</span></span>
+<span class="giallo-l"><span class="z-entity z-name">bundle</span><span class="z-string"> init</span></span></code></pre>
+<p>Add this to <code>Gemfile</code>:</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span>gem </span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">github-pages</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-constant"> group</span><span class="z-constant">:</span><span class="z-constant"> :</span><span class="z-constant">jekyll_plugins</span></span></code></pre>
+<p>Then run:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">bundle</span><span class="z-string"> install</span></span>
+<span class="giallo-l"><span class="z-entity z-name">bundle</span><span class="z-string"> exec</span><span class="z-string"> jekyll</span><span class="z-string"> new</span><span class="z-string"> .</span><span class="z-constant"> -</span><span class="z-constant">-force</span></span>
+<span class="giallo-l"><span class="z-entity z-name">bundle</span><span class="z-string"> exec</span><span class="z-string"> jekyll</span><span class="z-string"> serve</span></span></code></pre>
+<p>The reason for not directly using <code>gem install bundler jekyll</code> is simply that we want to build an environment exactly consistent with GitHub Pages.</p>
+<p>Enter the address it provides in your browser, perhaps <code>http://localhost:4000</code> or <code>http://127.0.0.1:4000/</code>, and you can see the official template.</p>
+<p>If you like it, you can start working from there directly. Open the folder, create files under <code>_posts</code> in the format <code>yyyy-mm-dd-title.md</code> according to the example, edit the content, and then you can see the changes on the page. I will introduce more about this later.</p>
+<h2 id="enabling-github-pages-user-pages">Enabling GitHub Pages User Pages<a class="zola-anchor" href="#enabling-github-pages-user-pages" aria-label="Anchor link for: enabling-github-pages-user-pages" style="visibility: hidden;"></a>
+</h2>
+<p>If you do not have a <a rel="nofollow noreferrer external" href="https://github.com">GitHub</a> account yet, I strongly recommend registering one, because it is one of the most active social coding communities in the world. Visit the homepage and you can find the entry point.</p>
+<p>I strongly recommend referring to GitHub's official documentation. It describes almost everything you may want to know in detail. Of course, you need some ability to read English documentation, or at least be able to use translation.</p>
+<p>Now that you have a GitHub account, I usually recommend creating a repository named <code>yourusername.github.io</code>. Please allow it to initialize the repository with a README, especially when you only want to experiment and do not have content ready. This gives you a subdomain kindly provided by GitHub. All qualified content on the main branch, then called <code>master</code>, will be rebuilt and published. Usually, you can visit <code>https://yourusername.github.io</code> in your browser and see the converted content of <code>README.md</code>.</p>
+<p>If it does not display correctly, or if you want to enable GitHub Pages in another repository, open the repository <code>Settings</code> and follow the instructions. If the page looks bare, you can choose an official theme through <code>Choose a theme</code>, but this is not necessary because we will introduce excellent Jekyll themes and further customization next.</p>
+<h2 id="using-excellent-jekyll-themes">Using Excellent Jekyll Themes<a class="zola-anchor" href="#using-excellent-jekyll-themes" aria-label="Anchor link for: using-excellent-jekyll-themes" style="visibility: hidden;"></a>
+</h2>
+<p>Reinventing the wheel is interesting, but it often takes a lot of time, and a good idea may need a lot of debugging before it works properly. If you are not satisfied with Jekyll's default themes, I suggest trying some excellent Jekyll themes. They often implement:</p>
+<ul>
+<li>Responsive layout</li>
+<li>Good file structure</li>
+<li>Tag clouds and post categories</li>
+<li>Optimized SEO settings</li>
+<li>Third-party comment and analytics plugin support</li>
+</ul>
+<p>Starting from an excellent Jekyll theme lets you focus more on the article itself rather than a large amount of CSS code :)</p>
+<p>I especially recommend three themes:</p>
+<ul>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/Huxpro/huxblog-boilerplate">Huxblog-Boilerplate</a></strong>, by <a rel="nofollow noreferrer external" href="https://github.com/Huxpro/">@Huxpro</a>, Apache License v2.0</li>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/Simpleyyt/jekyll-theme-next">Jekyll NexT</a></strong>, by <a rel="nofollow noreferrer external" href="https://github.com/Simpleyyt/">@Simpleyyt</a>, Unknown</li>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/renyuanz/leonids">Leonids</a></strong>, by <a rel="nofollow noreferrer external" href="https://github.com/renyuanz/">@renyuanz</a>, MIT License</li>
+</ul>
+<p>Click the theme names to visit their repositories, then choose and download the one you like.</p>
+<p>Trust me, we can completely avoid Git and its command-line tools. If you do not want to skip those, you may need to read another article. I do not plan to introduce them for now.</p>
+<p>If you want to find more themes, I strongly recommend checking <a rel="nofollow noreferrer external" href="http://jekyllthemes.org">Jekyll Themes</a> and choosing one you like.</p>
+<h2 id="the-structure-of-a-jekyll-theme">The Structure of a Jekyll Theme<a class="zola-anchor" href="#the-structure-of-a-jekyll-theme" aria-label="Anchor link for: the-structure-of-a-jekyll-theme" style="visibility: hidden;"></a>
+</h2>
+<p>I noticed that I had not explained how to use these Jekyll themes. It is actually very simple: <code>cd your-jekyll-theme</code>, <code>bundler install</code>, and <code>jekyll serve</code>. You can also get a local preview version in your browser. Even if the command you use does not include <code>--watch</code>, content generation will still be live.</p>
+<p>I know you have had enough of empty themes, meaningless demo content, and my rambling, but please bear with me a little longer. Here we will talk about the structure of a Jekyll theme and some simple ways to organize content, which will help you modify and configure the theme next.</p>
+<p>Open the folder of the theme you selected with a file manager or your favorite text editor, and see what is inside.</p>
+<p>Usually, a Jekyll theme has a structure like this:</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>.</span></span>
+<span class="giallo-l"><span>├── _config.yml</span></span>
+<span class="giallo-l"><span>├── _drafts</span></span>
+<span class="giallo-l"><span>|   ├── begin-with-the-crazy-ideas.md</span></span>
+<span class="giallo-l"><span>|   └── sample-and-test.markdown</span></span>
+<span class="giallo-l"><span>├── _includes</span></span>
+<span class="giallo-l"><span>|   ├── footer.html</span></span>
+<span class="giallo-l"><span>|   └── header.html</span></span>
+<span class="giallo-l"><span>├── _layouts</span></span>
+<span class="giallo-l"><span>|   ├── default.html</span></span>
+<span class="giallo-l"><span>|   └── post.html</span></span>
+<span class="giallo-l"><span>├── _posts</span></span>
+<span class="giallo-l"><span>|   ├── 2015-10-29-how-to-begin.textile</span></span>
+<span class="giallo-l"><span>|   └── 2013-04-26-hello-world.md</span></span>
+<span class="giallo-l"><span>├── _data</span></span>
+<span class="giallo-l"><span>|   └── members.yml</span></span>
+<span class="giallo-l"><span>├── _site</span></span>
+<span class="giallo-l"><span>└── index.html</span></span></code></pre>
+<ul>
+<li>
+<p><code>_config.yml</code></p>
+<p>Stores configuration data. Many configuration options can be set directly from the command line, but if you write them here, you do not have to remember those commands.</p>
+</li>
+<li>
+<p><code>_drafts</code></p>
+<p>Drafts are unpublished posts. These files do not have <code>title.MARKUP</code> data in the filename.</p>
+</li>
+<li>
+<p><code>_includes</code></p>
+<p>You can load these included parts into your layouts or posts for reuse. Use <code>{% raw %}{% include file.ext %}{% endraw %}</code> to include <code>_includes/file.ext</code>.</p>
+</li>
+<li>
+<p><code>_layouts</code></p>
+<p>Layouts are templates wrapped around posts. Layouts can be selected in the YAML front matter for different posts. The tag <code>{% raw %}{{ content }}{% endraw %}</code> inserts content into the page.</p>
+</li>
+<li>
+<p><code>_posts</code></p>
+<p>This is where your posts go. The file format is important and must follow <code>YEAR-MONTH-DAY-title.MARKUP</code>. Permalinks can be customized in the post, but the date and markup language are determined by the filename.</p>
+</li>
+<li>
+<p><code>_data</code></p>
+<p>Well-formatted site data should go here. The Jekyll engine automatically loads all yaml files in this directory, meaning files ending in <code>.yml</code> or <code>.yaml</code>. If there is a <code>member.yml</code> file, its content can be accessed through <code>site.data.members</code>.</p>
+</li>
+<li>
+<p><code>_site</code></p>
+<p>Once Jekyll finishes conversion, the generated pages are placed here by default. It is best to put this directory into your <code>.gitignore</code>.</p>
+</li>
+<li>
+<p><code>index.html</code> and other HTML, Markdown, and Textile files</p>
+<p>If these files contain YAML front matter, Jekyll will automatically convert them. Other files such as <code>.html</code>, <code>.markdown</code>, <code>.md</code>, or <code>.textile</code> in your site root or outside the directories mentioned above will also be converted.</p>
+</li>
+<li>
+<p>Other files and folders</p>
+<p>Other directories and files not mentioned, such as css, images, and favicon.ico, will be copied completely into the generated site.</p>
+</li>
+</ul>
+<p>Yes, this part borrows from the official Jekyll website because it has already explained the topic thoroughly. I do not want to repeat work unnecessarily.</p>
+<p>In the next section, I will explain how to use each part with examples.</p>
+<h2 id="third-party-services-and-custom-configuration">Third-Party Services and Custom Configuration<a class="zola-anchor" href="#third-party-services-and-custom-configuration" aria-label="Anchor link for: third-party-services-and-custom-configuration" style="visibility: hidden;"></a>
+</h2>
+<h3 id="general-configuration">General Configuration<a class="zola-anchor" href="#general-configuration" aria-label="Anchor link for: general-configuration" style="visibility: hidden;"></a>
+</h3>
+<p>Open your Jekyll theme with your favorite text editor. First, edit <code>_config.yml</code>. Usually, it contains required SEO information and some of your personal information. Fill it according to your situation, and leave fields blank if you do not need them. Social links and default third-party services are usually configured here.</p>
+<p>I do not think we need the posts that come only for demonstration. If you happen to use <code>Fedora with Gnome</code> like me, I suggest moving them to the <code>Templates</code> folder, so you can create new posts using their format.</p>
+<p>Let us see how <code>.markdown(.md)</code> files for posts differ from ordinary files. Here is an example:</p>
+<pre class="giallo z-code"><code data-lang="markdown"><span class="giallo-l"><span>---</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">t</span><span class="z-entity z-name z-tag">itle</span><span>:</span><span class="z-string"> E</span><span class="z-string">lements</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">d</span><span class="z-entity z-name z-tag">escription</span><span>:</span><span class="z-string"> M</span><span class="z-string">arkdown-How-To</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">d</span><span class="z-entity z-name z-tag">ate</span><span>:</span><span class="z-constant"> 2013-12-24 23:29:08</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">c</span><span class="z-entity z-name z-tag">ategories</span><span>:</span></span>
+<span class="giallo-l"><span>  -</span><span class="z-string"> F</span><span class="z-string">oo</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">t</span><span class="z-entity z-name z-tag">ags</span><span>:</span></span>
+<span class="giallo-l"><span>---</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>The purpose of this post is to help you make sure all of HTML elements can display properly. If you use CSS reset, don&#39;t forget to redefine the style by yourself.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-meta z-separator">---</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">#</span><span class="z-entity z-name"> Heading 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">##</span><span class="z-entity z-name"> Heading 2</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">###</span><span class="z-entity z-name"> Heading 3</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">####</span><span class="z-entity z-name"> Heading 4</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">#####</span><span class="z-entity z-name"> Heading 5</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">######</span><span class="z-entity z-name"> Heading 6</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-meta z-separator">---</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">##</span><span class="z-entity z-name"> Paragraph</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Lorem ipsum dolor sit amet, </span><span>[</span><span class="z-string z-other z-link">test link</span><span>]</span><span>(</span><span>)</span><span> consectetur adipiscing elit. </span><span class="z-markup z-bold">**</span><span class="z-markup z-bold">Strong text</span><span class="z-markup z-bold">**</span><span> pellentesque ligula commodo viverra vehicula. </span><span class="z-markup z-italic">*</span><span class="z-markup z-italic">Italic text</span><span class="z-markup z-italic">*</span><span> at ullamcorper enim. Morbi a euismod nibh. </span><span>&lt;</span><span class="z-entity z-name z-tag">u</span><span>&gt;</span><span>Underline text</span><span>&lt;/</span><span class="z-entity z-name z-tag">u</span><span>&gt;</span><span> non elit nisl. </span><span>~~</span><span>Deleted text</span><span>~~</span><span> tristique, sem id condimentum tempus, metus lectus venenatis mauris, sit amet semper lorem felis a eros.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Interdum et malesuada fames ac ante ipsum primis in faucibus. </span><span class="z-markup z-inline z-raw">`</span><span class="z-markup z-inline z-raw">Sed erat diam</span><span class="z-markup z-inline z-raw">`</span><span>, blandit eget felis aliquam, rhoncus varius urna.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-quote">&gt;</span><span class="z-markup z-quote"> Praesent diam elit, interdum ut pulvinar placerat, imperdiet at magna.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">##</span><span class="z-entity z-name"> List Types</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">###</span><span class="z-entity z-name"> Definition List</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span class="z-entity z-name z-tag">dl</span><span>&gt;</span><span>&lt;</span><span class="z-entity z-name z-tag">dt</span><span>&gt;</span><span>Definition List Title</span><span>&lt;/</span><span class="z-entity z-name z-tag">dt</span><span>&gt;</span><span>&lt;</span><span class="z-entity z-name z-tag">dd</span><span>&gt;</span><span>This is a definition list division.</span><span>&lt;/</span><span class="z-entity z-name z-tag">dd</span><span>&gt;</span><span>&lt;/</span><span class="z-entity z-name z-tag">dl</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">###</span><span class="z-entity z-name"> Ordered List</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">1.</span><span> List Item 1</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">2.</span><span> List Item 2</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">3.</span><span> List Item 3</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">###</span><span class="z-entity z-name"> Unordered List</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">-</span><span> List Item 1</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">-</span><span> List Item 2</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">-</span><span> List Item 3</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">##</span><span class="z-entity z-name"> Table</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>|</span><span> Table Header 1</span><span> |</span><span> Table Header 2</span><span> |</span><span> Table Header 3</span><span> |</span></span>
+<span class="giallo-l"><span>|</span><span> ---</span><span> |</span><span> ---</span><span> |</span><span> ---</span><span> |</span></span>
+<span class="giallo-l"><span>|</span><span> Division 1</span><span> |</span><span> Division 2</span><span> |</span><span> Division 3</span><span> |</span></span>
+<span class="giallo-l"><span>|</span><span> Division 1</span><span> |</span><span> Division 2</span><span> |</span><span> Division 3</span><span> |</span></span>
+<span class="giallo-l"><span>|</span><span> Division 1</span><span> |</span><span> Division 2</span><span> |</span><span> Division 3</span><span> |</span></span></code></pre>
+<p>This article comes from the NexT theme and introduces basic Markdown usage. The content wrapped by a pair of <code>---</code> lines at the beginning belongs to YAML, containing document information such as title, description, category, tag, and date. I suggest adding this information to each article for record keeping.</p>
+<p>You may also need to modify the content introducing the blogger. Some themes integrate this into <code>_config.yml</code>, while others include a document named <code>about/resume</code>. Replace its content with your own. Some themes use data in the <code>_data</code> folder or content introduced from <code>_include</code>; modify those as well. The syntax is simple, so I will not elaborate.</p>
+<p>This lets you replace the information entirely with your own, but I suggest keeping part of the footer information because it usually declares which theme you are using.</p>
+<h3 id="third-party-services">Third-Party Services<a class="zola-anchor" href="#third-party-services" aria-label="Anchor link for: third-party-services" style="visibility: hidden;"></a>
+</h3>
+<p>I am a little worried whether the description is clear enough. If you have any questions, contact me directly. This part introduces how to add third-party services.</p>
+<p>Let us see what third-party services we may need:</p>
+<ol>
+<li>Comments
+<ul>
+<li>Duoshuo</li>
+<li>Disqus</li>
+<li>Livere</li>
+</ul>
+</li>
+<li>Analytics/SEO
+<ul>
+<li>Baidu</li>
+<li>Google</li>
+</ul>
+</li>
+</ol>
+<p>Here I use Livere and Google Analytics as examples. I choose them only because they are convenient; you can freely choose services that fit your situation.</p>
+<h4 id="enabling-the-google-analytics-plugin">Enabling the Google Analytics Plugin<a class="zola-anchor" href="#enabling-the-google-analytics-plugin" aria-label="Anchor link for: enabling-the-google-analytics-plugin" style="visibility: hidden;"></a>
+</h4>
+<p>Let us start with Google Analytics. It is usually well supported by different themes. All you need is to fill in the ID it provides. Of course, you need an independent domain for this, and you also need network access. If you want to use Baidu Analytics, you may need to file your domain, and Baidu's search engine seems to be on GitHub's blacklist.</p>
+<p>Here I assume that you already have a domain and the required network access. If you need to register a domain, Tencent and Alibaba both provide services.</p>
+<p>Open Google Analytics and follow the instructions. After completing all steps, you will get a string similar to <code>xx-xxxx-xxxx</code>. If not, find it from the provided Javascript code, then copy and paste it into the proper position in <code>_config.yml</code>.</p>
+<p>Simple, right? This example mainly shows how such integrations work. Themes usually use Liquid conditionals to check whether <code>ga_track_id</code> is filled in <code>_config.yml</code>, then fill the corresponding id and domain into the right place.</p>
+<p>This kind of code is usually located in <code>_include/footer.html</code>. In Huxblog, you can find <code>{% raw %}{% include footer.html %}{% endraw %}</code> in <code>_layout/default.html</code>, which includes <code>footer.html</code> in the page.</p>
+<h4 id="installing-the-livere-comment-plugin">Installing the Livere Comment Plugin<a class="zola-anchor" href="#installing-the-livere-comment-plugin" aria-label="Anchor link for: installing-the-livere-comment-plugin" style="visibility: hidden;"></a>
+</h4>
+<p>I know this third-party comment system is not common, but considering the domestic environment, it is worth considering if you want to chat happily with friends.</p>
+<p>Open livere.com and follow the registration and installation process. I do not want to describe these uninteresting steps too much. You will get a piece of js code.</p>
+<ul>
+<li>If you only plan to use it yourself, paste it directly into the appropriate position in <code>_layout/post.html</code>. This is usually the template used by your blog posts.</li>
+<li>If you want to make it into a plugin, I suggest creating <code>livere.html</code> in <code>_include</code> and pasting the code there. Replace the quoted content after <code>data-uid</code> with <code>{% raw %}{{ site.livere_uid }}{% endraw %}</code>. Then create a line <code>livere_uid: &lt;your-data-uid&gt;</code> in the appropriate position in <code>_config.yml</code>, and add <code>{% raw %}{% if site.livere_uid %}{{ include livere.html }}{% endif %}{% endraw %}</code> to <code>_layout/post.html</code>.</li>
+<li>If you want to control it through the front matter in blog <code>markdown</code> files, add it to <code>post.html</code> in the style of <code>{% raw %}{% if page.comments == true %}{% if site.livere_uid %}{{ include livere.html }}{% endif %}{% endif %}{% endraw %}</code>. Then you only need to add <code>comments: true</code> to the post front matter for it to work.</li>
+</ul>
+<p><strong>I originally planned to discuss more, but I realized I had dragged this out for too long, and the methods are mostly similar. I will add more later if needed.</strong></p>
+<h2 id="publishing-your-page">Publishing Your Page :)<a class="zola-anchor" href="#publishing-your-page" aria-label="Anchor link for: publishing-your-page" style="visibility: hidden;"></a>
+</h2>
+<p>Local preview is honestly not very interesting. Since it is only self-entertainment, publishing earlier is better, and you do not need to spend more time here with me.</p>
+<p>You should still be able to find the <code>yourusername.github.io</code> repository you created at the beginning. Now we need to upload the content from your local <code>your-jekyll-theme</code> to that repository.</p>
+<p>A very direct method is to click the repository's <code>Upload</code> button and drag all the content into it.</p>
+<p>I think this is enough for you to complete the work. Enjoy your blog.</p>
+<p>PS: If I now say that you can simply <code>fork</code> someone else's theme repository, rename the repository, modify the content, and get your own website, would you beat me up?</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="try-jekyll-with-github"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

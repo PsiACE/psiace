@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="使用 vps2arch 创建 Arch Linux 服务器，并完成 SSH、用户、sudo 和防火墙基础配置。">
+
+  <title>Arch Linux 初始服务器设置</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#part-0-qian-yan">Part 0：前言</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#part-1-shi-yong-vps2arch-chuang-jian-arch-linux-fu-wu-qi">Part 1：使用 vps2arch 创建 Arch Linux 服务器</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#part-2-cai-qu-yi-xie-pei-zhi-bu-zou-zuo-wei-ji-ben-she-zhi-de-yi-bu-fen">Part 2：采取一些配置步骤作为基本设置的一部分</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#yuan-cheng-ssh-lian-jie">远程 SSH 连接</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#chuang-jian-fei-root-yong-hu-bing-cai-yong-sudo-shou-yu-guan-li-quan-xian">创建非 ROOT 用户并采用 SUDO 授予管理权限</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#ji-ben-fang-huo-qiang">基本防火墙</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#pu-tong-yong-hu-de-ssh-fang-wen">普通用户的 SSH 访问</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#part-3-jie-xia-lai">Part 3：接下来...</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Arch Linux 初始服务器设置</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Sep 11, 2018</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/arch-linux"><span>#</span>Arch Linux</a><a class="instant" href="https://psiace.me/tags/server"><span>#</span>Server</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/init-server-setup-with-archlinux/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <p><strong>本文所涉步骤仅在阿里云上进行了验证，但应当同样适用于其它云服务供应商。</strong></p>
+<h2 id="part-0-qian-yan">Part 0：前言<a class="zola-anchor" href="#part-0-qian-yan" aria-label="Anchor link for: part-0-qian-yan" style="visibility: hidden;"></a>
+</h2>
+<p>我刚刚完成从 Red Hat 系（Fedora, CentOS）<del>完全</del>迁移到 <a rel="nofollow noreferrer external" href="https://www.archlinux.org/">Arch Linux</a> 的过程，这并不算是一个十分稳妥的选择，因为 Red Hat 系向来以高可靠性著称，即便是被称作试验田的 Fedora 也很少会因为稀奇古怪的问题而崩溃。但是，Arch Linux 作为一个滚动更新的发行版，它可以满足我对新鲜事物的好奇，并且该发行版提供的 Arch Wiki 以及 AUR 确实是值得我喜爱。</p>
+<p>在将桌面系统更换为 Manjaro Linux（一个基于 Arch Linux 的发行版，便于上手）之后，我开始准备将我在阿里云的 ECS 实例也切换到 Arch Linux 上。在这里有一个小小的争论，因为大部分人认为这不是一个稳妥的选择，频繁更新造成的不稳定，以及需要重启以确保它可以正常启用服务。但另一方面，使用 Arch Linux 的好处同样很明显，时刻最新有助于安全性的提升，丰富的软件和优秀的用户群在各个方面提供帮助（是的，而且我觉得他们足够活跃，这至少意味着你的问题可以得到更加及时的回应），最重要的，百科全书式的 Arch Wiki（在所有 GNU/Linux 系统里，只有两个在相关方面如此出色，另一个是 Gentoo）。我知道这并不足以说服那些追求稳定服务的运维人员，但至少我说服了我自己。值得一提的是 Arch Linux 的官网是运行在 Arch Linux 服务器上的。</p>
+<p>好吧，让我们开始！</p>
+<h2 id="part-1-shi-yong-vps2arch-chuang-jian-arch-linux-fu-wu-qi">Part 1：使用 vps2arch 创建 Arch Linux 服务器<a class="zola-anchor" href="#part-1-shi-yong-vps2arch-chuang-jian-arch-linux-fu-wu-qi" aria-label="Anchor link for: part-1-shi-yong-vps2arch-chuang-jian-arch-linux-fu-wu-qi" style="visibility: hidden;"></a>
+</h2>
+<p>说实在的，我更喜欢 Vultr，因为它提供的操作系统版本更新，而且有我一直喜爱的 Fedora。不过这都不重要了，因为它们都不直接支持 Arch Linux，我正在考虑要不要添加它的徽标到正在设计的网站上，这样一定会吸引不少人的目光。</p>
+<p>创建自定义镜像是一件麻烦的工作，它需要花费一定的时间，而且并不是一项对新手友好的事情。好在，我们有 <a rel="nofollow noreferrer external" href="https://gitlab.com/drizzt/vps2arch/">vps2arch</a>，感谢 <a rel="nofollow noreferrer external" href="https://gitlab.com/drizzt">@drizzt</a> 以及其他贡献者所作出的努力。在一个初始创建为 CentOS 7.4 的 ECS 实例上，我们仅仅需要执行三条命令，接下来就可以完全按照提示进行了。</p>
+<p><strong>注意，一切数据将会被清空，但将保留你的 root 密码并提供一个支持 SSH 的基础系统。</strong></p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">wget</span><span class="z-string"> http://tinyurl.com/vps2arch</span></span>
+<span class="giallo-l"><span class="z-entity z-name">chmod</span><span class="z-string"> +x</span><span class="z-string"> vps2arch</span></span>
+<span class="giallo-l"><span class="z-entity z-name">./vps2arch</span></span></code></pre>
+<p>重启之后，你将进入到 Arch Linux 中，一切都准备好了。</p>
+<h2 id="part-2-cai-qu-yi-xie-pei-zhi-bu-zou-zuo-wei-ji-ben-she-zhi-de-yi-bu-fen">Part 2：采取一些配置步骤作为基本设置的一部分<a class="zola-anchor" href="#part-2-cai-qu-yi-xie-pei-zhi-bu-zou-zuo-wei-ji-ben-she-zhi-de-yi-bu-fen" aria-label="Anchor link for: part-2-cai-qu-yi-xie-pei-zhi-bu-zou-zuo-wei-ji-ben-she-zhi-de-yi-bu-fen" style="visibility: hidden;"></a>
+</h2>
+<h3 id="yuan-cheng-ssh-lian-jie">远程 SSH 连接<a class="zola-anchor" href="#yuan-cheng-ssh-lian-jie" aria-label="Anchor link for: yuan-cheng-ssh-lian-jie" style="visibility: hidden;"></a>
+</h3>
+<p>你可以先在本地尝试一下 <code>ssh root@your.ecs.ip.address</code>，如果你此前没有使用过 SSH 连接，它可能是可用的。但如果用过，则会出现一大段警告，并无法连接。</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</span></span>
+<span class="giallo-l"><span>@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @</span></span>
+<span class="giallo-l"><span>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</span></span>
+<span class="giallo-l"><span>IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!</span></span>
+<span class="giallo-l"><span>Someone could be eavesdropping on you right now (man-in-the-middle attack)!</span></span>
+<span class="giallo-l"><span>It is also possible that a host key has just been changed.</span></span></code></pre>
+<p>这个时候，我们需要使用 <code>ssh-keygen -R your.ecs.ip.address</code> 来清除产生冲突的旧密钥。再重新进行连接。厌倦了每次输入密码？那么考虑在本地使用 <code>ssh-copy-id username@your.ecs.ip.address</code> 将公钥添加到服务器中。之后，你应当可以直接连接到 ECS 实例。</p>
+<h3 id="chuang-jian-fei-root-yong-hu-bing-cai-yong-sudo-shou-yu-guan-li-quan-xian">创建非 ROOT 用户并采用 SUDO 授予管理权限<a class="zola-anchor" href="#chuang-jian-fei-root-yong-hu-bing-cai-yong-sudo-shou-yu-guan-li-quan-xian" aria-label="Anchor link for: chuang-jian-fei-root-yong-hu-bing-cai-yong-sudo-shou-yu-guan-li-quan-xian" style="visibility: hidden;"></a>
+</h3>
+<p>使用 SSH 连接到你的服务器。</p>
+<p><code>useradd newusername</code> 将添加一个名为 newusername 的用户，而 <code>passwd newusername</code> 将为他设置密码。</p>
+<p>接下来需要创建用户主目录并赋权，否则在你切换到新用户后仍然停留在根目录里（命令行提示会指出）。</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">mkdir</span><span class="z-string"> /home/newusername</span></span>
+<span class="giallo-l"><span class="z-entity z-name">chown</span><span class="z-string"> newusername:newusername</span><span class="z-string"> /home/newusername</span></span></code></pre>
+<p>为了能够给新建用户授予管理权限，我们首先要安装 sudo 并编辑 <code>/etc/sudoers</code> 文件。<code>pacman -S sudo</code> 安装 sudo，<code>chmod u+w /etc/sudoers</code> 增加写权限；采用 <code>vi /etc/sudoers</code> 编辑，在 <code>root ALL=(ALL) ALL</code> 下面一行添加 <code>newusername ALL=(ALL) ALL</code>，保存退出；<code>chmod u-w /etc/sudoers</code> 撤销写权限。</p>
+<p>采用 <code>su - newusername</code> 切换用户到 newusername。</p>
+<h3 id="ji-ben-fang-huo-qiang">基本防火墙<a class="zola-anchor" href="#ji-ben-fang-huo-qiang" aria-label="Anchor link for: ji-ben-fang-huo-qiang" style="visibility: hidden;"></a>
+</h3>
+<p>iptables 已经被安装到了 Arch Linux 中，如果你不是很喜欢使用这个复杂的配置工具，我们可以选择使用 ufw 来进行接下来的步骤。（阿里云的安全组特性已经提供了类似防火墙的访问控制功能，但我认为服务器端也应该做出控制）</p>
+<p>此时我们只需要确保防火墙允许 SSH 可以正常连接。</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> pacman</span><span class="z-constant"> -</span><span class="z-constant">S</span><span class="z-string"> ufw</span></span>
+<span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> ufw</span><span class="z-string"> app</span><span class="z-string"> list</span></span>
+<span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> ufw</span><span class="z-string"> allow</span><span class="z-string"> SSH</span></span>
+<span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> ufw</span><span class="z-string"> enable</span></span></code></pre>
+<p>此时防火墙已经开启，使用 <code>sudo ufw status</code> 可以查看当前状态。</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>Status: active</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>To                         Action      From</span></span>
+<span class="giallo-l"><span>--                         ------      ----</span></span>
+<span class="giallo-l"><span>SSH                        ALLOW       Anywhere</span></span>
+<span class="giallo-l"><span>SSH (v6)                   ALLOW       Anywhere (v6)</span></span></code></pre><h3 id="pu-tong-yong-hu-de-ssh-fang-wen">普通用户的 SSH 访问<a class="zola-anchor" href="#pu-tong-yong-hu-de-ssh-fang-wen" aria-label="Anchor link for: pu-tong-yong-hu-de-ssh-fang-wen" style="visibility: hidden;"></a>
+</h3>
+<p>你应当可以用类似 ROOT 用户的方法通过 SSH 登录到远程服务器，<code>ssh newusername@your.ecs.ip.address</code>，输入密码。</p>
+<p>本地采用上面提到的 <code>ssh-copy-id</code> 命令可以帮助你启用密钥身份验证。</p>
+<p>如果你在 root 用户下已经启用了 SSH 密钥验证，可以通过 rsync 将其复制到普通用户的目录下。（这里假设你仍是上面的普通用户）</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> pacman</span><span class="z-constant"> -</span><span class="z-constant">S</span><span class="z-string"> rsync</span></span>
+<span class="giallo-l"><span class="z-entity z-name">mkdir</span><span class="z-string"> .ssh</span></span>
+<span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> su</span><span class="z-string"> -</span><span class="z-string"> root</span></span>
+<span class="giallo-l"><span class="z-entity z-name">rsync</span><span class="z-constant"> -</span><span class="z-constant">-archive</span><span class="z-constant"> -</span><span class="z-constant">-chown=newusername:newusername</span><span class="z-string"> ~/.ssh</span><span class="z-string"> /home/newusername</span></span></code></pre>
+<p>最后一条语句经测试只能在 root 用户下使用，采用 sudo 指令不可行。</p>
+<p>关闭连接，采用 <code>ssh newusername@your.ecs.ip.address</code>，这时应该可以正常使用密钥验证。</p>
+<h2 id="part-3-jie-xia-lai">Part 3：接下来...<a class="zola-anchor" href="#part-3-jie-xia-lai" aria-label="Anchor link for: part-3-jie-xia-lai" style="visibility: hidden;"></a>
+</h2>
+<p>基本的服务器配置已经处理好了，你可以着手去做你想要做的事情，或许从 <a rel="nofollow noreferrer external" href="https://github.com/Kickball/awesome-selfhosted">Awesome Selfhosted</a> 中挑选一个自托管服务是一个不错的选择。</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="init-server-setup-with-archlinux"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

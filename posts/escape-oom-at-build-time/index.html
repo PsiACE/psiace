@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Mitigating Rust build-time OOM with linker and symbol mangling configuration.">
+
+  <title>Escaping Out of Memory at Build Time</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#the-faster-higher-stronger-mold">The &quot;Faster, Higher, Stronger&quot; mold</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#a-brand-new-symbol-mangling-scheme">A Brand New Symbol Mangling Scheme</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#what-else-can-be-done">What Else Can Be Done?</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Escaping Out of Memory at Build Time</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Feb 23, 2022</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/2022"><span>#</span>2022</a><a class="instant" href="https://psiace.me/tags/databend"><span>#</span>Databend</a><a class="instant" href="https://psiace.me/tags/rust"><span>#</span>Rust</a><a class="instant" href="https://psiace.me/tags/linux"><span>#</span>Linux</a><a class="instant" href="https://psiace.me/tags/notes"><span>#</span>Notes</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/escape-oom-at-build-time/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <p>I mentioned this topic while writing my weekly report today, so I will also record how to escape out-of-memory failures during Rust compilation.</p>
+<p>Out of Memory, or OOM, is exactly what the name suggests: a failure caused when the required memory exceeds the maximum memory the system can provide.</p>
+<p>In Databend, the <a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/databend/tree/main/common/functions">common/functions</a> module provides common SQL functions for users. It is already large by itself, and the latest round of refactoring introduced many codegen-related steps. So we met an old friend again: CI failed.</p>
+<blockquote>
+<p>(signal: 9, SIGKILL: kill) warning: build failed, waiting for other jobs to finish... error: build failed.</p>
+</blockquote>
+<p>Using <code>-Z time-passes</code> in RUSTFLAGS can help observe some metrics, making it easy to judge that this was OOM. Earlier feedback and errors also supported that it happened during the linking stage.</p>
+<p>So what should we do? The simplest method is "bigger is better, more is beautiful": pay for more memory, or allocate a larger swap space. Yes, like the <a rel="nofollow noreferrer external" href="https://psiace.me/btrfs-32gib-swapfile-on-fedora/">brutal 32GiB swapfile</a> I had before. This can solve the problem once and for all, but the former obviously costs money. Memory sticks are still a large burden, and laptops often have limited room for replacement. The latter protects the wallet, but wastes a large chunk of disk space and may affect performance.</p>
+<p>Let us see whether there are transitional options that can ease this awkward situation and make a limited compromise.</p>
+<h2 id="the-faster-higher-stronger-mold">The "Faster, Higher, Stronger" mold<a class="zola-anchor" href="#the-faster-higher-stronger-mold" aria-label="Anchor link for: the-faster-higher-stronger-mold" style="visibility: hidden;"></a>
+</h2>
+<p>Yes, since the problem is the linker, the simplest method is to change it. Rust's default linker option is <code>cc</code>, which means it uses <code>ld</code> from the GNU toolchain. Although GNU has made outstanding contributions to free software, in my current experience it is not a good modern choice. A strong competitor is lld from the LLVM toolchain.</p>
+<p>Today, we also have an even better candidate: <a rel="nofollow noreferrer external" href="https://github.com/rui314/mold">mold</a>. In real use, it performs similarly to, or even better than, lld while using less memory.</p>
+<p>How can it be used with the Rust toolchain? There are two methods.</p>
+<p><strong>mold -run</strong></p>
+<p>This mode helps us quickly try mold. Thanks to its built-in interception mechanism, commands pointing to ld, ld.lld, and ld.gold can be redirected to mold itself.</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> With Make.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">mold</span><span class="z-constant"> -</span><span class="z-constant">run</span><span class="z-string"> make</span><span class="z-keyword"> &lt;</span><span class="z-string">make-options-if-an</span><span>y</span><span class="z-keyword">&gt;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Or with Cargo.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">mold</span><span class="z-constant"> -</span><span class="z-constant">run</span><span class="z-string"> cargo</span><span class="z-keyword"> &lt;</span><span class="z-string">cargo-options-if-an</span><span>y</span><span class="z-keyword">&gt;</span></span></code></pre>
+<p><strong>Edit .cargo/config.toml</strong></p>
+<p>Add the following content. If it was installed with <code>sudo make install</code>, <code>path/to/mold</code> will most likely point to <code>/usr/local/bin/mold</code>.</p>
+<pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span>[</span><span class="z-entity z-name">target</span><span>.</span><span class="z-entity z-name">x86_64-unknown-linux-gnu</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other">linker</span><span> =</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">clang</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-variable z-other">rustflags</span><span> =</span><span> [</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">-C</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">link-arg=-fuse-ld=/path/to/mold</span><span class="z-punctuation z-definition z-string">&quot;</span><span>]</span></span></code></pre><h2 id="a-brand-new-symbol-mangling-scheme">A Brand New Symbol Mangling Scheme<a class="zola-anchor" href="#a-brand-new-symbol-mangling-scheme" aria-label="Anchor link for: a-brand-new-symbol-mangling-scheme" style="visibility: hidden;"></a>
+</h2>
+<p>Symbol mangling is a technique used by compilers of modern programming languages to solve the problem that program entity names must be unique.</p>
+<p>Rust currently has its own symbol mangling scheme, <a rel="nofollow noreferrer external" href="https://github.com/rust-lang/rfcs/pull/2603">rust-lang/rfcs#2603</a>. Enabling it can generate smaller symbols when duplicate components exist.</p>
+<p>There are also two ways to enable this feature.</p>
+<p><strong>RUSTFLAGS</strong></p>
+<p>In the latest Rust nightly, <code>-C symbol-manging-version=v0</code> can be used as a RUSTFLAG. Slightly older versions may require <code>-Z symbol-manging-version=v0</code>.</p>
+<blockquote>
+<p>RUSTFLAGS="-C symbol-manging-version=v0" cargo <cargo-options-if-any></p>
+</blockquote>
+<p><strong>Edit .cargo/config.toml</strong></p>
+<p>Add the following content. If it errors, try <code>-Z</code>:</p>
+<pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span>[</span><span class="z-entity z-name">target</span><span>.</span><span class="z-entity z-name">nightly-x86_64-unknown-linux-gnu</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other">rustflags</span><span> =</span><span> [</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">-C</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">symbol-mangling-version=v0</span><span class="z-punctuation z-definition z-string">&quot;</span><span>]</span></span></code></pre><h2 id="what-else-can-be-done">What Else Can Be Done?<a class="zola-anchor" href="#what-else-can-be-done" aria-label="Anchor link for: what-else-can-be-done" style="visibility: hidden;"></a>
+</h2>
+<p>Split the project into smaller units so compiling each part is not too heavy; remove some bulky dependencies so the build is less painful; or adjust compilation options further for targeted optimization.</p>
+<p>That is all for today. I wish everyone can escape OOM and get stronger machines.</p>
+<hr />
+<p>Funny enough, after cleaning dependencies for quite a while, fewer than 900 still remain.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="escape-oom-at-build-time"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

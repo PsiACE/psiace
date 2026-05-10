@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="关于 Jekyll 与 GitHub Pages 的快速开始、主题使用与个性化配置。">
+
+  <title>尝试使用 Jekyll 与 GitHub Pages</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#ben-di-bu-shu-jekyll-github-pages-huan-jing">本地部署 Jekyll&#x2F;GitHub Pages 环境</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#qi-yong-github-pages-de-yong-hu-ye-mian-fu-wu">启用 GitHub Pages 的用户页面服务</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#shi-yong-you-xiu-de-jekyll-theme">使用优秀的 Jekyll Theme</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#jekyll-theme-de-zu-zhi-jie-gou">Jekyll Theme 的组织结构</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#yi-xie-di-san-fang-fu-wu-he-ge-xing-hua-pei-zhi">一些第三方服务和个性化配置</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#chang-gui">常规</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#di-san-fang-fu-wu">第三方服务</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#jiang-ni-de-ye-mian-fa-bu">将你的页面发布 :)</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>尝试使用 Jekyll 与 GitHub Pages</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Jul 14, 2018</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/jekyll"><span>#</span>Jekyll</a><a class="instant" href="https://psiace.me/tags/github-pages"><span>#</span>GitHub Pages</a><a class="instant" href="https://psiace.me/tags/static-site-generator"><span>#</span>Static Site Generator</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/try-jekyll-with-github/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <p><em>本文将帮助你快速入门，为了避免在介绍上花费过多时间，部分内容请感兴趣的同学自己查看官方网站和文档。</em></p>
+<p><a rel="nofollow noreferrer external" href="https://jekyllrb.com">Jekyll</a> 是一个优秀的静态站点生成器，<a rel="nofollow noreferrer external" href="https://pages.github.com">GitHub Pages</a> 是 <strong>GitHub</strong> 提供的静态页面托管服务。使用这些，我们可以轻松地为项目/组织构建网站，也可以发布自己的博客和简历。</p>
+<p>同时使用 Jekyll 和 GitHub Pages 的一个最大的好处是你可以只关注内容，这是由于有很多优秀的设计师和开发人员为 Jekyll 制作了大量的美观实用的主题，而 GitHub 为我们节约了购置服务器的经费。唯一的限制可能仅仅是我们需要一些第三方服务来提供诸如评论和在线表单这样的功能。</p>
+<p>本文会介绍以下几个方面的内容：</p>
+<ul>
+<li>本地部署 Jekyll/GitHub Pages 环境</li>
+<li>启用 GitHub Pages 的用户页面服务</li>
+<li>使用优秀的 Jekyll Theme</li>
+<li>Jekyll Theme 的组织结构</li>
+<li>一些第三方服务和个性化配置</li>
+<li>将你的页面发布 :)</li>
+</ul>
+<p>好吧，让我们现在就开始，玩的开心～</p>
+<h2 id="ben-di-bu-shu-jekyll-github-pages-huan-jing">本地部署 Jekyll/GitHub Pages 环境<a class="zola-anchor" href="#ben-di-bu-shu-jekyll-github-pages-huan-jing" aria-label="Anchor link for: ben-di-bu-shu-jekyll-github-pages-huan-jing" style="visibility: hidden;"></a>
+</h2>
+<p>首先我们需要一台联网的计算机，当然，如果没有也不用担心，我会考虑在后面添加如何使用手机来完成这项工作。</p>
+<p>首先，你需要安装 Ruby 语言环境，这里提供 Fedora 系统上的命令行安装方法：</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> dnf</span><span class="z-string"> install</span><span class="z-string"> ruby</span><span class="z-string"> ruby-devel</span></span></code></pre>
+<p>如果你使用的是 Ubuntu 系统，只需要把命令换成：</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">sudo</span><span class="z-string"> apt-get</span><span class="z-string"> install</span><span class="z-string"> ruby</span><span class="z-string"> ruby-dev</span></span></code></pre>
+<p>至于 <code>[Y/N]</code> 我们当然是选择 Y :)</p>
+<p>如果你在使用 Windows 或是其它操作系统，请参考 <a rel="nofollow noreferrer external" href="https://www.ruby-lang.org">Ruby 官网</a>，你可以很轻易得到安装办法。</p>
+<p>接下来，使用 GitHub Pages 推荐的依赖方式创建本地环境。可以先安装 Bundler，然后在项目中通过 <code>github-pages</code> 这个 gem 对齐 GitHub Pages 环境：</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">gem</span><span class="z-string"> install</span><span class="z-string"> bundler</span></span>
+<span class="giallo-l"><span class="z-entity z-name">mkdir</span><span class="z-string"> myblog</span></span>
+<span class="giallo-l"><span class="z-support">cd</span><span class="z-string"> myblog</span></span>
+<span class="giallo-l"><span class="z-entity z-name">bundle</span><span class="z-string"> init</span></span></code></pre>
+<p>在 <code>Gemfile</code> 中添加：</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span>gem </span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">github-pages</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-constant"> group</span><span class="z-constant">:</span><span class="z-constant"> :</span><span class="z-constant">jekyll_plugins</span></span></code></pre>
+<p>然后执行：</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">bundle</span><span class="z-string"> install</span></span>
+<span class="giallo-l"><span class="z-entity z-name">bundle</span><span class="z-string"> exec</span><span class="z-string"> jekyll</span><span class="z-string"> new</span><span class="z-string"> .</span><span class="z-constant"> -</span><span class="z-constant">-force</span></span>
+<span class="giallo-l"><span class="z-entity z-name">bundle</span><span class="z-string"> exec</span><span class="z-string"> jekyll</span><span class="z-string"> serve</span></span></code></pre>
+<p>不直接使用 <code>gem install bundler jekyll</code> 的原因只是我们想要构建一个与 GitHub Pages 完全相同的环境。</p>
+<p>在浏览器中输入它提供的地址（也许是 <code>http://localhost:4000</code> 或是 <code>http://127.0.0.1:4000/</code>），你就可以看到一个官方提供的模板。</p>
+<p>如果你喜欢它，可以直接在这个上开始工作，打开文件夹，在 <code>_posts</code> 目录下以 <code>yyyy-mm-dd-title.md</code> 按示例新建文件，编辑内容，然后就可以在页面上看到更改了，稍后我会额外介绍这些内容。</p>
+<h2 id="qi-yong-github-pages-de-yong-hu-ye-mian-fu-wu">启用 GitHub Pages 的用户页面服务<a class="zola-anchor" href="#qi-yong-github-pages-de-yong-hu-ye-mian-fu-wu" aria-label="Anchor link for: qi-yong-github-pages-de-yong-hu-ye-mian-fu-wu" style="visibility: hidden;"></a>
+</h2>
+<p>如果你还没有 <a rel="nofollow noreferrer external" href="https://github.com">GitHub</a> 的账号，我强烈推荐你注册一个，因为这是世界上最为活跃的<del>同性</del>交友社区之一 :) 只要访问主页，你就可以找到入口。</p>
+<p>我强烈建议你参考 GitHub 的官方文档，它非常详细地介绍了所有你可能想要了解的内容。当然，你需要一点阅读英文文档的能力，至少要能够使用翻译。</p>
+<p>好了，现在你已经有了 GitHub 的账号，通常情况下，我会建议你创建一个名为 <code>yourusername.github.io</code> 的存储库（请容许它使用 README 文档对存储库进行初始化，特别是当你打算试验而没有准备好内容），这样你就可以获得一个由 GitHub 友情提供的子域名，所有在主分支（<code>master</code>）的符合要求的内容都将被重构并发布，通常情况下，你可以在浏览器访问 <code>https://yourusername.github.io</code>，然后看到 <code>README.md</code> 被转化后的内容。</p>
+<p>如果它没有正常显示或者你想在其它存储库启用 GitHub Pages，请打开存储库的 <code>Settings</code> 然后根据提示操作。如果你觉得页面光秃秃，可以通过 <code>Choose a theme</code> 来选择一个官方主题，但这不是必要的，因为我们接下来会介绍一些关于使用优秀的 Jekyll 主题和进一步定制的内容。</p>
+<h2 id="shi-yong-you-xiu-de-jekyll-theme">使用优秀的 Jekyll Theme<a class="zola-anchor" href="#shi-yong-you-xiu-de-jekyll-theme" aria-label="Anchor link for: shi-yong-you-xiu-de-jekyll-theme" style="visibility: hidden;"></a>
+</h2>
+<p>造轮子是一件有意思的工作，但它往往需要花费大量的时间，而且一个好的想法可能需要经过大量的调试才能正常工作，如果你不满足于 Jekyll 的几个默认主题，那么我建议你试着使用一些优秀的 Jekyll 主题，它们往往实现了以下功能：</p>
+<ul>
+<li>响应式布局</li>
+<li>良好的文件结构</li>
+<li>标签云/文章分类</li>
+<li>优化的 SEO 设置</li>
+<li>第三方评论/统计插件支持</li>
+</ul>
+<p>从优秀的 Jekyll 主题开始可以让你更专注于文章本身，而不是看上去数目众多的 CSS 代码 :)</p>
+<p>这里我特别推荐三个主题：</p>
+<ul>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/Huxpro/huxblog-boilerplate">Huxblog-Boilerplate</a></strong>，by <a rel="nofollow noreferrer external" href="https://github.com/Huxpro/">@Huxpro</a>，Apache License v2.0</li>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/Simpleyyt/jekyll-theme-next">Jekyll NexT</a></strong>，by <a rel="nofollow noreferrer external" href="https://github.com/Simpleyyt/">@Simpleyyt</a>，Unknown</li>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/renyuanz/leonids">Leonids</a></strong>，by <a rel="nofollow noreferrer external" href="https://github.com/renyuanz/">@renyuanz</a>，MIT License</li>
+</ul>
+<p>点击主题名，你将跳转到它们的存储库，请选择你所喜欢的主题下载。</p>
+<p>相信我，我们可以完全避开 Git 以及它的命令行工具，如果你不想跳过这些，那么你可能需要另外查看其它文章，我暂时没有介绍这些的计划。</p>
+<p>如果你想查找更多主题，我强烈建议你查看 <a rel="nofollow noreferrer external" href="http://jekyllthemes.org">Jekyll Themes</a>，请从中挑选你喜欢的那个。</p>
+<h2 id="jekyll-theme-de-zu-zhi-jie-gou">Jekyll Theme 的组织结构<a class="zola-anchor" href="#jekyll-theme-de-zu-zhi-jie-gou" aria-label="Anchor link for: jekyll-theme-de-zu-zhi-jie-gou" style="visibility: hidden;"></a>
+</h2>
+<p>我注意到我此前并没有提示如何使用这些 Jekyll 主题，其实很简单：<code>cd your-jekyll-theme</code>、<code>bundler install</code>、<code>jekyll serve</code>，同样你可以在浏览器得到一个本地预览的版本。即便你使用的命令没有包含 <code>--watch</code> 选项，内容的构建仍然会是实时的。</p>
+<p>我知道你已经受够了空荡荡的主题或是为了演示而填充的没意义的内容以及我的啰嗦，但请再稍稍忍耐一下，这里会谈到 Jekyll Theme 的组织结构和一些简单的内容组织方式，这将有助于你下一步修改/配置主题。</p>
+<p>来吧，让我们用文件管理器或是你喜欢的文本编辑器打开你选定的主题所在的文件夹，看看里面有什么宝贝。</p>
+<p>通常情况下，Jekyll Theme 会是下面所示的结构：</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>.</span></span>
+<span class="giallo-l"><span>├── _config.yml</span></span>
+<span class="giallo-l"><span>├── _drafts</span></span>
+<span class="giallo-l"><span>|   ├── begin-with-the-crazy-ideas.md</span></span>
+<span class="giallo-l"><span>|   └── sample-and-test.markdown</span></span>
+<span class="giallo-l"><span>├── _includes</span></span>
+<span class="giallo-l"><span>|   ├── footer.html</span></span>
+<span class="giallo-l"><span>|   └── header.html</span></span>
+<span class="giallo-l"><span>├── _layouts</span></span>
+<span class="giallo-l"><span>|   ├── default.html</span></span>
+<span class="giallo-l"><span>|   └── post.html</span></span>
+<span class="giallo-l"><span>├── _posts</span></span>
+<span class="giallo-l"><span>|   ├── 2015-10-29-how-to-begin.textile</span></span>
+<span class="giallo-l"><span>|   └── 2013-04-26-hello-world.md</span></span>
+<span class="giallo-l"><span>├── _data</span></span>
+<span class="giallo-l"><span>|   └── members.yml</span></span>
+<span class="giallo-l"><span>├── _site</span></span>
+<span class="giallo-l"><span>└── index.html</span></span></code></pre>
+<ul>
+<li>
+<p><code>_config.yml</code></p>
+<p>保存配置数据。很多配置选项都会直接从命令行中进行设置，但是如果你把那些配置写在这儿，你就不用非要去记住那些命令了。</p>
+</li>
+<li>
+<p><code>_drafts</code></p>
+<p>drafts 是未发布的文章。这些文件的格式中都没有 <code>title.MARKUP</code> 数据。</p>
+</li>
+<li>
+<p><code>_includes</code></p>
+<p>你可以加载这些包含部分到你的布局或者文章中以方便重用。可以用 <code>{% raw %}{% include file.ext %}{% endraw %}</code> 来把文件 <code>_includes/file.ext</code> 包含进来。</p>
+</li>
+<li>
+<p><code>_layouts</code></p>
+<p>layouts 是包裹在文章外部的模板。布局可以在 YAML 头信息中根据不同文章进行选择。标签 <code>{% raw %}{{ content }}{% endraw %}</code> 可以将 content 插入页面中。</p>
+</li>
+<li>
+<p><code>_posts</code></p>
+<p>这里放的就是你的文章了。文件格式很重要，必须要符合 <code>YEAR-MONTH-DAY-title.MARKUP</code>。The permalinks 可以在文章中自己定制，但是数据和标记语言都是根据文件名来确定的。</p>
+</li>
+<li>
+<p><code>_data</code></p>
+<p>格式良好的网站数据应该放在这里。Jekyll 引擎将自动加载此目录中的所有 yaml 文件（以 <code>.yml</code> 或 <code>.yaml</code> 结尾的文件）。如目录下有 <code>member.yml</code> 文件，则可以通过 <code>site.data.members</code> 访问该文件的内容。</p>
+</li>
+<li>
+<p><code>_site</code></p>
+<p>一旦 Jekyll 完成转换，就会将生成的页面放在这里（默认）。最好将这个目录放进你的 <code>.gitignore</code> 文件中。</p>
+</li>
+<li>
+<p><code>index.html</code> 和其它 HTML、Markdown、Textile 文件</p>
+<p>如果这些文件中包含 YAML 头信息部分，Jekyll 就会自动将它们进行转换。当然，其他的如 <code>.html</code>、<code>.markdown</code>、<code>.md</code>、或者 <code>.textile</code> 等在你的站点根目录下或者不是以上提到的目录中的文件也会被转换。</p>
+</li>
+<li>
+<p>其它文件/文件夹</p>
+<p>其他一些未被提及的目录和文件如 css 还有 images 文件夹，favicon.ico 等文件都将被完全拷贝到生成的 site 中。</p>
+</li>
+</ul>
+<p>是的，这里搬运了 Jekyll 官方网站的内容，因为它们已经被介绍的很详尽。我不愿意做一些重复的工作。</p>
+<p>我会在下一部分结合实例来讲一下各个部分的使用。</p>
+<h2 id="yi-xie-di-san-fang-fu-wu-he-ge-xing-hua-pei-zhi">一些第三方服务和个性化配置<a class="zola-anchor" href="#yi-xie-di-san-fang-fu-wu-he-ge-xing-hua-pei-zhi" aria-label="Anchor link for: yi-xie-di-san-fang-fu-wu-he-ge-xing-hua-pei-zhi" style="visibility: hidden;"></a>
+</h2>
+<h3 id="chang-gui">常规<a class="zola-anchor" href="#chang-gui" aria-label="Anchor link for: chang-gui" style="visibility: hidden;"></a>
+</h3>
+<p>用你最喜爱的文本编辑器打开你的 Jekyll Theme，首先我们需要编辑 <code>_config.yml</code> 文件，通常情况下，它会包含一些网站所必须的 SEO 信息，以及你一些个人信息，按照你的情况把它填好，如果里面没有你所需要的内容请留空。社交链接和默认的第三方服务通常是在这里进行配置。</p>
+<p>哦，我想我们不需要那些为了展示而配备的文章，如果你恰恰和我一样使用 <code>Fedora with Gnome</code>（我只是不确定其它系统的情况）我建议你将它们移动到 <code>模板</code> 文件夹中，这样你就可以按它的格式新建文章。</p>
+<p>让我们来看一下用于文章的 <code>.markdown(.md)</code> 文件与平时有什么不同，这里给出一个示例：</p>
+<pre class="giallo z-code"><code data-lang="markdown"><span class="giallo-l"><span>---</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">t</span><span class="z-entity z-name z-tag">itle</span><span>:</span><span class="z-string"> E</span><span class="z-string">lements</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">d</span><span class="z-entity z-name z-tag">escription</span><span>:</span><span class="z-string"> M</span><span class="z-string">arkdown-How-To</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">d</span><span class="z-entity z-name z-tag">ate</span><span>:</span><span class="z-constant"> 2013-12-24 23:29:08</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">c</span><span class="z-entity z-name z-tag">ategories</span><span>:</span></span>
+<span class="giallo-l"><span>  -</span><span class="z-string"> F</span><span class="z-string">oo</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">t</span><span class="z-entity z-name z-tag">ags</span><span>:</span></span>
+<span class="giallo-l"><span>---</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>The purpose of this post is to help you make sure all of HTML elements can display properly. If you use CSS reset, don&#39;t forget to redefine the style by yourself.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-meta z-separator">---</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">#</span><span class="z-entity z-name"> Heading 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">##</span><span class="z-entity z-name"> Heading 2</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">###</span><span class="z-entity z-name"> Heading 3</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">####</span><span class="z-entity z-name"> Heading 4</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">#####</span><span class="z-entity z-name"> Heading 5</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">######</span><span class="z-entity z-name"> Heading 6</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-meta z-separator">---</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">##</span><span class="z-entity z-name"> Paragraph</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Lorem ipsum dolor sit amet, </span><span>[</span><span class="z-string z-other z-link">test link</span><span>]</span><span>(</span><span>)</span><span> consectetur adipiscing elit. </span><span class="z-markup z-bold">**</span><span class="z-markup z-bold">Strong text</span><span class="z-markup z-bold">**</span><span> pellentesque ligula commodo viverra vehicula. </span><span class="z-markup z-italic">*</span><span class="z-markup z-italic">Italic text</span><span class="z-markup z-italic">*</span><span> at ullamcorper enim. Morbi a euismod nibh. </span><span>&lt;</span><span class="z-entity z-name z-tag">u</span><span>&gt;</span><span>Underline text</span><span>&lt;/</span><span class="z-entity z-name z-tag">u</span><span>&gt;</span><span> non elit nisl. </span><span>~~</span><span>Deleted text</span><span>~~</span><span> tristique, sem id condimentum tempus, metus lectus venenatis mauris, sit amet semper lorem felis a eros.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Interdum et malesuada fames ac ante ipsum primis in faucibus. </span><span class="z-markup z-inline z-raw">`</span><span class="z-markup z-inline z-raw">Sed erat diam</span><span class="z-markup z-inline z-raw">`</span><span>, blandit eget felis aliquam, rhoncus varius urna.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-quote">&gt;</span><span class="z-markup z-quote"> Praesent diam elit, interdum ut pulvinar placerat, imperdiet at magna.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">##</span><span class="z-entity z-name"> List Types</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">###</span><span class="z-entity z-name"> Definition List</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span class="z-entity z-name z-tag">dl</span><span>&gt;</span><span>&lt;</span><span class="z-entity z-name z-tag">dt</span><span>&gt;</span><span>Definition List Title</span><span>&lt;/</span><span class="z-entity z-name z-tag">dt</span><span>&gt;</span><span>&lt;</span><span class="z-entity z-name z-tag">dd</span><span>&gt;</span><span>This is a definition list division.</span><span>&lt;/</span><span class="z-entity z-name z-tag">dd</span><span>&gt;</span><span>&lt;/</span><span class="z-entity z-name z-tag">dl</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">###</span><span class="z-entity z-name"> Ordered List</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">1.</span><span> List Item 1</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">2.</span><span> List Item 2</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">3.</span><span> List Item 3</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">###</span><span class="z-entity z-name"> Unordered List</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">-</span><span> List Item 1</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">-</span><span> List Item 2</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-list z-begin z-markdown">-</span><span> List Item 3</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-markup z-heading">##</span><span class="z-entity z-name"> Table</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>|</span><span> Table Header 1</span><span> |</span><span> Table Header 2</span><span> |</span><span> Table Header 3</span><span> |</span></span>
+<span class="giallo-l"><span>|</span><span> ---</span><span> |</span><span> ---</span><span> |</span><span> ---</span><span> |</span></span>
+<span class="giallo-l"><span>|</span><span> Division 1</span><span> |</span><span> Division 2</span><span> |</span><span> Division 3</span><span> |</span></span>
+<span class="giallo-l"><span>|</span><span> Division 1</span><span> |</span><span> Division 2</span><span> |</span><span> Division 3</span><span> |</span></span>
+<span class="giallo-l"><span>|</span><span> Division 1</span><span> |</span><span> Division 2</span><span> |</span><span> Division 3</span><span> |</span></span></code></pre>
+<p>此文章来自 NexT 主题，介绍了基本的 Markdown 用法，你可以对照页面来看，最前面被一组 <code>---</code> 包围的内容属于 YAML，包含了文档的信息：标题，描述，分类，标签，日期；我建议你为每篇文章添加这些内容来记录。</p>
+<p>你可能还需要修改关于介绍博主的内容，一部分主题会在 <code>_config.yml</code> 中进行集成，还有一部分主题会包含一个名为 <code>about/resume</code> 的文档，请把里面的内容换成你自己的。还有一种会使用 <code>_data</code> 文件夹内的数据或是引入 <code>_include</code> 文件夹中的内容，也同样请你修改它们，语法很简单，不做赘述。</p>
+<p>这样你就可以把信息完全替换成你自己的，但我建议你保留页脚的部分信息，该内容通常会申明你使用的是什么主题。</p>
+<h3 id="di-san-fang-fu-wu">第三方服务<a class="zola-anchor" href="#di-san-fang-fu-wu" aria-label="Anchor link for: di-san-fang-fu-wu" style="visibility: hidden;"></a>
+</h3>
+<p>啊哦，其实我有点担心是不是描述的足够清楚，如果有什么疑问的话请直接联系我。这一部分会介绍到如何加入第三方服务。</p>
+<p>来看看我们需要哪些第三方服务：</p>
+<ol>
+<li>评论
+<ul>
+<li>多说</li>
+<li>Disqus</li>
+<li>来必力</li>
+</ul>
+</li>
+<li>统计/SEO
+<ul>
+<li>百度</li>
+<li>谷歌</li>
+</ul>
+</li>
+</ol>
+<p>这里以来必力和谷歌分析为例，选用这两个的原因只是因为方便，你可以自由选择适合你情况的服务。</p>
+<h4 id="qi-yong-gu-ge-fen-xi-cha-jian">启用谷歌分析插件<a class="zola-anchor" href="#qi-yong-gu-ge-fen-xi-cha-jian" aria-label="Anchor link for: qi-yong-gu-ge-fen-xi-cha-jian" style="visibility: hidden;"></a>
+</h4>
+<p>先说谷歌分析吧，它通常在各个主题之中都有良好的支持，你需要的只是填入它提供的 ID，当然，你需要一个独立的域名来做这件事，还需要番茄 :( 如果你想要使用百度分析，可能需要为域名进行备案，此外，百度的搜索引擎似乎是在 GitHub 的黑名单上。</p>
+<p>我这里默认你已经有了域名，也做了番茄，如果你需要注册域名，腾讯阿里都可以提供服务。</p>
+<p>打开 Google Analytics，按照提示进行操作，在执行完所有步骤之后，你会得到一个类似 <code>xx-xxxx-xxxx</code> 的字符串，如果没有，请从给出的 Javascript 代码中把它找出来，复制粘贴到 <code>_config.yml</code> 中合适的位置。</p>
+<p>很简单不是吗？以这个为例子主要是为了展示它的运作模式。主题通常会通过 Liquid 条件判断检查你在 <code>_config.yml</code> 中是否填写了 <code>ga_track_id</code>，然后把对应的 id 和 domain 填入位置。</p>
+<p>这类代码通常位于 <code>_include/footer.html</code>，在 Huxblog 中，你可以在 <code>_layout/default.html</code> 找到 <code>{% raw %}{% include footer.html %}{% endraw %}</code> 这个语句，使我们可以把 <code>footer.html</code> 包含在页面中。</p>
+<h4 id="an-zhuang-lai-bi-li-ping-lun-cha-jian">安装来必力评论插件<a class="zola-anchor" href="#an-zhuang-lai-bi-li-ping-lun-cha-jian" aria-label="Anchor link for: an-zhuang-lai-bi-li-ping-lun-cha-jian" style="visibility: hidden;"></a>
+</h4>
+<p>我知道这个第三方评论很少见，但鉴于天朝的环境，如果你想和小伙伴愉快发言，可以考虑一下。</p>
+<p>打开 livere.com 按流程注册安装（我不想过多的描述这些没有意义的内容），你会得到一段 js 代码。</p>
+<ul>
+<li>如果你只打算自己用，请直接把它粘贴到 <code>_layout/post.html</code> 中合适的位置。通常这是对应你博文所使用的模板。</li>
+<li>如果你打算把它做成插件，我建议你在 <code>_include</code> 中新建一个 <code>livere.html</code> 然后把它粘贴进去，将 <code>data-uid</code> 后面引号的内容换成 <code>{% raw %}{{ site.livere_uid }}{% endraw %}</code>，然后在 <code>_config.yml</code> 中合适的位置新建一行 <code>livere_uid: &lt;your-data-uid&gt;</code>，在 <code>_layout/post.html</code> 中添加 <code>{% raw %}{% if site.livere_uid %}{{ include livere.html }}{% endif %}{% endraw %}</code>。</li>
+<li>如果你想要通过博客的 <code>markdown</code> 文件中的信息头来控制，请按 <code>{% raw %}{% if page.comments == true %}{% if site.livere_uid %}{{ include livere.html }}{% endif %}{% endif %}{% endraw %}</code> 的样式添加到 <code>post.html</code> 中，这样，你只需要在博文信息头中加入 <code>comments: true</code> 就可以使它正常工作。</li>
+</ul>
+<p><strong>本来打算再讲一些其它的内容，一想我拖的时间有些长，而方法都大同小异，以后有需要再补。</strong></p>
+<h2 id="jiang-ni-de-ye-mian-fa-bu">将你的页面发布 :)<a class="zola-anchor" href="#jiang-ni-de-ye-mian-fa-bu" aria-label="Anchor link for: jiang-ni-de-ye-mian-fa-bu" style="visibility: hidden;"></a>
+</h2>
+<p>本地预览确实很没意思，毕竟只是自娱自乐，还是早点发布比较好，你也不用再在我这里花费更多的时间了。</p>
+<p>相信你应该还找得到你在开始创建的 <code>yourusername.github.io</code> 存储库，现在我们要把你本地的 <code>your-jekyll-theme</code> 中的内容上传到那里。</p>
+<p>一个很直接的方式就是点击存储库的 <code>Upload</code> 按钮，然后将内容统统拖拽进去。</p>
+<p>我觉得这已经足够你完成这项工作，享受你的博客吧。</p>
+<p>PS：如果我现在说你直接 <code>fork</code> 一个别人的主题存储库，然后把存储库的名字和内容进行修改就可以得到属于你的网站，你会不会打死我。</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="try-jekyll-with-github"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

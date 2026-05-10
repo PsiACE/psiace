@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="A walkthrough from different Fibonacci algorithms to extending Python with C&#x2F;C++.">
+
+  <title>I Will Always Hate Python Fibonacci</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#different-algorithmic-implementations-of-fibonacci">Different Algorithmic Implementations of Fibonacci</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#recursion">Recursion</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#memoization">Memoization</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#mathematics">Mathematics</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#matrix-multiplication">Matrix Multiplication</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#extending-fibonacci-with-c-c">Extending Fibonacci with C &#x2F; C++</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#how-to-extend-python-with-c-c">How to Extend Python with C &#x2F; C++</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#examples-and-performance">Examples and Performance</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#acknowledgements">Acknowledgements</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>I Will Always Hate Python Fibonacci</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Sep 30, 2022</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/2022"><span>#</span>2022</a><a class="instant" href="https://psiace.me/tags/python"><span>#</span>Python</a><a class="instant" href="https://psiace.me/tags/notes"><span>#</span>Notes</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/master-python-fibonacci/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <p>This is PsiACE. It has been a long time since I last met everyone with a public report.</p>
+<p>At the moment, I am in Macau. Overall, things are going fairly well. My cooking has improved rapidly recently, and I have had to pick up Python again after not writing it for a long time.</p>
+<p>There are probably four ways to write the Chinese character "hui", and there are even more ways to write Python Fibonacci. Let us take a look.</p>
+<p>This article mainly introduces two aspects. The first half focuses on different algorithmic implementations of Fibonacci, and the second half focuses on how to extend Fibonacci with C/C++ and similar tools.</p>
+<h2 id="different-algorithmic-implementations-of-fibonacci">Different Algorithmic Implementations of Fibonacci<a class="zola-anchor" href="#different-algorithmic-implementations-of-fibonacci" aria-label="Anchor link for: different-algorithmic-implementations-of-fibonacci" style="visibility: hidden;"></a>
+</h2>
+<p>The <a rel="nofollow noreferrer external" href="https://link.zhihu.com/?target=https%3A//en.wikipedia.org/wiki/Fibonacci%23Fibonacci_sequence">Fibonacci sequence</a> is named after the Italian mathematician <code>Leonardo Fibonacci</code>.</p>
+<p>The Fibonacci sequence has many uses in computing, such as Fibonacci search, an improved form of binary search, and Fibonacci heaps.</p>
+<h3 id="recursion">Recursion<a class="zola-anchor" href="#recursion" aria-label="Anchor link for: recursion" style="visibility: hidden;"></a>
+</h3>
+<p>According to the definition of Fibonacci, a recursive algorithm can be written easily:</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">    if</span><span> n</span><span class="z-keyword"> &lt;=</span><span class="z-constant"> 1</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">        return</span><span> n</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> +</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 2</span><span>)</span></span></code></pre><h3 id="memoization">Memoization<a class="zola-anchor" href="#memoization" aria-label="Anchor link for: memoization" style="visibility: hidden;"></a>
+</h3>
+<p>A simple optimization idea is memoization. Since this is a recursive computation, saving previous results is helpful.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    @</span><span class="z-entity z-name">lru_cache</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span class="z-storage z-type">    def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span> n</span><span class="z-keyword"> &lt;=</span><span class="z-constant"> 1</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">            return</span><span> n</span></span>
+<span class="giallo-l"><span class="z-keyword">        return</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> +</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 2</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> fib</span><span>(</span><span>n</span><span>)</span></span></code></pre>
+<p>For further optimization, we can use an iterative algorithm, such as remembering all previous results. This is roughly linear.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    data</span><span class="z-keyword"> =</span><span> [</span><span class="z-constant">0</span><span>,</span><span class="z-constant"> 1</span><span>]</span></span>
+<span class="giallo-l"><span class="z-keyword">    for</span><span> i</span><span class="z-keyword"> in</span><span class="z-support"> range</span><span>(</span><span>n</span><span class="z-keyword">-</span><span class="z-constant">1</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>        data</span><span>.</span><span>append</span><span>(</span><span>data</span><span>[</span><span class="z-keyword">-</span><span class="z-constant">2</span><span>]</span><span class="z-keyword"> +</span><span> data</span><span>[</span><span class="z-keyword">-</span><span class="z-constant">1</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> data</span><span>[</span><span>n</span><span>]</span></span></code></pre>
+<p>In fact, we do not need to record that many intermediate results. Keeping only the previous two values is enough:</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    a</span><span>,</span><span> b</span><span class="z-keyword"> =</span><span class="z-constant"> 0</span><span>,</span><span class="z-constant"> 1</span></span>
+<span class="giallo-l"><span class="z-keyword">    for</span><span> i</span><span class="z-keyword"> in</span><span class="z-support"> range</span><span>(</span><span>n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>        a</span><span>,</span><span> b</span><span class="z-keyword"> =</span><span> b</span><span>,</span><span> a</span><span class="z-keyword"> +</span><span> b</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> a</span></span></code></pre><h3 id="mathematics">Mathematics<a class="zola-anchor" href="#mathematics" aria-label="Anchor link for: mathematics" style="visibility: hidden;"></a>
+</h3>
+<p>Going further, if we convert the recurrence relation into a closed-form formula, we get the following algorithm:</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    sqrt5</span><span class="z-keyword"> =</span><span class="z-constant"> 5</span><span class="z-keyword">**</span><span class="z-constant">0.5</span></span>
+<span class="giallo-l"><span>    fibN</span><span class="z-keyword"> =</span><span> (</span><span>(</span><span class="z-constant">1</span><span class="z-keyword"> +</span><span> sqrt5</span><span>)</span><span class="z-keyword"> /</span><span class="z-constant"> 2</span><span>)</span><span class="z-keyword"> **</span><span> n</span><span class="z-keyword"> -</span><span> (</span><span>(</span><span class="z-constant">1</span><span class="z-keyword"> -</span><span> sqrt5</span><span>)</span><span class="z-keyword"> /</span><span class="z-constant"> 2</span><span>)</span><span class="z-keyword"> **</span><span> n</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span class="z-support"> round</span><span>(</span><span>fibN</span><span class="z-keyword"> /</span><span> sqrt5</span><span>)</span></span></code></pre>
+<p>This method is very fast, but integer overflow needs to be considered, so it is only effective for small data sizes. It is constant-level.</p>
+<h3 id="matrix-multiplication">Matrix Multiplication<a class="zola-anchor" href="#matrix-multiplication" aria-label="Anchor link for: matrix-multiplication" style="visibility: hidden;"></a>
+</h3>
+<p>Are there other methods? Matrix multiplication, for example, is roughly logarithmic:</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">    if</span><span> n</span><span class="z-keyword"> &lt;</span><span class="z-constant"> 2</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">        return</span><span> n</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    q</span><span class="z-keyword"> =</span><span> [</span><span>[</span><span class="z-constant">1</span><span>,</span><span class="z-constant"> 1</span><span>]</span><span>,</span><span> [</span><span class="z-constant">1</span><span>,</span><span class="z-constant"> 0</span><span>]</span><span>]</span></span>
+<span class="giallo-l"><span>    res</span><span class="z-keyword"> =</span><span> matrix_pow</span><span>(</span><span>q</span><span>,</span><span> n</span><span class="z-keyword"> -</span><span class="z-constant"> 1</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> res</span><span>[</span><span class="z-constant">0</span><span>]</span><span>[</span><span class="z-constant">0</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> matrix_pow</span><span>(</span><span class="z-variable z-parameter z-function">a</span><span>,</span><span class="z-variable z-parameter z-function"> n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    ret</span><span class="z-keyword"> =</span><span> [</span><span>[</span><span class="z-constant">1</span><span>,</span><span class="z-constant"> 0</span><span>]</span><span>,</span><span> [</span><span class="z-constant">0</span><span>,</span><span class="z-constant"> 1</span><span>]</span><span>]</span></span>
+<span class="giallo-l"><span class="z-keyword">    while</span><span> n</span><span class="z-keyword"> &gt;</span><span class="z-constant"> 0</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">        if</span><span> n</span><span class="z-keyword"> &amp;</span><span class="z-constant"> 1</span><span>:</span></span>
+<span class="giallo-l"><span>            ret</span><span class="z-keyword"> =</span><span> matrix_multiply</span><span>(</span><span>ret</span><span>,</span><span> a</span><span>)</span></span>
+<span class="giallo-l"><span>        n</span><span class="z-keyword"> &gt;&gt;=</span><span class="z-constant"> 1</span></span>
+<span class="giallo-l"><span>        a</span><span class="z-keyword"> =</span><span> matrix_multiply</span><span>(</span><span>a</span><span>,</span><span> a</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> ret</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> matrix_multiply</span><span>(</span><span class="z-variable z-parameter z-function">a</span><span>,</span><span class="z-variable z-parameter z-function"> b</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    c</span><span class="z-keyword"> =</span><span> [</span><span>[</span><span class="z-constant">0</span><span>,</span><span class="z-constant"> 0</span><span>]</span><span>,</span><span> [</span><span class="z-constant">0</span><span>,</span><span class="z-constant"> 0</span><span>]</span><span>]</span></span>
+<span class="giallo-l"><span class="z-keyword">    for</span><span> i</span><span class="z-keyword"> in</span><span class="z-support"> range</span><span>(</span><span class="z-constant">2</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">        for</span><span> j</span><span class="z-keyword"> in</span><span class="z-support"> range</span><span>(</span><span class="z-constant">2</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>            c</span><span>[</span><span>i</span><span>]</span><span>[</span><span>j</span><span>]</span><span class="z-keyword"> =</span><span> a</span><span>[</span><span>i</span><span>]</span><span>[</span><span class="z-constant">0</span><span>]</span><span class="z-keyword"> *</span><span> b</span><span>[</span><span class="z-constant">0</span><span>]</span><span>[</span><span>j</span><span>]</span><span class="z-keyword"> +</span><span> a</span><span>[</span><span>i</span><span>]</span><span>[</span><span class="z-constant">1</span><span>]</span><span class="z-keyword"> *</span><span> b</span><span>[</span><span class="z-constant">1</span><span>]</span><span>[</span><span>j</span><span>]</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> c</span></span></code></pre><h2 id="extending-fibonacci-with-c-c">Extending Fibonacci with C / C++<a class="zola-anchor" href="#extending-fibonacci-with-c-c" aria-label="Anchor link for: extending-fibonacci-with-c-c" style="visibility: hidden;"></a>
+</h2>
+<p>A very typical view is that Python is a language suitable for beginners and rapid development, but it does not have a major performance advantage. Even at PyCon, <a rel="nofollow noreferrer external" href="https://github.com/gvanrossum">@gvanrossum</a> said that Python's speed must be improved by 2x so that it can confront high-performance programming languages such as C++ head-on.</p>
+<p>Clearly, there are known ways to improve performance, and they have been applied in mainstream data science packages and web framework packages.</p>
+<ul>
+<li>Reduce time complexity. Whatever makes the program slow, choose a faster algorithm directly whenever possible.</li>
+<li>Parallelize the code. If there are multiple idle processors, try splitting the task into subtasks that can be processed at the same time.</li>
+<li>Rewrite the slower parts of the code in a faster language.</li>
+</ul>
+<p>The obvious benefits of extending Python with C / C++ are:</p>
+<ul>
+<li>On one hand, thanks to Python's simplicity and ease of use, we can provide a clear and simplified interface, reducing downstream developers' effort and accelerating application development.</li>
+<li>On the other hand, thanks to the performance and compiler optimization of other languages, program performance can be improved significantly.</li>
+</ul>
+<h3 id="how-to-extend-python-with-c-c">How to Extend Python with C / C++<a class="zola-anchor" href="#how-to-extend-python-with-c-c" aria-label="Anchor link for: how-to-extend-python-with-c-c" style="visibility: hidden;"></a>
+</h3>
+<p><strong>Using Python's ctypes module</strong></p>
+<p>ctypes is the official FFI module provided by Python and is suitable for dynamic libraries. The complexity of handling calls is mostly shifted to Python, and it cannot make good use of some Python capabilities.</p>
+<p><strong>Using Python CAPI</strong></p>
+<p>CPython provides an API set for C / C++, allowing C / C++ to interact with Python using native Python capabilities. However, debugging still requires the C / C++ toolchain, and because it calls Python's low-level CAPI, manual manipulation of Python reference counts is sometimes required to work with Python's GC mechanism.</p>
+<p><strong>Using Cython</strong></p>
+<p>Cython is an optimized static compiler for Python and the Cython language. It translates Python and Cython into C/C++, then compiles that into a statically linked library for Python to use.</p>
+<p>Besides providing CAPI, Cython also provides most wrapped modules and functions. For Unicode or Python's exception mechanism, Cython helps automatically translate them into C/C++. Since Cython is code translation with relatively coarse granularity, some fine-grained optimization is difficult.</p>
+<p><strong>Using SWIG</strong></p>
+<p>SWIG does not only provide C/C++ extensions for Python. It also supports extensions for Java, Perl, and other languages, meaning one extension can be used in multiple places.</p>
+<p>The biggest advantage of SWIG is that the same code can extend multiple languages. However, for some features, Python-specific CAPI calls still need to be explicitly written in the configuration file. Debugging also still relies on the C/C++ toolchain.</p>
+<h3 id="examples-and-performance">Examples and Performance<a class="zola-anchor" href="#examples-and-performance" aria-label="Anchor link for: examples-and-performance" style="visibility: hidden;"></a>
+</h3>
+<p>Let us return to the Fibonacci sequence. Earlier, we discussed its algorithms and some optimizations.</p>
+<p><strong>Recursion</strong></p>
+<p>In the following sections, we will use the recursive algorithm as the baseline to show different optimizations. Except for the parallel section, we will use <code>fib(47)</code> for performance evaluation.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">    if</span><span> n</span><span class="z-keyword"> &lt;=</span><span class="z-constant"> 1</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">        return</span><span> n</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> +</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 2</span><span>)</span></span></code></pre>
+<p><strong>Parallelism</strong></p>
+<p>By using multiprocessing pools, we can execute multiple computation tasks at the same time, which gives performance advantages in certain scenarios.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">import</span><span> multiprocessing</span></span>
+<span class="giallo-l"><span class="z-keyword">import</span><span> multiprocessing</span><span class="z-keyword"> as</span><span> mp</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment">function for calculate fibannaci number</span></span>
+<span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">  if</span><span> n</span><span class="z-keyword"> &lt;=</span><span class="z-constant"> 1</span><span>:</span><span class="z-keyword"> return</span><span class="z-constant"> 1</span></span>
+<span class="giallo-l"><span class="z-keyword">  return</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> +</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 2</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> parallel_fib</span><span>(</span><span class="z-variable z-parameter z-function">x</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    #</span><span class="z-comment"> paralleing throught pool.</span></span>
+<span class="giallo-l"><span>    p</span><span class="z-keyword"> =</span><span> multiprocessing</span><span>.</span><span>Pool</span><span>(</span><span>mp</span><span>.</span><span>cpu_count</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> p</span><span>.</span><span>map</span><span>(</span><span>fib</span><span>,</span><span> [</span><span>x</span><span>,</span><span> x</span><span class="z-keyword">+</span><span class="z-constant">1</span><span>,</span><span> x</span><span class="z-keyword">+</span><span class="z-constant">2</span><span>,</span><span> x</span><span class="z-keyword">+</span><span class="z-constant">3</span><span>]</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> One-time parallel calculation</span></span>
+<span class="giallo-l"><span class="z-support">print</span><span>(</span><span>parallel_fib</span><span>(</span><span class="z-constant">30</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Recursive calculation one by one</span></span>
+<span class="giallo-l"><span class="z-support">print</span><span>(</span><span>fib</span><span>(</span><span class="z-constant">30</span><span>)</span><span>,</span><span> fib</span><span>(</span><span class="z-constant">31</span><span>)</span><span>,</span><span> fib</span><span>(</span><span class="z-constant">32</span><span>)</span><span>,</span><span> fib</span><span>(</span><span class="z-constant">33</span><span>)</span><span>)</span></span></code></pre>
+<p>A quick look at performance:</p>
+<table><thead><tr><th>Language</th><th>Time, s</th></tr></thead><tbody>
+<tr><td>Python Recursive</td><td>1.377</td></tr>
+<tr><td>Python Parallel</td><td>0.669</td></tr>
+</tbody></table>
+<p><strong>Fast Algorithm - Memoization</strong></p>
+<p>The recursive algorithm is quite plain and very slow. We discussed faster algorithms earlier, and here is a simple algorithm that caches recent results.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">from</span><span> functools</span><span class="z-keyword"> import</span><span> lru_cache</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name">@</span><span class="z-entity z-name">lru_cache</span><span>(</span><span class="z-constant">3</span><span>)</span></span>
+<span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">  if</span><span> n</span><span class="z-keyword"> &lt;=</span><span class="z-constant"> 1</span><span>:</span><span class="z-keyword"> return</span><span class="z-constant"> 1</span></span>
+<span class="giallo-l"><span class="z-keyword">  return</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> +</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 2</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-support">print</span><span>(</span><span>fib</span><span>(</span><span class="z-constant">47</span><span>)</span><span>)</span></span></code></pre>
+<p><strong>PyPy - JIT</strong></p>
+<p>PyPy is an alternative to CPython. It is built with RPython, a language developed together with it. The main reason to use PyPy instead of CPython is speed: it usually runs faster.</p>
+<p>PyPy implements Python 2.7.18 and 3.7.10. It supports the full core language, passes the Python 2.7 test suite and almost all of the 3.7 test suite, and supports most commonly used Python standard library modules.</p>
+<p>The secret to PyPy's speed is JIT technology. These are the steps JIT compilation takes to improve performance:</p>
+<ul>
+<li>Identify the most commonly used components in the code, such as functions inside loops.</li>
+<li>Convert these components into machine code at runtime.</li>
+<li>Optimize the generated machine code.</li>
+<li>Replace the previous implementation with the optimized machine-code version.</li>
+</ul>
+<p>Fortunately, our recursive version can naturally use PyPy compilation to gain performance improvements.</p>
+<p><strong>C</strong></p>
+<p>To demonstrate the capabilities of C/C++ extensions, we also provide a C version for comparison.</p>
+<pre class="giallo z-code"><code data-lang="c"><span class="giallo-l"><span class="z-keyword">#</span><span class="z-keyword">include</span><span class="z-punctuation z-definition z-string"> &lt;</span><span class="z-string">stdio.h</span><span class="z-punctuation z-definition z-string">&gt;</span></span>
+<span class="giallo-l"><span class="z-keyword">#</span><span class="z-keyword">include</span><span class="z-punctuation z-definition z-string"> &lt;</span><span class="z-string">stdint.h</span><span class="z-punctuation z-definition z-string">&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage">static</span><span class="z-storage z-type"> uint64_t</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-storage z-type">uint64_t</span><span class="z-variable"> n</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">  if</span><span> (</span><span>n </span><span class="z-keyword">&lt;=</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> return</span><span> n</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">  return</span><span class="z-entity z-name"> fib</span><span>(</span><span>n </span><span class="z-keyword">-</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> +</span><span class="z-entity z-name"> fib</span><span>(</span><span>n </span><span class="z-keyword">-</span><span class="z-constant"> 2</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">int</span><span class="z-entity z-name"> main</span><span>(</span><span class="z-storage z-type">void</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">  printf</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-constant">%llu</span><span class="z-constant"> \n</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-entity z-name"> fib</span><span>(</span><span class="z-constant">47</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">  return</span><span class="z-constant"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p><strong>ctypes</strong></p>
+<p>Similarly, following the previous C version, we write the corresponding shared library.</p>
+<pre class="giallo z-code"><code data-lang="c"><span class="giallo-l"><span class="z-keyword">%</span><span class="z-keyword">%</span><span>file fib</span><span class="z-keyword">-</span><span>share.h</span></span>
+<span class="giallo-l"><span class="z-keyword">#</span><span class="z-keyword">include</span><span class="z-punctuation z-definition z-string"> &lt;</span><span class="z-string">stdint.h</span><span class="z-punctuation z-definition z-string">&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">uint64_t</span><span class="z-entity z-name"> c_fib</span><span>(</span><span class="z-storage z-type">uint64_t</span><span class="z-variable"> n</span><span>)</span><span>;</span></span></code></pre><pre class="giallo z-code"><code data-lang="c"><span class="giallo-l"><span class="z-keyword">%</span><span class="z-keyword">%</span><span>file fib</span><span class="z-keyword">-</span><span>share.c</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">#</span><span class="z-keyword">include</span><span class="z-punctuation z-definition z-string"> &lt;</span><span class="z-string">stdint.h</span><span class="z-punctuation z-definition z-string">&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">uint64_t</span><span class="z-entity z-name"> c_fib</span><span>(</span><span class="z-storage z-type">uint64_t</span><span class="z-variable"> n</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">  if</span><span> (</span><span>n </span><span class="z-keyword">&lt;=</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> return</span><span> n</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">  return</span><span class="z-entity z-name"> c_fib</span><span>(</span><span>n </span><span class="z-keyword">-</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> +</span><span class="z-entity z-name"> c_fib</span><span>(</span><span>n </span><span class="z-keyword">-</span><span class="z-constant"> 2</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Next, let us use <code>ctypes</code> to call it. The main parts are simple. The important detail is that <code>uint64_t</code> corresponds to <code>c_ulonglong</code>, and we need to specify the argument type and return type.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">%</span><span class="z-keyword">%</span><span class="z-variable">file</span><span> fib</span><span class="z-keyword">-</span><span>ctypes</span><span>.</span><span>py</span></span>
+<span class="giallo-l"><span class="z-keyword">from</span><span> ctypes</span><span class="z-keyword"> import</span><span class="z-constant"> CDLL</span><span>,</span><span> c_ulonglong</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">def</span><span class="z-entity z-name"> ctypes_fib</span><span>(</span><span class="z-variable z-parameter z-function">n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    #</span><span class="z-comment"> Use ctypes to load the library</span></span>
+<span class="giallo-l"><span>    lib</span><span class="z-keyword"> =</span><span> CDLL</span><span>(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">./ctypes_fib.so</span><span class="z-punctuation z-definition z-string">&#39;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    #</span><span class="z-comment"> We need to give the argument and return types explicitly</span></span>
+<span class="giallo-l"><span>    lib</span><span>.</span><span>c_fib</span><span>.</span><span>argtypes</span><span class="z-keyword"> =</span><span> [</span><span>c_ulonglong</span><span>]</span></span>
+<span class="giallo-l"><span>    lib</span><span>.</span><span>c_fib</span><span>.</span><span>restype</span><span class="z-keyword">  =</span><span> c_ulonglong</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> lib</span><span>.</span><span>c_fib</span><span>(</span><span>n</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-support">print</span><span>(</span><span>ctypes_fib</span><span>(</span><span class="z-constant">47</span><span>)</span><span>)</span></span></code></pre>
+<p>Then we need to compile the shared library and run it like any other Python program.</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">$</span><span class="z-string"> gcc</span><span class="z-constant"> -</span><span class="z-constant">O3</span><span class="z-constant"> -</span><span class="z-constant">fPIC</span><span class="z-constant"> -</span><span class="z-constant">shared</span><span class="z-constant"> -</span><span class="z-constant">std=c99</span><span class="z-string">  fib-share.c</span><span class="z-constant"> -</span><span class="z-constant">o</span><span class="z-string"> ctypes_fib.so</span></span>
+<span class="giallo-l"><span class="z-entity z-name">$</span><span class="z-string"> python</span><span class="z-string"> fib-ctypes.py</span></span></code></pre>
+<p><strong>CAPI</strong></p>
+<p>Compared with the other methods, CAPI is more complex, so I would probably recommend reading <a rel="nofollow noreferrer external" href="https://llllllllll.github.io/c-extension-tutorial/">How to Write and Debug C Extension Modules</a>.</p>
+<pre class="giallo z-code"><code data-lang="c"><span class="giallo-l"><span class="z-keyword">#</span><span class="z-keyword">include</span><span class="z-punctuation z-definition z-string"> &lt;</span><span class="z-string">Python.h</span><span class="z-punctuation z-definition z-string">&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage">static</span><span class="z-storage z-type"> unsigned</span><span class="z-storage z-type"> long</span></span>
+<span class="giallo-l"><span class="z-entity z-name">cfib</span><span>(</span><span class="z-storage z-type">unsigned</span><span class="z-storage z-type"> long</span><span class="z-variable"> n</span><span>)</span></span>
+<span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span class="z-keyword">  if</span><span> (</span><span>n </span><span class="z-keyword">&lt;=</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> return</span><span> n</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">  return</span><span class="z-entity z-name"> cfib</span><span>(</span><span>n </span><span class="z-keyword">-</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> +</span><span class="z-entity z-name"> cfib</span><span>(</span><span>n </span><span class="z-keyword">-</span><span class="z-constant"> 2</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name">PyDoc_STRVAR</span><span>(</span><span>fib_doc</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">compute the nth Fibonacci number</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage">static</span><span> PyObject</span><span class="z-keyword">*</span></span>
+<span class="giallo-l"><span class="z-entity z-name">pyfib</span><span>(</span><span>PyObject</span><span class="z-keyword">*</span><span class="z-variable"> self</span><span>,</span><span> PyObject</span><span class="z-keyword">*</span><span class="z-variable"> n</span><span>)</span></span>
+<span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span class="z-storage z-type">    unsigned</span><span class="z-storage z-type"> long</span><span> as_unsigned_long </span><span class="z-keyword">=</span><span class="z-entity z-name"> PyLong_AsUnsignedLong</span><span>(</span><span>n</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    PyObject</span><span class="z-keyword">*</span><span> result </span><span class="z-keyword">=</span><span class="z-entity z-name"> PyLong_FromUnsignedLong</span><span>(</span><span class="z-entity z-name">cfib</span><span>(</span><span>as_unsigned_long</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span> result</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>PyMethodDef methods</span><span class="z-storage">[]</span><span class="z-keyword"> =</span><span> {</span></span>
+<span class="giallo-l"><span>    {</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">fib</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span> (</span><span>PyCFunction</span><span>)</span><span> pyfib</span><span>,</span><span> METH_O</span><span>,</span><span> fib_doc</span><span>}</span><span>,</span></span>
+<span class="giallo-l"><span>    {</span><span class="z-constant">NULL</span><span>}</span><span>,</span></span>
+<span class="giallo-l"><span>}</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name">PyDoc_STRVAR</span><span>(</span><span>fib_module_doc</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">provides a Fibonacci function</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>PyModuleDef fib_module </span><span class="z-keyword">=</span><span> {</span></span>
+<span class="giallo-l"><span>    PyModuleDef_HEAD_INIT</span><span>,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">    &quot;</span><span class="z-string">fib</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    fib_module_doc</span><span>,</span></span>
+<span class="giallo-l"><span class="z-keyword">    -</span><span class="z-constant">1</span><span>,</span></span>
+<span class="giallo-l"><span>    methods</span><span>,</span></span>
+<span class="giallo-l"><span class="z-constant">    NULL</span><span>,</span></span>
+<span class="giallo-l"><span class="z-constant">    NULL</span><span>,</span></span>
+<span class="giallo-l"><span class="z-constant">    NULL</span><span>,</span></span>
+<span class="giallo-l"><span class="z-constant">    NULL</span></span>
+<span class="giallo-l"><span>}</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>PyMODINIT_FUNC</span></span>
+<span class="giallo-l"><span class="z-entity z-name">PyInit_fib</span><span>(</span><span class="z-storage z-type">void</span><span>)</span></span>
+<span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span class="z-keyword">    return</span><span class="z-entity z-name"> PyModule_Create</span><span>(</span><span class="z-keyword">&amp;</span><span>fib_module</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>All function return types are pointers to PyObject, and the parameter types are two PyObject pointers. The first corresponds to <code>self</code> in a Python class method, and the second corresponds to the argument in the call.</p>
+<p>After completing the function we need, we need to explicitly declare the methods exposed by the module, the accepted parameter types, and the documentation.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">from</span><span> .</span><span>fib</span><span class="z-keyword"> import</span><span> fib</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-support z-variable">__all__</span><span class="z-keyword"> =</span><span> [</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">fib</span><span class="z-punctuation z-definition z-string">&#39;</span><span>]</span></span></code></pre>
+<p>The most common way to build a CPython extension module is to use setuptools and a setup.py file. We start with a normal setuptools setup.py file:</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">from</span><span> setuptools</span><span class="z-keyword"> import</span><span> setup</span><span>,</span><span> find_packages</span><span>,</span><span> Extension</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>setup</span><span>(</span></span>
+<span class="giallo-l"><span class="z-variable">    name</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">fibcapi</span><span class="z-punctuation z-definition z-string">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable">    version</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">0.1.0</span><span class="z-punctuation z-definition z-string">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable">    packages</span><span class="z-keyword">=</span><span>find_packages</span><span>(</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable">    classifiers</span><span class="z-keyword">=</span><span>[</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">        &#39;</span><span class="z-string">Development Status :: 3 - Alpha</span><span class="z-punctuation z-definition z-string">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">        &#39;</span><span class="z-string">License :: OSI Approved :: GNU General Public License v2 (GPLv2)</span><span class="z-punctuation z-definition z-string">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">        &#39;</span><span class="z-string">Natural Language :: English</span><span class="z-punctuation z-definition z-string">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">        &#39;</span><span class="z-string">Programming Language :: Python :: 3 :: Only</span><span class="z-punctuation z-definition z-string">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">        &#39;</span><span class="z-string">Programming Language :: Python :: Implementation :: CPython</span><span class="z-punctuation z-definition z-string">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span>    ]</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable">    ext_modules</span><span class="z-keyword">=</span><span>[</span></span>
+<span class="giallo-l"><span>        Extension</span><span>(</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-string">            &#39;</span><span class="z-string">fib.fib</span><span class="z-punctuation z-definition z-string">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span>            [</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">fib/fib.c</span><span class="z-punctuation z-definition z-string">&#39;</span><span>]</span><span>,</span></span>
+<span class="giallo-l"><span>        )</span><span>,</span></span>
+<span class="giallo-l"><span>    ]</span><span>,</span></span>
+<span class="giallo-l"><span>)</span></span></code></pre>
+<p>Run the following command from the root directory:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">python</span><span class="z-string"> setup.py</span><span class="z-string"> build_ext</span><span class="z-constant"> -</span><span class="z-constant">-inplace</span></span></code></pre>
+<p>Finally, call it like an ordinary Python program.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">import</span><span> fib</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-support">print</span><span>(</span><span>fib</span><span>.</span><span>fib</span><span>(</span><span class="z-constant">47</span><span>)</span><span>)</span></span></code></pre>
+<p><strong>Cython</strong></p>
+<p>If using Cython, the code can be changed to:</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span>cdef</span><span class="z-variable"> long</span><span> fib</span><span>(</span><span class="z-variable">long</span><span> n</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">  if</span><span> n</span><span class="z-keyword"> &lt;=</span><span class="z-constant"> 1</span><span>:</span><span class="z-keyword"> return</span><span> n</span></span>
+<span class="giallo-l"><span class="z-keyword">  return</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 1</span><span>)</span><span class="z-keyword"> +</span><span> fib</span><span>(</span><span>n</span><span class="z-keyword"> -</span><span class="z-constant"> 2</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-support">print</span><span>(</span><span>fib</span><span>(</span><span class="z-constant">47</span><span>)</span><span>)</span></span></code></pre>
+<p>Use the following command to compile:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">cython</span><span class="z-constant"> -</span><span class="z-constant">3</span><span class="z-constant"> -</span><span class="z-constant">-embed</span><span class="z-constant"> -</span><span class="z-constant">o</span><span class="z-string"> fib.pyx.c</span><span class="z-string"> fib.pyx</span><span> &amp;&amp;</span><span class="z-entity z-name"> gcc</span><span class="z-constant"> -</span><span class="z-constant">O3</span><span> $(</span><span class="z-entity z-name">python3-config</span><span class="z-constant"> -</span><span class="z-constant">-embed</span><span class="z-constant"> -</span><span class="z-constant">-cflags</span><span>)</span><span class="z-constant"> -</span><span class="z-constant">o</span><span class="z-string"> fib</span><span class="z-string"> fib.pyx.c</span><span> $(</span><span class="z-entity z-name">python3-config</span><span class="z-constant"> -</span><span class="z-constant">-embed</span><span class="z-constant"> -</span><span class="z-constant">-ldflags</span><span>)</span></span></code></pre>
+<p><strong>SWIG</strong></p>
+<p>First, let us reuse <code>fib-share.h</code> and <code>fib-share.c</code> from the ctypes section.</p>
+<p>Next, define the corresponding SWIG interface file. To use <code>uint64_t</code>, we have to introduce <code>stdint.i</code>.</p>
+<pre class="giallo z-code"><code data-lang="c"><span class="giallo-l"><span class="z-keyword">%</span><span class="z-keyword">%</span><span>file fib</span><span class="z-keyword">-</span><span>swig.i</span></span>
+<span class="giallo-l"><span class="z-keyword">%</span><span>include </span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">stdint.i</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">%</span><span>module fibswig</span></span>
+<span class="giallo-l"><span class="z-keyword">%</span><span>{</span></span>
+<span class="giallo-l"><span class="z-storage">extern</span><span class="z-storage z-type"> uint64_t</span><span class="z-entity z-name"> c_fib</span><span>(</span><span class="z-storage z-type">uint64_t</span><span> n</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">%</span><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage">extern</span><span class="z-storage z-type"> uint64_t</span><span class="z-entity z-name"> c_fib</span><span>(</span><span class="z-storage z-type">uint64_t</span><span class="z-variable"> n</span><span>)</span><span>;</span></span></code></pre>
+<p>Then we need to write a little Python code to call the swig shared library.</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">import</span><span> fibswig</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-support">print</span><span>(</span><span>fibswig</span><span>.</span><span>c_fib</span><span>(</span><span class="z-constant">47</span><span>)</span><span>)</span></span></code></pre>
+<p>Next, we need to compile the shared library and execute it like any other Python program.</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">$</span><span class="z-string"> swig</span><span class="z-constant"> -</span><span class="z-constant">python</span><span class="z-string"> fib-swig.i</span></span>
+<span class="giallo-l"><span class="z-entity z-name">$</span><span class="z-string"> gcc</span><span class="z-constant"> -</span><span class="z-constant">fPIC</span><span class="z-constant"> -</span><span class="z-constant">c</span><span class="z-string"> fib-share.c</span><span class="z-string"> fib-swig_wrap.c</span><span class="z-constant"> -</span><span class="z-constant">I</span><span class="z-string"> /usr/include/python3.10</span></span>
+<span class="giallo-l"><span class="z-entity z-name">$</span><span class="z-string"> ld</span><span class="z-constant"> -</span><span class="z-constant">fPIC</span><span class="z-constant"> -</span><span class="z-constant">shared</span><span class="z-string"> fib-share.o</span><span class="z-string"> fib-swig_wrap.o</span><span class="z-constant"> -</span><span class="z-constant">o</span><span class="z-string"> _fibswig.so</span></span>
+<span class="giallo-l"><span class="z-entity z-name">$</span><span class="z-string"> python</span><span class="z-string"> fib-swig.py</span></span></code></pre>
+<p><strong>Performance Summary</strong></p>
+<table><thead><tr><th>Lang</th><th>Time, s</th></tr></thead><tbody>
+<tr><td>Python3</td><td>530.974</td></tr>
+<tr><td>Python3 (PyPy)</td><td>39.398</td></tr>
+<tr><td>Python - Cache</td><td>0.013</td></tr>
+<tr><td>C</td><td>3.336</td></tr>
+<tr><td>ctypes</td><td>3.245</td></tr>
+<tr><td>CAPI</td><td>3.300</td></tr>
+<tr><td>Cython</td><td>4.487</td></tr>
+<tr><td>SWIG</td><td>13.368</td></tr>
+</tbody></table>
+<h2 id="acknowledgements">Acknowledgements<a class="zola-anchor" href="#acknowledgements" aria-label="Anchor link for: acknowledgements" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li><a rel="nofollow noreferrer external" href="https://leetcode.cn/problems/fibonacci-number/">509. Fibonacci Number - LeetCode</a></li>
+<li><a rel="nofollow noreferrer external" href="https://docs.python.org/3/extending/extending.html">Extending Python with C or C++</a></li>
+<li><a rel="nofollow noreferrer external" href="https://docs.python.org/3/library/ctypes.html"><code>ctypes</code> — A foreign function library for Python</a></li>
+<li><a rel="nofollow noreferrer external" href="https://realpython.com/build-python-c-extension-module/">Building a Python C Extension Module</a></li>
+<li><a rel="nofollow noreferrer external" href="https://towardsdatascience.com/write-your-own-c-extension-to-speed-up-python-x100-626bb9d166e7">Write Your Own C-extension to Speed Up Python by 100x</a></li>
+<li><a rel="nofollow noreferrer external" href="https://medium.com/delta-force/extending-python-with-c-f4e9656fbf5d">Extending Python with C</a></li>
+<li><a rel="nofollow noreferrer external" href="https://web.mit.edu/people/amliu/vrut/python/ext/intro.html">Extending Python with C or C++ code</a></li>
+<li><a rel="nofollow noreferrer external" href="https://www.zhihu.com/question/23003213">How to implement communication between C/C++ and Python?</a></li>
+<li><a rel="nofollow noreferrer external" href="https://zhuanlan.zhihu.com/p/363434563">Performance optimization for Python and C/C++ extensions</a></li>
+<li><a rel="nofollow noreferrer external" href="https://blog.brickgao.com/2015/08/14/extending-Python-with-C-and-C-Plus-Plus/">Extending Python with C/C++</a></li>
+</ul>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="master-python-fibonacci"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

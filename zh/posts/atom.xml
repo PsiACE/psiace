@@ -2396,4 +2396,1157 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
 </content>
         
     </entry>
+    <entry xml:lang="zh">
+        <title>Apache OpenDAL (Incubating) ：无痛数据访问新体验</title>
+        <published>2023-07-05T00:00:00+00:00</published>
+        <updated>2023-07-05T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/apache-opendal/"/>
+        <id>https://psiace.me/zh/posts/apache-opendal/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/apache-opendal/">&lt;blockquote&gt;
+&lt;p&gt;本文主要根据 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;note.xuanwo.io&#x2F;#&#x2F;page&#x2F;opendal%2F%E9%9D%A2%E5%90%91%20java%20%E7%94%A8%E6%88%B7%E7%9A%84%E4%BB%8B%E7%BB%8D&quot;&gt;面向 Java 用户的介绍 | @Xuanwo&lt;&#x2F;a&gt; 整理而来。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;如果你致力于构建云原生、跨云优先的应用程序及服务，或者希望支持可配置的存储后端以满足复杂的数据访问需要，再或者，你厌倦了在各种 SDK 中进行周旋并期待一个统一的抽象与开发体验，Apache OpenDAL (Incubating) 将会是你的绝佳拍档。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;apache-opendal&#x2F;apache-opendal.png&quot; alt=&quot;Apache OpenDAL (Incubating) Arch&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;opendal-shi-shen-me&quot;&gt;OpenDAL 是什么&lt;a class=&quot;zola-anchor&quot; href=&quot;#opendal-shi-shen-me&quot; aria-label=&quot;Anchor link for: opendal-shi-shen-me&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;OpenDAL 是一个数据访问层，允许用户以统一的方式轻松有效地从各种存储服务中检索数据。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;数据访问层&lt;&#x2F;strong&gt; 意味着：OpenDAL 在数据读写流程中处于一个 &lt;strong&gt;承上启下&lt;&#x2F;strong&gt; 的关键位置，我们屏蔽了不同存储后端的实现细节，对外提供了一套统一的接口抽象。&lt;&#x2F;p&gt;
+&lt;p&gt;接下来，让我们试着回答「OpenDAL 不是什么」，从另一个角度来解构 OpenDAL ：&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;opendal-bu-shi-dai-li-fu-wu&quot;&gt;OpenDAL 不是代理服务&lt;a class=&quot;zola-anchor&quot; href=&quot;#opendal-bu-shi-dai-li-fu-wu&quot; aria-label=&quot;Anchor link for: opendal-bu-shi-dai-li-fu-wu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;OpenDAL 以库的形式提供，而并非代理各种存储后端的服务或应用。&lt;&#x2F;p&gt;
+&lt;p&gt;如果你希望将 OpenDAL 集成到现有项目中，需要通过 OpenDAL 支持的语言来调用 OpenDAL 的接口直接访问存储服务。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;opendal-bu-shi-sdk-ju-he-qi&quot;&gt;OpenDAL 不是 SDK 聚合器&lt;a class=&quot;zola-anchor&quot; href=&quot;#opendal-bu-shi-sdk-ju-he-qi&quot; aria-label=&quot;Anchor link for: opendal-bu-shi-sdk-ju-he-qi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;尽管 OpenDAL 取代了各类 SDK 在应用架构中的生态位，但 OpenDAL 并不是以 SDK 聚合器的形式进行实现。&lt;&#x2F;p&gt;
+&lt;p&gt;换句话说，OpenDAL 不是简单的调用各个存储服务的 SDK，我们基于统一的 Rust 核心开发自行实现了各个存储服务的对接，确保抹平服务之间的细节差异。&lt;&#x2F;p&gt;
+&lt;p&gt;以 S3 为例，OpenDAL 手动构造 HTTP Request 并解析 HTTP Response，保证所有行为都符合 API 规范并且完全纳入 OpenDAL 的掌控之中。得益于 OpenDAL 以原生形式接管数据访问流程，我们可以轻松为各种存储后端实现统一的重试和日志机制，并确保行为的一致性。&lt;&#x2F;p&gt;
+&lt;p&gt;而对于 S3 的兼容服务，由于原生存储服务的限制和 API 实现的差异，兼容程度和行为细节都可能会与 S3 存在差异，比如 OSS 对 Range 的默认实现就需要设置一个独立的 Header 才能确保行为一致。OpenDAL 除了对接原生存储服务之外，也会对兼容性服务进行针对性处理，以确保用户的数据访问体验。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;opendal-de-you-shi&quot;&gt;OpenDAL 的优势&lt;a class=&quot;zola-anchor&quot; href=&quot;#opendal-de-you-shi&quot; aria-label=&quot;Anchor link for: opendal-de-you-shi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;OpenDAL 并不是唯一一个致力于提供数据访问抽象的项目，但相比于其他同类项目，OpenDAL 具有如下优势：&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;feng-fu-de-fu-wu-zhi-chi&quot;&gt;丰富的服务支持&lt;a class=&quot;zola-anchor&quot; href=&quot;#feng-fu-de-fu-wu-zhi-chi&quot; aria-label=&quot;Anchor link for: feng-fu-de-fu-wu-zhi-chi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenDAL 支持数十种存储服务，覆盖场景全面，支持按需选用：
+&lt;ul&gt;
+&lt;li&gt;标准存储协议：FTP，HTTP，SFTP，WebDAV 等&lt;&#x2F;li&gt;
+&lt;li&gt;对象存储服务：azblob，gcs，obs，oss，s3 等&lt;&#x2F;li&gt;
+&lt;li&gt;文件存储服务：fs, azdfs，hdfs，webhdfs, ipfs 等&lt;&#x2F;li&gt;
+&lt;li&gt;消费级存储服务（网盘）：Google Drive，OneDrive，Dropbox 等&lt;&#x2F;li&gt;
+&lt;li&gt;Key Value 存储服务：Memory，Redis，Rocksdb 等&lt;&#x2F;li&gt;
+&lt;li&gt;缓存服务：Ghac，Memcached 等&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;wan-zheng-de-kua-yu-yan-bang-ding&quot;&gt;完整的跨语言绑定&lt;a class=&quot;zola-anchor&quot; href=&quot;#wan-zheng-de-kua-yu-yan-bang-ding&quot; aria-label=&quot;Anchor link for: wan-zheng-de-kua-yu-yan-bang-ding&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;以 Rust 为核心，OpenDAL 现在提供 Python&#x2F;Node.js&#x2F;Java&#x2F;C 等多个语言的绑定支持，同时也在积极开发其他语言的绑定。&lt;&#x2F;li&gt;
+&lt;li&gt;跨语言绑定不光为其他语言提供统一的存储访问抽象，设计和实现上也尽可能遵循各种语言约定俗成的命名风格和开发习惯，为快速上手使用铺平道路。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;qiang-da-de-zhong-jian-jian-zhi-chi&quot;&gt;强大的中间件支持&lt;a class=&quot;zola-anchor&quot; href=&quot;#qiang-da-de-zhong-jian-jian-zhi-chi&quot; aria-label=&quot;Anchor link for: qiang-da-de-zhong-jian-jian-zhi-chi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenDAL 提供原生的中间件能力，主要包括
+&lt;ul&gt;
+&lt;li&gt;错误重试：OpenDAL 支持细粒度的错误重试能力，除了常见的请求重试之外，支持从断点续传，不需要重新读取整个文件。&lt;&#x2F;li&gt;
+&lt;li&gt;可观测性支持：OpenDAL 对所有操作都实现了 logging，tracing，metrics 支持，开启中间件就能直接获得对存储的可观测性能力。&lt;&#x2F;li&gt;
+&lt;li&gt;此外还有并发控制，流控，模糊测试等。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;jian-dan-yi-yong&quot;&gt;简单易用&lt;a class=&quot;zola-anchor&quot; href=&quot;#jian-dan-yi-yong&quot; aria-label=&quot;Anchor link for: jian-dan-yi-yong&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;OpenDAL 的 API 经过良好的设计并在实际使用中不断打磨，文档覆盖全面，方便快速上手。下面是一个使用 Python 绑定访问 HDFS 的例子：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;import&lt;&#x2F;span&gt;&lt;span&gt; opendal&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;op&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; opendal&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;Operator&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;hdfs&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt; name_node&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;hdfs:&#x2F;&#x2F;192.16.8.10.103&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;op&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;read&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;path&#x2F;to&#x2F;file&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;opendal-de-shi-yong-chang-jing&quot;&gt;OpenDAL 的使用场景&lt;a class=&quot;zola-anchor&quot; href=&quot;#opendal-de-shi-yong-chang-jing&quot; aria-label=&quot;Anchor link for: opendal-de-shi-yong-chang-jing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;目前 OpenDAL 被广泛应用于有云原生需要的各种场景，包括但不限于数据库、数据管道和缓存等，主要用户案例包括：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Databend：OLAP 云原生数据仓库，使用 OpenDAL 来读写持久化数据（s3，azblob，gcs，hdfs 等）和缓存数据（fs，redis，rocksdb，moka 等）&lt;&#x2F;li&gt;
+&lt;li&gt;GreptimeDB：云原生时序数据库，使用 OpenDAL 来读写持久化数据（s3，azblob 等）&lt;&#x2F;li&gt;
+&lt;li&gt;RisingWave：用于流处理的分布式 SQL 数据库，使用 OpenDAL 来读写持久化数据 （s3，azblob，hdfs 等）&lt;&#x2F;li&gt;
+&lt;li&gt;Vector: 可观察性数据管道，使用 OpenDAL 来写入持久化数据（目前以 hdfs 的使用为主）&lt;&#x2F;li&gt;
+&lt;li&gt;Sccache：支持云存储的类 ccache 工具，主要用于缓存 rust&#x2F;cpp 语言的编译产物，使用 OpenDAL 来读写缓存数据（s3 和 ghac 等）&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;opendal-de-wei-lai-gui-hua&quot;&gt;OpenDAL 的未来规划&lt;a class=&quot;zola-anchor&quot; href=&quot;#opendal-de-wei-lai-gui-hua&quot; aria-label=&quot;Anchor link for: opendal-de-wei-lai-gui-hua&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;除了进一步满足云原生数据访问需求之外，OpenDAL 将会持续拓展用户场景，积极探索在数据科学、移动应用等方面的使用。同时，OpenDAL 也会持续打磨现有的实现和绑定，为用户提供更好的集成体验。&lt;&#x2F;p&gt;
+&lt;p&gt;OpenDAL 还将会探索如何改善用户在数据管理和服务集成的工作流：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;打磨 oli 命令行工具，帮助用户无痛管理数据。&lt;&#x2F;li&gt;
+&lt;li&gt;实现 oay 代理服务，为用户提供高质量的兼容 API 。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;另外，由于 OpenDAL 目前是一个跨多语言的项目，我们还计划撰写一系列入门教程，帮助大家从 0 开始，在学习语言的同时掌握 OpenDAL 的使用技巧。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;zhi-xie&quot;&gt;致谢&lt;a class=&quot;zola-anchor&quot; href=&quot;#zhi-xie&quot; aria-label=&quot;Anchor link for: zhi-xie&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;opendal.apache.org&#x2F;&quot;&gt;Apache OpenDAL(Incubating) | Website&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;incubator-opendal&quot;&gt;apache&#x2F;incubator-opendal | GitHub&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;note.xuanwo.io&#x2F;#&#x2F;page&#x2F;opendal%2F%E9%9D%A2%E5%90%91%20java%20%E7%94%A8%E6%88%B7%E7%9A%84%E4%BB%8B%E7%BB%8D&quot;&gt;面向 Java 用户的介绍 | @Xuanwo&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>我永远讨厌 Python Fibonacci</title>
+        <published>2022-09-30T00:00:00+00:00</published>
+        <updated>2022-09-30T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/master-python-fibonacci/"/>
+        <id>https://psiace.me/zh/posts/master-python-fibonacci/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/master-python-fibonacci/">&lt;p&gt;这里是 PsiACE，好久没和大家见面做公开的汇报了。&lt;&#x2F;p&gt;
+&lt;p&gt;目前的话人在澳门，总体上还不错，最近一段时间做饭水平急速提高，并且不得不捡起好久没写过的 Python 。&lt;&#x2F;p&gt;
+&lt;p&gt;「回」字大概有四种写法，Python Fibonacci 则更多，让我们一起来看一下吧。&lt;&#x2F;p&gt;
+&lt;p&gt;这篇文章主要从两个方面来介绍，前半部分主要关注 Fibonacci 的不同算法实现，后半部分则会关注如何使用 C&#x2F;C++ 等来拓展 Fibonacci 。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;fibonacci-de-bu-tong-suan-fa-shi-xian&quot;&gt;Fibonacci 的不同算法实现&lt;a class=&quot;zola-anchor&quot; href=&quot;#fibonacci-de-bu-tong-suan-fa-shi-xian&quot; aria-label=&quot;Anchor link for: fibonacci-de-bu-tong-suan-fa-shi-xian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;link.zhihu.com&#x2F;?target=https%3A&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Fibonacci%23Fibonacci_sequence&quot;&gt;斐波那契数列&lt;&#x2F;a&gt;（Fibonacci sequence）是以意大利数学家 &lt;code&gt;列昂纳多·斐波那契&lt;&#x2F;code&gt; 的名字命名的数列。&lt;&#x2F;p&gt;
+&lt;p&gt;斐波那契数列在计算机里面有很多用途，例如斐波那契查找（二分查找的一种改进），斐波那契堆等。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;di-gui&quot;&gt;递归&lt;a class=&quot;zola-anchor&quot; href=&quot;#di-gui&quot; aria-label=&quot;Anchor link for: di-gui&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;根据 Fibonacci 定义，可以轻松写出一个递归算法：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    if&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;lt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        return&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;ji-yi-hua&quot;&gt;记忆化&lt;a class=&quot;zola-anchor&quot; href=&quot;#ji-yi-hua&quot; aria-label=&quot;Anchor link for: ji-yi-hua&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;一个简单的优化思路是采用记忆化，因为是一个递归的计算方法，保存之前的结果会比较有利。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;    @&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;lru_cache&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;    def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        if&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;lt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;            return&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        return&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;进一步优化的话可以选择递推形式的算法，比如记忆全部的前置结果。大概是线性级别。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    data&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    for&lt;&#x2F;span&gt;&lt;span&gt; i&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; in&lt;&#x2F;span&gt;&lt;span class=&quot;z-support&quot;&gt; range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        data&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;append&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;data&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; data&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; data&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;但是事实上，我们不需要记录那么多中间结果，仅需要保留前两个值即可：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    a&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; b&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 0&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    for&lt;&#x2F;span&gt;&lt;span&gt; i&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; in&lt;&#x2F;span&gt;&lt;span class=&quot;z-support&quot;&gt; range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        a&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; b&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; b&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; a&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; b&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; a&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;shu-xue&quot;&gt;数学&lt;a class=&quot;zola-anchor&quot; href=&quot;#shu-xue&quot; aria-label=&quot;Anchor link for: shu-xue&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;更进一步地，如果将其递推公式整理为通项公式，可以得到下面的算法：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    sqrt5&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 5&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;**&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0.5&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    fibN&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; sqrt5&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; **&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span&gt; sqrt5&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; **&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span class=&quot;z-support&quot;&gt; round&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;fibN&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &#x2F;&lt;&#x2F;span&gt;&lt;span&gt; sqrt5&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;这种方法非常快，但是要考虑 &lt;code&gt;int&lt;&#x2F;code&gt; 溢出，仅仅对小数据量有效。(常数级别)&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;ju-zhen-cheng-fa&quot;&gt;矩阵乘法&lt;a class=&quot;zola-anchor&quot; href=&quot;#ju-zhen-cheng-fa&quot; aria-label=&quot;Anchor link for: ju-zhen-cheng-fa&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;那么还有没有其他方法呢？比如矩阵乘法，大概是对数级别：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    if&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        return&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    q&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 0&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    res&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; matrix_pow&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;q&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; res&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; matrix_pow&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;a&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt; n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    ret&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 0&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    while&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 0&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        if&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;amp;&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;            ret&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; matrix_multiply&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;ret&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; a&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;gt;&amp;gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        a&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; matrix_multiply&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;a&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; a&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; ret&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; matrix_multiply&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;a&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt; b&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    c&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 0&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 0&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    for&lt;&#x2F;span&gt;&lt;span&gt; i&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; in&lt;&#x2F;span&gt;&lt;span class=&quot;z-support&quot;&gt; range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        for&lt;&#x2F;span&gt;&lt;span&gt; j&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; in&lt;&#x2F;span&gt;&lt;span class=&quot;z-support&quot;&gt; range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;            c&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;i&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;j&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; a&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;i&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; *&lt;&#x2F;span&gt;&lt;span&gt; b&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;j&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; a&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;i&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; *&lt;&#x2F;span&gt;&lt;span&gt; b&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;j&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; c&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;shi-yong-c-c-tuo-zhan-fibonacci&quot;&gt;使用 C &#x2F; C++ 拓展 Fibonacci&lt;a class=&quot;zola-anchor&quot; href=&quot;#shi-yong-c-c-tuo-zhan-fibonacci&quot; aria-label=&quot;Anchor link for: shi-yong-c-c-tuo-zhan-fibonacci&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;一个非常典型的观点是，Python是一种适合初学者、开发快速的语言，但没有很大的性能优势。甚至在 PyCon 上，&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;gvanrossum&quot;&gt;@gvanrossum&lt;&#x2F;a&gt; 也说，必须让 Python 语言的速度水平提高 2 倍，借此与 C++ 等高性能编程语言正面对抗。&lt;&#x2F;p&gt;
+&lt;p&gt;显然，存在一些已知的改善性能的办法，并且在主流的数据科学包以及 web framework 包中得到了应用。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;降低时间复杂度。不管是什么原因导致程序变慢，只要可以，直接选择一个更快的算法。&lt;&#x2F;li&gt;
+&lt;li&gt;并行化代码。如果存在多个闲置的处理器，可以尝试将任务分割成可以同时处理的子任务。&lt;&#x2F;li&gt;
+&lt;li&gt;使用更快的语言重写代码中较慢的部分。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;使用 C &#x2F; C++ 拓展 Python 的显著好处：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;一方面，得益于 Python 的简单易用，可以提供一套清晰和简化的接口，降低下游开发人员的精力投入，加速应用的开发。&lt;&#x2F;li&gt;
+&lt;li&gt;另一方面，得益于其他语言的性能和编译优化，可以显著改善程序性能。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;ru-he-shi-yong-c-c-tuo-zhan-python&quot;&gt;如何使用 C &#x2F; C++ 拓展 Python&lt;a class=&quot;zola-anchor&quot; href=&quot;#ru-he-shi-yong-c-c-tuo-zhan-python&quot; aria-label=&quot;Anchor link for: ru-he-shi-yong-c-c-tuo-zhan-python&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;strong&gt;使用 Python 的 ctypes 模块&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;ctypes 是 Python 官方提供的 FFI 模块，适用于动态链接库。调用时的处理复杂度基本转移到 Python，无法很好利用 Python 中的一些能力。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;使用 Python CAPI&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;CPython 为 C &#x2F; C++ 提供了一套 API ，可以使用 Python 原生的一些能力完成 C &#x2F; C++ 与 Python 的交互。但是在调试方面依然需要采用 C &#x2F; C++ 工具链，而且因为调用了 Python 底层的 CAPI，有时候需要手动去操控 Python 的引用计数来完成 Python 的 GC 机制。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;使用 Cython&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Cython 是一种面向 Python 和 Cython 语言的一个优化过的静态编译器。Cython 会将 Python 和 Cython 翻译成 C&#x2F;C++，然后编译成一个静态链接库供 Python 使用。&lt;&#x2F;p&gt;
+&lt;p&gt;Cython 除了提供 CAPI 之外，还提供了大部分的封装好的模块和函数，而对于 Unicode 或者 Python 的异常机制，Cython 会帮助你自动翻译成 C&#x2F;C++ 。由于 Cython 做的是代码转译，粒度相对较粗，所以无法做一些细粒度优化。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;使用 SWIG&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;SWIG 并不只是提供 C&#x2F;C++ 对 Python 的拓展，还提供对 Java、Perl 等其他语言的拓展支持，就是写一个拓展可以在多处使用。&lt;&#x2F;p&gt;
+&lt;p&gt;使用 SWIG 的最大优点是可以使同一套代码拓展多种语言，但是对于某些特性，依然还是要针对 Python 在配置文件中显式地写出一些 Python CAPI 相关的调用，在调试方面，也是只能使用 C&#x2F;C++ 配套的调试工具。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;shi-li-yu-xing-neng&quot;&gt;示例与性能&lt;a class=&quot;zola-anchor&quot; href=&quot;#shi-li-yu-xing-neng&quot; aria-label=&quot;Anchor link for: shi-li-yu-xing-neng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;让我们继续回到斐波那契数列的例子，之前的内容中，我们曾经讨论过它的算法和一些优化。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;递归&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;接下来的内容中，将会使用递归算法作为基准来展现不同的优化，除了并行部分之外，我们将会使用 &lt;code&gt;fib(47)&lt;&#x2F;code&gt; 进行性能评估。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    if&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;lt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        return&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;并行&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;通过使用 multiprocessing 进行池化，我们得以同时执行多个计算任务，这使得在一些特定场景下具有性能优势。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;import&lt;&#x2F;span&gt;&lt;span&gt; multiprocessing&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;import&lt;&#x2F;span&gt;&lt;span&gt; multiprocessing&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; as&lt;&#x2F;span&gt;&lt;span&gt; mp&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt;function for calculate fibannaci number&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  if&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;lt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; return&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  return&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; parallel_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;x&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;    #&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; paralleing throught pool.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    p&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; multiprocessing&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;Pool&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;mp&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;cpu_count&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; p&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;map&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span&gt;x&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; x&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;+&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; x&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;+&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; x&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;+&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; One-time parallel calculation&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;parallel_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;30&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Recursive calculation one by one&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;30&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;31&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;33&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;简单看一下性能：&lt;&#x2F;p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Language&lt;&#x2F;th&gt;&lt;th&gt;Time, s&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Python Recursive&lt;&#x2F;td&gt;&lt;td&gt;1.377&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Python Parallel&lt;&#x2F;td&gt;&lt;td&gt;0.669&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;p&gt;&lt;strong&gt;快速算法 - 记忆化&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;递归算法相当朴素，也非常的慢，更加快速的算法我们在之前有过讨论，这里给出一个缓存最近结果的一个简单算法。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;from&lt;&#x2F;span&gt;&lt;span&gt; functools&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; import&lt;&#x2F;span&gt;&lt;span&gt; lru_cache&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;@&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;lru_cache&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  if&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;lt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; return&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  return&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;47&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;PyPy - JIT&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;PyPy 是 CPython 的替代品。它是使用与之共同开发的 RPython 语言构建的。使用它而不是 CPython 的主要原因是速度: 它通常运行得更快。&lt;&#x2F;p&gt;
+&lt;p&gt;PyPy 实现了 Python 2.7.18和3.7.10。它支持所有的核心语言，通过 Python 2.7 测试套件和几乎所有的 3.7 测试套件。它支持大多数常用的 Python 标准库模块。&lt;&#x2F;p&gt;
+&lt;p&gt;PyPy 快速的秘密在于使用了 JIT 技术，以下是 JIT 编译为提高性能而采取的步骤：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;标识代码中最常用的组件，例如循环中的函数。&lt;&#x2F;li&gt;
+&lt;li&gt;在运行时将这些组件转换为机器码。&lt;&#x2F;li&gt;
+&lt;li&gt;优化生成的机器码。&lt;&#x2F;li&gt;
+&lt;li&gt;用优化的机器码版本替换以前的实现。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;很高兴，我们的递归版本可以自然地利用 PyPy 进行编译以获得性能上的提升。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;C&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;由于要展示 C&#x2F;C++ 拓展的能力，我们也提供 C 语言版本做一个比较。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;c&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;include&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;stdio.h&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;include&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;stdint.h&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;static&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt; uint64_t&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;uint64_t&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt; n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  if&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;&amp;lt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; return&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  return&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;int&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; main&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;void&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;  printf&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;%llu&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; \n&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;47&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  return&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 0&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;ctypes&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;同样的，我们仿照之前的 C 语言版本，编写对应的共享库。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;c&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;file fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt;share.h&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;include&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;stdint.h&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;uint64_t&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; c_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;uint64_t&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt; n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;c&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;file fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt;share.c&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;include&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;stdint.h&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;uint64_t&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; c_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;uint64_t&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt; n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  if&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;&amp;lt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; return&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  return&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; c_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; c_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;接下来，让我们使用 &lt;code&gt;ctypes&lt;&#x2F;code&gt; 来调用它。主要的部分都很简单，需要注意的是，&lt;code&gt;uint64_t&lt;&#x2F;code&gt; 对应的是 &lt;code&gt;c_ulonglong&lt;&#x2F;code&gt; ，我们需要指定参数类型和结果类型。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt;file&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt;ctypes&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;py&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;from&lt;&#x2F;span&gt;&lt;span&gt; ctypes&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; import&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; CDLL&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; c_ulonglong&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;def&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; ctypes_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-parameter z-function&quot;&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;    #&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Use ctypes to load the library&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    lib&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; CDLL&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;.&#x2F;ctypes_fib.so&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;    #&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; We need to give the argument and return types explicitly&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    lib&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;c_fib&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;argtypes&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span&gt;c_ulonglong&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    lib&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;c_fib&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;restype&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;  =&lt;&#x2F;span&gt;&lt;span&gt; c_ulonglong&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; lib&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;c_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;ctypes_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;47&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;接着，我们需要编译共享库，并像运行其他 Python 程序那样执行。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;$&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; gcc&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;O3&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;fPIC&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;shared&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;std=c99&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;  fib-share.c&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ctypes_fib.so&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;$&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; python&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib-ctypes.py&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;CAPI&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;相比其他几种方法，CAPI 会显得复杂一些，所以，我大概会推荐你去阅读 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;llllllllll.github.io&#x2F;c-extension-tutorial&#x2F;&quot;&gt;How to Write and Debug C Extension Modules&lt;&#x2F;a&gt; 。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;c&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;include&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;Python.h&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;static&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt; unsigned&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt; long&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;cfib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;unsigned&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt; long&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt; n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  if&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;&amp;lt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; return&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  return&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; cfib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; cfib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;PyDoc_STRVAR&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;fib_doc&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;compute the nth Fibonacci number&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;static&lt;&#x2F;span&gt;&lt;span&gt; PyObject&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;*&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;pyfib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;PyObject&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;*&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt; self&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; PyObject&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;*&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt; n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;    unsigned&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt; long&lt;&#x2F;span&gt;&lt;span&gt; as_unsigned_long &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; PyLong_AsUnsignedLong&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    PyObject&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; result &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; PyLong_FromUnsignedLong&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;cfib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;as_unsigned_long&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span&gt; result&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;PyMethodDef methods&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage&quot;&gt;[]&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    {&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span&gt;PyCFunction&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt; pyfib&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; METH_O&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; fib_doc&lt;&#x2F;span&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    {&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;NULL&lt;&#x2F;span&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;PyDoc_STRVAR&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;fib_module_doc&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;provides a Fibonacci function&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;PyModuleDef fib_module &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    PyModuleDef_HEAD_INIT&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    fib_module_doc&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    methods&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-constant&quot;&gt;    NULL&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-constant&quot;&gt;    NULL&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-constant&quot;&gt;    NULL&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-constant&quot;&gt;    NULL&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;PyMODINIT_FUNC&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;PyInit_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;void&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    return&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; PyModule_Create&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;fib_module&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;所有的函数返回类型都是 PyObject 的指针，参数类型是是 PyObject 的两个指针，前者对应 Python 类里方法的 self，后者对应串里的参数。&lt;&#x2F;p&gt;
+&lt;p&gt;完成我们需要的函数之后，需要显示地声明模块暴露在外的方法，接受参数的类型以及文档。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;from&lt;&#x2F;span&gt;&lt;span&gt; .&lt;&#x2F;span&gt;&lt;span&gt;fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; import&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support z-variable&quot;&gt;__all__&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;构建 CPython 扩展模块的最常见方法是使用 setuptools 和 setup.py 文件。我们从一个普通的 setuptools setup.py 文件开始：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;from&lt;&#x2F;span&gt;&lt;span&gt; setuptools&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; import&lt;&#x2F;span&gt;&lt;span&gt; setup&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; find_packages&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span&gt; Extension&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;setup&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable&quot;&gt;    name&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;fibcapi&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable&quot;&gt;    version&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;0.1.0&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable&quot;&gt;    packages&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;find_packages&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable&quot;&gt;    classifiers&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;        &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;Development Status :: 3 - Alpha&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;        &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;License :: OSI Approved :: GNU General Public License v2 (GPLv2)&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;        &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;Natural Language :: English&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;        &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;Programming Language :: Python :: 3 :: Only&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;        &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;Programming Language :: Python :: Implementation :: CPython&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    ]&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable&quot;&gt;    ext_modules&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        Extension&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;            &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;fib.fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;            [&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;fib&#x2F;fib.c&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        )&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    ]&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;从根目录运行以下命令：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;python&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; setup.py&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; build_ext&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;-inplace&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;最后，像写一个普通的Python程序一样调用它。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;import&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;47&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;Cython&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;如果使用 Cython, 代码可以更改为：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;cdef&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt; long&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt;long&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  if&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;lt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; return&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  return&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; +&lt;&#x2F;span&gt;&lt;span&gt; fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;47&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;需要使用下面的命令来编译：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;cython&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;3&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;-embed&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib.pyx.c&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib.pyx&lt;&#x2F;span&gt;&lt;span&gt; &amp;amp;&amp;amp;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; gcc&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;O3&lt;&#x2F;span&gt;&lt;span&gt; $(&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;python3-config&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;-embed&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;-cflags&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib.pyx.c&lt;&#x2F;span&gt;&lt;span&gt; $(&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;python3-config&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;-embed&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;-ldflags&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;SWIG&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;首先，让我们复用之前 ctypes 一节中的 &lt;code&gt;fib-share.h&lt;&#x2F;code&gt; 和 &lt;code&gt;fib-share.c&lt;&#x2F;code&gt; 。&lt;&#x2F;p&gt;
+&lt;p&gt;接着，定义对应的 SWIG 接口文件，为了使用 &lt;code&gt;uint64_t&lt;&#x2F;code&gt; ，我们不得不引入 &lt;code&gt;stdint.i&lt;&#x2F;code&gt; 。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;c&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;file fib&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt;swig.i&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;include &lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;stdint.i&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;module fibswig&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;extern&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt; uint64_t&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; c_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;uint64_t&lt;&#x2F;span&gt;&lt;span&gt; n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;%&lt;&#x2F;span&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-storage&quot;&gt;extern&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt; uint64_t&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; c_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt;uint64_t&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable&quot;&gt; n&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;然后，我们需要编写一点 python 代码来调用 swig 共享库&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;python&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;import&lt;&#x2F;span&gt;&lt;span&gt; fibswig&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;fibswig&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span&gt;c_fib&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;47&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;接着，我们需要编译共享库，并像运行其他 Python 程序那样执行。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;$&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; swig&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;python&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib-swig.i&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;$&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; gcc&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;fPIC&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;c&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib-share.c&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib-swig_wrap.c&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;I&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; &#x2F;usr&#x2F;include&#x2F;python3.10&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;$&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ld&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;fPIC&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;shared&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib-share.o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib-swig_wrap.o&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; _fibswig.so&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;$&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; python&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; fib-swig.py&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;性能汇总&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Lang&lt;&#x2F;th&gt;&lt;th&gt;Time, s&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Python3&lt;&#x2F;td&gt;&lt;td&gt;530.974&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Python3 (PyPy)&lt;&#x2F;td&gt;&lt;td&gt;39.398&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Python - Cache&lt;&#x2F;td&gt;&lt;td&gt;0.013&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;C&lt;&#x2F;td&gt;&lt;td&gt;3.336&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;ctypes&lt;&#x2F;td&gt;&lt;td&gt;3.245&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;CAPI&lt;&#x2F;td&gt;&lt;td&gt;3.300&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Cython&lt;&#x2F;td&gt;&lt;td&gt;4.487&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;SWIG&lt;&#x2F;td&gt;&lt;td&gt;13.368&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;h2 id=&quot;zhi-xie&quot;&gt;致谢&lt;a class=&quot;zola-anchor&quot; href=&quot;#zhi-xie&quot; aria-label=&quot;Anchor link for: zhi-xie&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;leetcode.cn&#x2F;problems&#x2F;fibonacci-number&#x2F;&quot;&gt;509. 斐波那契数 - 力扣&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;docs.python.org&#x2F;3&#x2F;extending&#x2F;extending.html&quot;&gt;Extending Python with C or C++&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;docs.python.org&#x2F;3&#x2F;library&#x2F;ctypes.html&quot;&gt;&lt;code&gt;ctypes&lt;&#x2F;code&gt; — A foreign function library for Python&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;realpython.com&#x2F;build-python-c-extension-module&#x2F;&quot;&gt;Building a Python C Extension Module&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;towardsdatascience.com&#x2F;write-your-own-c-extension-to-speed-up-python-x100-626bb9d166e7&quot;&gt;Write Your Own C-extension to Speed Up Python by 100x&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;delta-force&#x2F;extending-python-with-c-f4e9656fbf5d&quot;&gt;Extending Python with C&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;web.mit.edu&#x2F;people&#x2F;amliu&#x2F;vrut&#x2F;python&#x2F;ext&#x2F;intro.html&quot;&gt;Extending Python with C or C++ code&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;www.zhihu.com&#x2F;question&#x2F;23003213&quot;&gt;如何实现 C&#x2F;C++ 与 Python 的通信？&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;363434563&quot;&gt;Python 和 C&#x2F;C++ 拓展程序的性能优化&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;blog.brickgao.com&#x2F;2015&#x2F;08&#x2F;14&#x2F;extending-Python-with-C-and-C-Plus-Plus&#x2F;&quot;&gt;用 C&#x2F;C++ 拓展 Python&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>谈谈过去的一年</title>
+        <published>2022-07-05T00:00:00+00:00</published>
+        <updated>2022-07-05T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/talk-about-the-past-year/"/>
+        <id>https://psiace.me/zh/posts/talk-about-the-past-year/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/talk-about-the-past-year/">&lt;p&gt;这里是 PsiACE，本来应该继续写迭代记录之「十日谈」的，但距离上一期已经又过去月余，就不太提得起兴趣。&lt;&#x2F;p&gt;
+&lt;p&gt;今天就做个特别篇好啦，毕竟 22 年已经过半，在职业道路上也慢慢前进了一年，算是一个比较有意思的时间节点。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;zhi-de-kai-xin-de-xiao-li-cheng-bei&quot;&gt;值得开心的小里程碑&lt;a class=&quot;zola-anchor&quot; href=&quot;#zhi-de-kai-xin-de-xiao-li-cheng-bei&quot; aria-label=&quot;Anchor link for: zhi-de-kai-xin-de-xiao-li-cheng-bei&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;个人向&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;减少碳水 + 增加散步 = 减重计划，颇有成效，瘦掉 7 、8 斤，感觉回到标准身材指日可待。&lt;&#x2F;li&gt;
+&lt;li&gt;逐步开始有效的日程&#x2F;时间管理，感觉比较关键的步骤是记录而非追踪。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;开源向&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;psiace&#x2F;&quot;&gt;@PsiACE&lt;&#x2F;a&gt; 累计 233 fo，&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;repsiace&quot;&gt;推上&lt;&#x2F;a&gt; 也有 300+ 。&lt;&#x2F;li&gt;
+&lt;li&gt;在 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&#x2F;&quot;&gt;datafuselabs&#x2F;databend&lt;&#x2F;a&gt; 上的提交数量突破 400 。&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;dataslime&#x2F;ritelinked&quot;&gt;dataslime&#x2F;ritelinked&lt;&#x2F;a&gt; 达成 10w 下载量，目前也有一些其他朋友在用。&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&#x2F;databend-internals&quot;&gt;PsiACE&#x2F;databend-internals&lt;&#x2F;a&gt; 最近好像被翻了牌子，目前有 160 star 。&lt;&#x2F;li&gt;
+&lt;li&gt;开始在 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;casbin&quot;&gt;@casbin&lt;&#x2F;a&gt; 的 GSoC 活动担任导师，也推动 Databend 参与 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;summer-ospp.ac.cn&#x2F;&quot;&gt;OSPP&lt;&#x2F;a&gt; 。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;qing-nian-ren-de-xiao-xiao-fan-nao&quot;&gt;青年人的小小烦恼&lt;a class=&quot;zola-anchor&quot; href=&quot;#qing-nian-ren-de-xiao-xiao-fan-nao&quot; aria-label=&quot;Anchor link for: qing-nian-ren-de-xiao-xiao-fan-nao&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;生活向&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;可能关家里太久，整个人不太活跃，很多有趣的想法都搁置了下来。&lt;&#x2F;li&gt;
+&lt;li&gt;好想女朋友，好想女朋友，好想女朋友。（疫情什么的，实在太讨厌了）&lt;&#x2F;li&gt;
+&lt;li&gt;睡眠质量还蛮好，但是总觉得睡不太够，失眠也比较严重。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;职业向&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;有几个月状态比较低落，虽然期间也搞出了 databend-perf 、databend-internals ，但确实不那么满意。&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;perf.databend.rs&#x2F;&quot;&gt;databend-perf&lt;&#x2F;a&gt; 上线几个月，跑出不少 bug ，最近又在罢工。&lt;&#x2F;li&gt;
+&lt;li&gt;前段时间 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;BohuTANG&#x2F;&quot;&gt;@BohuTANG&lt;&#x2F;a&gt; 问到入职一年来的成长，并提及 Owner 意识。感觉自己应该多向 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Xuanwo&quot;&gt;@Xuanwo&lt;&#x2F;a&gt; 、&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;flaneur2020&quot;&gt;@flaneur2020&lt;&#x2F;a&gt; 学习。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;hou-xu-de-yi-xie-ji-hua&quot;&gt;后续的一些计划&lt;a class=&quot;zola-anchor&quot; href=&quot;#hou-xu-de-yi-xie-ji-hua&quot; aria-label=&quot;Anchor link for: hou-xu-de-yi-xie-ji-hua&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;学习向&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;把英语和数学往起捡一下。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;工作向&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;试图对 databend-query 进行一轮 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&#x2F;issues&#x2F;6180&quot;&gt;拆分&lt;&#x2F;a&gt; &#x2F; &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&#x2F;issues&#x2F;5001&quot;&gt;测试重构&lt;&#x2F;a&gt; 。&lt;&#x2F;li&gt;
+&lt;li&gt;继续打磨 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&#x2F;databend-internals&quot;&gt;PsiACE&#x2F;databend-internals&lt;&#x2F;a&gt; ，及时增补新内容，争取正式并入 datafuselabs 进行维护。&lt;&#x2F;li&gt;
+&lt;li&gt;持续探索开发者运营方面的一些好的形式和策略。&lt;&#x2F;li&gt;
+&lt;li&gt;提高自己的技术水平和投入，争取能够落地一些 looks great 的想法。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;暂时先这样，或许，下个迭代见！&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>逃离编译时的内存溢出</title>
+        <published>2022-02-23T00:00:00+00:00</published>
+        <updated>2022-02-23T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/escape-oom-at-build-time/"/>
+        <id>https://psiace.me/zh/posts/escape-oom-at-build-time/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/escape-oom-at-build-time/">&lt;p&gt;今天写周报的时候提到了这个话题，顺便就记录一下如何逃离 Rust 编译时的内存溢出。&lt;&#x2F;p&gt;
+&lt;p&gt;内存溢出，也就是 Out of Memory（OOM），从字面就能看出来，是要用到的内存大于系统能提供的最大内存而引起的故障。&lt;&#x2F;p&gt;
+&lt;p&gt;Databend 中的 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&#x2F;tree&#x2F;main&#x2F;common&#x2F;functions&quot;&gt;common&#x2F;functions&lt;&#x2F;a&gt; 模块为用户提供常用 SQL 函数支持，体量本身就很大，并且在新一轮的改造中引入了很多需要 codegen 的环节。于是，我们又遇到了老朋友（CI 又挂了）：&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;(signal: 9, SIGKILL: kill) warning: build failed, waiting for other jobs to finish... error: build failed.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;使用 &lt;code&gt;-Z time-passes&lt;&#x2F;code&gt; 这个 RUSTFLAGS 可以帮助观测一些指标，就很容易判断出来是 OOM 。而且之前的一些反馈和报错也能够佐证是发生在链接阶段。&lt;&#x2F;p&gt;
+&lt;p&gt;那么，该怎么办呢？最简单的办法是「大就是好，多就是美」，加钱上更多内存，或者分配更大的 Swap 空间（没错，就像我之前有一个 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;btrfs-32gib-swapfile-on-fedora&#x2F;&quot;&gt;暴力的 32GiB Swapfile&lt;&#x2F;a&gt;）。这当然可以一劳永逸，但：前者无疑会消耗钱包，目前内存条还是一个很大的负担，而且对于笔记本之类，更换的余地也有限；后者虽然守住了钱包，但是白白占去那么大一块空间，而且说不得会影响一些性能。&lt;&#x2F;p&gt;
+&lt;p&gt;让我们一起看一下，有没有什么过渡的选项可以缓解这一尴尬的局面，进行一些有限的平衡。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;geng-kuai-geng-gao-geng-qiang-de-mold&quot;&gt;「更快、更高、更强」的 mold&lt;a class=&quot;zola-anchor&quot; href=&quot;#geng-kuai-geng-gao-geng-qiang-de-mold&quot; aria-label=&quot;Anchor link for: geng-kuai-geng-gao-geng-qiang-de-mold&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;是的，既然是链接器的问题，那么最简单的办法就是换一个。Rust 默认的 linker 选项设定的是 &lt;code&gt;cc&lt;&#x2F;code&gt;，这意味着会利用到 gnu 工具链中的 &lt;code&gt;ld&lt;&#x2F;code&gt;，尽管 gnu 在自由软件领域有着卓越的贡献，但以目前的经验而言，这并不是一个好的现代选择。它的一个有力的竞争者是 llvm 工具链中的 lld 。&lt;&#x2F;p&gt;
+&lt;p&gt;而到了今天，我们还有另外一个更加优越的候选人 —— 「&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;rui314&#x2F;mold&quot;&gt;mold&lt;&#x2F;a&gt;」，在实际使用中，表现出与 lld 相当、甚至超过的性能，并且使用更少的内存。&lt;&#x2F;p&gt;
+&lt;p&gt;该如何与 Rust 工具链结合使用呢，有这么两种方法：&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;mold -run&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;采用这种模式，可以帮助我们快速体验 mold ，这得益于内置的拦截机制，可以将指向 ld ，ld.lld ，ld.gold 的命令转向 mold 自身。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; With Make.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;mold&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;run&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; make&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;make-options-if-an&lt;&#x2F;span&gt;&lt;span&gt;y&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Or with Cargo.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;mold&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;run&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; cargo&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; &amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;cargo-options-if-an&lt;&#x2F;span&gt;&lt;span&gt;y&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;编辑 .cargo&#x2F;config.toml&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;添加下面的内容即可，如果是按 &lt;code&gt;sudo make install&lt;&#x2F;code&gt; 安装的，&lt;code&gt;path&#x2F;to&#x2F;mold&lt;&#x2F;code&gt; 大概率会指向 &lt;code&gt;&#x2F;usr&#x2F;local&#x2F;bin&#x2F;mold&lt;&#x2F;code&gt; 。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;toml&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;target&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;x86_64-unknown-linux-gnu&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;linker&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;clang&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;rustflags&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-C&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;link-arg=-fuse-ld=&#x2F;path&#x2F;to&#x2F;mold&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;chuan-xin-de-fu-hao-xiu-shi-fang-an&quot;&gt;船新的符号修饰方案&lt;a class=&quot;zola-anchor&quot; href=&quot;#chuan-xin-de-fu-hao-xiu-shi-fang-an&quot; aria-label=&quot;Anchor link for: chuan-xin-de-fu-hao-xiu-shi-fang-an&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;符号修饰，或者说 symbol mangling ，是现代计算机程序设计语言的编译器用于解决由于程序实体的名字必须唯一而导致的问题的一种技术。&lt;&#x2F;p&gt;
+&lt;p&gt;Rust 目前有一个自己设计符号修饰方案，&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;rust-lang&#x2F;rfcs&#x2F;pull&#x2F;2603&quot;&gt;rust-lang&#x2F;rfcs#2603&lt;&#x2F;a&gt;，通过启用这一方案，在有重复组件的情况下，会生成更小的符号。&lt;&#x2F;p&gt;
+&lt;p&gt;要想启用这一特性，同样有两种方法：&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;RUSTFLAGS&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;在目前最新的 Rust nightly 中，可以使用 &lt;code&gt;-C symbol-manging-version=v0&lt;&#x2F;code&gt; 这个 RUSTFLAG ，相对旧一点的版本可能需要使用 &lt;code&gt;-Z symbol-manging-version=v0&lt;&#x2F;code&gt; 。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;RUSTFLAGS=&quot;-C symbol-manging-version=v0&quot; cargo &lt;cargo-options-if-any&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;编辑 .cargo&#x2F;config.toml&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;添加下面的内容即可，如果报错，请试试 &lt;code&gt;-Z&lt;&#x2F;code&gt;：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;toml&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;target&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;nightly-x86_64-unknown-linux-gnu&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;rustflags&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-C&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;symbol-mangling-version=v0&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;huan-neng-zuo-shen-me&quot;&gt;还能做什么？&lt;a class=&quot;zola-anchor&quot; href=&quot;#huan-neng-zuo-shen-me&quot; aria-label=&quot;Anchor link for: huan-neng-zuo-shen-me&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;拆分成更小的单元，让编译每个部分的时候不会太吃力；或者去掉一些笨重的依赖，让它不那么费劲；或者对编译选项进行更多调整，进行针对性优化。&lt;&#x2F;p&gt;
+&lt;p&gt;好吧，今天就到这里咯，祝大家都能逃离 OOM ，换上更强悍的机器。&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;笑死，清理了半天依赖，还剩下不到 900 个。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>论文十问</title>
+        <published>2022-02-19T00:00:00+00:00</published>
+        <updated>2022-02-19T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/ten-questions-for-reading-a-paper/"/>
+        <id>https://psiace.me/zh/posts/ten-questions-for-reading-a-paper/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/ten-questions-for-reading-a-paper/">&lt;p&gt;最近有试着在读论文，由于自身积累问题，往往试图跳过其中艰深的部分，不能很好汲取其中的精华。&lt;&#x2F;p&gt;
+&lt;p&gt;最近看到沈向洋老师的 “论文十问”，觉得很有帮助，现摘抄如下：&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;lun-wen-shi-wen&quot;&gt;论文十问&lt;a class=&quot;zola-anchor&quot; href=&quot;#lun-wen-shi-wen&quot; aria-label=&quot;Anchor link for: lun-wen-shi-wen&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q1 论文试图解决什么问题？&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q2 这是否是一个新的问题？&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q3 这篇文章要验证一个什么科学假设？&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q4 有哪些相关研究？如何归类？谁是这一课题在领域内值得关注的研究员？&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q5 论文中提到的解决方案之关键是什么？&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q6 论文中的实验是如何设计的？&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q7 用于定量评估的数据集是什么？代码有没有开源？&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q8 论文中的实验及结果有没有很好地支持需要验证的科学假设？&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q9 这篇论文到底有什么贡献？&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+Q10 下一步呢？有什么工作可以继续深入？&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;yi-dian-e-wai-shuo-ming&quot;&gt;一点额外说明&lt;a class=&quot;zola-anchor&quot; href=&quot;#yi-dian-e-wai-shuo-ming&quot; aria-label=&quot;Anchor link for: yi-dian-e-wai-shuo-ming&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;需要正确区分问题之间的边界，既要讲出关键，又不能车轱辘话来回滚。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;尽量使用原文中的表达，并帮助没有前置知识的读者理解主题。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;十答应当能够表达清楚论文的主要工作和贡献。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>在 Fedora 上为 Btrfs 新建 32GiB Swapfile</title>
+        <published>2022-01-23T00:00:00+00:00</published>
+        <updated>2022-01-23T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/btrfs-32gib-swapfile-on-fedora/"/>
+        <id>https://psiace.me/zh/posts/btrfs-32gib-swapfile-on-fedora/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/btrfs-32gib-swapfile-on-fedora/">&lt;p&gt;受到 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&#x2F;pull&#x2F;3946&quot;&gt;Databend - set swap to 10G&lt;&#x2F;a&gt; 的感召，检查了一下自己本子的 Swap ，只有大概 8G 的 zram 。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;~&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ swapon -s&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;Filename&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;        Type&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;       Size&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;       Used&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;    Priority&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;&#x2F;dev&#x2F;zram0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;      partition&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;  8388604&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;    0&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;       100&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;完蛋，不能顺利跑完 grcov 限定版 unit-test 的原因大概就在这里了（之前有讨论过是 OOM）。本着「大就是好，多就是美」的原则，决定给它来个超级加倍，再塞个 32 GiB 的 Swapfile 上去。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;btrfs-xian-ding-zhi-chu-shi-hua-swapfile&quot;&gt;Btrfs 限定之初始化 Swapfile&lt;a class=&quot;zola-anchor&quot; href=&quot;#btrfs-xian-ding-zhi-chu-shi-hua-swapfile&quot; aria-label=&quot;Anchor link for: btrfs-xian-ding-zhi-chu-shi-hua-swapfile&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;自 5.0 内核之后，Btrfs 才支持创建 Swapfile ，而且有一些特别的要求：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Swapfile 不能放在 snapshotted subvolume （快照子卷）上。&lt;&#x2F;li&gt;
+&lt;li&gt;不支持跨多设备文件系统上的 Swapfile 。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;所以正确的做法是：新建一个 non-snapshotted subvolume ，然后在该子卷之下创建禁用压缩的 Swapfile 。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Create a non-snapshotted subvolume.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora &#x2F;&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ sudo btrfs subvolume create swap&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;Create&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; subvolume&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;.&#x2F;swap&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Enter the subvolume.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora &#x2F;&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ cd swap&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Create a zero-length swapfile.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora swap&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ sudo truncate -s 0 .&#x2F;swapfile&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Set the swapfile attribute to avoid copy-on-write.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora swap&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ sudo chattr +C .&#x2F;swapfile&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Disable compression.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora swap&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ sudo btrfs property set .&#x2F;swapfile compression none&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;注意，这些需要在系统根目录下完成，以避免权限问题和设置问题。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;she-ding-swapfile-zuo-wei-swap-cheng-fen-zhi-yi&quot;&gt;设定 Swapfile 作为 Swap 成分之一&lt;a class=&quot;zola-anchor&quot; href=&quot;#she-ding-swapfile-zuo-wei-swap-cheng-fen-zhi-yi&quot; aria-label=&quot;Anchor link for: she-ding-swapfile-zuo-wei-swap-cheng-fen-zhi-yi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Swapfile 是创建特定交换分区的一种替代方案，好处是方便创建和删除、也便于动态变更大小。&lt;&#x2F;p&gt;
+&lt;p&gt;这种方案比较适合 SSD 空间充裕的情况。刚好可以组成一个 memory -&amp;gt; zram -&amp;gt; swapfile 的多级交换。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Fill the swapfile to a suitable size, usually half of memory or close to memory size.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; This is only for fun, so I chose a huge 32GiB, which is admittedly wasteful.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora swap&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ sudo dd&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; if&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;v&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;z&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;r&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; of&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;w&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;p&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;f&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;i&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;l&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; bs&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;1&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;M&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; count&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;3&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;2&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;7&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;6&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;8&lt;&#x2F;span&gt;&lt;span class=&quot;z-variable z-other&quot;&gt; status&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;p&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;r&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;g&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;r&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;33980153856&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; bytes&lt;&#x2F;span&gt;&lt;span&gt; (34&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; GB,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 32&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; GiB&lt;&#x2F;span&gt;&lt;span&gt;) copied, 20 s, 1.7 GB&#x2F;s&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;32768+0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; records&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; in&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;32768+0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; records&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; out&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;34359738368&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; bytes&lt;&#x2F;span&gt;&lt;span&gt; (34&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; GB,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 32&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; GiB&lt;&#x2F;span&gt;&lt;span&gt;) copied, 21.2624 s, 1.6 GB&#x2F;s&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Set correct permissions.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora swap&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ sudo chmod 600 .&#x2F;swapfile&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Format the swapfile as swap.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora swap&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ sudo mkswap .&#x2F;swapfile&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;Setting&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; up&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; swapspace&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; version&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; 1,&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; size&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 32&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; GiB&lt;&#x2F;span&gt;&lt;span&gt; (34359734272&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; bytes&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;no&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; label,&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; UUID=2e48f371-62a9-487a-9613-382b386b2836&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Enable the swapfile and set its priority.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Since zram has priority 100, set this to 50. After all, zram is much faster than a swapfile.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora swap&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ sudo swapon --priority 50 .&#x2F;swapfile&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;jian-cha-swap-kong-jian-bing-she-zhi-zi-dong-gua-zai&quot;&gt;检查 Swap 空间并设置自动挂载&lt;a class=&quot;zola-anchor&quot; href=&quot;#jian-cha-swap-kong-jian-bing-she-zhi-zi-dong-gua-zai&quot; aria-label=&quot;Anchor link for: jian-cha-swap-kong-jian-bing-she-zhi-zi-dong-gua-zai&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;那么，经过之前两步，已经得到了接近 40GiB 的 Swap 空间，接下来就是检查一下，并设置挂载。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Use free to check the overview.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;~&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ free -m&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;               total&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;        used&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;        free&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;      shared&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;  buff&#x2F;cache&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;   available&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;Mem:&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;           15453&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;        5206&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;         290&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;         109&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;        9956&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;        9808&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;Swap:&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;          40959&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;           2&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;       40957&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Use swapon to check details.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;~&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ swapon -s&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;Filename&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;        Type&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;       Size&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;       Used&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;    Priority&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;&#x2F;dev&#x2F;zram0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;      partition&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;  8388604&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;    2560&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;    100&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;&#x2F;swap&#x2F;swapfile&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;  file&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;       33554428&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;   0&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;       50&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Edit fstab and add an entry to mount it.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; The subvolume name must be included here. UUID is optional.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span&gt;psiace@fedora &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;~&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;$ sudo nano &#x2F;etc&#x2F;fstab&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;&#x2F;swap&#x2F;swapfile&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;    none&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;    swap&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;    defaults&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;    0&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;    0&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;can-kao-zi-liao&quot;&gt;参考资料&lt;a class=&quot;zola-anchor&quot; href=&quot;#can-kao-zi-liao&quot; aria-label=&quot;Anchor link for: can-kao-zi-liao&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;笑死，一个多年 Fedora 用户看的文档大多都来自 Arch Wiki 。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;https:&#x2F;&#x2F;wiki.archlinux.org&#x2F;title&#x2F;Improving_performance#zram_or_zswap&lt;&#x2F;li&gt;
+&lt;li&gt;https:&#x2F;&#x2F;wiki.archlinux.org&#x2F;title&#x2F;Btrfs#Swap_file&lt;&#x2F;li&gt;
+&lt;li&gt;https:&#x2F;&#x2F;wiki.archlinux.org&#x2F;title&#x2F;Swap#Swap_file_creation&lt;&#x2F;li&gt;
+&lt;li&gt;https:&#x2F;&#x2F;wiki.archlinux.org&#x2F;title&#x2F;Fstab&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;克制 Rust 编译大型项目时 OOM 还有一些小技巧，也许下次可以水一点内容。&lt;&#x2F;p&gt;
+&lt;p&gt;我没有摸鱼！（手动狗头）&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>2021 年度总结 - Life is not a struggle</title>
+        <published>2022-01-01T00:00:00+00:00</published>
+        <updated>2022-01-01T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/2021-life-is-not-a-struggle/"/>
+        <id>https://psiace.me/zh/posts/2021-life-is-not-a-struggle/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/2021-life-is-not-a-struggle/">&lt;p&gt;说是年度总结，却是在 2022 的第一天夜里才匆匆写几句，就是留个念头。&lt;&#x2F;p&gt;
+&lt;p&gt;2021 年首要的关键字就是 &lt;strong&gt;「工作」&lt;&#x2F;strong&gt; 咯，从 7 月份入职，整整半年过去，应该算是顺利成为职场新人了。非常感谢 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;BohuTANG&quot;&gt;@BohuTANG&lt;&#x2F;a&gt; 和 Datafuse Labs，让我有机会体验「全职开源 + 远程办公」的生活。成功凑了不少 commits 在 GitHub 上，还要继续努力才行。&lt;&#x2F;p&gt;
+&lt;p&gt;回过头看看 2021 上半年，几乎就只有两次答辩的时候去了一段时间学校，感觉确实是离校园生活越来越远了。中间五月份因为扭伤比较严重，在床上躺了将近一个月，想起来还挺怨念的。不知道能不能有机会边工作边读读书（xs，总想着回炉重造是怎么回事）。&lt;&#x2F;p&gt;
+&lt;p&gt;总之呢，2021 已经过去了。「Life is not a struggle」，希望自己能够与生活和解。新的一年，不要那么贪心，做好每一件事情，扎扎实实投入到学习和工作之中。&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;另，昨天发了好多遍「早睡早起」，然而还是没做到 :(&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>Arch Linux 初始服务器设置</title>
+        <published>2018-09-11T00:00:00+00:00</published>
+        <updated>2018-09-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/init-server-setup-with-archlinux/"/>
+        <id>https://psiace.me/zh/posts/init-server-setup-with-archlinux/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/init-server-setup-with-archlinux/">&lt;p&gt;&lt;strong&gt;本文所涉步骤仅在阿里云上进行了验证，但应当同样适用于其它云服务供应商。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;part-0-qian-yan&quot;&gt;Part 0：前言&lt;a class=&quot;zola-anchor&quot; href=&quot;#part-0-qian-yan&quot; aria-label=&quot;Anchor link for: part-0-qian-yan&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;我刚刚完成从 Red Hat 系（Fedora, CentOS）&lt;del&gt;完全&lt;&#x2F;del&gt;迁移到 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;www.archlinux.org&#x2F;&quot;&gt;Arch Linux&lt;&#x2F;a&gt; 的过程，这并不算是一个十分稳妥的选择，因为 Red Hat 系向来以高可靠性著称，即便是被称作试验田的 Fedora 也很少会因为稀奇古怪的问题而崩溃。但是，Arch Linux 作为一个滚动更新的发行版，它可以满足我对新鲜事物的好奇，并且该发行版提供的 Arch Wiki 以及 AUR 确实是值得我喜爱。&lt;&#x2F;p&gt;
+&lt;p&gt;在将桌面系统更换为 Manjaro Linux（一个基于 Arch Linux 的发行版，便于上手）之后，我开始准备将我在阿里云的 ECS 实例也切换到 Arch Linux 上。在这里有一个小小的争论，因为大部分人认为这不是一个稳妥的选择，频繁更新造成的不稳定，以及需要重启以确保它可以正常启用服务。但另一方面，使用 Arch Linux 的好处同样很明显，时刻最新有助于安全性的提升，丰富的软件和优秀的用户群在各个方面提供帮助（是的，而且我觉得他们足够活跃，这至少意味着你的问题可以得到更加及时的回应），最重要的，百科全书式的 Arch Wiki（在所有 GNU&#x2F;Linux 系统里，只有两个在相关方面如此出色，另一个是 Gentoo）。我知道这并不足以说服那些追求稳定服务的运维人员，但至少我说服了我自己。值得一提的是 Arch Linux 的官网是运行在 Arch Linux 服务器上的。&lt;&#x2F;p&gt;
+&lt;p&gt;好吧，让我们开始！&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;part-1-shi-yong-vps2arch-chuang-jian-arch-linux-fu-wu-qi&quot;&gt;Part 1：使用 vps2arch 创建 Arch Linux 服务器&lt;a class=&quot;zola-anchor&quot; href=&quot;#part-1-shi-yong-vps2arch-chuang-jian-arch-linux-fu-wu-qi&quot; aria-label=&quot;Anchor link for: part-1-shi-yong-vps2arch-chuang-jian-arch-linux-fu-wu-qi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;说实在的，我更喜欢 Vultr，因为它提供的操作系统版本更新，而且有我一直喜爱的 Fedora。不过这都不重要了，因为它们都不直接支持 Arch Linux，我正在考虑要不要添加它的徽标到正在设计的网站上，这样一定会吸引不少人的目光。&lt;&#x2F;p&gt;
+&lt;p&gt;创建自定义镜像是一件麻烦的工作，它需要花费一定的时间，而且并不是一项对新手友好的事情。好在，我们有 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;gitlab.com&#x2F;drizzt&#x2F;vps2arch&#x2F;&quot;&gt;vps2arch&lt;&#x2F;a&gt;，感谢 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;gitlab.com&#x2F;drizzt&quot;&gt;@drizzt&lt;&#x2F;a&gt; 以及其他贡献者所作出的努力。在一个初始创建为 CentOS 7.4 的 ECS 实例上，我们仅仅需要执行三条命令，接下来就可以完全按照提示进行了。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;注意，一切数据将会被清空，但将保留你的 root 密码并提供一个支持 SSH 的基础系统。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;wget&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; http:&#x2F;&#x2F;tinyurl.com&#x2F;vps2arch&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;chmod&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; +x&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; vps2arch&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;.&#x2F;vps2arch&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;重启之后，你将进入到 Arch Linux 中，一切都准备好了。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;part-2-cai-qu-yi-xie-pei-zhi-bu-zou-zuo-wei-ji-ben-she-zhi-de-yi-bu-fen&quot;&gt;Part 2：采取一些配置步骤作为基本设置的一部分&lt;a class=&quot;zola-anchor&quot; href=&quot;#part-2-cai-qu-yi-xie-pei-zhi-bu-zou-zuo-wei-ji-ben-she-zhi-de-yi-bu-fen&quot; aria-label=&quot;Anchor link for: part-2-cai-qu-yi-xie-pei-zhi-bu-zou-zuo-wei-ji-ben-she-zhi-de-yi-bu-fen&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;yuan-cheng-ssh-lian-jie&quot;&gt;远程 SSH 连接&lt;a class=&quot;zola-anchor&quot; href=&quot;#yuan-cheng-ssh-lian-jie&quot; aria-label=&quot;Anchor link for: yuan-cheng-ssh-lian-jie&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;你可以先在本地尝试一下 &lt;code&gt;ssh root@your.ecs.ip.address&lt;&#x2F;code&gt;，如果你此前没有使用过 SSH 连接，它可能是可用的。但如果用过，则会出现一大段警告，并无法连接。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;Someone could be eavesdropping on you right now (man-in-the-middle attack)!&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;It is also possible that a host key has just been changed.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;这个时候，我们需要使用 &lt;code&gt;ssh-keygen -R your.ecs.ip.address&lt;&#x2F;code&gt; 来清除产生冲突的旧密钥。再重新进行连接。厌倦了每次输入密码？那么考虑在本地使用 &lt;code&gt;ssh-copy-id username@your.ecs.ip.address&lt;&#x2F;code&gt; 将公钥添加到服务器中。之后，你应当可以直接连接到 ECS 实例。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;chuang-jian-fei-root-yong-hu-bing-cai-yong-sudo-shou-yu-guan-li-quan-xian&quot;&gt;创建非 ROOT 用户并采用 SUDO 授予管理权限&lt;a class=&quot;zola-anchor&quot; href=&quot;#chuang-jian-fei-root-yong-hu-bing-cai-yong-sudo-shou-yu-guan-li-quan-xian&quot; aria-label=&quot;Anchor link for: chuang-jian-fei-root-yong-hu-bing-cai-yong-sudo-shou-yu-guan-li-quan-xian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;使用 SSH 连接到你的服务器。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;useradd newusername&lt;&#x2F;code&gt; 将添加一个名为 newusername 的用户，而 &lt;code&gt;passwd newusername&lt;&#x2F;code&gt; 将为他设置密码。&lt;&#x2F;p&gt;
+&lt;p&gt;接下来需要创建用户主目录并赋权，否则在你切换到新用户后仍然停留在根目录里（命令行提示会指出）。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;mkdir&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; &#x2F;home&#x2F;newusername&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;chown&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; newusername:newusername&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; &#x2F;home&#x2F;newusername&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;为了能够给新建用户授予管理权限，我们首先要安装 sudo 并编辑 &lt;code&gt;&#x2F;etc&#x2F;sudoers&lt;&#x2F;code&gt; 文件。&lt;code&gt;pacman -S sudo&lt;&#x2F;code&gt; 安装 sudo，&lt;code&gt;chmod u+w &#x2F;etc&#x2F;sudoers&lt;&#x2F;code&gt; 增加写权限；采用 &lt;code&gt;vi &#x2F;etc&#x2F;sudoers&lt;&#x2F;code&gt; 编辑，在 &lt;code&gt;root ALL=(ALL) ALL&lt;&#x2F;code&gt; 下面一行添加 &lt;code&gt;newusername ALL=(ALL) ALL&lt;&#x2F;code&gt;，保存退出；&lt;code&gt;chmod u-w &#x2F;etc&#x2F;sudoers&lt;&#x2F;code&gt; 撤销写权限。&lt;&#x2F;p&gt;
+&lt;p&gt;采用 &lt;code&gt;su - newusername&lt;&#x2F;code&gt; 切换用户到 newusername。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;ji-ben-fang-huo-qiang&quot;&gt;基本防火墙&lt;a class=&quot;zola-anchor&quot; href=&quot;#ji-ben-fang-huo-qiang&quot; aria-label=&quot;Anchor link for: ji-ben-fang-huo-qiang&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;iptables 已经被安装到了 Arch Linux 中，如果你不是很喜欢使用这个复杂的配置工具，我们可以选择使用 ufw 来进行接下来的步骤。（阿里云的安全组特性已经提供了类似防火墙的访问控制功能，但我认为服务器端也应该做出控制）&lt;&#x2F;p&gt;
+&lt;p&gt;此时我们只需要确保防火墙允许 SSH 可以正常连接。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; pacman&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;S&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ufw&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ufw&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; app&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; list&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ufw&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; allow&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; SSH&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ufw&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; enable&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;此时防火墙已经开启，使用 &lt;code&gt;sudo ufw status&lt;&#x2F;code&gt; 可以查看当前状态。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;Status: active&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;To                         Action      From&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;--                         ------      ----&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;SSH                        ALLOW       Anywhere&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;SSH (v6)                   ALLOW       Anywhere (v6)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;pu-tong-yong-hu-de-ssh-fang-wen&quot;&gt;普通用户的 SSH 访问&lt;a class=&quot;zola-anchor&quot; href=&quot;#pu-tong-yong-hu-de-ssh-fang-wen&quot; aria-label=&quot;Anchor link for: pu-tong-yong-hu-de-ssh-fang-wen&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;你应当可以用类似 ROOT 用户的方法通过 SSH 登录到远程服务器，&lt;code&gt;ssh newusername@your.ecs.ip.address&lt;&#x2F;code&gt;，输入密码。&lt;&#x2F;p&gt;
+&lt;p&gt;本地采用上面提到的 &lt;code&gt;ssh-copy-id&lt;&#x2F;code&gt; 命令可以帮助你启用密钥身份验证。&lt;&#x2F;p&gt;
+&lt;p&gt;如果你在 root 用户下已经启用了 SSH 密钥验证，可以通过 rsync 将其复制到普通用户的目录下。（这里假设你仍是上面的普通用户）&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; pacman&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;S&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; rsync&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;mkdir&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; .ssh&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; su&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; root&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;rsync&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;-archive&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;-chown=newusername:newusername&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ~&#x2F;.ssh&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; &#x2F;home&#x2F;newusername&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;最后一条语句经测试只能在 root 用户下使用，采用 sudo 指令不可行。&lt;&#x2F;p&gt;
+&lt;p&gt;关闭连接，采用 &lt;code&gt;ssh newusername@your.ecs.ip.address&lt;&#x2F;code&gt;，这时应该可以正常使用密钥验证。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;part-3-jie-xia-lai&quot;&gt;Part 3：接下来...&lt;a class=&quot;zola-anchor&quot; href=&quot;#part-3-jie-xia-lai&quot; aria-label=&quot;Anchor link for: part-3-jie-xia-lai&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;基本的服务器配置已经处理好了，你可以着手去做你想要做的事情，或许从 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Kickball&#x2F;awesome-selfhosted&quot;&gt;Awesome Selfhosted&lt;&#x2F;a&gt; 中挑选一个自托管服务是一个不错的选择。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>在 Linux 上运行 MASM 汇编</title>
+        <published>2018-09-06T00:00:00+00:00</published>
+        <updated>2018-09-06T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/masm-on-linux/"/>
+        <id>https://psiace.me/zh/posts/masm-on-linux/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/masm-on-linux/">&lt;p&gt;在 Linux 环境下使用汇编，使用 NASM 或是 GNU AS 无疑会方便很多，但国内的课程大多采用 MASM 进行讲解和作业，为了适应课堂需要，我们需要配置学习环境。&lt;&#x2F;p&gt;
+&lt;p&gt;首先，使用最喜欢的包管理工具安装 DOSBox，例如 &lt;code&gt;sudo dnf install dosbox&lt;&#x2F;code&gt;。该软件是一个使用 SDL 库的 DOS 模拟程序，可以再现一个 MS-DOS 兼容环境。&lt;&#x2F;p&gt;
+&lt;p&gt;其次，你需要准备使用的 MASM 软件，通常情况下，教师会为你提供 MASM 5.0 上机学习环境（包括 MASM.EXE LINK.EXE LIB.EXE 以及 CREF.EXE），这是可以在 DOS 环境下运行的几个版本之一，请下载它。当然你也可以自行寻找其它合适版本的 MASM，并找出这些程序。&lt;&#x2F;p&gt;
+&lt;p&gt;接下来，把你找到的程序（至少包括 MASM.EXE LINK.EXE LIB.EXE 以及 CREF.EXE）放入 &lt;code&gt;~&#x2F;.dosbox&#x2F;MASM&lt;&#x2F;code&gt; 之中（需要在 &lt;code&gt;.dosbox&lt;&#x2F;code&gt; 下新建），然后在 &lt;code&gt;~&#x2F;.dosbox&#x2F;dosbox-0.74.conf&lt;&#x2F;code&gt; 中的 &lt;code&gt;[autoexec]&lt;&#x2F;code&gt; 部分录入：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[autoexec]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;# Lines in this section will be run at startup.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;# You can put your MOUNT lines here.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;MOUNT c &#x2F;home&#x2F;yourusername&#x2F;.dosbox&#x2F;MASM&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;set PATH= %PATH%;c:\;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;mount E &#x2F;home&#x2F;yourusername&#x2F;asm&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;E:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;好了，我们的安装准备已经完成，接下来是测试时间。&lt;&#x2F;p&gt;
+&lt;p&gt;在你上面选择存放 &lt;code&gt;.asm&lt;&#x2F;code&gt; 的文件中新建 &lt;code&gt;hello.asm&lt;&#x2F;code&gt;，将 hello world 例程录入：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;asm&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;assume &lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;cs&lt;&#x2F;span&gt;&lt;span&gt;:codes, &lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;ds&lt;&#x2F;span&gt;&lt;span&gt;:datas&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;datas segment&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        str&lt;&#x2F;span&gt;&lt;span class=&quot;z-storage z-type&quot;&gt; db&lt;&#x2F;span&gt;&lt;span&gt; &amp;#39;hello,world&amp;#39;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;13&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;,&amp;#39;$&amp;#39;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;datas ends&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;codes segment&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;    start&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        mov&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; ax&lt;&#x2F;span&gt;&lt;span&gt;, datas&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        mov&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; ds&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;ax&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        lea&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; dx&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;str&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        mov&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; ah&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;9&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        int&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 21h&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        mov&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; ah&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;4ch&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        int&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 21h&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;codes ends&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    end start&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;打开 DOSBox，在命令行依次执行 &lt;code&gt;masm hello.asm&lt;&#x2F;code&gt;、&lt;code&gt;link hello.obj&lt;&#x2F;code&gt; 以及 &lt;code&gt;hello.exe&lt;&#x2F;code&gt;。如果配置成功，程序会输出 &lt;code&gt;hello,world&lt;&#x2F;code&gt;，这意味着我们的 MASM 学习环境已经配置成功了。&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;9 月 24 日补充：&lt;&#x2F;p&gt;
+&lt;p&gt;关于 &lt;code&gt;~&#x2F;.dosbox&#x2F;dosbox-0.74.conf&lt;&#x2F;code&gt; 的设置：&lt;code&gt;MOUNT c path&#x2F;to&#x2F;your&#x2F;folder&lt;&#x2F;code&gt; 是指定 C 盘的位置，所以完全可以用其他位置来代替。&lt;code&gt;set PATH= %PATH%;c:\;&lt;&#x2F;code&gt; 一句设定了环境变量。&lt;&#x2F;p&gt;
+&lt;p&gt;关于 DEBUG 程序：直接放置到 C 盘目录之下即可，输入 &lt;code&gt;debug&lt;&#x2F;code&gt; 即可运行。&lt;&#x2F;p&gt;
+&lt;p&gt;关于下载：可以在 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;http:&#x2F;&#x2F;www.phatcode.net&quot;&gt;http:&#x2F;&#x2F;www.phatcode.net&lt;&#x2F;a&gt; 找到相关内容。下载后直接解压，然后找出你所需要的内容放置在 C 盘下即可。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>尝试使用 Jekyll 与 GitHub Pages</title>
+        <published>2018-07-14T00:00:00+00:00</published>
+        <updated>2018-07-14T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/try-jekyll-with-github/"/>
+        <id>https://psiace.me/zh/posts/try-jekyll-with-github/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/try-jekyll-with-github/">&lt;p&gt;&lt;em&gt;本文将帮助你快速入门，为了避免在介绍上花费过多时间，部分内容请感兴趣的同学自己查看官方网站和文档。&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;jekyllrb.com&quot;&gt;Jekyll&lt;&#x2F;a&gt; 是一个优秀的静态站点生成器，&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;pages.github.com&quot;&gt;GitHub Pages&lt;&#x2F;a&gt; 是 &lt;strong&gt;GitHub&lt;&#x2F;strong&gt; 提供的静态页面托管服务。使用这些，我们可以轻松地为项目&#x2F;组织构建网站，也可以发布自己的博客和简历。&lt;&#x2F;p&gt;
+&lt;p&gt;同时使用 Jekyll 和 GitHub Pages 的一个最大的好处是你可以只关注内容，这是由于有很多优秀的设计师和开发人员为 Jekyll 制作了大量的美观实用的主题，而 GitHub 为我们节约了购置服务器的经费。唯一的限制可能仅仅是我们需要一些第三方服务来提供诸如评论和在线表单这样的功能。&lt;&#x2F;p&gt;
+&lt;p&gt;本文会介绍以下几个方面的内容：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;本地部署 Jekyll&#x2F;GitHub Pages 环境&lt;&#x2F;li&gt;
+&lt;li&gt;启用 GitHub Pages 的用户页面服务&lt;&#x2F;li&gt;
+&lt;li&gt;使用优秀的 Jekyll Theme&lt;&#x2F;li&gt;
+&lt;li&gt;Jekyll Theme 的组织结构&lt;&#x2F;li&gt;
+&lt;li&gt;一些第三方服务和个性化配置&lt;&#x2F;li&gt;
+&lt;li&gt;将你的页面发布 :)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;好吧，让我们现在就开始，玩的开心～&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;ben-di-bu-shu-jekyll-github-pages-huan-jing&quot;&gt;本地部署 Jekyll&#x2F;GitHub Pages 环境&lt;a class=&quot;zola-anchor&quot; href=&quot;#ben-di-bu-shu-jekyll-github-pages-huan-jing&quot; aria-label=&quot;Anchor link for: ben-di-bu-shu-jekyll-github-pages-huan-jing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;首先我们需要一台联网的计算机，当然，如果没有也不用担心，我会考虑在后面添加如何使用手机来完成这项工作。&lt;&#x2F;p&gt;
+&lt;p&gt;首先，你需要安装 Ruby 语言环境，这里提供 Fedora 系统上的命令行安装方法：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; dnf&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; install&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ruby&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ruby-devel&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;如果你使用的是 Ubuntu 系统，只需要把命令换成：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; apt-get&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; install&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ruby&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; ruby-dev&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;至于 &lt;code&gt;[Y&#x2F;N]&lt;&#x2F;code&gt; 我们当然是选择 Y :)&lt;&#x2F;p&gt;
+&lt;p&gt;如果你在使用 Windows 或是其它操作系统，请参考 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;www.ruby-lang.org&quot;&gt;Ruby 官网&lt;&#x2F;a&gt;，你可以很轻易得到安装办法。&lt;&#x2F;p&gt;
+&lt;p&gt;接下来，使用 GitHub Pages 推荐的依赖方式创建本地环境。可以先安装 Bundler，然后在项目中通过 &lt;code&gt;github-pages&lt;&#x2F;code&gt; 这个 gem 对齐 GitHub Pages 环境：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;gem&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; install&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; bundler&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;mkdir&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; myblog&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;cd&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; myblog&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;bundle&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; init&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;在 &lt;code&gt;Gemfile&lt;&#x2F;code&gt; 中添加：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;gem &lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;github-pages&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; group&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;:&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; :&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;jekyll_plugins&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;然后执行：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;bundle&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; install&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;bundle&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; exec&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; jekyll&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; new&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; .&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;-force&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;bundle&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; exec&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; jekyll&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; serve&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;不直接使用 &lt;code&gt;gem install bundler jekyll&lt;&#x2F;code&gt; 的原因只是我们想要构建一个与 GitHub Pages 完全相同的环境。&lt;&#x2F;p&gt;
+&lt;p&gt;在浏览器中输入它提供的地址（也许是 &lt;code&gt;http:&#x2F;&#x2F;localhost:4000&lt;&#x2F;code&gt; 或是 &lt;code&gt;http:&#x2F;&#x2F;127.0.0.1:4000&#x2F;&lt;&#x2F;code&gt;），你就可以看到一个官方提供的模板。&lt;&#x2F;p&gt;
+&lt;p&gt;如果你喜欢它，可以直接在这个上开始工作，打开文件夹，在 &lt;code&gt;_posts&lt;&#x2F;code&gt; 目录下以 &lt;code&gt;yyyy-mm-dd-title.md&lt;&#x2F;code&gt; 按示例新建文件，编辑内容，然后就可以在页面上看到更改了，稍后我会额外介绍这些内容。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;qi-yong-github-pages-de-yong-hu-ye-mian-fu-wu&quot;&gt;启用 GitHub Pages 的用户页面服务&lt;a class=&quot;zola-anchor&quot; href=&quot;#qi-yong-github-pages-de-yong-hu-ye-mian-fu-wu&quot; aria-label=&quot;Anchor link for: qi-yong-github-pages-de-yong-hu-ye-mian-fu-wu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;如果你还没有 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&quot;&gt;GitHub&lt;&#x2F;a&gt; 的账号，我强烈推荐你注册一个，因为这是世界上最为活跃的&lt;del&gt;同性&lt;&#x2F;del&gt;交友社区之一 :) 只要访问主页，你就可以找到入口。&lt;&#x2F;p&gt;
+&lt;p&gt;我强烈建议你参考 GitHub 的官方文档，它非常详细地介绍了所有你可能想要了解的内容。当然，你需要一点阅读英文文档的能力，至少要能够使用翻译。&lt;&#x2F;p&gt;
+&lt;p&gt;好了，现在你已经有了 GitHub 的账号，通常情况下，我会建议你创建一个名为 &lt;code&gt;yourusername.github.io&lt;&#x2F;code&gt; 的存储库（请容许它使用 README 文档对存储库进行初始化，特别是当你打算试验而没有准备好内容），这样你就可以获得一个由 GitHub 友情提供的子域名，所有在主分支（&lt;code&gt;master&lt;&#x2F;code&gt;）的符合要求的内容都将被重构并发布，通常情况下，你可以在浏览器访问 &lt;code&gt;https:&#x2F;&#x2F;yourusername.github.io&lt;&#x2F;code&gt;，然后看到 &lt;code&gt;README.md&lt;&#x2F;code&gt; 被转化后的内容。&lt;&#x2F;p&gt;
+&lt;p&gt;如果它没有正常显示或者你想在其它存储库启用 GitHub Pages，请打开存储库的 &lt;code&gt;Settings&lt;&#x2F;code&gt; 然后根据提示操作。如果你觉得页面光秃秃，可以通过 &lt;code&gt;Choose a theme&lt;&#x2F;code&gt; 来选择一个官方主题，但这不是必要的，因为我们接下来会介绍一些关于使用优秀的 Jekyll 主题和进一步定制的内容。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;shi-yong-you-xiu-de-jekyll-theme&quot;&gt;使用优秀的 Jekyll Theme&lt;a class=&quot;zola-anchor&quot; href=&quot;#shi-yong-you-xiu-de-jekyll-theme&quot; aria-label=&quot;Anchor link for: shi-yong-you-xiu-de-jekyll-theme&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;造轮子是一件有意思的工作，但它往往需要花费大量的时间，而且一个好的想法可能需要经过大量的调试才能正常工作，如果你不满足于 Jekyll 的几个默认主题，那么我建议你试着使用一些优秀的 Jekyll 主题，它们往往实现了以下功能：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;响应式布局&lt;&#x2F;li&gt;
+&lt;li&gt;良好的文件结构&lt;&#x2F;li&gt;
+&lt;li&gt;标签云&#x2F;文章分类&lt;&#x2F;li&gt;
+&lt;li&gt;优化的 SEO 设置&lt;&#x2F;li&gt;
+&lt;li&gt;第三方评论&#x2F;统计插件支持&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;从优秀的 Jekyll 主题开始可以让你更专注于文章本身，而不是看上去数目众多的 CSS 代码 :)&lt;&#x2F;p&gt;
+&lt;p&gt;这里我特别推荐三个主题：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Huxpro&#x2F;huxblog-boilerplate&quot;&gt;Huxblog-Boilerplate&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;，by &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Huxpro&#x2F;&quot;&gt;@Huxpro&lt;&#x2F;a&gt;，Apache License v2.0&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Simpleyyt&#x2F;jekyll-theme-next&quot;&gt;Jekyll NexT&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;，by &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Simpleyyt&#x2F;&quot;&gt;@Simpleyyt&lt;&#x2F;a&gt;，Unknown&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;renyuanz&#x2F;leonids&quot;&gt;Leonids&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;，by &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;renyuanz&#x2F;&quot;&gt;@renyuanz&lt;&#x2F;a&gt;，MIT License&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;点击主题名，你将跳转到它们的存储库，请选择你所喜欢的主题下载。&lt;&#x2F;p&gt;
+&lt;p&gt;相信我，我们可以完全避开 Git 以及它的命令行工具，如果你不想跳过这些，那么你可能需要另外查看其它文章，我暂时没有介绍这些的计划。&lt;&#x2F;p&gt;
+&lt;p&gt;如果你想查找更多主题，我强烈建议你查看 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;http:&#x2F;&#x2F;jekyllthemes.org&quot;&gt;Jekyll Themes&lt;&#x2F;a&gt;，请从中挑选你喜欢的那个。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;jekyll-theme-de-zu-zhi-jie-gou&quot;&gt;Jekyll Theme 的组织结构&lt;a class=&quot;zola-anchor&quot; href=&quot;#jekyll-theme-de-zu-zhi-jie-gou&quot; aria-label=&quot;Anchor link for: jekyll-theme-de-zu-zhi-jie-gou&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;我注意到我此前并没有提示如何使用这些 Jekyll 主题，其实很简单：&lt;code&gt;cd your-jekyll-theme&lt;&#x2F;code&gt;、&lt;code&gt;bundler install&lt;&#x2F;code&gt;、&lt;code&gt;jekyll serve&lt;&#x2F;code&gt;，同样你可以在浏览器得到一个本地预览的版本。即便你使用的命令没有包含 &lt;code&gt;--watch&lt;&#x2F;code&gt; 选项，内容的构建仍然会是实时的。&lt;&#x2F;p&gt;
+&lt;p&gt;我知道你已经受够了空荡荡的主题或是为了演示而填充的没意义的内容以及我的啰嗦，但请再稍稍忍耐一下，这里会谈到 Jekyll Theme 的组织结构和一些简单的内容组织方式，这将有助于你下一步修改&#x2F;配置主题。&lt;&#x2F;p&gt;
+&lt;p&gt;来吧，让我们用文件管理器或是你喜欢的文本编辑器打开你选定的主题所在的文件夹，看看里面有什么宝贝。&lt;&#x2F;p&gt;
+&lt;p&gt;通常情况下，Jekyll Theme 会是下面所示的结构：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;├── _config.yml&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;├── _drafts&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|   ├── begin-with-the-crazy-ideas.md&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|   └── sample-and-test.markdown&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;├── _includes&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|   ├── footer.html&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|   └── header.html&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;├── _layouts&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|   ├── default.html&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|   └── post.html&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;├── _posts&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|   ├── 2015-10-29-how-to-begin.textile&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|   └── 2013-04-26-hello-world.md&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;├── _data&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|   └── members.yml&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;├── _site&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;└── index.html&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;_config.yml&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;保存配置数据。很多配置选项都会直接从命令行中进行设置，但是如果你把那些配置写在这儿，你就不用非要去记住那些命令了。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;_drafts&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;drafts 是未发布的文章。这些文件的格式中都没有 &lt;code&gt;title.MARKUP&lt;&#x2F;code&gt; 数据。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;_includes&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;你可以加载这些包含部分到你的布局或者文章中以方便重用。可以用 &lt;code&gt;{% raw %}{% include file.ext %}{% endraw %}&lt;&#x2F;code&gt; 来把文件 &lt;code&gt;_includes&#x2F;file.ext&lt;&#x2F;code&gt; 包含进来。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;_layouts&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;layouts 是包裹在文章外部的模板。布局可以在 YAML 头信息中根据不同文章进行选择。标签 &lt;code&gt;{% raw %}{{ content }}{% endraw %}&lt;&#x2F;code&gt; 可以将 content 插入页面中。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;_posts&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;这里放的就是你的文章了。文件格式很重要，必须要符合 &lt;code&gt;YEAR-MONTH-DAY-title.MARKUP&lt;&#x2F;code&gt;。The permalinks 可以在文章中自己定制，但是数据和标记语言都是根据文件名来确定的。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;_data&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;格式良好的网站数据应该放在这里。Jekyll 引擎将自动加载此目录中的所有 yaml 文件（以 &lt;code&gt;.yml&lt;&#x2F;code&gt; 或 &lt;code&gt;.yaml&lt;&#x2F;code&gt; 结尾的文件）。如目录下有 &lt;code&gt;member.yml&lt;&#x2F;code&gt; 文件，则可以通过 &lt;code&gt;site.data.members&lt;&#x2F;code&gt; 访问该文件的内容。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;_site&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;一旦 Jekyll 完成转换，就会将生成的页面放在这里（默认）。最好将这个目录放进你的 &lt;code&gt;.gitignore&lt;&#x2F;code&gt; 文件中。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;index.html&lt;&#x2F;code&gt; 和其它 HTML、Markdown、Textile 文件&lt;&#x2F;p&gt;
+&lt;p&gt;如果这些文件中包含 YAML 头信息部分，Jekyll 就会自动将它们进行转换。当然，其他的如 &lt;code&gt;.html&lt;&#x2F;code&gt;、&lt;code&gt;.markdown&lt;&#x2F;code&gt;、&lt;code&gt;.md&lt;&#x2F;code&gt;、或者 &lt;code&gt;.textile&lt;&#x2F;code&gt; 等在你的站点根目录下或者不是以上提到的目录中的文件也会被转换。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;其它文件&#x2F;文件夹&lt;&#x2F;p&gt;
+&lt;p&gt;其他一些未被提及的目录和文件如 css 还有 images 文件夹，favicon.ico 等文件都将被完全拷贝到生成的 site 中。&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;是的，这里搬运了 Jekyll 官方网站的内容，因为它们已经被介绍的很详尽。我不愿意做一些重复的工作。&lt;&#x2F;p&gt;
+&lt;p&gt;我会在下一部分结合实例来讲一下各个部分的使用。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;yi-xie-di-san-fang-fu-wu-he-ge-xing-hua-pei-zhi&quot;&gt;一些第三方服务和个性化配置&lt;a class=&quot;zola-anchor&quot; href=&quot;#yi-xie-di-san-fang-fu-wu-he-ge-xing-hua-pei-zhi&quot; aria-label=&quot;Anchor link for: yi-xie-di-san-fang-fu-wu-he-ge-xing-hua-pei-zhi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;chang-gui&quot;&gt;常规&lt;a class=&quot;zola-anchor&quot; href=&quot;#chang-gui&quot; aria-label=&quot;Anchor link for: chang-gui&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;用你最喜爱的文本编辑器打开你的 Jekyll Theme，首先我们需要编辑 &lt;code&gt;_config.yml&lt;&#x2F;code&gt; 文件，通常情况下，它会包含一些网站所必须的 SEO 信息，以及你一些个人信息，按照你的情况把它填好，如果里面没有你所需要的内容请留空。社交链接和默认的第三方服务通常是在这里进行配置。&lt;&#x2F;p&gt;
+&lt;p&gt;哦，我想我们不需要那些为了展示而配备的文章，如果你恰恰和我一样使用 &lt;code&gt;Fedora with Gnome&lt;&#x2F;code&gt;（我只是不确定其它系统的情况）我建议你将它们移动到 &lt;code&gt;模板&lt;&#x2F;code&gt; 文件夹中，这样你就可以按它的格式新建文章。&lt;&#x2F;p&gt;
+&lt;p&gt;让我们来看一下用于文章的 &lt;code&gt;.markdown(.md)&lt;&#x2F;code&gt; 文件与平时有什么不同，这里给出一个示例：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;markdown&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;---&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;t&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;itle&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; E&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;lements&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;escription&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; M&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;arkdown-How-To&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;ate&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 2013-12-24 23:29:08&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;c&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;ategories&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;  -&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; F&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;oo&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;t&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;ags&lt;&#x2F;span&gt;&lt;span&gt;:&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;---&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;The purpose of this post is to help you make sure all of HTML elements can display properly. If you use CSS reset, don&amp;#39;t forget to redefine the style by yourself.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-meta z-separator&quot;&gt;---&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Heading 1&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;##&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Heading 2&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;###&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Heading 3&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;####&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Heading 4&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;#####&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Heading 5&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;######&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Heading 6&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-meta z-separator&quot;&gt;---&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;##&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Paragraph&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;Lorem ipsum dolor sit amet, &lt;&#x2F;span&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-string z-other z-link&quot;&gt;test link&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span&gt; consectetur adipiscing elit. &lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-bold&quot;&gt;**&lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-bold&quot;&gt;Strong text&lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-bold&quot;&gt;**&lt;&#x2F;span&gt;&lt;span&gt; pellentesque ligula commodo viverra vehicula. &lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-italic&quot;&gt;*&lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-italic&quot;&gt;Italic text&lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-italic&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; at ullamcorper enim. Morbi a euismod nibh. &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;u&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt;Underline text&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;u&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; non elit nisl. &lt;&#x2F;span&gt;&lt;span&gt;~~&lt;&#x2F;span&gt;&lt;span&gt;Deleted text&lt;&#x2F;span&gt;&lt;span&gt;~~&lt;&#x2F;span&gt;&lt;span&gt; tristique, sem id condimentum tempus, metus lectus venenatis mauris, sit amet semper lorem felis a eros.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;Interdum et malesuada fames ac ante ipsum primis in faucibus. &lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-inline z-raw&quot;&gt;`&lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-inline z-raw&quot;&gt;Sed erat diam&lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-inline z-raw&quot;&gt;`&lt;&#x2F;span&gt;&lt;span&gt;, blandit eget felis aliquam, rhoncus varius urna.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-quote&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-markup z-quote&quot;&gt; Praesent diam elit, interdum ut pulvinar placerat, imperdiet at magna.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;##&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; List Types&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;###&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Definition List&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;dl&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;dt&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt;Definition List Title&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;dt&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;dd&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt;This is a definition list division.&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;dd&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name z-tag&quot;&gt;dl&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;###&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Ordered List&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-list z-begin z-markdown&quot;&gt;1.&lt;&#x2F;span&gt;&lt;span&gt; List Item 1&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-list z-begin z-markdown&quot;&gt;2.&lt;&#x2F;span&gt;&lt;span&gt; List Item 2&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-list z-begin z-markdown&quot;&gt;3.&lt;&#x2F;span&gt;&lt;span&gt; List Item 3&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;###&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Unordered List&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-list z-begin z-markdown&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt; List Item 1&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-list z-begin z-markdown&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt; List Item 2&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-list z-begin z-markdown&quot;&gt;-&lt;&#x2F;span&gt;&lt;span&gt; List Item 3&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-markup z-heading&quot;&gt;##&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; Table&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|&lt;&#x2F;span&gt;&lt;span&gt; Table Header 1&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; Table Header 2&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; Table Header 3&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|&lt;&#x2F;span&gt;&lt;span&gt; ---&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; ---&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; ---&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|&lt;&#x2F;span&gt;&lt;span&gt; Division 1&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; Division 2&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; Division 3&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|&lt;&#x2F;span&gt;&lt;span&gt; Division 1&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; Division 2&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; Division 3&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;|&lt;&#x2F;span&gt;&lt;span&gt; Division 1&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; Division 2&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;span&gt; Division 3&lt;&#x2F;span&gt;&lt;span&gt; |&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;此文章来自 NexT 主题，介绍了基本的 Markdown 用法，你可以对照页面来看，最前面被一组 &lt;code&gt;---&lt;&#x2F;code&gt; 包围的内容属于 YAML，包含了文档的信息：标题，描述，分类，标签，日期；我建议你为每篇文章添加这些内容来记录。&lt;&#x2F;p&gt;
+&lt;p&gt;你可能还需要修改关于介绍博主的内容，一部分主题会在 &lt;code&gt;_config.yml&lt;&#x2F;code&gt; 中进行集成，还有一部分主题会包含一个名为 &lt;code&gt;about&#x2F;resume&lt;&#x2F;code&gt; 的文档，请把里面的内容换成你自己的。还有一种会使用 &lt;code&gt;_data&lt;&#x2F;code&gt; 文件夹内的数据或是引入 &lt;code&gt;_include&lt;&#x2F;code&gt; 文件夹中的内容，也同样请你修改它们，语法很简单，不做赘述。&lt;&#x2F;p&gt;
+&lt;p&gt;这样你就可以把信息完全替换成你自己的，但我建议你保留页脚的部分信息，该内容通常会申明你使用的是什么主题。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;di-san-fang-fu-wu&quot;&gt;第三方服务&lt;a class=&quot;zola-anchor&quot; href=&quot;#di-san-fang-fu-wu&quot; aria-label=&quot;Anchor link for: di-san-fang-fu-wu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;啊哦，其实我有点担心是不是描述的足够清楚，如果有什么疑问的话请直接联系我。这一部分会介绍到如何加入第三方服务。&lt;&#x2F;p&gt;
+&lt;p&gt;来看看我们需要哪些第三方服务：&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;评论
+&lt;ul&gt;
+&lt;li&gt;多说&lt;&#x2F;li&gt;
+&lt;li&gt;Disqus&lt;&#x2F;li&gt;
+&lt;li&gt;来必力&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;统计&#x2F;SEO
+&lt;ul&gt;
+&lt;li&gt;百度&lt;&#x2F;li&gt;
+&lt;li&gt;谷歌&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;这里以来必力和谷歌分析为例，选用这两个的原因只是因为方便，你可以自由选择适合你情况的服务。&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;qi-yong-gu-ge-fen-xi-cha-jian&quot;&gt;启用谷歌分析插件&lt;a class=&quot;zola-anchor&quot; href=&quot;#qi-yong-gu-ge-fen-xi-cha-jian&quot; aria-label=&quot;Anchor link for: qi-yong-gu-ge-fen-xi-cha-jian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;先说谷歌分析吧，它通常在各个主题之中都有良好的支持，你需要的只是填入它提供的 ID，当然，你需要一个独立的域名来做这件事，还需要番茄 :( 如果你想要使用百度分析，可能需要为域名进行备案，此外，百度的搜索引擎似乎是在 GitHub 的黑名单上。&lt;&#x2F;p&gt;
+&lt;p&gt;我这里默认你已经有了域名，也做了番茄，如果你需要注册域名，腾讯阿里都可以提供服务。&lt;&#x2F;p&gt;
+&lt;p&gt;打开 Google Analytics，按照提示进行操作，在执行完所有步骤之后，你会得到一个类似 &lt;code&gt;xx-xxxx-xxxx&lt;&#x2F;code&gt; 的字符串，如果没有，请从给出的 Javascript 代码中把它找出来，复制粘贴到 &lt;code&gt;_config.yml&lt;&#x2F;code&gt; 中合适的位置。&lt;&#x2F;p&gt;
+&lt;p&gt;很简单不是吗？以这个为例子主要是为了展示它的运作模式。主题通常会通过 Liquid 条件判断检查你在 &lt;code&gt;_config.yml&lt;&#x2F;code&gt; 中是否填写了 &lt;code&gt;ga_track_id&lt;&#x2F;code&gt;，然后把对应的 id 和 domain 填入位置。&lt;&#x2F;p&gt;
+&lt;p&gt;这类代码通常位于 &lt;code&gt;_include&#x2F;footer.html&lt;&#x2F;code&gt;，在 Huxblog 中，你可以在 &lt;code&gt;_layout&#x2F;default.html&lt;&#x2F;code&gt; 找到 &lt;code&gt;{% raw %}{% include footer.html %}{% endraw %}&lt;&#x2F;code&gt; 这个语句，使我们可以把 &lt;code&gt;footer.html&lt;&#x2F;code&gt; 包含在页面中。&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;an-zhuang-lai-bi-li-ping-lun-cha-jian&quot;&gt;安装来必力评论插件&lt;a class=&quot;zola-anchor&quot; href=&quot;#an-zhuang-lai-bi-li-ping-lun-cha-jian&quot; aria-label=&quot;Anchor link for: an-zhuang-lai-bi-li-ping-lun-cha-jian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;我知道这个第三方评论很少见，但鉴于天朝的环境，如果你想和小伙伴愉快发言，可以考虑一下。&lt;&#x2F;p&gt;
+&lt;p&gt;打开 livere.com 按流程注册安装（我不想过多的描述这些没有意义的内容），你会得到一段 js 代码。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果你只打算自己用，请直接把它粘贴到 &lt;code&gt;_layout&#x2F;post.html&lt;&#x2F;code&gt; 中合适的位置。通常这是对应你博文所使用的模板。&lt;&#x2F;li&gt;
+&lt;li&gt;如果你打算把它做成插件，我建议你在 &lt;code&gt;_include&lt;&#x2F;code&gt; 中新建一个 &lt;code&gt;livere.html&lt;&#x2F;code&gt; 然后把它粘贴进去，将 &lt;code&gt;data-uid&lt;&#x2F;code&gt; 后面引号的内容换成 &lt;code&gt;{% raw %}{{ site.livere_uid }}{% endraw %}&lt;&#x2F;code&gt;，然后在 &lt;code&gt;_config.yml&lt;&#x2F;code&gt; 中合适的位置新建一行 &lt;code&gt;livere_uid: &amp;lt;your-data-uid&amp;gt;&lt;&#x2F;code&gt;，在 &lt;code&gt;_layout&#x2F;post.html&lt;&#x2F;code&gt; 中添加 &lt;code&gt;{% raw %}{% if site.livere_uid %}{{ include livere.html }}{% endif %}{% endraw %}&lt;&#x2F;code&gt;。&lt;&#x2F;li&gt;
+&lt;li&gt;如果你想要通过博客的 &lt;code&gt;markdown&lt;&#x2F;code&gt; 文件中的信息头来控制，请按 &lt;code&gt;{% raw %}{% if page.comments == true %}{% if site.livere_uid %}{{ include livere.html }}{% endif %}{% endif %}{% endraw %}&lt;&#x2F;code&gt; 的样式添加到 &lt;code&gt;post.html&lt;&#x2F;code&gt; 中，这样，你只需要在博文信息头中加入 &lt;code&gt;comments: true&lt;&#x2F;code&gt; 就可以使它正常工作。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;本来打算再讲一些其它的内容，一想我拖的时间有些长，而方法都大同小异，以后有需要再补。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;jiang-ni-de-ye-mian-fa-bu&quot;&gt;将你的页面发布 :)&lt;a class=&quot;zola-anchor&quot; href=&quot;#jiang-ni-de-ye-mian-fa-bu&quot; aria-label=&quot;Anchor link for: jiang-ni-de-ye-mian-fa-bu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;本地预览确实很没意思，毕竟只是自娱自乐，还是早点发布比较好，你也不用再在我这里花费更多的时间了。&lt;&#x2F;p&gt;
+&lt;p&gt;相信你应该还找得到你在开始创建的 &lt;code&gt;yourusername.github.io&lt;&#x2F;code&gt; 存储库，现在我们要把你本地的 &lt;code&gt;your-jekyll-theme&lt;&#x2F;code&gt; 中的内容上传到那里。&lt;&#x2F;p&gt;
+&lt;p&gt;一个很直接的方式就是点击存储库的 &lt;code&gt;Upload&lt;&#x2F;code&gt; 按钮，然后将内容统统拖拽进去。&lt;&#x2F;p&gt;
+&lt;p&gt;我觉得这已经足够你完成这项工作，享受你的博客吧。&lt;&#x2F;p&gt;
+&lt;p&gt;PS：如果我现在说你直接 &lt;code&gt;fork&lt;&#x2F;code&gt; 一个别人的主题存储库，然后把存储库的名字和内容进行修改就可以得到属于你的网站，你会不会打死我。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
 </feed>

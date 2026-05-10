@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="An introduction to Apache OpenDAL&#x27;s positioning, strengths, use cases, and roadmap.">
+
+  <title>Apache OpenDAL (Incubating): A Painless New Data Access Experience</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#what-is-opendal">What Is OpenDAL?</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#opendal-is-not-a-proxy-service">OpenDAL Is Not a Proxy Service</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#opendal-is-not-an-sdk-aggregator">OpenDAL Is Not an SDK Aggregator</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#advantages-of-opendal">Advantages of OpenDAL</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#rich-service-support">Rich Service Support</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#complete-cross-language-bindings">Complete Cross-Language Bindings</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#powerful-middleware-support">Powerful Middleware Support</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#simple-and-easy-to-use">Simple and Easy to Use</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#opendal-use-cases">OpenDAL Use Cases</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#opendal-s-future-roadmap">OpenDAL&#x27;s Future Roadmap</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#acknowledgements">Acknowledgements</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Apache OpenDAL (Incubating): A Painless New Data Access Experience</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Jul 5, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/2023"><span>#</span>2023</a><a class="instant" href="https://psiace.me/tags/asf"><span>#</span>ASF</a><a class="instant" href="https://psiace.me/tags/opendal"><span>#</span>OpenDAL</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/apache-opendal/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+
+        <blockquote>
+<p>This article is mainly organized from <a rel="nofollow noreferrer external" href="https://note.xuanwo.io/#/page/opendal%2F%E9%9D%A2%E5%90%91%20java%20%E7%94%A8%E6%88%B7%E7%9A%84%E4%BB%8B%E7%BB%8D">An Introduction for Java Users | @Xuanwo</a>.</p>
+</blockquote>
+<p>If you are committed to building cloud-native, cloud-agnostic applications and services, or you want to support configurable storage backends for complex data access needs, or you are tired of juggling different SDKs and expect a unified abstraction and developer experience, Apache OpenDAL (Incubating) will be an excellent partner.</p>
+<p><img src="https://psiace.me/posts/apache-opendal/apache-opendal.png" alt="Apache OpenDAL (Incubating) Arch" /></p>
+<h2 id="what-is-opendal">What Is OpenDAL?<a class="zola-anchor" href="#what-is-opendal" aria-label="Anchor link for: what-is-opendal" style="visibility: hidden;"></a>
+</h2>
+<p>OpenDAL is a data access layer that allows users to retrieve data from various storage services easily and efficiently in a unified way.</p>
+<p><strong>Data access layer</strong> means that OpenDAL sits at a key position between the upper and lower parts of the data read/write flow. We hide implementation details of different storage backends and provide a unified interface abstraction externally.</p>
+<p>Next, let us try to answer "what OpenDAL is not" and deconstruct OpenDAL from another angle.</p>
+<h3 id="opendal-is-not-a-proxy-service">OpenDAL Is Not a Proxy Service<a class="zola-anchor" href="#opendal-is-not-a-proxy-service" aria-label="Anchor link for: opendal-is-not-a-proxy-service" style="visibility: hidden;"></a>
+</h3>
+<p>OpenDAL is provided as a library, not as a service or application that proxies various storage backends.</p>
+<p>If you want to integrate OpenDAL into an existing project, you need to call OpenDAL APIs through a supported language and directly access the storage service.</p>
+<h3 id="opendal-is-not-an-sdk-aggregator">OpenDAL Is Not an SDK Aggregator<a class="zola-anchor" href="#opendal-is-not-an-sdk-aggregator" aria-label="Anchor link for: opendal-is-not-an-sdk-aggregator" style="visibility: hidden;"></a>
+</h3>
+<p>Although OpenDAL replaces the position of various SDKs in application architecture, it is not implemented as an SDK aggregator.</p>
+<p>In other words, OpenDAL does not simply call SDKs from different storage services. Based on a unified Rust core, we implement integrations with storage services ourselves to smooth over differences between services.</p>
+<p>Taking S3 as an example, OpenDAL manually constructs HTTP requests and parses HTTP responses, ensuring that all behavior conforms to the API specification and remains fully under OpenDAL's control. Because OpenDAL natively takes over the data access flow, we can easily implement unified retry and logging mechanisms for different storage backends and ensure behavioral consistency.</p>
+<p>For S3-compatible services, compatibility and behavioral details may still differ from S3 because of limitations in native storage services and API implementation differences. For example, OSS requires a separate header for its default Range behavior to remain consistent. Besides integrating native storage services, OpenDAL also handles compatible services in targeted ways to ensure the user's data access experience.</p>
+<h2 id="advantages-of-opendal">Advantages of OpenDAL<a class="zola-anchor" href="#advantages-of-opendal" aria-label="Anchor link for: advantages-of-opendal" style="visibility: hidden;"></a>
+</h2>
+<p>OpenDAL is not the only project committed to providing a data access abstraction, but compared with similar projects, OpenDAL has the following advantages.</p>
+<h3 id="rich-service-support">Rich Service Support<a class="zola-anchor" href="#rich-service-support" aria-label="Anchor link for: rich-service-support" style="visibility: hidden;"></a>
+</h3>
+<ul>
+<li>OpenDAL supports dozens of storage services, covers a wide range of scenarios, and can be selected as needed:
+<ul>
+<li>Standard storage protocols: FTP, HTTP, SFTP, WebDAV, and more</li>
+<li>Object storage services: azblob, gcs, obs, oss, s3, and more</li>
+<li>File storage services: fs, azdfs, hdfs, webhdfs, ipfs, and more</li>
+<li>Consumer storage services: Google Drive, OneDrive, Dropbox, and more</li>
+<li>Key-value storage services: Memory, Redis, Rocksdb, and more</li>
+<li>Cache services: Ghac, Memcached, and more</li>
+</ul>
+</li>
+</ul>
+<h3 id="complete-cross-language-bindings">Complete Cross-Language Bindings<a class="zola-anchor" href="#complete-cross-language-bindings" aria-label="Anchor link for: complete-cross-language-bindings" style="visibility: hidden;"></a>
+</h3>
+<ul>
+<li>With Rust as the core, OpenDAL now provides bindings for Python, Node.js, Java, C, and other languages, while actively developing bindings for more languages.</li>
+<li>Cross-language bindings not only provide unified storage access abstractions for other languages, but also follow each language's conventional naming style and development habits as much as possible in design and implementation, paving the way for quick adoption.</li>
+</ul>
+<h3 id="powerful-middleware-support">Powerful Middleware Support<a class="zola-anchor" href="#powerful-middleware-support" aria-label="Anchor link for: powerful-middleware-support" style="visibility: hidden;"></a>
+</h3>
+<ul>
+<li>OpenDAL provides native middleware capabilities, mainly including:
+<ul>
+<li>Error retry: OpenDAL supports fine-grained error retry capabilities. Besides common request retries, it supports resuming from breakpoints without rereading the entire file.</li>
+<li>Observability support: OpenDAL implements logging, tracing, and metrics support for all operations. By enabling middleware, users can directly obtain observability for storage.</li>
+<li>It also includes concurrency control, traffic control, fuzz testing, and more.</li>
+</ul>
+</li>
+</ul>
+<h3 id="simple-and-easy-to-use">Simple and Easy to Use<a class="zola-anchor" href="#simple-and-easy-to-use" aria-label="Anchor link for: simple-and-easy-to-use" style="visibility: hidden;"></a>
+</h3>
+<ul>
+<li>
+<p>OpenDAL's API is well designed and continuously polished in real use. Its documentation is comprehensive and makes it easy to get started. The following is an example of using the Python binding to access HDFS:</p>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">import</span><span> opendal</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>op</span><span class="z-keyword"> =</span><span> opendal</span><span>.</span><span>Operator</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">hdfs</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-variable"> name_node</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">hdfs://192.16.8.10.103</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>op</span><span>.</span><span>read</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">path/to/file</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span></span></code></pre></li>
+</ul>
+<h3 id="opendal-use-cases">OpenDAL Use Cases<a class="zola-anchor" href="#opendal-use-cases" aria-label="Anchor link for: opendal-use-cases" style="visibility: hidden;"></a>
+</h3>
+<p>OpenDAL is currently widely used in various cloud-native scenarios, including but not limited to databases, data pipelines, and caches. Major user cases include:</p>
+<ul>
+<li>Databend: an OLAP cloud-native data warehouse that uses OpenDAL to read and write persistent data (s3, azblob, gcs, hdfs, and more) and cache data (fs, redis, rocksdb, moka, and more).</li>
+<li>GreptimeDB: a cloud-native time-series database that uses OpenDAL to read and write persistent data (s3, azblob, and more).</li>
+<li>RisingWave: a distributed SQL database for stream processing that uses OpenDAL to read and write persistent data (s3, azblob, hdfs, and more).</li>
+<li>Vector: an observability data pipeline that uses OpenDAL to write persistent data, currently mainly through hdfs.</li>
+<li>Sccache: a ccache-like tool supporting cloud storage, mainly used to cache compilation artifacts for Rust/C++. It uses OpenDAL to read and write cache data such as s3 and ghac.</li>
+</ul>
+<h2 id="opendal-s-future-roadmap">OpenDAL's Future Roadmap<a class="zola-anchor" href="#opendal-s-future-roadmap" aria-label="Anchor link for: opendal-s-future-roadmap" style="visibility: hidden;"></a>
+</h2>
+<p>Besides further satisfying cloud-native data access needs, OpenDAL will continue expanding user scenarios and actively explore usage in data science, mobile applications, and other areas. OpenDAL will also continue polishing existing implementations and bindings to provide a better integration experience for users.</p>
+<p>OpenDAL will also explore how to improve users' workflows in data management and service integration:</p>
+<ul>
+<li>Polish the oli command-line tool to help users manage data painlessly.</li>
+<li>Implement the oay proxy service to provide high-quality compatible APIs.</li>
+</ul>
+<p>In addition, because OpenDAL is currently a cross-language project, we also plan to write a series of beginner tutorials to help everyone start from zero and master OpenDAL while learning a language.</p>
+<h2 id="acknowledgements">Acknowledgements<a class="zola-anchor" href="#acknowledgements" aria-label="Anchor link for: acknowledgements" style="visibility: hidden;"></a>
+</h2>
+<ul>
+<li><a rel="nofollow noreferrer external" href="https://opendal.apache.org/">Apache OpenDAL(Incubating) | Website</a></li>
+<li><a rel="nofollow noreferrer external" href="https://github.com/apache/incubator-opendal">apache/incubator-opendal | GitHub</a></li>
+<li><a rel="nofollow noreferrer external" href="https://note.xuanwo.io/#/page/opendal%2F%E9%9D%A2%E5%90%91%20java%20%E7%94%A8%E6%88%B7%E7%9A%84%E4%BB%8B%E7%BB%8D">An Introduction for Java Users | @Xuanwo</a></li>
+</ul>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="apache-opendal"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>
