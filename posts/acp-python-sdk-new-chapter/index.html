@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -259,13 +259,13 @@
 
         
 
-        <p>When I first started working on the <strong><a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol/python-sdk">Agent Client Protocol Python SDK</a></strong>, it was a small side project born out of curiosity.
+        <p>When I first started working on the <strong><a rel="nofollow noreferrer external" href="https://github.com/agentclientprotocol/python-sdk">Agent Client Protocol Python SDK</a></strong>, it was a small side project born out of curiosity.
 I wanted to understand how coding agents communicate—how state, intent, and messages flow between the client and the agent.</p>
 <p>Over time it grew into something real.
 More developers began to use it—from <strong>Moonshot</strong> to other model companies exploring agent workflows.
 The SDK became more stable, closely tracking the evolving ACP spec and serving as a foundation for real-world integrations.</p>
 <p>Today marks a new chapter.
-The Python SDK has officially moved under the <strong><a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol">agentclientprotocol</a></strong> organization, joining the TypeScript, Rust, and Kotlin SDKs as part of the official ecosystem.</p>
+The Python SDK has officially moved under the <strong><a rel="nofollow noreferrer external" href="https://github.com/agentclientprotocol">agentclientprotocol</a></strong> organization, joining the TypeScript, Rust, and Kotlin SDKs as part of the official ecosystem.</p>
 <p>I will keep maintaining and improving it there.
 My focus stays on reliability, clarity, and making it easier for developers to build agentic systems.</p>
 <p>Special thanks to <strong>Sergey Ignatov</strong>, <strong>Anna</strong>, and <strong>Ben</strong> for their trust and support during this transition—and to everyone who has used, contributed to, or shared feedback on this SDK.</p>

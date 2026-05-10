@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -382,10 +382,10 @@ And we don't need Prometheus.</p>
 <h2 id="recommended-reading">Recommended Reading<a class="zola-anchor" href="#recommended-reading" aria-label="Anchor link for: recommended-reading" style="visibility: hidden;"></a>
 </h2>
 <ul>
-<li><a rel="nofollow noreferrer" href="https://frostming.com/posts/2026/create-a-claw/">What does it take to create a lobster?</a></li>
-<li><a rel="nofollow noreferrer" href="https://psiace.me/zh/posts/reinvent-the-punch-tape/">Reinvent the punch tape</a></li>
-<li><a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a></li>
-<li><a rel="nofollow noreferrer" href="https://www.piglei.com/articles/ai-programming-is-a-new-framework/">AI Programming Is a New Framework</a></li>
+<li><a rel="nofollow noreferrer external" href="https://frostming.com/posts/2026/create-a-claw/">What does it take to create a lobster?</a></li>
+<li><a rel="nofollow noreferrer external" href="https://psiace.me/zh/posts/reinvent-the-punch-tape/">Reinvent the punch tape</a></li>
+<li><a rel="nofollow noreferrer external" href="https://github.com/psiace/bub">bub</a></li>
+<li><a rel="nofollow noreferrer external" href="https://www.piglei.com/articles/ai-programming-is-a-new-framework/">AI Programming Is a New Framework</a></li>
 </ul>
 
       </article>

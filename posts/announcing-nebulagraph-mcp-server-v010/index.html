@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -288,7 +288,7 @@
 
         
 
-        <p>Over the past few weeks, <strong>Model Context Protocol (MCP)</strong> has sparked significant discussion and attention within the tech community. As part of this momentum, I contributed to several related open-source projects, including the <a rel="nofollow noreferrer" href="https://github.com/run-llama/llama_index/pull/17795">McpToolSpec implementation for the LlamaIndex official repository</a> and collaborated with Xuanwo and FrostMing to develop a version of the <a rel="nofollow noreferrer" href="https://github.com/Xuanwo/mcp-server-opendal">Model Context Protocol Server for Apache OpenDAL™</a>.</p>
+        <p>Over the past few weeks, <strong>Model Context Protocol (MCP)</strong> has sparked significant discussion and attention within the tech community. As part of this momentum, I contributed to several related open-source projects, including the <a rel="nofollow noreferrer external" href="https://github.com/run-llama/llama_index/pull/17795">McpToolSpec implementation for the LlamaIndex official repository</a> and collaborated with Xuanwo and FrostMing to develop a version of the <a rel="nofollow noreferrer external" href="https://github.com/Xuanwo/mcp-server-opendal">Model Context Protocol Server for Apache OpenDAL™</a>.</p>
 <p>MCP is currently the only standard with an ecosystem advantage. In this context, I implemented a simple <strong>NebulaGraph MCP Server</strong> based on NebulaGraph 3.x, serving as the first foundational component in the NebulaGraph X MCP ecosystem. This server is intended for exploring the potential of combining AI and graph databases, and I hope to see more exciting work emerge under this paradigm.</p>
 <h2 id="about-model-context-protocol-mcp">About Model Context Protocol (MCP)<a class="zola-anchor" href="#about-model-context-protocol-mcp" aria-label="Anchor link for: about-model-context-protocol-mcp" style="visibility: hidden;"></a>
 </h2>
@@ -334,7 +334,7 @@
 </h2>
 <p>The <strong>NebulaGraph MCP Server</strong> is an initial attempt to contribute to the MCP ecosystem, aiming to provide a starting point for combining language models and graph databases. As the protocol matures and the ecosystem expands, I look forward to seeing it deliver value in more real-world scenarios. If you are interested in this direction, feel free to explore and experiment together!</p>
 <hr />
-<p>For more details, check out the original repository <a rel="nofollow noreferrer" href="https://github.com/PsiACE/nebulagraph-mcp-server">here</a>.</p>
+<p>For more details, check out the original repository <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/nebulagraph-mcp-server">here</a>.</p>
 
       </article>
 

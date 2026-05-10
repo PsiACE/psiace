@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -320,7 +320,7 @@
 <li><strong>资源耗尽</strong>：无限循环、内存泄漏导致系统崩溃</li>
 <li><strong>网络攻击</strong>：发起 DDoS、端口扫描等恶意行为</li>
 </ul>
-<p>像 <a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents/blob/main/src/smolagents/remote_executors.py">Hugging Face smolagents</a> 之类的项目已经意识到了这个问题，提供了多种执行器选项来平衡功能性和安全性。</p>
+<p>像 <a rel="nofollow noreferrer external" href="https://github.com/huggingface/smolagents/blob/main/src/smolagents/remote_executors.py">Hugging Face smolagents</a> 之类的项目已经意识到了这个问题，提供了多种执行器选项来平衡功能性和安全性。</p>
 <h2 id="webassembly-de-an-quan-you-shi">WebAssembly 的安全优势<a class="zola-anchor" href="#webassembly-de-an-quan-you-shi" aria-label="Anchor link for: webassembly-de-an-quan-you-shi" style="visibility: hidden;"></a>
 </h2>
 <p>WebAssembly 的核心价值不在于性能，而在于<strong>原生安全设计</strong>。作为从浏览器安全模型发展而来的技术，WASM 提供了：</p>
@@ -330,30 +330,29 @@
 <li><strong>执行确定性</strong>：相同的输入总是产生相同的输出，便于审计</li>
 <li><strong>语言无关性</strong>：支持多种编程语言的安全执行</li>
 </ol>
-<p>Simon Willison 在他的 <a rel="nofollow noreferrer" href="https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox">TIL 文章</a> 中详细探讨了这个方案，<a rel="nofollow noreferrer" href="https://news.ycombinator.com/item?id=34581487">Hacker News 社区也有深入讨论</a>。</p>
-<p>虽然 <a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents">Hugging Face smolagents</a> 已经提供了基于 Pyodide 和 Deno 的 <code>WasmExecutor</code>，但我想探索一个基于 wasmtime 的本地执行方案，看看有什么不同的技术权衡。</p>
+<p>Simon Willison 在他的 <a rel="nofollow noreferrer external" href="https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox">TIL 文章</a> 中详细探讨了这个方案，<a rel="nofollow noreferrer external" href="https://news.ycombinator.com/item?id=34581487">Hacker News 社区也有深入讨论</a>。</p>
+<p>虽然 <a rel="nofollow noreferrer external" href="https://github.com/huggingface/smolagents">Hugging Face smolagents</a> 已经提供了基于 Pyodide 和 Deno 的 <code>WasmExecutor</code>，但我想探索一个基于 wasmtime 的本地执行方案，看看有什么不同的技术权衡。</p>
 <h2 id="ji-shu-shi-xian">技术实现<a class="zola-anchor" href="#ji-shu-shi-xian" aria-label="Anchor link for: ji-shu-shi-xian" style="visibility: hidden;"></a>
 </h2>
 <p>基于 wasmtime-py 和 VMware 的 Python WASM 运行时，我实现了一个简单的沙箱执行器：</p>
-<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">wasmtime_executor</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">WasmtimePythonExecutor</span></span>
-</span><span class="z-source z-python"><span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-from z-python">from</span></span><span class="z-meta z-statement z-import z-python"><span class="z-meta z-import-source z-python"> <span class="z-meta z-import-path z-python"><span class="z-meta z-import-name z-python">smolagents</span></span> <span class="z-meta z-statement z-import z-python"><span class="z-keyword z-control z-import z-python">import</span></span></span></span><span class="z-meta z-statement z-import z-python"></span><span class="z-meta z-statement z-import z-python"> <span class="z-meta z-generic-name z-python">CodeAgent</span><span class="z-punctuation z-separator z-import-list z-python">,</span> <span class="z-meta z-generic-name z-python">InferenceClientModel</span></span>
-</span><span class="z-source z-python">
-</span><span class="z-source z-python"><span class="z-meta z-class z-python"><span class="z-storage z-type z-class z-python"><span class="z-keyword z-declaration z-class z-python">class</span></span> <span class="z-entity z-name z-class z-python"><span class="z-meta z-generic-name z-python">WasmtimeCodeAgent</span></span><span class="z-meta z-class z-inheritance z-python"><span class="z-punctuation z-section z-inheritance z-begin z-python">(</span></span></span><span class="z-meta z-class z-inheritance z-python"><span class="z-entity z-other z-inherited-class z-python">CodeAgent</span><span class="z-punctuation z-section z-inheritance z-end z-python">)</span></span><span class="z-meta z-class z-python"><span class="z-punctuation z-section z-class z-begin z-python">:</span></span>
-</span><span class="z-source z-python"><span class="z-meta z-function z-python">    <span class="z-storage z-type z-function z-python"><span class="z-keyword z-declaration z-function z-python">def</span></span> <span class="z-entity z-name z-function z-python"><span class="z-meta z-generic-name z-python">create_python_executor</span></span></span><span class="z-meta z-function z-parameters z-python"><span class="z-punctuation z-section z-parameters z-begin z-python">(</span></span><span class="z-meta z-function z-parameters z-python"><span class="z-variable z-parameter z-python">self</span><span class="z-punctuation z-section z-parameters z-end z-python">)</span></span><span class="z-meta z-function z-python"><span class="z-punctuation z-section z-function z-begin z-python">:</span></span>
-</span><span class="z-source z-python">        <span class="z-keyword z-control z-flow z-return z-python">return</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">WasmtimePythonExecutor</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
-</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">additional_authorized_imports</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">additional_authorized_imports</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
-</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-variable z-parameter z-python">max_print_outputs_length</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">max_print_outputs_length</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
-</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">            <span class="z-keyword z-operator z-unpacking z-mapping z-python">**</span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-language z-python">self</span><span class="z-punctuation z-accessor z-dot z-python">.</span><span class="z-meta z-generic-name z-python">executor_kwargs</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
-</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">        <span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
-</span><span class="z-source z-python">
-</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">WasmtimeCodeAgent</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span>
-</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">tools</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-sequence z-list z-empty z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
-</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">model</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">InferenceClientModel</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
-</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python">    <span class="z-variable z-parameter z-python">additional_authorized_imports</span><span class="z-keyword z-operator z-assignment z-python">=</span><span class="z-meta z-sequence z-list z-python"><span class="z-punctuation z-section z-sequence z-begin z-python">[</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">math<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">json<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-sequence z-end z-python">]</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span>
-</span></span><span class="z-source z-python"><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
-</span><span class="z-source z-python">
-</span><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">result</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">agent</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">run</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">Calculate the square root of 125<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span class="z-keyword">from</span><span> wasmtime_executor</span><span class="z-keyword"> import</span><span> WasmtimePythonExecutor</span></span>
+<span class="giallo-l"><span class="z-keyword">from</span><span> smolagents</span><span class="z-keyword"> import</span><span> CodeAgent</span><span>,</span><span> InferenceClientModel</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">class</span><span class="z-entity z-name"> WasmtimeCodeAgent</span><span>(</span><span class="z-entity">CodeAgent</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-storage z-type">    def</span><span class="z-entity z-name"> create_python_executor</span><span>(</span><span class="z-variable z-parameter z-function">self</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span class="z-keyword">        return</span><span> WasmtimePythonExecutor</span><span>(</span></span>
+<span class="giallo-l"><span class="z-variable">            additional_authorized_imports</span><span class="z-keyword">=</span><span class="z-variable z-language">self</span><span>.</span><span>additional_authorized_imports</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable">            max_print_outputs_length</span><span class="z-keyword">=</span><span class="z-variable z-language">self</span><span>.</span><span>max_print_outputs_length</span><span>,</span></span>
+<span class="giallo-l"><span class="z-keyword">            **</span><span class="z-variable z-language">self</span><span>.</span><span>executor_kwargs</span><span>,</span></span>
+<span class="giallo-l"><span>        )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>agent</span><span class="z-keyword"> =</span><span> WasmtimeCodeAgent</span><span>(</span></span>
+<span class="giallo-l"><span class="z-variable">    tools</span><span class="z-keyword">=</span><span>[</span><span>]</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable">    model</span><span class="z-keyword">=</span><span>InferenceClientModel</span><span>(</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable">    additional_authorized_imports</span><span class="z-keyword">=</span><span>[</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">math</span><span class="z-punctuation z-definition z-string">&quot;</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">json</span><span class="z-punctuation z-definition z-string">&quot;</span><span>]</span><span>,</span></span>
+<span class="giallo-l"><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>result</span><span class="z-keyword"> =</span><span> agent</span><span>.</span><span>run</span><span>(</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">Calculate the square root of 125</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span></span></code></pre>
 <p>核心实现思路：利用 VMware 提供的 Python WASM 二进制文件，通过 wasmtime-py 进行运行时管理，并实现与 smolagents 的兼容层。关键的技术差异在于<strong>本地执行</strong>，避免了对外部 Deno 运行时的依赖。</p>
 <h2 id="ji-shu-ping-gu">技术评估<a class="zola-anchor" href="#ji-shu-ping-gu" aria-label="Anchor link for: ji-shu-ping-gu" style="visibility: hidden;"></a>
 </h2>
@@ -389,16 +388,16 @@
 <p>这个项目的真正价值不在于具体的实现代码，而在于证明了<strong>Code Agent 范式存在多种安全沙箱方案</strong>。虽然 smolagents 提供了基于 Pyodide 的 Deno 沙箱，wasmtime 为本地执行提供了另一种技术选择。开发者可以基于现有的代理框架，添加安全边界，保持功能完整性，同时探索不同的技术权衡。</p>
 <h2 id="jin-yi-bu-tan-suo">进一步探索<a class="zola-anchor" href="#jin-yi-bu-tan-suo" aria-label="Anchor link for: jin-yi-bu-tan-suo" style="visibility: hidden;"></a>
 </h2>
-<p>完整的实现代码和详细文档在我的 <a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor">Wasmtime 执行器项目</a> 中。代码虽然粗糙，但功能完整。欢迎克隆、测试、改进。</p>
+<p>完整的实现代码和详细文档在我的 <a rel="nofollow noreferrer external" href="https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor">Wasmtime 执行器项目</a> 中。代码虽然粗糙，但功能完整。欢迎克隆、测试、改进。</p>
 <p>理解 Code Agent 范式安全挑战的最佳方式就是动手实践。即使是简单的概念验证项目，也能带来深刻的技术洞察。</p>
 <hr />
 <h2 id="can-kao-zi-liao">参考资料<a class="zola-anchor" href="#can-kao-zi-liao" aria-label="Anchor link for: can-kao-zi-liao" style="visibility: hidden;"></a>
 </h2>
 <ul>
-<li><a rel="nofollow noreferrer" href="https://github.com/huggingface/smolagents">Hugging Face smolagents</a></li>
-<li><a rel="nofollow noreferrer" href="https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor">Wasmtime 执行器项目</a></li>
-<li><a rel="nofollow noreferrer" href="https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox">Simon Willison 的 WASM Python 沙箱</a></li>
-<li><a rel="nofollow noreferrer" href="https://github.com/vmware-labs/webassembly-language-runtimes">VMware WebAssembly 语言运行时</a></li>
+<li><a rel="nofollow noreferrer external" href="https://github.com/huggingface/smolagents">Hugging Face smolagents</a></li>
+<li><a rel="nofollow noreferrer external" href="https://github.com/psiace/psiace/tree/main/demo/wasmtime-executor">Wasmtime 执行器项目</a></li>
+<li><a rel="nofollow noreferrer external" href="https://til.simonwillison.net/webassembly/python-in-a-wasm-sandbox">Simon Willison 的 WASM Python 沙箱</a></li>
+<li><a rel="nofollow noreferrer external" href="https://github.com/vmware-labs/webassembly-language-runtimes">VMware WebAssembly 语言运行时</a></li>
 </ul>
 
       </article>

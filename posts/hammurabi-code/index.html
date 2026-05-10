@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -291,7 +291,7 @@
         
 
         <blockquote>
-<p>Today I want to talk about a few design ideas in <a rel="nofollow noreferrer" href="https://github.com/bubbuild/bub">bub</a> that have endured to this day, along with some of my thoughts on interaction between humans and agents.
+<p>Today I want to talk about a few design ideas in <a rel="nofollow noreferrer external" href="https://github.com/bubbuild/bub">bub</a> that have endured to this day, along with some of my thoughts on interaction between humans and agents.
 You have probably seen this project mentioned more than once in my previous writing, so besides understanding its design, I also hope you will take the time to read some of its code.</p>
 </blockquote>
 <h2 id="introduction">Introduction<a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction" style="visibility: hidden;"></a>
@@ -320,7 +320,7 @@ The views may differ, but from Bub's perspective, Function Calling and what huma
 That is, in fact, the natural way Bub manages its own context.
 Through that shared mechanism, humans and agents naturally develop the same intuition about load and state, and we can directly observe the concrete impact different tools have on Bub.</p>
 <blockquote>
-<p>P.S. The idea of Comma Commands comes from a 2009 essay, <a rel="nofollow noreferrer" href="https://rhodesmill.org/brandon/2009/commands-with-comma/"><em>Start all of your commands with a comma</em></a>.
+<p>P.S. The idea of Comma Commands comes from a 2009 essay, <a rel="nofollow noreferrer external" href="https://rhodesmill.org/brandon/2009/commands-with-comma/"><em>Start all of your commands with a comma</em></a>.
 One reason for introducing it early on, besides ensuring consistent behavior, was to make Bub feel at home in the command line.
 After all, the command line remains one of the interfaces programmers know best.</p>
 </blockquote>
@@ -366,7 +366,7 @@ More often than not, each side simply bears it as it unfolds.</p>
 <p>What Bub does is not to propose a new mode of interaction, but to acknowledge the existence of interaction itself and establish constraints around it.</p>
 <p>This is where the article ought to end.
 It is late into the night once again.
-Welcome to follow and star Bub: <a rel="nofollow noreferrer" href="https://github.com/bubbuild/bub">https://github.com/bubbuild/bub</a>.</p>
+Welcome to follow and star Bub: <a rel="nofollow noreferrer external" href="https://github.com/bubbuild/bub">https://github.com/bubbuild/bub</a>.</p>
 
       </article>
 

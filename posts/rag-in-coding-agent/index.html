@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -333,8 +333,6 @@
 
 
   
-
-  
     
     
     
@@ -342,6 +340,8 @@
     
     
     
+  
+
   
 
 
@@ -452,54 +452,52 @@
 <h2 id="how-to-build-a-rag-enhanced-coding-workflow">How to Build a RAG-Enhanced Coding Workflow<a class="zola-anchor" href="#how-to-build-a-rag-enhanced-coding-workflow" aria-label="Anchor link for: how-to-build-a-rag-enhanced-coding-workflow" style="visibility: hidden;"></a>
 </h2>
 <p>Here's a simple step-by-step process for how RAG can be used in a coding assistant:</p>
-<pre data-lang="mermaid" class="language-mermaid z-code"><code class="language-mermaid" data-lang="mermaid"><span class="z-text z-plain">graph LR
-</span><span class="z-text z-plain">   subgraph TaskInit [&quot;1. Task Understanding&quot;]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       A[&quot;Parse Your Request&lt;br/&gt;What do you want to build?&quot;]
-</span><span class="z-text z-plain">       A --&gt; B[&quot;Initialize Environment&lt;br/&gt;Set up workspace&quot;]
-</span><span class="z-text z-plain">       B --&gt; C[&quot;Map Your Codebase&lt;br/&gt;Find relevant files&quot;]
-</span><span class="z-text z-plain">       B --&gt; D[&quot;Bootstrap Context&lt;br/&gt;Load coding rules &amp; docs&quot;]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph ContextBuild [&quot;2. Gather Information&quot;]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       E[&quot;Find Documentation&lt;br/&gt;Framework guides &amp; tutorials&quot;]
-</span><span class="z-text z-plain">       E --&gt; F[&quot;Search Code Examples&lt;br/&gt;Similar solutions in your project&quot;]
-</span><span class="z-text z-plain">       F --&gt; G[&quot;Query Q&amp;A Platforms&lt;br/&gt;StackOverflow &amp; GitHub repos&quot;]
-</span><span class="z-text z-plain">       G --&gt; H[&quot;Build Knowledge Soup&lt;br/&gt;Combine all the info&quot;]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph CodeWork [&quot;3. Write &amp; Test Code&quot;]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       I[&quot;Generate Code&lt;br/&gt;Using all gathered context&quot;]
-</span><span class="z-text z-plain">       I --&gt; J[&quot;Run in Sandbox&lt;br/&gt;Test safely in isolation&quot;]
-</span><span class="z-text z-plain">       J --&gt; K[&quot;Capture Results&lt;br/&gt;Success or error feedback&quot;]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph HandleFeedback [&quot;4. Handle Results&quot;]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       L[&quot;Task Complete!&lt;br/&gt;Code works as expected&quot;]
-</span><span class="z-text z-plain">       M[&quot;Debug Errors&lt;br/&gt;Find solutions for failures&quot;]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   subgraph Finish [&quot;5. Wrap Up&quot;]
-</span><span class="z-text z-plain">       direction TB
-</span><span class="z-text z-plain">       N[&quot;Deliver Final Code&lt;br/&gt;Plus documentation&quot;]
-</span><span class="z-text z-plain">   end
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   %% Main flow connections
-</span><span class="z-text z-plain">   TaskInit --&gt; ContextBuild
-</span><span class="z-text z-plain">   ContextBuild --&gt; CodeWork
-</span><span class="z-text z-plain">   CodeWork --&gt; HandleFeedback
-</span><span class="z-text z-plain">   K --&gt;|&quot;✅ Success&quot;| L
-</span><span class="z-text z-plain">   K --&gt;|&quot;❌ Error&quot;| M
-</span><span class="z-text z-plain">   M -.-&gt;|&quot;Try again with fixes&quot;| ContextBuild
-</span><span class="z-text z-plain">   L --&gt; Finish
-</span><span class="z-text z-plain">
-</span><span class="z-text z-plain">   classDef ragStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-</span><span class="z-text z-plain">   class D,E,F,G,H,I,M ragStyle
-</span></code></pre>
-<h3 id="1-understanding-what-you-want">1. <strong>Understanding What You Want</strong><a class="zola-anchor" href="#1-understanding-what-you-want" aria-label="Anchor link for: 1-understanding-what-you-want" style="visibility: hidden;"></a>
+<pre class="giallo z-code"><code data-lang="mermaid"><span class="giallo-l"><span>graph LR</span></span>
+<span class="giallo-l"><span>   subgraph TaskInit [&quot;1. Task Understanding&quot;]</span></span>
+<span class="giallo-l"><span>       direction TB</span></span>
+<span class="giallo-l"><span>       A[&quot;Parse Your Request&lt;br/&gt;What do you want to build?&quot;]</span></span>
+<span class="giallo-l"><span>       A --&gt; B[&quot;Initialize Environment&lt;br/&gt;Set up workspace&quot;]</span></span>
+<span class="giallo-l"><span>       B --&gt; C[&quot;Map Your Codebase&lt;br/&gt;Find relevant files&quot;]</span></span>
+<span class="giallo-l"><span>       B --&gt; D[&quot;Bootstrap Context&lt;br/&gt;Load coding rules &amp; docs&quot;]</span></span>
+<span class="giallo-l"><span>   end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>   subgraph ContextBuild [&quot;2. Gather Information&quot;]</span></span>
+<span class="giallo-l"><span>       direction TB</span></span>
+<span class="giallo-l"><span>       E[&quot;Find Documentation&lt;br/&gt;Framework guides &amp; tutorials&quot;]</span></span>
+<span class="giallo-l"><span>       E --&gt; F[&quot;Search Code Examples&lt;br/&gt;Similar solutions in your project&quot;]</span></span>
+<span class="giallo-l"><span>       F --&gt; G[&quot;Query Q&amp;A Platforms&lt;br/&gt;StackOverflow &amp; GitHub repos&quot;]</span></span>
+<span class="giallo-l"><span>       G --&gt; H[&quot;Build Knowledge Soup&lt;br/&gt;Combine all the info&quot;]</span></span>
+<span class="giallo-l"><span>   end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>   subgraph CodeWork [&quot;3. Write &amp; Test Code&quot;]</span></span>
+<span class="giallo-l"><span>       direction TB</span></span>
+<span class="giallo-l"><span>       I[&quot;Generate Code&lt;br/&gt;Using all gathered context&quot;]</span></span>
+<span class="giallo-l"><span>       I --&gt; J[&quot;Run in Sandbox&lt;br/&gt;Test safely in isolation&quot;]</span></span>
+<span class="giallo-l"><span>       J --&gt; K[&quot;Capture Results&lt;br/&gt;Success or error feedback&quot;]</span></span>
+<span class="giallo-l"><span>   end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>   subgraph HandleFeedback [&quot;4. Handle Results&quot;]</span></span>
+<span class="giallo-l"><span>       direction TB</span></span>
+<span class="giallo-l"><span>       L[&quot;Task Complete!&lt;br/&gt;Code works as expected&quot;]</span></span>
+<span class="giallo-l"><span>       M[&quot;Debug Errors&lt;br/&gt;Find solutions for failures&quot;]</span></span>
+<span class="giallo-l"><span>   end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>   subgraph Finish [&quot;5. Wrap Up&quot;]</span></span>
+<span class="giallo-l"><span>       direction TB</span></span>
+<span class="giallo-l"><span>       N[&quot;Deliver Final Code&lt;br/&gt;Plus documentation&quot;]</span></span>
+<span class="giallo-l"><span>   end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>   %% Main flow connections</span></span>
+<span class="giallo-l"><span>   TaskInit --&gt; ContextBuild</span></span>
+<span class="giallo-l"><span>   ContextBuild --&gt; CodeWork</span></span>
+<span class="giallo-l"><span>   CodeWork --&gt; HandleFeedback</span></span>
+<span class="giallo-l"><span>   K --&gt;|&quot;✅ Success&quot;| L</span></span>
+<span class="giallo-l"><span>   K --&gt;|&quot;❌ Error&quot;| M</span></span>
+<span class="giallo-l"><span>   M -.-&gt;|&quot;Try again with fixes&quot;| ContextBuild</span></span>
+<span class="giallo-l"><span>   L --&gt; Finish</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>   classDef ragStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px</span></span>
+<span class="giallo-l"><span>   class D,E,F,G,H,I,M ragStyle</span></span></code></pre><h3 id="1-understanding-what-you-want">1. <strong>Understanding What You Want</strong><a class="zola-anchor" href="#1-understanding-what-you-want" aria-label="Anchor link for: 1-understanding-what-you-want" style="visibility: hidden;"></a>
 </h3>
 <p>The assistant starts by figuring out exactly what you're trying to accomplish. Let's say you tell it: "I need to add user authentication to my API." It needs to understand:</p>
 <ul>

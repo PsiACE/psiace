@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -386,10 +386,10 @@
 <h2 id="tui-jian-yue-du">推荐阅读<a class="zola-anchor" href="#tui-jian-yue-du" aria-label="Anchor link for: tui-jian-yue-du" style="visibility: hidden;"></a>
 </h2>
 <ul>
-<li><a rel="nofollow noreferrer" href="https://frostming.com/posts/2026/create-a-claw/">创造一只龙虾，需要些什么?</a></li>
-<li><a rel="nofollow noreferrer" href="https://psiace.me/zh/posts/reinvent-the-punch-tape/">重新发明打孔纸带</a></li>
-<li><a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a></li>
-<li><a rel="nofollow noreferrer" href="https://www.piglei.com/articles/ai-programming-is-a-new-framework/">AI Programming Is a New Framework</a></li>
+<li><a rel="nofollow noreferrer external" href="https://frostming.com/posts/2026/create-a-claw/">创造一只龙虾，需要些什么?</a></li>
+<li><a rel="nofollow noreferrer external" href="https://psiace.me/zh/posts/reinvent-the-punch-tape/">重新发明打孔纸带</a></li>
+<li><a rel="nofollow noreferrer external" href="https://github.com/psiace/bub">bub</a></li>
+<li><a rel="nofollow noreferrer external" href="https://www.piglei.com/articles/ai-programming-is-a-new-framework/">AI Programming Is a New Framework</a></li>
 </ul>
 
       </article>

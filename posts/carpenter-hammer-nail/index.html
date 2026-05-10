@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -274,6 +274,8 @@
 
 
   
+
+  
     
     
     
@@ -281,8 +283,6 @@
     
     
     
-  
-
   
 
 
@@ -302,14 +302,14 @@
 
         <blockquote>
 <p>This post is dedicated to bub, an agent that lives in group chats. I want to talk about the problems, paradigms, and model shifts behind it.
-<a rel="nofollow noreferrer" href="https://github.com/kemingy">kemingy</a> once roasted me: "Your writing feels too divergent. It drifts away from technical writing, needs extra context, and still may not align."
+<a rel="nofollow noreferrer external" href="https://github.com/kemingy">kemingy</a> once roasted me: "Your writing feels too divergent. It drifts away from technical writing, needs extra context, and still may not align."
 Luckily, this time I started from preparing an internal company talk, so I finally followed a proper structure.</p>
 </blockquote>
 <h2 id="preface">Preface<a class="zola-anchor" href="#preface" aria-label="Anchor link for: preface" style="visibility: hidden;"></a>
 </h2>
-<p>Hi, I’m PsiACE. I used to work on databases, RAG, agents, and open source. Now I work on open-source ecosystem projects at OceanBase. You can find me on <a rel="nofollow noreferrer" href="https://github.com/PsiACE/">GitHub</a>.</p>
-<p>Even within the coding-agent subdomain alone, I’ve worked on RAG, sandboxing, agents, and protocols. For example, <a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol/python-sdk">agent-client-protocol</a> ranks around top 10k downloads in the Python ecosystem (about 1.2%), and none of this was ever my official day job.</p>
-<p>Today’s sharing is a projection of my thoughts and experiences from years of working on agents, plus my recent restart of <a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a>. In just a few days, bub evolved from a simple coding agent into a form that feels OpenClaw-like, but not the same.</p>
+<p>Hi, I’m PsiACE. I used to work on databases, RAG, agents, and open source. Now I work on open-source ecosystem projects at OceanBase. You can find me on <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/">GitHub</a>.</p>
+<p>Even within the coding-agent subdomain alone, I’ve worked on RAG, sandboxing, agents, and protocols. For example, <a rel="nofollow noreferrer external" href="https://github.com/agentclientprotocol/python-sdk">agent-client-protocol</a> ranks around top 10k downloads in the Python ecosystem (about 1.2%), and none of this was ever my official day job.</p>
+<p>Today’s sharing is a projection of my thoughts and experiences from years of working on agents, plus my recent restart of <a rel="nofollow noreferrer external" href="https://github.com/psiace/bub">bub</a>. In just a few days, bub evolved from a simple coding agent into a form that feels OpenClaw-like, but not the same.</p>
 <p>My current lens is somewhat more product-oriented, so this won’t dive too deep into hardcore implementation details. Before we go further, let’s look at the title: <em>Carpenter, Hammer, Nail</em>:</p>
 <ul>
 <li>If someone has a hammer, everything starts to look like a nail.</li>
@@ -391,7 +391,7 @@ Luckily, this time I started from preparing an internal company talk, so I final
 <li>Or switch to a new hammer.</li>
 </ul>
 <p>Side note: until today, I still have not read the implementations of codex / pi-mono / nanobot / openclaw.</p>
-<p>Special thanks to <a rel="nofollow noreferrer" href="https://github.com/frostming">frostming</a>, <a rel="nofollow noreferrer" href="https://github.com/yihong0618">yihong0618</a>, <a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a>, and all its contributors.</p>
+<p>Special thanks to <a rel="nofollow noreferrer external" href="https://github.com/frostming">frostming</a>, <a rel="nofollow noreferrer external" href="https://github.com/yihong0618">yihong0618</a>, <a rel="nofollow noreferrer external" href="https://github.com/psiace/bub">bub</a>, and all its contributors.</p>
 <p>Thanks to alma, kapy, huluwa, and the creators behind these agents.</p>
 <p>Thank you all.</p>
 

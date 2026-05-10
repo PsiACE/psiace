@@ -143,7 +143,7 @@
   
 
   
-    <link id="hl" rel="stylesheet" type="text/css" href="https://psiace.me/hl-light.css" />
+    <link id="hl" rel="stylesheet" type="text/css" href="https://psiace.me/giallo-light.css" />
   
 
 
@@ -155,11 +155,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -179,7 +179,7 @@
           
         </div>
         
-        <div id="bio"> AI 需要结构。我来搭建。 </div>
+        <div id="bio"> ASF Member · OceanBase（蚂蚁集团）高级工程师 </div>
         
       </div>
     </section>
@@ -278,12 +278,14 @@
       </div>
     </section>
     <section id="brief" class="prose">
-      <p>你好，我是 PsiACE，一名开源工程师。</p>
-<p>我在构建 AI 系统之下的结构层，
-让智能变得可靠、可观测、可复用。</p>
-<p>我的工作覆盖数据系统、结构化上下文、
-能力协议与开源生态。</p>
-<p><strong>AI 需要结构。我来搭建。</strong></p>
+      <p>你好，我是 PsiACE，一名开源工程师，
+关注数据基础设施与生成式 AI 的结合。</p>
+<p>目前在 OceanBase（蚂蚁集团）担任高级工程师，
+围绕 OceanBase 生态构建数据库原生的智能体能力。
+此前在 NebulaGraph 负责 GenAI 平台的工程化，
+更早作为创始团队成员参与 Databend 的研发。</p>
+<p>我是 Apache 软件基金会 Member ，
+也是 Apache OpenDAL 等多个项目的贡献者。</p>
     </section>
     
     

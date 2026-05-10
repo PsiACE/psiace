@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -315,7 +315,7 @@ Math never came easy, yet coding let me build things, so I stuck with it.</p>
 I devoured GNU and Free Software Foundation histories and helped the GNU.org proofread articles.
 I barely knew tools beyond basic git, so seniors merged patches for me.
 Mailing lists introduced me to Junyu, whose WebP image service would later go viral on Twitter.</p>
-<p>That year I also wrote to the fresh <a rel="nofollow noreferrer" href="https://leetcode.cn/">LeetCode China</a> launch to volunteer for solution translations.
+<p>That year I also wrote to the fresh <a rel="nofollow noreferrer external" href="https://leetcode.cn/">LeetCode China</a> launch to volunteer for solution translations.
 Hercy sent my first official reply, and Winston helped me land the gig.
 Seven years on, we’re still friends.</p>
 <p>Of course 2018 had more stories:
@@ -332,36 +332,36 @@ I never imagined a future job would have me writing Rust for real.</p>
 <h2 id="2019-translation-and-community">2019 – Translation and Community<a class="zola-anchor" href="#2019-translation-and-community" aria-label="Anchor link for: 2019-translation-and-community" style="visibility: hidden;"></a>
 </h2>
 <p>Translation carried me farther than I expected.
-In 2019 <a rel="nofollow noreferrer" href="https://linux.cn/lctt/">LCTT</a> was still the most vibrant Linux community in China.
+In 2019 <a rel="nofollow noreferrer external" href="https://linux.cn/lctt/">LCTT</a> was still the most vibrant Linux community in China.
 There I met Wang and teacher Bai Huancheng; we even planned a book that never shipped, yet that collaboration remains unforgettable.</p>
 <p>Python was booming.
-I picked up Flask, Django, and FastAPI and became a maintainer of <a rel="nofollow noreferrer" href="https://github.com/audreyfeldroy/cookiecutter-pypackage">audreyfeldroy/cookiecutter-pypackage</a>, a project with thousands of stars.
+I picked up Flask, Django, and FastAPI and became a maintainer of <a rel="nofollow noreferrer external" href="https://github.com/audreyfeldroy/cookiecutter-pypackage">audreyfeldroy/cookiecutter-pypackage</a>, a project with thousands of stars.
 Audrey Feldroy and Daniel Roy “Pydanny” Greenfeld still run that legendary two-person shop.</p>
-<p>By year end I finished the compiler course, read <em>Crafting Interpreters</em>, and built <a rel="nofollow noreferrer" href="https://github.com/PsiACE/meco">meco</a>, a C project template, plus the toy language <a rel="nofollow noreferrer" href="https://github.com/PsiACE/emo">emo</a>.
+<p>By year end I finished the compiler course, read <em>Crafting Interpreters</em>, and built <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/meco">meco</a>, a C project template, plus the toy language <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/emo">emo</a>.
 I also tried Neo4j and NebulaGraph, building a graph-visualization project.
 I had no idea I’d later work at a graph database company.</p>
 <hr />
 <h2 id="2020-rust-summer-and-finding-a-direction">2020 – Rust Summer and Finding a Direction<a class="zola-anchor" href="#2020-rust-summer-and-finding-a-direction" aria-label="Anchor link for: 2020-rust-summer-and-finding-a-direction" style="visibility: hidden;"></a>
 </h2>
 <p>I told myself I was preparing for graduate school in 2020, yet my mind stayed half in code.
-I shifted from Python to Rust and joined the first <a rel="nofollow noreferrer" href="https://summer-ospp.ac.cn/">Open Source Promotion Plan (OSPP)</a> to build <a rel="nofollow noreferrer" href="https://github.com/casbin-rs/casbin-raft">casbin-raft</a>.
+I shifted from Python to Rust and joined the first <a rel="nofollow noreferrer external" href="https://summer-ospp.ac.cn/">Open Source Promotion Plan (OSPP)</a> to build <a rel="nofollow noreferrer external" href="https://github.com/casbin-rs/casbin-raft">casbin-raft</a>.
 That’s where I met Jiang Cheng and Hackerchai — Jiang later wrote a recommendation letter, and chai went on to Kong.
 My connection with OSPP ran even deeper, continuing to this day.</p>
-<p>I also translated a chapter of <em>Writing an OS in Rust</em> and met Luo Jia, creator of <a rel="nofollow noreferrer" href="https://github.com/rustsbi/rustsbi">RustSBI</a>.
+<p>I also translated a chapter of <em>Writing an OS in Rust</em> and met Luo Jia, creator of <a rel="nofollow noreferrer external" href="https://github.com/rustsbi/rustsbi">RustSBI</a>.
 nrc’s <em>“Early Impressions of Go from a Rust Programmer”</em> was another piece I translated.
-Their VLDB paper became the backbone of my thesis proposal, and with permission I published my notes at <a rel="nofollow noreferrer" href="https://github.com/psiace/tidb-a-raft-based-htap-database">PsiACE/TiDB-A-Raft-based-HTAP-Database</a>.</p>
+Their VLDB paper became the backbone of my thesis proposal, and with permission I published my notes at <a rel="nofollow noreferrer external" href="https://github.com/psiace/tidb-a-raft-based-htap-database">PsiACE/TiDB-A-Raft-based-HTAP-Database</a>.</p>
 <p>My thesis was a Rust-based distributed KV store built with Raft + Bitcask.
 If you know PingCAP, you can guess the inspiration.
-I studied <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/openraft">async-raft</a> — the predecessor of databend/openraft — and contributed to PingCAP projects.
-I donated to the inaugural <a rel="nofollow noreferrer" href="https://rustcc.cn/2020rustchinaconf/">Rust China Conf 2020</a> and later edited the Rust Chinese Community Daily for a few years.</p>
+I studied <a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/openraft">async-raft</a> — the predecessor of databend/openraft — and contributed to PingCAP projects.
+I donated to the inaugural <a rel="nofollow noreferrer external" href="https://rustcc.cn/2020rustchinaconf/">Rust China Conf 2020</a> and later edited the Rust Chinese Community Daily for a few years.</p>
 <hr />
 <h2 id="2021-from-failed-exams-to-first-job">2021 – From Failed Exams to First Job<a class="zola-anchor" href="#2021-from-failed-exams-to-first-job" aria-label="Anchor link for: 2021-from-failed-exams-to-first-job" style="visibility: hidden;"></a>
 </h2>
-<p>The exam was a mess — I was still fixing lint in <a rel="nofollow noreferrer" href="https://github.com/xi-editor/xi-editor">xi-editor</a> during review weeks.
+<p>The exam was a mess — I was still fixing lint in <a rel="nofollow noreferrer external" href="https://github.com/xi-editor/xi-editor">xi-editor</a> during review weeks.
 I interviewed with Wasmedge for an internship, learned about WebAssembly and the ERC20 standard, and my solution was eventually adopted by the community.
-And forked <a rel="nofollow noreferrer" href="https://github.com/PsiACE/riteraft">riteraft</a> and <a rel="nofollow noreferrer" href="https://github.com/PsiACE/ritelinked">ritelinked</a> from Meilisearch and Hashlink, respectively, earning a modest following.
-I also interviewed with PingCAP for <a rel="nofollow noreferrer" href="https://github.com/ti-community-infra/tichi">TiChi</a>, learning Prow deployment the hard way.</p>
-<p>Meanwhile I contributed to <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/databend">Databend</a> across CI, fuzzing, and upstream Arrow and SQL parser changes.
+And forked <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/riteraft">riteraft</a> and <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/ritelinked">ritelinked</a> from Meilisearch and Hashlink, respectively, earning a modest following.
+I also interviewed with PingCAP for <a rel="nofollow noreferrer external" href="https://github.com/ti-community-infra/tichi">TiChi</a>, learning Prow deployment the hard way.</p>
+<p>Meanwhile I contributed to <a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/databend">Databend</a> across CI, fuzzing, and upstream Arrow and SQL parser changes.
 Back then Databend had maybe ten people.
 I added BohuTANG on WeChat just to learn, yet after my thesis defense he invited me to join.
 We met in Wuhan, and his founder energy was blindingly bright.

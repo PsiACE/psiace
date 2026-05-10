@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -295,7 +295,7 @@
         
 
         <blockquote>
-<p>今天聊聊 <a rel="nofollow noreferrer" href="https://github.com/bubbuild/bub">bub</a> 中一些延续至今的设计巧思，以及我对人与 Agent 交互的一些想法。
+<p>今天聊聊 <a rel="nofollow noreferrer external" href="https://github.com/bubbuild/bub">bub</a> 中一些延续至今的设计巧思，以及我对人与 Agent 交互的一些想法。
 你或许已经在我的文章中多次看到这个项目；因此，在了解它的设计之余，我也希望你能试着读一读它的代码。</p>
 </blockquote>
 <h2 id="qian-yan">前言<a class="zola-anchor" href="#qian-yan" aria-label="Anchor link for: qian-yan" style="visibility: hidden;"></a>
@@ -327,7 +327,7 @@
 而这正是 Bub 管理自己上下文的自然表达。
 基于这一点，人和 Agent 便自然建立起了对负载状态的理解；我们也因此能够直观感受到，不同工具究竟会对 Bub 产生怎样的影响。</p>
 <blockquote>
-<p>P.S. Comma Commands 的设计来源于 2009 年的一篇文章：<a rel="nofollow noreferrer" href="https://rhodesmill.org/brandon/2009/commands-with-comma/"><em>Start all of your commands with a comma</em></a>。
+<p>P.S. Comma Commands 的设计来源于 2009 年的一篇文章：<a rel="nofollow noreferrer external" href="https://rhodesmill.org/brandon/2009/commands-with-comma/"><em>Start all of your commands with a comma</em></a>。
 最开始引入它的目的之一，除了提供一致的行为之外，也是为了让 Bub 能够在命令行中恰到好处地工作。
 毕竟，命令行是程序员最熟悉的界面之一。</p>
 </blockquote>
@@ -369,7 +369,7 @@
 <p>Bub 所做的，并不是提出一种新的交互方式，而是承认交互本身的存在，并为它建立约束。</p>
 <p>文章到了这里就应该结束了。
 又是一个深深的夜。
-欢迎关注 Bub：<a rel="nofollow noreferrer" href="https://github.com/bubbuild/bub">https://github.com/bubbuild/bub</a></p>
+欢迎关注 Bub：<a rel="nofollow noreferrer external" href="https://github.com/bubbuild/bub">https://github.com/bubbuild/bub</a></p>
 
       </article>
 

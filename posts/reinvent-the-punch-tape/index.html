@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -286,7 +286,7 @@
         
 
         <blockquote>
-<p>Hi, I'm <a rel="nofollow noreferrer" href="https://github.com/PsiACE">PsiACE</a>. This idea was born about 4 months ago when I was still working toward better GraphRAG. I have some experience with Agents and databases over the past few years—feel free to read my previous posts.</p>
+<p>Hi, I'm <a rel="nofollow noreferrer external" href="https://github.com/PsiACE">PsiACE</a>. This idea was born about 4 months ago when I was still working toward better GraphRAG. I have some experience with Agents and databases over the past few years—feel free to read my previous posts.</p>
 </blockquote>
 <h2 id="tl-dr">TL;DR<a class="zola-anchor" href="#tl-dr" aria-label="Anchor link for: tl-dr" style="visibility: hidden;"></a>
 </h2>

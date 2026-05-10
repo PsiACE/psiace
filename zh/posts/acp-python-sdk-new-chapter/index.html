@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -263,13 +263,13 @@
 
         
 
-        <p>当我最初开始编写 <strong><a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol/python-sdk">Agent Client Protocol Python SDK</a></strong> 时，它只是一个出于好奇的小项目。
+        <p>当我最初开始编写 <strong><a rel="nofollow noreferrer external" href="https://github.com/agentclientprotocol/python-sdk">Agent Client Protocol Python SDK</a></strong> 时，它只是一个出于好奇的小项目。
 我想弄清楚 <em>coding agents</em> 是如何交流的——状态、意图与消息在客户端和智能体之间如何流动。</p>
 <p>随着时间推移，它逐渐成长为一个真正有用的项目。
 越来越多的开发者开始使用它，从 <strong>Moonshot</strong> 到其他探索智能体工作流的公司。
 SDK 的架构变得稳定，并持续与 ACP 规范保持同步，成为多种实际集成的基础。</p>
 <p>今天，是一个新的开始。
-Python SDK 已经正式迁移到 <strong><a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol">agentclientprotocol</a></strong> 组织下，与 TypeScript、Rust、Kotlin SDK 一起成为官方生态的一部分。</p>
+Python SDK 已经正式迁移到 <strong><a rel="nofollow noreferrer external" href="https://github.com/agentclientprotocol">agentclientprotocol</a></strong> 组织下，与 TypeScript、Rust、Kotlin SDK 一起成为官方生态的一部分。</p>
 <p>我会继续在新组织下维护和改进它，专注于让它更加可靠、简洁、易于集成，让更多开发者能够轻松构建智能体系统。</p>
 <p>特别感谢 <strong>Sergey Ignatov</strong>、<strong>Anna</strong> 和 <strong>Ben</strong> 在整个迁移过程中给予的信任与支持，也感谢所有曾经使用、贡献或反馈过这个项目的开发者们。</p>
 <p>这个项目最初只是一个实验，如今它已成为一个共同的努力。

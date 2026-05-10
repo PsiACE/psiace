@@ -5,7 +5,7 @@ function enableThemeToggle() {
   const preferDark = window.matchMedia("(prefers-color-scheme: dark)");
   function toggleTheme(theme) {
     if (theme == "dark") document.body.classList.add('dark'); else document.body.classList.remove('dark');
-    if (hlLink) hlLink.href = `/hl-${theme}.css`;
+    if (hlLink) hlLink.href = `/giallo-${theme}.css`;
     sessionStorage.setItem("theme", theme);
     toggleGiscusTheme(theme);
   }
@@ -247,7 +247,7 @@ function enableBackLink() {
   const backLink = document.querySelector('#back-link');
   if (!backLink) return;
   backLink.addEventListener('click', (e) => {
-    if (document.referrer && location.href.startsWith(document.referrer) && !location.hash) {
+    if (document.referrer && location.href.startsWith(document.referrer) && !location.hash && history.length > 1) {
       e.preventDefault();
       history.back();
     }

@@ -10,7 +10,7 @@
   
     
   
-  <meta name="description" content="About PsiACE, an open-source engineer building the structure layer beneath AI systems.">
+  <meta name="description" content="About PsiACE — ASF Member and open source engineer working on data infrastructure and generative AI.">
 
   <title>About</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -196,6 +196,8 @@
 
 
   
+
+  
     
     
     
@@ -203,8 +205,6 @@
     
     
     
-  
-
   
 
 
@@ -218,17 +218,55 @@
     <div>
       
       <article class="prose">
-        <p>Hi, I'm PsiACE, an open-source engineer.</p>
-<p>My work focuses on the <strong>structure layer beneath AI systems</strong>:
-the structure of data, context, capability, and the ecosystems that make collaboration possible.</p>
-<p>I started from cloud-native databases and data systems,
-building execution and storage foundations at Databend.
-I later worked on unified data access abstractions and open-source governance at Apache OpenDAL.
-More recently, I've been building structured context and reasoning pipelines for AI systems,
-including context construction and capability-layer tooling.</p>
-<p>What I care about is not how intelligent a model looks,
-but whether intelligence can be <strong>trusted, explained, and sustained</strong> in real systems.</p>
-<p><strong>AI needs structure. I build it.</strong></p>
+        <p>I'm Chojan Shang (PsiACE), an open source engineer based in Hangzhou, China.
+I work at the intersection of data infrastructure and generative AI.</p>
+<h2 id="now">Now</h2>
+<p><strong>Senior Engineer @ OceanBase (Ant Group).</strong>
+I lead the development of <a rel="nofollow noreferrer external" href="https://github.com/ob-labs/agentseek">AgentSeek</a>,
+building database-native agent capabilities and open source tooling around the OceanBase ecosystem,
+and working with the community on upstream / downstream collaboration.</p>
+<h2 id="before">Before</h2>
+<p><strong>GenAI Platform Engineer @ NebulaGraph (2024 – 2025).</strong>
+Owned the engineering of the NebulaGraph GenAI platform.
+Co-designed and shipped Fusion GraphRAG, reaching ~95% answer accuracy in selected scenarios
+and cutting time-to-first-answer by 80% over public baselines under the same compute.</p>
+<p><strong>Core Engineer @ Databend Labs (2021 – 2024).</strong>
+Founding team member of the cloud-native data warehouse Databend.
+Led major refactors, modular decomposition, compile-time performance work,
+and the first continuous benchmark.
+Drove integrations with HuggingFace, lakeFS, and KubeSphere across data lake and cloud-native scenarios.
+On the community side, grew GitHub stars from 800+ to 8000+
+and served multiple years as the OSPP community liaison.</p>
+<h2 id="open-source">Open source</h2>
+<ul>
+<li><strong>ASF Member.</strong> Committer / contributor to several Apache projects.
+Helped take <strong>Apache OpenDAL</strong> from incubation to graduation —
+now adopted at scale by LanceDB, Milvus, and others.</li>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/agentclientprotocol/python-sdk">ACP Python SDK</a>.</strong>
+Creator and maintainer of the Agent Client Protocol Python SDK,
+with around 10M monthly downloads and adoption in products from Kimi and Mistral.</li>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/bubbuild/bub">bub</a>.</strong> Core maintainer of an open source agent framework
+built for real-world multi-party collaboration.</li>
+</ul>
+<h2 id="speaking-writing">Speaking &amp; writing</h2>
+<p>I've spoken at ApacheCon Asia, PyCon China, Rust China Conf,
+and Kubernetes Community Days on data infrastructure and GenAI / Agent engineering.</p>
+<h2 id="education">Education</h2>
+<ul>
+<li><strong>M.Sc., Applied Mathematics &amp; Data Science</strong>, Macau University of Science and Technology (2022 – 2024) — learned caching, LLM applications.</li>
+<li><strong>B.Eng., Computer Science</strong>, Huazhong Agricultural University (2017 – 2021) — databases.</li>
+</ul>
+<h2 id="what-i-care-about">What I care about</h2>
+<p>Building trustworthy open source products that connect communities, users,
+and commercial teams — landing complex infrastructure
+in developer-friendly ways at global scale.</p>
+<h2 id="contact">Contact</h2>
+<ul>
+<li>Email: <a href="mailto:psiace@apache.org">psiace@apache.org</a></li>
+<li>GitHub: <a rel="nofollow noreferrer external" href="https://github.com/PsiACE">@PsiACE</a></li>
+<li>LinkedIn: <a rel="nofollow noreferrer external" href="https://www.linkedin.com/in/psiace/">PsiACE</a></li>
+<li>Twitter / X: <a rel="nofollow noreferrer external" href="https://twitter.com/repsiace">@repsiace</a></li>
+</ul>
 
       </article>
 

@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -330,7 +330,7 @@ let AI run inside boundaries, and let humans own outcomes.</p>
 </h2>
 <p>AI‑assisted coding is addictive, but as projects grow, context drifts and complexity balloons.
 You get something that runs, but barely holds.</p>
-<p>On the other hand, pure spec‑driven frameworks — like GitHub’s <a rel="nofollow noreferrer" href="https://github.com/github/spec-kit">Spec Kit</a> — are often heavy for iterative work.
+<p>On the other hand, pure spec‑driven frameworks — like GitHub’s <a rel="nofollow noreferrer external" href="https://github.com/github/spec-kit">Spec Kit</a> — are often heavy for iterative work.
 Precise, but hard to live with.</p>
 <p>So I took the middle ground: spec‑first boundaries, AI‑assisted speed — using the Agent Client Protocol (ACP).</p>
 <h2 id="what-makes-acp-a-good-base">What Makes ACP a Good Base<a class="zola-anchor" href="#what-makes-acp-a-good-base" aria-label="Anchor link for: what-makes-acp-a-good-base" style="visibility: hidden;"></a>
@@ -338,7 +338,7 @@ Precise, but hard to live with.</p>
 <p>ACP, started by Zed, defines how editors and agents talk.
 It uses JSON‑RPC 2.0 and is described in JSON Schema — clear edges, machine‑readable types, auditable behaviors.
 That balance makes it ideal for SDKs that must live across languages and over time.</p>
-<p>I applied this while maintaining the ACP <a rel="nofollow noreferrer" href="https://github.com/psiace/agent-client-protocol-python">Python SDK</a> for the <a rel="nofollow noreferrer" href="https://agentclientprotocol.com">Agent Client Protocol</a>.</p>
+<p>I applied this while maintaining the ACP <a rel="nofollow noreferrer external" href="https://github.com/psiace/agent-client-protocol-python">Python SDK</a> for the <a rel="nofollow noreferrer external" href="https://agentclientprotocol.com">Agent Client Protocol</a>.</p>
 <h2 id="how-i-built-the-python-sdk">How I Built the Python SDK<a class="zola-anchor" href="#how-i-built-the-python-sdk" aria-label="Anchor link for: how-i-built-the-python-sdk" style="visibility: hidden;"></a>
 </h2>
 <h3 id="stage-0-minimal-but-runnable">Stage 0 — Minimal, but Runnable<a class="zola-anchor" href="#stage-0-minimal-but-runnable" aria-label="Anchor link for: stage-0-minimal-but-runnable" style="visibility: hidden;"></a>
@@ -365,11 +365,10 @@ I had the agent scan docs to produce a rename map (more Pythonic names), then bo
 </h3>
 <p>I didn’t want endless if‑trees like <code>if method == "..."</code>.
 So I wrote a compact router that makes method→handler first‑class:</p>
-<pre data-lang="python" class="language-python z-code"><code class="language-python" data-lang="python"><span class="z-source z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">builder</span></span> <span class="z-keyword z-operator z-assignment z-python">=</span> <span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">RouterBuilder</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
-</span><span class="z-source z-python">
-</span><span class="z-source z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">builder</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">request_attr</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">CLIENT_METHODS</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">fs_write_text_file<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">WriteTextFileRequest</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">writeTextFile<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
-</span><span class="z-source z-python"><span class="z-meta z-function-call z-python"><span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">builder</span></span><span class="z-meta z-qualified-name z-python"><span class="z-punctuation z-accessor z-dot z-python">.</span></span><span class="z-meta z-qualified-name z-python"><span class="z-variable z-function z-python"><span class="z-meta z-generic-name z-python">request_attr</span></span></span></span><span class="z-meta z-function-call z-arguments z-python"><span class="z-punctuation z-section z-arguments z-begin z-python">(</span><span class="z-meta z-item-access z-python"><span class="z-meta z-qualified-name z-python"><span class="z-variable z-other z-constant z-python">CLIENT_METHODS</span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-begin z-python">[</span></span><span class="z-meta z-item-access z-arguments z-python"><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">fs_read_text_file<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span></span><span class="z-meta z-item-access z-python"><span class="z-punctuation z-section z-brackets z-end z-python">]</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">ReadTextFileRequest</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-qualified-name z-python"><span class="z-meta z-generic-name z-python">client</span></span><span class="z-punctuation z-separator z-arguments z-python">,</span> <span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python"><span class="z-punctuation z-definition z-string z-begin z-python">&quot;</span></span></span><span class="z-meta z-string z-python"><span class="z-string z-quoted z-double z-python">readTextFile<span class="z-punctuation z-definition z-string z-end z-python">&quot;</span></span></span><span class="z-punctuation z-section z-arguments z-end z-python">)</span></span>
-</span></code></pre>
+<pre class="giallo z-code"><code data-lang="python"><span class="giallo-l"><span>builder</span><span class="z-keyword"> =</span><span> RouterBuilder</span><span>(</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>builder</span><span>.</span><span>request_attr</span><span>(</span><span class="z-constant">CLIENT_METHODS</span><span>[</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">fs_write_text_file</span><span class="z-punctuation z-definition z-string">&quot;</span><span>]</span><span>,</span><span> WriteTextFileRequest</span><span>,</span><span> client</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">writeTextFile</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>builder</span><span>.</span><span>request_attr</span><span>(</span><span class="z-constant">CLIENT_METHODS</span><span>[</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">fs_read_text_file</span><span class="z-punctuation z-definition z-string">&quot;</span><span>]</span><span>,</span><span> ReadTextFileRequest</span><span>,</span><span> client</span><span>,</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">readTextFile</span><span class="z-punctuation z-definition z-string">&quot;</span><span>)</span></span></code></pre>
 <p>Registered handlers are pluggable, testable, and auditable.
 By v0.4.9 the SDK wasn’t big, but it was stable and teachable.</p>
 <h3 id="context-curation-feed-the-agent-only-what-matters">Context curation — feed the agent only what matters<a class="zola-anchor" href="#context-curation-feed-the-agent-only-what-matters" aria-label="Anchor link for: context-curation-feed-the-agent-only-what-matters" style="visibility: hidden;"></a>
@@ -411,7 +410,7 @@ Fuel gives speed; rails keep you alive.</p>
 <p>I like this balance — AI writes, I define boundaries.
 Every line explainable, every bug reproducible.
 That’s how to build responsibly in the AI age.</p>
-<p>— <strong>PsiACE</strong> (<a rel="nofollow noreferrer" href="https://github.com/PsiACE">GitHub</a> · <a rel="nofollow noreferrer" href="https://opendal.apache.org/">Apache OpenDAL PMC Member</a>)</p>
+<p>— <strong>PsiACE</strong> (<a rel="nofollow noreferrer external" href="https://github.com/PsiACE">GitHub</a> · <a rel="nofollow noreferrer external" href="https://opendal.apache.org/">Apache OpenDAL PMC Member</a>)</p>
 
       </article>
 

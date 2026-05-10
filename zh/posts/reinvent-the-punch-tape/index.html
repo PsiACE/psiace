@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -290,7 +290,7 @@
         
 
         <blockquote>
-<p>大家好，我是 <a rel="nofollow noreferrer" href="https://github.com/PsiACE">PsiACE</a>，你可以在 GitHub 上找到我，这个想法最开始诞生于 4 个月前，那个时候我还在为更好的 GraphRAG 而努力。我过去几年在 Agent 和数据库有一些经验，你也可以阅读我的历史文章。</p>
+<p>大家好，我是 <a rel="nofollow noreferrer external" href="https://github.com/PsiACE">PsiACE</a>，你可以在 GitHub 上找到我，这个想法最开始诞生于 4 个月前，那个时候我还在为更好的 GraphRAG 而努力。我过去几年在 Agent 和数据库有一些经验，你也可以阅读我的历史文章。</p>
 </blockquote>
 <h2 id="tl-dr">TL;DR<a class="zola-anchor" href="#tl-dr" aria-label="Anchor link for: tl-dr" style="visibility: hidden;"></a>
 </h2>

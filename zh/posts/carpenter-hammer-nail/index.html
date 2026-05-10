@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -278,8 +278,6 @@
 
 
   
-
-  
     
     
     
@@ -287,6 +285,8 @@
     
     
     
+  
+
   
 
 
@@ -306,14 +306,14 @@
 
         <blockquote>
 <p>这篇文章继续献给 bub ，一个在群聊中生活的 agent ，来讲讲背后的问题、范式和模型变迁。
-<a rel="nofollow noreferrer" href="https://github.com/kemingy">kemingy</a> 吐嘈过：“你的文章疑似太发散了，脱离了科技写作的范畴，需要额外的 context，也不一定能对得上”。
+<a rel="nofollow noreferrer external" href="https://github.com/kemingy">kemingy</a> 吐嘈过：“你的文章疑似太发散了，脱离了科技写作的范畴，需要额外的 context，也不一定能对得上”。
 好在本次是要在公司内部做一个分享开始撰写的，所以难得正经地会走一下流程。</p>
 </blockquote>
 <h2 id="qian-yan">前言<a class="zola-anchor" href="#qian-yan" aria-label="Anchor link for: qian-yan" style="visibility: hidden;"></a>
 </h2>
-<p>大家好，我是 PsiACE，花名泉达。以前做数据库，做 RAG，做 Agent，做开源，现在在 OceanBase 做开源生态相关的工作。欢迎关注我的 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/">GitHub</a> 。</p>
-<p>即便只是在 coding agent 这个子领域上，我至少做过 rag、沙箱、agent、protocol 几个方向，其中 <a rel="nofollow noreferrer" href="https://github.com/agentclientprotocol/python-sdk">agent-client-protocol</a> 在整个 python 生态下载量大概前万名（1.2%），而这些都不曾是我的主业。</p>
-<p>今天分享主要是我过去几年做 Agent 和最近重新拾起 <a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a> 的一些想法和经验的投影。bub 在短短的几天内从一个简单的 Coding Agent 开始，独立地演化成某种类似 OpenClaw 但不同的形态。</p>
+<p>大家好，我是 PsiACE，花名泉达。以前做数据库，做 RAG，做 Agent，做开源，现在在 OceanBase 做开源生态相关的工作。欢迎关注我的 <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/">GitHub</a> 。</p>
+<p>即便只是在 coding agent 这个子领域上，我至少做过 rag、沙箱、agent、protocol 几个方向，其中 <a rel="nofollow noreferrer external" href="https://github.com/agentclientprotocol/python-sdk">agent-client-protocol</a> 在整个 python 生态下载量大概前万名（1.2%），而这些都不曾是我的主业。</p>
+<p>今天分享主要是我过去几年做 Agent 和最近重新拾起 <a rel="nofollow noreferrer external" href="https://github.com/psiace/bub">bub</a> 的一些想法和经验的投影。bub 在短短的几天内从一个简单的 Coding Agent 开始，独立地演化成某种类似 OpenClaw 但不同的形态。</p>
 <p>最近的视角会更多偏产品经理一些，所以这次不会涉及特别深入的技术点。在进入正题前，先让我们看看这个标题，《木匠，锤子，钉子》：</p>
 <ul>
 <li>一个人有了锤子，就会看什么都像钉子。</li>
@@ -394,7 +394,7 @@
 <li>或者，换一把新锤子。</li>
 </ul>
 <p>题外话，直到今天，我仍然没有看过 codex / pi-mono / nanobot / openclaw 是如何实现的。</p>
-<p>特别感谢 <a rel="nofollow noreferrer" href="https://github.com/frostming">frostming</a>，感谢 <a rel="nofollow noreferrer" href="https://github.com/yihong0618">yihong0618</a>、<a rel="nofollow noreferrer" href="https://github.com/psiace/bub">bub</a> 和其贡献者们。</p>
+<p>特别感谢 <a rel="nofollow noreferrer external" href="https://github.com/frostming">frostming</a>，感谢 <a rel="nofollow noreferrer external" href="https://github.com/yihong0618">yihong0618</a>、<a rel="nofollow noreferrer external" href="https://github.com/psiace/bub">bub</a> 和其贡献者们。</p>
 <p>感谢 alma、kapy、葫芦娃和这些 Agent 背后的创造者。</p>
 <p>谢谢大家。</p>
 

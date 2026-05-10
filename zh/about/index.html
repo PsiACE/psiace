@@ -10,7 +10,7 @@
   
     
   
-  <meta name="description" content="关于 PsiACE：构建 AI 系统之下结构层的开源工程师。">
+  <meta name="description" content="关于 PsiACE：Apache 软件基金会 Member，开源工程师，专注数据基础设施与生成式 AI 的结合。">
 
   <title>关于</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -200,8 +200,6 @@
 
 
   
-
-  
     
     
     
@@ -209,6 +207,8 @@
     
     
     
+  
+
   
 
 
@@ -222,17 +222,55 @@
     <div>
       
       <article class="prose">
-        <p>你好，我是 PsiACE，一名开源工程师。</p>
-<p>我的工作聚焦于 AI 系统之下的结构层：
-数据、上下文、能力，以及支撑协作的开源生态结构。</p>
-<p>我从云原生数据库与数据系统起步，
-在 Databend 构建执行与存储基础。
-随后在 Apache OpenDAL 参与统一数据访问抽象与开源治理。
-最近我在构建面向 AI 系统的结构化上下文与推理流水线，
-包括上下文构建与能力层工具。</p>
-<p>我关注的不是模型看起来有多聪明，
-而是智能在真实系统中能否被<strong>信任、解释和持续</strong>。</p>
-<p><strong>AI 需要结构。我来搭建。</strong></p>
+        <p>我是尚卓燃（PsiACE），一名开源工程师，常驻杭州，
+专注数据基础设施与生成式 AI 的结合。</p>
+<h2 id="xian-zai">现在</h2>
+<p><strong>OceanBase（蚂蚁集团）高级工程师。</strong>
+主导开发 <a rel="nofollow noreferrer external" href="https://github.com/ob-labs/agentseek">AgentSeek</a>，
+围绕 OceanBase 生态打造数据库原生的智能体能力与开源工具链，
+推动 AI / Agent 能力与 OceanBase 开源生态的融合，
+并参与社区运营与上下游协作。</p>
+<h2 id="ci-qian">此前</h2>
+<p><strong>Vesoft Inc. (NebulaGraph) GenAI 平台工程师（2024 – 2025）。</strong>
+主导 NebulaGraph GenAI 平台的工程化实践，面向复杂业务领域问答优化上下文构建流程；
+合作设计并落地 FusionGraphRAG 方案，在选定业务场景下问答精度稳定在约 95% ，
+对比公开 GraphRAG 基线，在相同算力下实现首答可用时间缩短 80%。</p>
+<p><strong>Databend Labs 核心研发工程师（2021 – 2024）。</strong>
+云原生数据仓库 Databend 的创始团队成员之一，
+参与历次重大代码重构与架构演进，主导模块化拆分改造与编译时性能优化，
+设计并主导第一个持续 benchmark 方案的落地，
+推动与 HuggingFace、lakeFS、KubeSphere 等生态的集成。
+社区侧，主导开发者关系与运营，GitHub Star 由 800+ 增长至 8000+ ，
+连续多年担任 OSPP 社区联络人，持续培育新贡献者。</p>
+<h2 id="kai-yuan">开源</h2>
+<ul>
+<li><strong>ASF Member。</strong> 多个 Apache 项目的 Committer 和贡献者，
+参与 <strong>Apache OpenDAL</strong> 从孵化到毕业为顶级项目的全过程，
+目前已在 LanceDB、Milvus 等项目中规模化使用。</li>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/agentclientprotocol/python-sdk">ACP Python SDK</a>。</strong>
+Agent Client Protocol Python SDK 的创建者与维护者，
+月下载量近千万，被 Kimi、Mistral 等产品广泛使用。</li>
+<li><strong><a rel="nofollow noreferrer external" href="https://github.com/bubbuild/bub">bub</a>。</strong> 一个面向真实多人协作场景的开源 Agent 框架，
+作为主要维护者之一参与开发。</li>
+</ul>
+<h2 id="fen-xiang-yu-xie-zuo">分享与写作</h2>
+<p>曾在 ApacheCon Asia、PyCon China、Rust China Conf、Kubernetes Community Days
+等大会分享数据基础设施与 GenAI / Agent 工程实践。</p>
+<h2 id="jiao-yu">教育</h2>
+<ul>
+<li><strong>应用数学与数据科学硕士</strong>，澳门科技大学（2022 – 2024）——学习型缓存，大模型应用。</li>
+<li><strong>计算机科学与技术学士</strong>，华中农业大学（2017 – 2021）——数据库方向。</li>
+</ul>
+<h2 id="wo-zai-yi-de-shi">我在意的事</h2>
+<p>打造可信的开源产品，连接社区、用户与商业团队，
+让复杂基础设施以开发者友好的方式落地全球场景。</p>
+<h2 id="lian-xi">联系</h2>
+<ul>
+<li>邮箱：<a href="mailto:psiace@apache.org">psiace@apache.org</a></li>
+<li>GitHub：<a rel="nofollow noreferrer external" href="https://github.com/PsiACE">@PsiACE</a></li>
+<li>LinkedIn：<a rel="nofollow noreferrer external" href="https://www.linkedin.com/in/psiace/">PsiACE</a></li>
+<li>Twitter / X：<a rel="nofollow noreferrer external" href="https://twitter.com/repsiace">@repsiace</a></li>
+</ul>
 
       </article>
 

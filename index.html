@@ -143,7 +143,7 @@
   
 
   
-    <link id="hl" rel="stylesheet" type="text/css" href="https://psiace.me/hl-light.css" />
+    <link id="hl" rel="stylesheet" type="text/css" href="https://psiace.me/giallo-light.css" />
   
 
 
@@ -155,11 +155,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -179,7 +179,7 @@
           
         </div>
         
-        <div id="bio"> AI needs structure. I build it. </div>
+        <div id="bio"> ASF Member · Senior Engineer @ OceanBase (Ant Group) </div>
         
       </div>
     </section>
@@ -268,12 +268,14 @@
       </div>
     </section>
     <section id="brief" class="prose">
-      <p>Hi, I'm PsiACE, an open-source engineer.</p>
-<p>I build the structure layer beneath AI systems,
-so intelligence becomes reliable, observable, and reusable.</p>
-<p>My work spans data systems, structured context,
-capability protocols, and open-source ecosystems.</p>
-<p><strong>AI needs structure. I build it.</strong></p>
+      <p>Hi, I'm PsiACE — an open source engineer
+working at the intersection of data infrastructure and generative AI.</p>
+<p>I'm currently a Senior Engineer at OceanBase (Ant Group),
+building database-native agent capabilities around the OceanBase ecosystem.
+Before that I worked on the GenAI platform at NebulaGraph,
+and helped build Databend as a founding engineer.</p>
+<p>I'm an ASF Member,
+and a contributor to several Apache projects including OpenDAL.</p>
     </section>
     
     

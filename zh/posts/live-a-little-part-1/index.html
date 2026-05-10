@@ -145,7 +145,7 @@
   <link rel="stylesheet" href="https://psiace.me/main.css">
   
 
-<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
 
 
 
@@ -156,11 +156,11 @@
   
   <script>
     const theme = sessionStorage.getItem('theme');
-    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if ((theme && theme == 'dark') || (!theme && match)) {
       document.body.classList.add('dark');
       const hl = document.querySelector('link#hl');
-      if (hl) hl.href = 'https://psiace.me/hl-dark.css';
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
     }
   </script>
   
@@ -320,7 +320,7 @@ Ruby 风头正盛，我用 Rails 搭过小站，也在 GitHub 上部署过 Jekyl
 我读 GNU 和自由软件基金会的故事，也在 GNU.org 帮忙校对文章。
 那时的我还不会 git 之外的工具，全靠前辈帮我合并推送。
 在邮件列表里，我看到俊余的名字——几年后，他做的 WebP 图像服务在推特上火爆一时。</p>
-<p>同年我写信给刚落地中国的 <a rel="nofollow noreferrer" href="https://leetcode.cn/">LeetCode 力扣</a>，想参与题解翻译。
+<p>同年我写信给刚落地中国的 <a rel="nofollow noreferrer external" href="https://leetcode.cn/">LeetCode 力扣</a>，想参与题解翻译。
 Hercy 给我了第一封正式回复。
 和 Winston 一起帮我做了 landing 。
 如今一晃也结缘七年。</p>
@@ -338,42 +338,42 @@ Hercy 给我了第一封正式回复。
 <h2 id="2019-fan-yi-she-qu-yu-zao-qi-xiang-mu">2019：翻译、社区与早期项目<a class="zola-anchor" href="#2019-fan-yi-she-qu-yu-zao-qi-xiang-mu" aria-label="Anchor link for: 2019-fan-yi-she-qu-yu-zao-qi-xiang-mu" style="visibility: hidden;"></a>
 </h2>
 <p>翻译比我想的走得更远。
-2019 年，<a rel="nofollow noreferrer" href="https://linux.cn/lctt/">LCTT</a> 仍是国内最活跃的 Linux 中文社区。
+2019 年，<a rel="nofollow noreferrer external" href="https://linux.cn/lctt/">LCTT</a> 仍是国内最活跃的 Linux 中文社区。
 我在里面结识了老王和白宦成老师；我们计划合写一本书，虽最终搁浅，但那段共同写作的日子至今难忘。</p>
 <p>技术上，Python 当时如日中天。
 我学了 Flask、Django、FastAPI 皮毛，用 Cookiecutter 生成项目模板。
-后来成为 <a rel="nofollow noreferrer" href="https://github.com/audreyfeldroy/cookiecutter-pypackage">audreyfeldroy/cookiecutter-pypackage</a> 的维护者——一个几千 star 的项目。
+后来成为 <a rel="nofollow noreferrer external" href="https://github.com/audreyfeldroy/cookiecutter-pypackage">audreyfeldroy/cookiecutter-pypackage</a> 的维护者——一个几千 star 的项目。
 她和 Pydanny 是有名的「夫妻店」，今天依然活跃。</p>
-<p>年底，我修完编译原理课，读 <em>Crafting Interpreters</em>，写了个 C 语言项目的模板 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/meco">meco</a> 和玩具语言 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/emo">emo</a>。
+<p>年底，我修完编译原理课，读 <em>Crafting Interpreters</em>，写了个 C 语言项目的模板 <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/meco">meco</a> 和玩具语言 <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/emo">emo</a>。
 那时也尝试 Neo4j 与 NebulaGraph，做过可视化图查询的项目。
 我没想到，几年后我真会在图数据库公司工作。</p>
 <hr />
 <h2 id="2020-rust-zhi-xia-yu-fang-xiang-chu-ding">2020：Rust 之夏与方向初定<a class="zola-anchor" href="#2020-rust-zhi-xia-yu-fang-xiang-chu-ding" aria-label="Anchor link for: 2020-rust-zhi-xia-yu-fang-xiang-chu-ding" style="visibility: hidden;"></a>
 </h2>
 <p>2020 准备考研，但心思其实一半在代码。
-我从 Python 转向 Rust，入选首届 <a rel="nofollow noreferrer" href="https://summer-ospp.ac.cn/">开源之夏 OSPP</a>，在 Casbin 写了 <a rel="nofollow noreferrer" href="https://github.com/casbin-rs/casbin-raft">casbin-raft</a>，认识了江成和 Hackerchai。
+我从 Python 转向 Rust，入选首届 <a rel="nofollow noreferrer external" href="https://summer-ospp.ac.cn/">开源之夏 OSPP</a>，在 Casbin 写了 <a rel="nofollow noreferrer external" href="https://github.com/casbin-rs/casbin-raft">casbin-raft</a>，认识了江成和 Hackerchai。
 江成后来为我写了推荐信，chai 去了 Kong。
 和 OSPP 的缘分甚至更深，一直延续到今天。</p>
 <p>同年，我在 Rust 中文社区贡献翻译：
-译过 <em>Writing an OS in Rust</em> 中的一章，与洛佳结识——后来他做了 <a rel="nofollow noreferrer" href="https://github.com/rustsbi/rustsbi">RustSBI</a>。
+译过 <em>Writing an OS in Rust</em> 中的一章，与洛佳结识——后来他做了 <a rel="nofollow noreferrer external" href="https://github.com/rustsbi/rustsbi">RustSBI</a>。
 我还翻译了 nrc 的 <em>“Early Impressions of Go from a Rust Programmer”</em> 。
 PingCAP 的 VLDB 论文成为了毕设开题材料。
-这个内容在获得授权后发布在了 <a rel="nofollow noreferrer" href="https://github.com/psiace/tidb-a-raft-based-htap-database">PsiACE/TiDB-A-Raft-based-HTAP-Database</a></p>
+这个内容在获得授权后发布在了 <a rel="nofollow noreferrer external" href="https://github.com/psiace/tidb-a-raft-based-htap-database">PsiACE/TiDB-A-Raft-based-HTAP-Database</a></p>
 <p>毕业设计题是 “基于 Rust 的分布式 KV”——Raft + Bitcask。
 熟悉 PingCAP 的同学应该都知道灵感出自何处。
-我研究 async-raft（即 <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/openraft">databend/openraft</a> 前身），也给 P 社周边库提 PR。
-那年我以个人捐赠者身份支持 <a rel="nofollow noreferrer" href="https://rustcc.cn/2020rustchinaconf/">Rust China Conf 2020</a>，和夏歌、Mike、汉东有了更多交流。
+我研究 async-raft（即 <a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/openraft">databend/openraft</a> 前身），也给 P 社周边库提 PR。
+那年我以个人捐赠者身份支持 <a rel="nofollow noreferrer external" href="https://rustcc.cn/2020rustchinaconf/">Rust China Conf 2020</a>，和夏歌、Mike、汉东有了更多交流。
 后来，我还做了几年 Rust 中文社区日报编辑。</p>
 <hr />
 <h2 id="2021-zhuan-zhe-yu-di-yi-fen-gong-zuo">2021：转折与第一份工作<a class="zola-anchor" href="#2021-zhuan-zhe-yu-di-yi-fen-gong-zuo" aria-label="Anchor link for: 2021-zhuan-zhe-yu-di-yi-fen-gong-zuo" style="visibility: hidden;"></a>
 </h2>
-<p>考研失败——毕竟我复习间隙还在给 <a rel="nofollow noreferrer" href="https://github.com/xi-editor/xi-editor">xi-editor</a> 修过 lint。
+<p>考研失败——毕竟我复习间隙还在给 <a rel="nofollow noreferrer external" href="https://github.com/xi-editor/xi-editor">xi-editor</a> 修过 lint。
 我去 Wasmedge 面试实习，了解到了 WebAssembly 和 ERC20 标准，我修正的方案最后被用于社区。
-又从 Meilisearch 和 Hashlink 分叉出 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/riteraft">riteraft</a> 和 <a rel="nofollow noreferrer" href="https://github.com/PsiACE/ritelinked">ritelinked</a>，前者积累 300 多 star，后者成为我下载量最高的 crate 之一。</p>
-<p>我也拿到 PingCAP 面试机会，当时项目是给 <a rel="nofollow noreferrer" href="https://github.com/pingcap/tichi">Tichi</a> 做贡献。
+又从 Meilisearch 和 Hashlink 分叉出 <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/riteraft">riteraft</a> 和 <a rel="nofollow noreferrer external" href="https://github.com/PsiACE/ritelinked">ritelinked</a>，前者积累 300 多 star，后者成为我下载量最高的 crate 之一。</p>
+<p>我也拿到 PingCAP 面试机会，当时项目是给 <a rel="nofollow noreferrer external" href="https://github.com/pingcap/tichi">Tichi</a> 做贡献。
 练习部署 Prow 时，第一次切身感受国内网络之艰难。
 Mini256 就在那个组里——几年后，我在做 GraphRAG 时看到 TiDB 推出 AutoFlow，他也在做 RAG 了。</p>
-<p>那段时间，我一边写论文，一边给 <a rel="nofollow noreferrer" href="https://github.com/datafuselabs/databend">Databend</a> 做早期贡献，从 CI 到模糊测试，再到上游的 Arrow 和 SQL 解析器。
+<p>那段时间，我一边写论文，一边给 <a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/databend">Databend</a> 做早期贡献，从 CI 到模糊测试，再到上游的 Arrow 和 SQL 解析器。
 那时 Databend 不过 10 人左右。
 我加了虎哥好友，只想向技术大佬多学习，没想到真的因此获得了工作机会。
 他爽快地约我在武汉见面。
