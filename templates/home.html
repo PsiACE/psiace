@@ -32,6 +32,8 @@
             {% set label = "文章" %}
           {% elif label == "about" %}
             {% set label = "关于" %}
+          {% elif label == "resume" %}
+            {% set label = "简历" %}
           {% endif %}
         {% endif %}
         {% if item.is_external %}

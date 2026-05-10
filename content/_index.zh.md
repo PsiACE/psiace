@@ -27,11 +27,9 @@ date_format = "%Y年%m月%d日"
 你好，我是 PsiACE，一名开源工程师，
 关注数据基础设施与生成式 AI 的结合。
 
-我是 [Agent Client Protocol Python SDK](https://github.com/agentclientprotocol/python-sdk) 的维护者。
-目前在做 [bub](https://github.com/bubbuild/bub)，
+我在做 [bub](https://github.com/bubbuild/bub)，
 一个让 Agent 与人一起工作的 hook-first runtime；
-也在整理 [tape.systems](https://tape.systems)，
-把 append-only tape、anchor、handoff 与 view 作为长周期上下文构造的基础模型。
+也在推动 [tape.systems](https://tape.systems) 成为上下文构造的基础模型。
 
 我是 Apache 软件基金会 Member ，
 也是包括 [Apache OpenDAL](https://github.com/apache/opendal) 在内的多个 Apache 项目的贡献者。
