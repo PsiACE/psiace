@@ -1,34 +1,21 @@
 ## Hi, I'm PsiACE 👋
 
-**AI needs structure. I build it.**
-
-I work on the **structure layer beneath AI systems**:
-data, context, capability, memory, and ecosystem,
-so intelligence becomes **reliable, observable, and reusable**.
+ASF Member and open source engineer,
+working at the intersection of data infrastructure and generative AI.
 
 ---
 
-### What I work on
+### Currently
 
-- Data systems & execution/storage foundations
-- Unified abstraction layer
-- Structured context for AI
-- Capability protocols & SDKs
-- Open-source governance & ecosystem structure
+- **Senior Engineer @ OceanBase (Ant Group)** — database-native agent capabilities and open source tooling around the OceanBase ecosystem.
+- **ASF Member** — Committer / contributor across multiple Apache projects; helped take Apache OpenDAL from incubation to graduation.
 
----
+### Selected work
 
-### Current focus
-
-- **Senior Engineer @ OceanBase** - open-source and ecosystem engineering for a production-grade database system  
-- **PMC Member @ Apache OpenDAL**
+- **[ACP Python SDK](https://github.com/agentclientprotocol/python-sdk)** — Agent Client Protocol SDK, ~10M monthly downloads; used by Kimi, Mistral, and others.
+- **[bub](https://github.com/bubbuild/bub)** — open source agent framework for real-world multi-party collaboration; core maintainer.
+- **[Apache OpenDAL](https://opendal.apache.org/)** — unified data access layer, adopted at scale by LanceDB, Milvus, and others.
 
 ---
 
-### Selected projects
- 
-- **[ACP Python SDK](https://github.com/agentclientprotocol/python-sdk)** - Capability-layer SDK for AI agents and tools
-
----
-
-> Structure first. Then intelligence.
+> Build trustworthy open source — connect communities, users, and commercial teams.

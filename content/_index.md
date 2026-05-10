@@ -10,7 +10,7 @@ footer = false
 # If you don't want to display id/bio/avatar, simply comment out that line
 name = "Chojan Shang"
 id = "psiace"
-bio = "AI needs structure. I build it."
+bio = "ASF Member · Senior Engineer @ OceanBase (Ant Group)"
 avatar = "img/avatar.png"
 links = [
     { name = "GitHub", icon = "github", url = "https://github.com/psiace" },
@@ -25,12 +25,13 @@ recent_more_text = "more »"
 date_format = "%b %-d, %Y"
 +++
 
-Hi, I'm PsiACE, an open-source engineer.
+Hi, I'm PsiACE — an open source engineer
+working at the intersection of data infrastructure and generative AI.
 
-I build the structure layer beneath AI systems,
-so intelligence becomes reliable, observable, and reusable.
+I'm currently a Senior Engineer at OceanBase (Ant Group),
+building database-native agent capabilities around the OceanBase ecosystem.
+Before that I worked on the GenAI platform at NebulaGraph,
+and helped build Databend as a founding engineer.
 
-My work spans data systems, structured context,
-capability protocols, and open-source ecosystems.
-
-**AI needs structure. I build it.**
+I'm an ASF Member,
+and a contributor to several Apache projects including OpenDAL.
