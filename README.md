@@ -3,8 +3,6 @@
 ASF Member and open source engineer,
 working at the intersection of data infrastructure and generative AI.
 
----
-
 ### Currently
 
 - **Senior Engineer @ OceanBase (Ant Group)** — database-native agent capabilities and open source tooling around the OceanBase ecosystem.
