@@ -31,13 +31,13 @@ source_tail = "。此处为存档版本，正文按原文照录。"
 
 > 根据 CNCF 对云原生的定义：云原生技术使组织能够在公共、私有和混合云这类现代、动态的环境中构建和运行可扩展的应用程序。典型示例包括：容器、服务网格、微服务、不变基础设施和声明式 API 。
 
-[1.gif](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f8ebbe30c5d74df8b8fd5fd083d633cb~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+![「Cloud Native」动态演示图（原为 GIF 动画），蓝色背景上两朵白色云形轮廓](images/figure-01.gif)
 
 然而，无论是公有云还是私有云、无论是云计算还是云服务，在天空中都已经存在太多不同类型的“云”。每个“云”都拥有自己独特的 API 和生态系统，并且彼此之间缺乏互操作性，能够兼容的地方也是寥寥无几。云已经成为事实上的孤岛。这个孤岛不仅仅是指公有云和私有云之间的隔阂，还包括了不同公有云之间、不同私有云之间、以及公有云和私有云之间的隔阂。这种孤岛现象不仅给用户带来了很多麻烦，也限制了云计算的发展。
 
 2021 年 RISELab 发表了题为 [The Sky Above The Clouds](https://arxiv.org/abs/2205.07147) 的论文，讨论关于天空计算的未来。天空计算将云原生的思想进一步扩展，从而囊括公有云、私有云和边缘设备。其目标是实现一种统一的 API 和生态体系，使得不同云之间可以无缝地协作和交互。这样一来，用户就可以在不同的云之间自由地迁移应用程序和数据，而不必担心兼容性和迁移成本的问题。同时，天空计算还可以提供更高效、更安全、更可靠的计算服务，从而满足用户对于云计算的不断增长的需求。总体上讲，天空计算致力于允许应用跨多个云厂商运行，实现多云之间的互操作性。
 
-[640.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7746cc62e2ce4c5697f8f2b6494ccd46~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+![Table 1 多云类型对比表：分区式多云、可移植式多云与天空式多云在应用一致性、云透明、统一 API 与深度 API 上的差异](images/figure-02.png)
 *(上图引自论文，展示不同类型的多云与天空的区别)*
 
 ## The Databend Way
@@ -46,14 +46,14 @@ source_tail = "。此处为存档版本，正文按原文照录。"
 
 Databend 能够满足用户在不同的云之间自由地访问数据并进行查询，而不必担心兼容性和迁移成本的问题。同时，Databend 还可以提供更高效、更安全、更可靠的计算服务，从而满足用户对于云计算的不断增长的需求。从这个角度来看，Databend 已经初步形成了一套天空计算的解决方案。那么，对 Databend 而言，跨云的关键到底落在哪里呢？
 
-[640 (1).png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87a15fba3b1e4c759f216b29620e3345~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+![Databend Cloud 架构示意图：云服务、计算服务、存储服务与多云接入分层](images/figure-03.png)
 *(上图所示为 Databend Cloud 架构示意图)*
 
 Databend 采用存算分离的架构，并完全面向云对象存储进行设计决策。得益于存储与计算分离、存储与状态分离，Databend 可以实现对资源的精细化控制，轻松部署与扩展 Query 和 Meta 节点 ，并支持多种不同的计算场景和存储场景，而无需考虑跨云数据管理与移动的问题。
 
 Query 节点和 Meta 节点本身都是轻量化的服务，并且对于部署环境没有严格的依赖。但数据的存储和访问管理就不一样，我们需要考虑不同云服务之间的 API 兼容性、以及如何与云服务本身的安全机制交互从而提供更安全的访问控制机制。对于 Databend 而言，跨云，或者说实现天空计算的关键，就落在数据的管理与访问之上。
 
-[640 (2).png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8be16743799843438e3fe8bfb5d9fb33~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+![示意对比图：左侧各应用分别直连多种存储服务，右侧经由 OpenDAL 统一访问 S3、Azure Blob、HDFS、Redis 与本地文件系统](images/figure-04.png)
 *（OpenDAL 可以将数据访问问题从 M\N 转化为 M+N）*
 
 为了解决这一问题，Databend 抽象出一套统一的数据访问层（OpenDAL，现在是 Apache 软件基金会旗下的孵化项目），从而屏蔽了不同云服务之间的 API 兼容性问题。在接下来的部分，我们将会从不同的视角来观察 Databend 的无痛数据访问体验，体验真正完全云原生的天空计算的魅力。
@@ -73,7 +73,7 @@ bucket = "databend"
 当然，仅支持 S3 兼容的对象存储服务还不够。Databend 通过 OpenDAL 实现了 Google Cloud Storage、Azure Blob、Aliyun OSS、Huawei OBS 和 HDFS 等服务的原生存储后端支持。
 这意味着 Databend 可以充分利用各种供应商提供的 API，为用户带来更优秀的体验。例如，Aliyun OSS 的原生支持使得 Databend 可以通过 Aliyun RAM 对用户进行认证和授权，无需设置静态密钥，从而大大提高安全性并降低运维负担。
 
-[1.jpeg](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2846aae545e3431bb7930aad3bdb4a58~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+![云上访问控制示意图：项目内 Admins、Devs、Audfans 三组用户经 RAM 与用户账号权限访问云资源](images/figure-05.jpeg)
 *(上图选自阿里云官网，访问控制场景与能力)*
 
 此外，原生支持还可以避免出现非预期行为，并与服务供应商提供更紧密的集成。虽然各大厂商都提供了 S3 兼容 API，但它们之间存在微妙差异，在出现非预期行为时可能会导致服务性能下降或读写数据功能异常。Google Cloud Storage 提供了 S3 兼容的 XML API，但却没有支持批量删除对象的功能。这导致用户在调用该接口时遇到意外错误。而 Google Cloud Storage 的原生支持使 Databend 不必担心 GCS 对 S3 的兼容实现问题对用户业务造成影响。
@@ -176,7 +176,7 @@ COPY INTO @s2 FROM (SELECT name, age, id FROM test_table LIMIT 100) FILE_FORMAT 
 
 为了更好地满足多云环境下的数据库查询需求，Databend 设计并实现了一套 RESTful API 来支持数据共享。
 
-[文档图-16.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bf24a84e26ab412b94cd23bf63fb16fa~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+![数据共享工作流示意图：Provider tenant 的 db 与 share 共享给两个 Consumer tenant 的共享库](images/figure-06.png)
 *（上图所示为数据共享的工作流）*
 
 通过在配置文件中添加 `share_endpoint_address` 相关配置，用户可以利用预先部署好的 `open-sharing` 服务，经由熟悉的云存储服务共享 Databend 管理的数据库或表。

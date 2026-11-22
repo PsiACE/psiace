@@ -25,7 +25,7 @@ This is an important milestone for the [Databend](https://github.com/datafuselab
 
 > The Apache Incubator was founded in October 2002. It provides a path into the Apache Software Foundation for projects and codebases that want to become part of the Apache Foundation's efforts. Incubating projects are expected to practice ASF governance and operations and to use the infrastructure and resources provided by ASF. An incubating project has to go through a series of stages and evaluations before it can finally graduate and become an ASF top-level project (TLP).
 
-[Figure 1 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1de9af268ec84da49dab03128643b635~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Screenshot of the Apache Incubator OpenDAL status page, whose News entry reads 2023-02-27 Project enters incubation](images/figure-01.png)
 
 [incubator.apache.org/projects/op…](https://incubator.apache.org/projects/opendal.html)
 
@@ -37,7 +37,7 @@ A wide variety of storage services exist on the market, and each service has its
 
 OpenDAL provides a unified, simple, efficient, reliable, and observable data access layer, so that developers can seamlessly use different storage services and enjoy the best user experience.
 
-[Figure 2 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f117ee8ea2d49138c8ec8ef375fdd5e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Side-by-side diagram: on the left each application connects directly to several storage services; on the right OpenDAL fronts S3, Azure Blob, HDFS, Redis and local file systems](images/figure-02.png)
 
 OpenDAL not only simplifies the interfaces of different storage services, but also provides features such as automatic retry, request optimization, and observability. Developers only need to use OpenDAL to painlessly access dozens of storage services, without having to understand and master the details of specific SDKs.
 
@@ -74,7 +74,7 @@ OpenDAL has now initially built a small community and formed a product matrix. I
 
 Since it was open-sourced, OpenDAL has made 99 releases in total, with Github Star 700+, cumulative downloads of 349 K, and 48 contributors in total. The project has remained actively updated, and we sincerely thank every contributor for their effort and dedication.
 
-[Figure 3 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/24f6af85a54f4b6591466af157a64d47~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![GitHub star history chart for apache/incubator-opendal, rising over time](images/figure-03.png)
 
 Joining the Apache Incubator is an important milestone in OpenDAL's development history. We hope to use the ASF platform and resources to let OpenDAL focus on providing a neutral, vendor-lock-in-free, free, painless, and efficient storage access layer, and to serve the wider developer community better.
 

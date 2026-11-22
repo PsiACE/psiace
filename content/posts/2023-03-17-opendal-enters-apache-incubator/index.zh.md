@@ -25,7 +25,7 @@ source_tail = "。此处为存档版本，正文按原文照录。"
 
 > Apache 孵化器成立于 2002 年10月，为那些意图成为 Apache 基金会努力的一部分的项目和代码库，提供一个进入到 Apache 软件基金会的路径。孵化器项目需要践行 ASF 的治理和运营方式，并使用 ASF 提供的基础设施和资源。孵化器项目需要经过一系列的阶段和评估，才能最终毕业成为 ASF 的顶级项目（TLP）。
 
-[图 1（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1de9af268ec84da49dab03128643b635~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Apache 孵化器 OpenDAL 项目状态页截图，News 一栏记录 2023-02-27 项目进入孵化](images/figure-01.png)
 
 [incubator.apache.org/projects/op…](https://incubator.apache.org/projects/opendal.html)
 
@@ -37,7 +37,7 @@ source_tail = "。此处为存档版本，正文按原文照录。"
 
 OpenDAL 提供一个统一、简单、高效、可靠、可观察的数据访问层，让开发者可以无缝地使用不同的存储服务，并享受到最佳的用户体验。
 
-[图 2（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6f117ee8ea2d49138c8ec8ef375fdd5e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![示意对比图：左侧各应用分别直连多种存储服务，右侧经由 OpenDAL 统一访问 S3、Azure Blob、HDFS、Redis 与本地文件系统](images/figure-02.png)
 
 OpenDAL 不仅简化了不同存储服务的接口，还提供自动重试、请求优化和可观察性等特性。开发者只需要使用 OpenDAL 就可以无痛访问数十种存储服务，而无需了解和掌握特定 SDK 的细节。
 
@@ -74,7 +74,7 @@ OpenDAL 的初衷是打造一个通用、统一、易用的数据访问层，它
 
 OpenDAL 自开源以来累计发版 99 次，Github Star 700+, 累计下载次数 349 K, 累计开发者共计 48 位，项目一直处于活跃更新状态，由衷感谢每位贡献者的努力和付出。
 
-[图 3（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/24f6af85a54f4b6591466af157a64d47~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![apache/incubator-opendal 的 GitHub Star 历史曲线，星标数随时间持续上升](images/figure-03.png)
 
 加入 Apache 孵化器是 OpenDAL 发展历程中的一个重要里程碑，我们希望能够借助 ASF 的平台和资源，让 OpenDAL 专注于提供中立、无供应商锁定、自由、无痛、高效的存储访问层，更好地为广大开发者服务。
 

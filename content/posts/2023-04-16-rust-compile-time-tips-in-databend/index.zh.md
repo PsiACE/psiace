@@ -12,19 +12,19 @@ lang = "zh"
 source_url = "https://www.databend.cn/blog/category-engineering/databend-tips-for-rust-compile"
 source_note = "本文原发于 2023-04-16，作者 PsiACE："
 source_label = "Databend 博客原文"
-source_tail = "。此处为存档版本，正文按原文照录，图片以原站链接保留。"
+source_tail = "。此处为存档版本，正文按原文照录，插图随文归档。"
 +++
 
 ## 背景
 
 时至今日，Databend 已经成长为一个大型、复杂、完备的数据库系统。团队维护着数十万行代码，每次发布十几个编译产物，并且还提供基于 Docker 的一些构建工具以改善开发者 / CI 的体验。
 
-[图 1（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-02-bde0dee62c58e14e24b04dd92d9fc40d.png)
+![tokei -t=Rust 的代码统计输出截图：Databend 的 Rust 文件数、代码行、注释与空行](images/figure-01.png)
 
 之前的文章介绍过 PGO，用户可以根据自己的工作负载去调优 Databend 的编译。再早些时候，还有一篇介绍 Databend 开发环境和编译的文章。
 对于 Databend 这样的中大型 Rust 程序而言，编译实在算不上是一件轻松的事情：
 
-[图 2（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-03-f0aeddb58e0080facd38620e312f772d.png)
+![两格漫画：一人喊「HEY! GET BACK TO WORK!」，另一人回答「COMPILING!」](images/figure-02.png)
 
 - 一方面，在复杂的项目依赖和样板代码堆积之下，Rust 的编译时间显得不那么理想，前两年 Brian Anderson 的文章中也提到“Rust 糟糕的编译时间”这样的描述。
 - 另一方面，为了维护构建结果，不得不引入一些技巧来维护编译流水线的稳定，这并不是一件“一劳永逸”的事情，随着 Workflow 复杂性的提高，就不得不陷入循环之中。
@@ -44,13 +44,13 @@ source_tail = "。此处为存档版本，正文按原文照录，图片以原�
 在浏览器中打开结果 HTML 可以看到一个甘特图，其中展示了程序中各个 crate 之间的依赖关系，以及程序的编译并行程度和代码生成量级。
 通过观察图表，我们可以决定是否要提高某一模块的代码生成单元数目，或者要不要进一步拆解以优化整个编译流程。
 
-[图 3（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-04-df460550adf3e5ab1229854d72bce323.png)
+![cargo build --timings 生成的构建耗时瀑布图，按 crate 列出编译耗时](images/figure-03.png)
 
 ### cargo-depgraph
 
 这个工具其实不太常用，但可以拿来分析依赖关系。有助于找到一些潜在的优化点，特别是需要替换某些同类依赖或者优化 crates 组织层次的时候。
 
-[图 4（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-05-4b15ecf072e0131461b7d51123159a28.png)
+![cargo-depgraph 生成的依赖关系图，可见 databend 的 crate 依赖层次](images/figure-04.png)
 
 ## 无痛优化，从调整配置开始
 
@@ -68,7 +68,7 @@ components = ["rustfmt", "clippy", "rust-src", "miri"]
 
 另外，上游项目同样可能会随着时间的推移去改善过去不合理的设计，很多时候这些改进也最终会反映在对编译的影响上。
 
-[图 5（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-06-af1bd5e92d5d52a600cd6de6c1b29417.png)
+![databend 仓库中跟踪 upstream first 违规问题的 Issue 截图](images/figure-05.png)
 
 一个改善编译时间的最简单的优化方式就是始终跟进上游的变更，并且秉着“上游优先”的理念去参与到生态建设之中。Databend 团队从一开始就是 Rust nightly 的忠实簇拥，并且为更新工具链和依赖关系提供了简明的指导。
 
@@ -80,7 +80,7 @@ components = ["rustfmt", "clippy", "rust-src", "miri"]
 
 随着时间的推移，一切变得不同了起来。
 
-[图 6（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-07-2de9f43455e812c25b7a3975e94378f1.png)
+![mozilla/sccache 的 GitHub 仓库首页截图](images/figure-06.png)
 
 首先是 Sccache 恢复了活力，而 OpenDAL 也成功打入其内部，成为支撑 Rust 编译缓存生态的重要组件，尽管在本地构建时使用它常常无法展现出真正的威力，但是放在 CI 中，还是能够带来很大惊喜的。
 
@@ -92,7 +92,7 @@ components = ["rustfmt", "clippy", "rust-src", "miri"]
 
 Rust 生态里面有一个很有意思的项目是 [https://github.com/mTvare6/hello-world.rs](https://github.com/mTvare6/hello-world.rs)，它尽可能给你展现了如何让一个 Rust 项目变得尽可能糟糕。
 
-[图 7（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-08-0b3a78c25ca61a6068757bad09478e9b.png)
+![hello-world.rs 的 GitHub 仓库首页截图](images/figure-07.png)
 
 特别是：
 
@@ -104,7 +104,7 @@ Rust 自身是不太能很好自动处理这一点的，它需要把所有依赖
 
 sundy-li 发现了另外一个快速好用的工具，叫做 cargo-machete。
 
-[图 8（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-09-43ae0de3c638979e6eca19e62e168dc1.png)
+![cargo-machete 的 GitHub 仓库首页截图](images/figure-08.png)
 
 一个显著的优点是它很快，因为一切只需要简单的正则表达式来处理。而且也支持了自动修复，这意味着我们不再需要挨个检索文件再去编辑。
 
@@ -127,7 +127,7 @@ protocol = "sparse"
 
 最简单的办法就是选择比默认链接器更快的链接器。
 
-[图 9（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-10-20f0807c729c4242aba1a179024ce804.png)
+![链接耗时对比柱状图：GNU gold、LLVM lld 与 mold 在 Chrome、Clang、Firefox 上的表现](images/figure-09.png)
 
 lld 或者 mold 都可以改善链接时间，Databend 最后选择使用 mold。其实在 Databend 这个量级的程序上，两个链接器的差距并不明显，但是，使用 mold 的一个潜在好处是能够节约一部分编译时候消耗的内存。
 
@@ -163,7 +163,7 @@ databend-binaries = { codegen-units = 4 }
 
 对于一个大型的 All in One 式的 Crate 而言，拆分 crates 算是一个比较有收益的重构。一方面可以显著改善并行度。另一方面，通过解耦交叉依赖/循环依赖，可以帮助 Rust 更快地处理代码编译。
 
-[图 10（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-11-301019e764b440d9b60c6143dad55133.png)
+![将 databend-query 拆分为多个 crate 的 Pull Request 截图](images/figure-10.png)
 
 同时，还有一个潜在的好处，就是拆分以后，由于代码的边界更为清晰，维护起来也会省力一些。
 
@@ -193,7 +193,7 @@ tests/
 
 另外，对于 Databend 而言，有相当一部分测试都是对输入输出的端到端测试，如果硬编码在单元测试中需要增加更多额外的格式相关的工作，维护也会比较费力。
 
-[图 11（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-12-b6242e505bb7b772ef88cc7e29fbd461.png)
+![比对输出截图：QuotedString 的 span 由 0..18 变为 0..16](images/figure-11.png)
 
 Databend 巧妙运用 golden files 测试和 SQL logic 测试，替换了大量内嵌在单元测试中的 SQL 查询测试和输出结果检查，从而进一步改善了编译时间。
 
@@ -203,7 +203,7 @@ Databend 巧妙运用 golden files 测试和 SQL logic 测试，替换了大量�
 
 cargo nextest 让测试也可以快如闪电，并且提供更精细的统计和优雅的视图。Rust 社区中有不少项目通过引入 cargo nextest 大幅改善测试流水线的时间。
 
-[图 12（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-13-a1aced86c5fd042c72ed1ff0594b0acc.png)
+![cargo nextest 的运行输出截图，逐条列出通过或跳过的测试](images/figure-12.png)
 
 但 Databend 目前还无法迁移到这个工具上。一方面，配置相关的测试暂时还不被支持，如果再针对去单独跑 cargo test 还要重新编译。另一方面，有一部分与超时相关的测试设定了执行时间，必须等待执行完成。
 
@@ -211,7 +211,7 @@ cargo nextest 让测试也可以快如闪电，并且提供更精细的统计和
 
 改善依赖项的编译，典型的例子其实是 workspace-hack，将重要的公共依赖放在一个目录下，这样这些依赖就不需要反复编译了。Rust 社区中的 cargo-hakari，可以用来自动化管理 workspace-hack。
 
-[图 13（原站图片）](https://www.databend.cn/assets/images/databend-tips-for-rust-compile-14-e16d19ce5e0bcb6498f590a7d985bab7.png)
+![cargo hakari init workspace-hack 的命令行输出截图](images/figure-13.png)
 
 Databend 这边则是由于有大量的 common 组件，主要二进制程序都建立在 common 组件上，暗中符合这一优化思路。另外，随着 workspace 支持依赖继承之后，维护压力也得到减轻。
 

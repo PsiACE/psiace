@@ -23,7 +23,7 @@ source_tail = "。此处为存档版本，正文按原文照录。"
 >
 > [github.com/PsiACE](https://github.com/PsiACE)
 
-[图 1（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/71ba610e70414e8e880a20323d8692d4~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![论文标题页：GL-Cache: Group-level learning for efficient and high-performance caching，FAST '23，作者 Juncheng Yang 等](images/figure-01.png)
 
 > **论文原文：**
 >
@@ -51,7 +51,7 @@ source_tail = "。此处为存档版本，正文按原文照录。"
 
 ### **存储层次结构**
 
-[图 2（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4cdec092b29b4c3d853f7acebe6cced8~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![计算机体系存储层次结构金字塔示意图：寄存器、缓存、主存、闪存盘、传统磁盘与远端二级存储，标注访问时延与容量](images/figure-02.png)
 
 上图反映了计算机体系中的存储层次结构，可以看到明显的趋势是速度越大，容量越小。图中的缓存位于 CPU 内部，用于协调 CPU 运行速度和内存读取速度。
 
@@ -84,7 +84,7 @@ source_tail = "。此处为存档版本，正文按原文照录。"
 
 ### **关于是否引入** **机器学习** **的一些权衡**
 
-[图 3（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f27a535774a84d6e9502fb66b001faf7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![MLOps 工作流示意图：离线阶段用特征完成优化、训练与评估得到模型，在线阶段用模型对新特征做预测](images/figure-03.png)
 
 机器学习经常用于改进决策过程。将缓存管理和机器学习相结合的主要考虑因素是提高性能，包括如何增加吞吐量以及如何提高命中率。
 
@@ -104,7 +104,7 @@ source_tail = "。此处为存档版本，正文按原文照录。"
 
 前面花了大量的篇幅介绍缓存和机器学习在缓存中的应用，接下来让我们将目光转向本文的主角 GL-Cache 。
 
-[图 4（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a255af24c9014c7b8a6204e437674ba3~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![GL-Cache 总览图（论文 Fig.1）：对象被分成若干组，特征跟踪、模型训练与推理都在组一级进行](images/figure-04.png)
 
 GL-Cache 采用组级学习的思想，将对象分组，并按组聚集特征。
 
@@ -113,13 +113,13 @@ GL-Cache 采用组级学习的思想，将对象分组，并按组聚集特征�
 
 ### **设计权衡**
 
-[图 5（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f60506760dd54e3b94c9cfd52d7f0c11~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![设计权衡示意图：对对象分组并定期采样形成特征快照，计算效用用于训练，再由模型预测并作出逐出决策](images/figure-05.png)
 
 GL-Cache 将对象划分成若干组，定期跟踪每个对象组的特征，进行采样并形成特征快照，对每个特征快照计算效用并用于模型的训练，然后利用训练得到的模型进行预测并作出逐出决策。
 
 ### **分组策略**
 
-[图 6（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b52511f66100463ea48cbf8775281c6e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![基于插入时间的分组策略示意图：组内对象按插入先后排列](images/figure-06.png)
 
 GL-Cache 选择了基于插入时间的分组策略，简单且有效。主要是以下几点：
 
@@ -142,7 +142,7 @@ GL-Cache 选择了基于插入时间的分组策略，简单且有效。主要�
 - 如果组的大小为 1 ，即退化到对象级学习时，应该具有类似 Belady’s MIN 算法的表现。
 - 易于学习、能够准确反映效用，可以在线即时计算。
 
-[图 7（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/21b073bc7a544072a479a94a34d290b7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![效用函数公式：单对象效用 Uo(t) 与组效用 Ugroup(t) 均为对 Tₒ(t)×Sₒ 取倒数的求和，并说明 Tₒ(t) 与 Sₒ 的含义](images/figure-07.png)
 
 上图第一个式子展示了对于单个对象的效用函数计算，T(o)(t) 表示下一次请求的时间，而 S(o) 表示对象的大小。而组的效用可以用对象效用的累加来计算。
 
@@ -165,7 +165,7 @@ GL-Cache 选用了 7 种特征进行学习，并且进行了分类。
 
 其中，静态特征的前三个又被称为 **上下文特征** ，能够反映工作负载的变化情况。比如在数据备份时，可能会观测到写速率、未命中率和请求速率都在增加。
 
-[图 8（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/88820332a08c40358b8066c6151ba546~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![梯度提升树示意图：若干决策树按投票给出预测结果，用于对对象组排序](images/figure-08.png)
 
 模型比较简单，利用梯度提升树设计回归算法作为目标函数。感兴趣的话可以阅读 xgboost 相关论文和本论文相关源码，这里就不进行赘述。
 
@@ -173,7 +173,7 @@ GL-Cache 选用了 7 种特征进行学习，并且进行了分类。
 
 GL-Cache 使用训练得到的模型来对对象组进行排序，并且预测其效用，并选择效用最低的组进行逐出。
 
-[图 9（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2ebdd3d2cc8648cea7a89a8d0c5d9244~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![排序与合并逐出示意图（论文 Fig.4）：按效用对组排序，选出逐出对象后按 size 与 age 合并进下一组](images/figure-09.png)
 
 但是，GL-Cache 的逐出并不是直接删除对应的组，而是采用了合并逐出（Merge Evict）的思想：
 
@@ -187,7 +187,7 @@ GL-Cache 使用训练得到的模型来对对象组进行排序，并且预测�
 
 让我们略过评估相关的实验设计和结果细节，只是简单看一下基于组级学习的算法在潜在效益（命中率）和性能（吞吐量）象限上所处的位置。
 
-[图 10（原站图片）](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/16bcc78f1283466ca552ffd1efc740b7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![潜在效益（命中率）与吞吐量象限散点图：对象级学习、从分布学习、从简单专家学习与组级学习的位置对比](images/figure-10.png)
 
 - 对象级学习具有最高的命中率，但是由于计算繁重，所以在吞吐量上表现不佳。
 - 专家策略集由于模型相对比较简单，可以取得更好的吞吐量，但受到简单专家算法（LRU、LFU 等）本身的限制，命中率较低。

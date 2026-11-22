@@ -23,7 +23,7 @@ source_tail = ". This translation was prepared for this archive."
 >
 > [github.com/PsiACE](https://github.com/PsiACE)
 
-[Figure 1 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/71ba610e70414e8e880a20323d8692d4~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Paper title slide: GL-Cache: Group-level learning for efficient and high-performance caching, FAST '23, by Juncheng Yang et al.](images/figure-01.png)
 
 > **Original paper:**
 >
@@ -51,7 +51,7 @@ Before formally discussing GL-Cache, let us first look at some background on cac
 
 ### **Storage hierarchy**
 
-[Figure 2 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4cdec092b29b4c3d853f7acebe6cced8~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![The memory hierarchy pyramid: registers, caches, main memory, flash disk, traditional disk and remote secondary storage, annotated with latency and capacity](images/figure-02.png)
 
 The figure above reflects the storage hierarchy in computer architecture; an obvious trend is that the greater the speed, the smaller the capacity. The cache in the figure sits inside the CPU, and is used to reconcile the CPU's running speed with the memory's read speed.
 
@@ -92,7 +92,7 @@ The preceding section introduced **learned caches**, a class of methods that com
 
 ### **Some trade-offs about whether to introduce** **machine learning**
 
-[Figure 3 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f27a535774a84d6e9502fb66b001faf7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![MLOps workflow: offline, features feed optimisation, training and evaluation to produce a model; online, the model turns features into predictions](images/figure-03.png)
 
 Machine learning is often used to improve decision-making processes. The main consideration in combining cache management with machine learning is to improve performance, including how to increase throughput and how to improve the hit ratio.
 
@@ -112,7 +112,7 @@ Machine learning is often used to improve decision-making processes. The main co
 
 The previous sections spent a lot of space introducing caches and the application of machine learning in caching. Next, let us turn our attention to the protagonist of this article, GL-Cache .
 
-[Figure 4 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a255af24c9014c7b8a6204e437674ba3~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![GL-Cache overview (paper Fig. 1): objects are clustered into groups, and feature tracking, model training and inference all happen at the group level](images/figure-04.png)
 
 GL-Cache adopts the idea of group-level learning, grouping objects and aggregating features by group.
 
@@ -121,13 +121,13 @@ GL-Cache adopts the idea of group-level learning, grouping objects and aggregati
 
 ### **Design trade-offs**
 
-[Figure 5 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f60506760dd54e3b94c9cfd52d7f0c11~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Design-tradeoff diagram: objects are grouped, features are sampled into snapshots, utilities are computed for training, and the model predicts eviction decisions](images/figure-05.png)
 
 GL-Cache divides objects into a number of groups, periodically tracks the features of each object group, samples and forms feature snapshots, computes the utility of each feature snapshot and uses it for model training, and then uses the trained model to predict and make eviction decisions.
 
 ### **Grouping strategy**
 
-[Figure 6 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b52511f66100463ea48cbf8775281c6e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Insertion-time grouping strategy: objects within a group are ordered by insertion time](images/figure-06.png)
 
 GL-Cache chooses a grouping strategy based on insertion time, which is simple and effective. It is mainly for the following reasons:
 
@@ -150,7 +150,7 @@ The main decisions in designing utility are as follows:
 - If the group size is 1 , that is, when it degenerates to object-level learning, it should behave like Belady's MIN algorithm.
 - It is easy to learn, can accurately reflect utility, and can be computed online in real time.
 
-[Figure 7 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/21b073bc7a544072a479a94a34d290b7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Utility formulas: object utility Uo(t) and group utility Ugroup(t) are sums of 1/(Tₒ(t)×Sₒ), with Tₒ(t) and Sₒ defined below](images/figure-07.png)
 
 The first formula in the figure above shows the computation of the utility function for a single object, where T(o)(t) represents the time of the next request and S(o) represents the size of the object. The utility of a group can be computed as the sum of the utilities of its objects.
 
@@ -173,7 +173,7 @@ GL-Cache selects 7 features for learning, and classifies them.
 
 Among them, the first three static features are also called **context features** , and can reflect changes in the workload. For example, during data backup, one may observe that the write rate, miss ratio, and request rate are all increasing.
 
-[Figure 8 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/88820332a08c40358b8066c6151ba546~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Gradient-boosted trees: several decision trees whose votes produce the prediction used to rank object groups](images/figure-08.png)
 
 The model is fairly simple: it uses gradient boosted trees to design a regression algorithm as the objective function. If you are interested, you can read the relevant xgboost papers and the paper's relevant source code; we will not go into detail here.
 
@@ -181,7 +181,7 @@ The model is fairly simple: it uses gradient boosted trees to design a regressio
 
 GL-Cache uses the trained model to rank object groups, predict their utility, and select the group with the lowest utility for eviction.
 
-[Figure 9 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2ebdd3d2cc8648cea7a89a8d0c5d9244~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Ranking and merge eviction (paper Fig. 4): groups are ranked by utility, and evicted objects are merged into the next group by size and age](images/figure-09.png)
 
 However, GL-Cache's eviction does not directly delete the corresponding group; instead, it adopts the idea of Merge Evict :
 
@@ -195,7 +195,7 @@ Because several adjacent groups with close insertion times are chosen as the mer
 
 Let us skip the experiment design and result details of the evaluation, and just briefly look at where the group-level learning based algorithm stands in the quadrant of potential efficiency (hit ratio) and performance (throughput).
 
-[Figure 10 (original site)](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/16bcc78f1283466ca552ffd1efc740b7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+![Quadrant plot of potential efficiency (hit ratio) against throughput, positioning object-level learning, learning from distribution, learning from simple experts and group-level learning](images/figure-10.png)
 
 - Object-level learning has the highest hit ratio, but because of its heavy computation it performs poorly in throughput.
 - Expert policy sets, because their models are relatively simple, can achieve better throughput, but they are limited by the simple expert algorithms themselves (LRU, LFU, and so on) and have a lower hit ratio.
