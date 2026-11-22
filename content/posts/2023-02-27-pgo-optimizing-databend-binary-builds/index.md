@@ -111,7 +111,7 @@ ulimit -n 10000;ulimit -s 16384; cargo run -p sqllogictests --release 
 ## **References**
 
 - [doc.rust-lang.org/rustc/profi…](https://doc.rust-lang.org/rustc/profile-guided-optimization.html)
-- [en.wikipedia.org/wiki/Profil…](https://en.wikipedia.org/wiki/Profile-guided%5C_optimization)
+- [en.wikipedia.org/wiki/Profil…](https://en.wikipedia.org/wiki/Profile-guided_optimization)
 - [learn.microsoft.com/en-us/cpp/b…](https://learn.microsoft.com/en-us/cpp/build/profile-guided-optimizations?view=msvc-170)
 - [clang.llvm.org/docs/UsersM…](https://clang.llvm.org/docs/UsersManual.html#profile-guided-optimization)
 

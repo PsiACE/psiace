@@ -68,8 +68,7 @@
           {% if page.taxonomies.tags is defined %}
           <div id="tags">
             {% for tag in page.taxonomies.tags -%}
-            {% set tag_slugify = tag | slugify -%}
-            <a class="instant" href="{{ config.base_url ~ '/tags/' ~ tag_slugify }}"><span>#</span>{{ tag }}</a>
+            <a class="instant" href="{{ get_taxonomy_url(kind='tags', name=tag, lang=page.lang) }}"><span>#</span>{{ tag }}</a>
             {%- endfor %}
           </div>
           {% endif %}
