@@ -64,6 +64,10 @@
         <lastmod>2022-02-23</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/posts/gl-cache-group-level-learning/</loc>
+        <lastmod>2023-05-29</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/posts/hammurabi-code/</loc>
         <lastmod>2026-03-30</lastmod>
     </url>
@@ -104,6 +108,14 @@
         <lastmod>2025-12-31</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/posts/opendal-enters-apache-incubator/</loc>
+        <lastmod>2023-03-17</lastmod>
+    </url>
+    <url>
+        <loc>https://psiace.me/posts/pgo-optimizing-databend-binary-builds/</loc>
+        <lastmod>2023-02-27</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/posts/prometheus-bound/</loc>
         <lastmod>2026-02-16</lastmod>
     </url>
@@ -118,6 +130,14 @@
     <url>
         <loc>https://psiace.me/posts/reinvent-the-punch-tape/</loc>
         <lastmod>2026-01-28</lastmod>
+    </url>
+    <url>
+        <loc>https://psiace.me/posts/rust-compile-time-tips-in-databend/</loc>
+        <lastmod>2023-04-16</lastmod>
+    </url>
+    <url>
+        <loc>https://psiace.me/posts/sky-computing-the-databend-way/</loc>
+        <lastmod>2023-04-19</lastmod>
     </url>
     <url>
         <loc>https://psiace.me/posts/spec-driven-sdks/</loc>
@@ -181,6 +201,9 @@
         <loc>https://psiace.me/tags/architecture/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/archive/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/asf/</loc>
     </url>
     <url>
@@ -196,7 +219,13 @@
         <loc>https://psiace.me/tags/bub/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/cache/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/career/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/tags/cloud/</loc>
     </url>
     <url>
         <loc>https://psiace.me/tags/cloudflare/</loc>
@@ -325,7 +354,13 @@
         <loc>https://psiace.me/tags/orchestration/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/tags/paper/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/tags/parsing/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/tags/pgo/</loc>
     </url>
     <url>
         <loc>https://psiace.me/tags/programming/</loc>
@@ -457,6 +492,10 @@
         <lastmod>2022-02-23</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/zh/posts/gl-cache-group-level-learning/</loc>
+        <lastmod>2023-05-29</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/posts/hammurabi-code/</loc>
         <lastmod>2026-03-30</lastmod>
     </url>
@@ -497,6 +536,14 @@
         <lastmod>2025-12-31</lastmod>
     </url>
     <url>
+        <loc>https://psiace.me/zh/posts/opendal-enters-apache-incubator/</loc>
+        <lastmod>2023-03-17</lastmod>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/posts/pgo-optimizing-databend-binary-builds/</loc>
+        <lastmod>2023-02-27</lastmod>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/posts/prometheus-bound/</loc>
         <lastmod>2026-02-16</lastmod>
     </url>
@@ -511,6 +558,14 @@
     <url>
         <loc>https://psiace.me/zh/posts/reinvent-the-punch-tape/</loc>
         <lastmod>2026-01-28</lastmod>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/posts/rust-compile-time-tips-in-databend/</loc>
+        <lastmod>2023-04-16</lastmod>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/posts/sky-computing-the-databend-way/</loc>
+        <lastmod>2023-04-19</lastmod>
     </url>
     <url>
         <loc>https://psiace.me/zh/posts/spec-driven-sdks/</loc>
@@ -646,6 +701,12 @@
         <loc>https://psiace.me/zh/tags/github-pages/</loc>
     </url>
     <url>
+        <loc>https://psiace.me/zh/tags/gui-dang/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/huan-cun/</loc>
+    </url>
+    <url>
         <loc>https://psiace.me/zh/tags/huey/</loc>
     </url>
     <url>
@@ -671,6 +732,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/log/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/lun-wen/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/make-some-noise/</loc>
@@ -719,6 +783,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/parsing/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/pgo/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/programming/</loc>
@@ -782,6 +849,9 @@
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/webassembly/</loc>
+    </url>
+    <url>
+        <loc>https://psiace.me/zh/tags/yun/</loc>
     </url>
     <url>
         <loc>https://psiace.me/zh/tags/zed/</loc>

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="天空计算背景，以及 Databend 从数据存储、数据管理、数据共享视角的跨云实践。">
+
+  <title>多云转晴：Databend 的天空计算之路</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#bei-jing">背景</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#the-databend-way">The Databend Way</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#kua-yun-de-guan-jian">跨云的关键</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#shu-ju-cun-chu">数据存储</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#shu-ju-guan-li">数据管理</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#shu-ju-gong-xiang">数据共享</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#kua-yun-de-wei-lai">跨云的未来</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#zong-jie">总结</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#guan-yu-databend">关于 Databend</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>多云转晴：Databend 的天空计算之路</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Apr 19, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/zh/tags/2023/"><span>#</span>2023</a><a class="instant" href="https://psiace.me/zh/tags/databend/"><span>#</span>Databend</a><a class="instant" href="https://psiace.me/zh/tags/yun/"><span>#</span>云</a><a class="instant" href="https://psiace.me/zh/tags/opendal/"><span>#</span>OpenDAL</a><a class="instant" href="https://psiace.me/zh/tags/gui-dang/"><span>#</span>归档</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/sky-computing-the-databend-way/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+        
+        <p id="source-note">本文原发于 2023-04-19：<a href="https:&#x2F;&#x2F;juejin.cn&#x2F;post&#x2F;7223602277210325051" rel="noreferrer">掘金原文</a>。此处为存档版本，正文按原文照录。</p>
+
+        <blockquote>
+<p>作者：尚卓燃（PsiACE）</p>
+<p>澳门科技大学在读硕士，Databend 研发工程师实习生</p>
+<p>Apache OpenDAL(Incubating) Committer</p>
+<p><a rel="nofollow noreferrer external" href="https://github.com/psiace/">github.com/psiace/</a></p>
+</blockquote>
+<p>内容提要：本文将会介绍天空计算的背景，以及 Databend 是如何从数据存储、数据管理、数据共享等视角考虑跨云数据存储与访问的。</p>
+<h2 id="bei-jing">背景<a class="zola-anchor" href="#bei-jing" aria-label="Anchor link for: bei-jing" style="visibility: hidden;"></a>
+</h2>
+<p><a rel="nofollow noreferrer external" href="https://baike.baidu.com/item/%E4%BA%91%E8%AE%A1%E7%AE%97/9969353">云计算</a>时代的开端可以追溯到 2006 年，当时 <a rel="nofollow noreferrer external" href="https://aws.amazon.com/">AWS</a> 开始提供 S3 和 EC2 服务。2013 年，云原生概念刚刚被提出，甚至还没有一个完整的愿景。时间来到 2015 年 <a rel="nofollow noreferrer external" href="https://www.cncf.io/">CNCF</a> 成立，接下来的五年中，这一概念变得越来越流行，并且成为技术人绕不开的话题。</p>
+<blockquote>
+<p>根据 CNCF 对云原生的定义：云原生技术使组织能够在公共、私有和混合云这类现代、动态的环境中构建和运行可扩展的应用程序。典型示例包括：容器、服务网格、微服务、不变基础设施和声明式 API 。</p>
+</blockquote>
+<p><img src="https://psiace.me/zh/posts/sky-computing-the-databend-way/images/figure-01.gif" alt="「Cloud Native」动态演示图（原为 GIF 动画），蓝色背景上两朵白色云形轮廓" /></p>
+<p>然而，无论是公有云还是私有云、无论是云计算还是云服务，在天空中都已经存在太多不同类型的“云”。每个“云”都拥有自己独特的 API 和生态系统，并且彼此之间缺乏互操作性，能够兼容的地方也是寥寥无几。云已经成为事实上的孤岛。这个孤岛不仅仅是指公有云和私有云之间的隔阂，还包括了不同公有云之间、不同私有云之间、以及公有云和私有云之间的隔阂。这种孤岛现象不仅给用户带来了很多麻烦，也限制了云计算的发展。</p>
+<p>2021 年 RISELab 发表了题为 <a rel="nofollow noreferrer external" href="https://arxiv.org/abs/2205.07147">The Sky Above The Clouds</a> 的论文，讨论关于天空计算的未来。天空计算将云原生的思想进一步扩展，从而囊括公有云、私有云和边缘设备。其目标是实现一种统一的 API 和生态体系，使得不同云之间可以无缝地协作和交互。这样一来，用户就可以在不同的云之间自由地迁移应用程序和数据，而不必担心兼容性和迁移成本的问题。同时，天空计算还可以提供更高效、更安全、更可靠的计算服务，从而满足用户对于云计算的不断增长的需求。总体上讲，天空计算致力于允许应用跨多个云厂商运行，实现多云之间的互操作性。</p>
+<p><img src="https://psiace.me/zh/posts/sky-computing-the-databend-way/images/figure-02.png" alt="Table 1 多云类型对比表：分区式多云、可移植式多云与天空式多云在应用一致性、云透明、统一 API 与深度 API 上的差异" />
+<em>(上图引自论文，展示不同类型的多云与天空的区别)</em></p>
+<h2 id="the-databend-way">The Databend Way<a class="zola-anchor" href="#the-databend-way" aria-label="Anchor link for: the-databend-way" style="visibility: hidden;"></a>
+</h2>
+<h3 id="kua-yun-de-guan-jian">跨云的关键<a class="zola-anchor" href="#kua-yun-de-guan-jian" aria-label="Anchor link for: kua-yun-de-guan-jian" style="visibility: hidden;"></a>
+</h3>
+<p>Databend 能够满足用户在不同的云之间自由地访问数据并进行查询，而不必担心兼容性和迁移成本的问题。同时，Databend 还可以提供更高效、更安全、更可靠的计算服务，从而满足用户对于云计算的不断增长的需求。从这个角度来看，Databend 已经初步形成了一套天空计算的解决方案。那么，对 Databend 而言，跨云的关键到底落在哪里呢？</p>
+<p><img src="https://psiace.me/zh/posts/sky-computing-the-databend-way/images/figure-03.png" alt="Databend Cloud 架构示意图：云服务、计算服务、存储服务与多云接入分层" />
+<em>(上图所示为 Databend Cloud 架构示意图)</em></p>
+<p>Databend 采用存算分离的架构，并完全面向云对象存储进行设计决策。得益于存储与计算分离、存储与状态分离，Databend 可以实现对资源的精细化控制，轻松部署与扩展 Query 和 Meta 节点 ，并支持多种不同的计算场景和存储场景，而无需考虑跨云数据管理与移动的问题。</p>
+<p>Query 节点和 Meta 节点本身都是轻量化的服务，并且对于部署环境没有严格的依赖。但数据的存储和访问管理就不一样，我们需要考虑不同云服务之间的 API 兼容性、以及如何与云服务本身的安全机制交互从而提供更安全的访问控制机制。对于 Databend 而言，跨云，或者说实现天空计算的关键，就落在数据的管理与访问之上。</p>
+<p><img src="https://psiace.me/zh/posts/sky-computing-the-databend-way/images/figure-04.png" alt="示意对比图：左侧各应用分别直连多种存储服务，右侧经由 OpenDAL 统一访问 S3、Azure Blob、HDFS、Redis 与本地文件系统" />
+<em>（OpenDAL 可以将数据访问问题从 M\N 转化为 M+N）</em></p>
+<p>为了解决这一问题，Databend 抽象出一套统一的数据访问层（OpenDAL，现在是 Apache 软件基金会旗下的孵化项目），从而屏蔽了不同云服务之间的 API 兼容性问题。在接下来的部分，我们将会从不同的视角来观察 Databend 的无痛数据访问体验，体验真正完全云原生的天空计算的魅力。</p>
+<h3 id="shu-ju-cun-chu">数据存储<a class="zola-anchor" href="#shu-ju-cun-chu" aria-label="Anchor link for: shu-ju-cun-chu" style="visibility: hidden;"></a>
+</h3>
+<p>Databend 存储后端的细节隐藏在简单的配置之下，通过修改配置文件就可以轻松地在十数种存储服务之间切换。例如，如果你想使用 AWS S3，只需要指定类型为 <code>s3</code> 即可，Databend 会自动尝试使用 IAM 来进行认证。如果你想使用其他与 S3 兼容的对象存储服务，也可以通过 <code>endpoint_url</code> 等设置来调整。</p>
+<pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span>[</span><span class="z-entity z-name">storage</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other">type</span><span> =</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">s3</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">storage</span><span>.</span><span class="z-entity z-name">s3</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other">bucket</span><span> =</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">databend</span><span class="z-punctuation z-definition z-string">&quot;</span></span></code></pre>
+<p>当然，仅支持 S3 兼容的对象存储服务还不够。Databend 通过 OpenDAL 实现了 Google Cloud Storage、Azure Blob、Aliyun OSS、Huawei OBS 和 HDFS 等服务的原生存储后端支持。
+这意味着 Databend 可以充分利用各种供应商提供的 API，为用户带来更优秀的体验。例如，Aliyun OSS 的原生支持使得 Databend 可以通过 Aliyun RAM 对用户进行认证和授权，无需设置静态密钥，从而大大提高安全性并降低运维负担。</p>
+<p><img src="https://psiace.me/zh/posts/sky-computing-the-databend-way/images/figure-05.jpeg" alt="云上访问控制示意图：项目内 Admins、Devs、Audfans 三组用户经 RAM 与用户账号权限访问云资源" />
+<em>(上图选自阿里云官网，访问控制场景与能力)</em></p>
+<p>此外，原生支持还可以避免出现非预期行为，并与服务供应商提供更紧密的集成。虽然各大厂商都提供了 S3 兼容 API，但它们之间存在微妙差异，在出现非预期行为时可能会导致服务性能下降或读写数据功能异常。Google Cloud Storage 提供了 S3 兼容的 XML API，但却没有支持批量删除对象的功能。这导致用户在调用该接口时遇到意外错误。而 Google Cloud Storage 的原生支持使 Databend 不必担心 GCS 对 S3 的兼容实现问题对用户业务造成影响。</p>
+<p>总之，Databend 通过为各个服务实现原生支持来为用户提供高效可靠的数据分析服务。</p>
+<h3 id="shu-ju-guan-li">数据管理<a class="zola-anchor" href="#shu-ju-guan-li" aria-label="Anchor link for: shu-ju-guan-li" style="visibility: hidden;"></a>
+</h3>
+<p>前面讲过了存储后端的跨云支持，现在让我们将目光聚焦到数据的管理。更具体来说，数据在 Databend 工作流中的流入与流出。</p>
+<h4 id="copy-into-shu-ju-zai-ru">COPY INTO，数据载入<a class="zola-anchor" href="#copy-into-shu-ju-zai-ru" aria-label="Anchor link for: copy-into-shu-ju-zai-ru" style="visibility: hidden;"></a>
+</h4>
+<p>要讲数据管理，就不得不讨论数据从哪里来。过去可能还需要考虑是否需要迁移存储服务，但现在，你可以从数十种 Databend 支持或兼容的存储服务中加载数据，一切都显得那么自然。</p>
+<p><code>COPY INTO</code> 语句是窥探 Databend 跨云能力的一个窗口，下面的示例展示了如何从 Azure Blob 加载数据到 Databend 之中。</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-keyword">COPY</span><span class="z-keyword"> INTO</span><span> mytable</span></span>
+<span class="giallo-l"><span class="z-keyword">    FROM</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">azblob://mybucket/data.csv</span><span class="z-punctuation z-definition z-string">&#39;</span></span>
+<span class="giallo-l"><span class="z-keyword">    CONNECTION</span><span class="z-keyword"> =</span><span> (</span></span>
+<span class="giallo-l"><span class="z-keyword">        ENDPOINT_URL</span><span class="z-keyword"> =</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">https://&lt;account_name&gt;.blob.core.windows.net</span><span class="z-punctuation z-definition z-string">&#39;</span></span>
+<span class="giallo-l"><span>        ACCOUNT_NAME </span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">&lt;account_name&gt;</span><span class="z-punctuation z-definition z-string">&#39;</span></span>
+<span class="giallo-l"><span>        ACCOUNT_KEY </span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">&lt;account_key&gt;</span><span class="z-punctuation z-definition z-string">&#39;</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span class="z-keyword">    FILE_FORMAT</span><span class="z-keyword"> =</span><span> (</span><span class="z-keyword">type</span><span class="z-keyword"> =</span><span> CSV);</span></span></code></pre>
+<p>当然，不止是 Azure Blob ，Databend 支持的其他云对象存储服务、IPFS 以及可以经由 HTTPS 访问的文件都可以作为 External location ，通过 <code>COPY INTO</code> 语句加载进来。</p>
+<blockquote>
+<p>Databend 的 <code>COPY INTO</code> 语句还支持进行基本的转换服务，可以减轻 ETL 工作的负担。</p>
+</blockquote>
+<h4 id="stage-shu-ju-zan-cun-qu">Stage ，数据暂存区<a class="zola-anchor" href="#stage-shu-ju-zan-cun-qu" aria-label="Anchor link for: stage-shu-ju-zan-cun-qu" style="visibility: hidden;"></a>
+</h4>
+<p>刚刚提到 External location ，事实上，要加载到 Databend 中的数据文件还可以在 Stage 中暂存。Databend 同样支持 Internal stage 和 Named external stage 。</p>
+<p>数据文件可以经由 <code>PUT_INTO_STAGE API</code> 上传到 Internal Stage，由 Databend 交付当前配置的存储后端进行统一管理。而 Named external stage 则可以用于挂载其他 Databend 支持的多种存储服务之中的 bucket 。</p>
+<p>下面的例子展示了如何在 Databend 中创建一个名为 whdfs 的 Stage ，通过 WebHDFS 协议将 HDFS 中 data-files 目录下的数据文件导入 Databend 。</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span>bendsql</span><span class="z-keyword">&gt;</span><span class="z-keyword"> CREATE</span><span> STAGE </span><span class="z-keyword">IF</span><span class="z-keyword"> NOT</span><span class="z-keyword"> EXISTS</span><span> whdfs </span><span class="z-keyword">URL</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">webhdfs://127.0.0.1:9870/data-files/</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-keyword"> CONNECTION</span><span class="z-keyword">=</span><span>(HTTPS</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">false</span><span class="z-punctuation z-definition z-string">&#39;</span><span>);</span></span>
+<span class="giallo-l"><span>Query OK, </span><span class="z-constant">0</span><span class="z-keyword"> rows</span><span> affected (</span><span class="z-constant">0</span><span>.</span><span class="z-constant">01</span><span> sec)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>bendsql</span><span class="z-keyword">&gt;</span><span class="z-keyword"> COPY</span><span class="z-keyword"> INTO</span><span> books </span><span class="z-keyword">FROM</span><span> @whdfs</span><span> FILES</span><span class="z-keyword">=</span><span>(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">books.csv</span><span class="z-punctuation z-definition z-string">&#39;</span><span>) </span><span class="z-keyword">file_format</span><span class="z-keyword">=</span><span>(</span><span class="z-keyword">type</span><span class="z-keyword">=</span><span>CSV field_delimiter</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">,</span><span class="z-punctuation z-definition z-string">&#39;</span><span>  record_delimiter</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">\n</span><span class="z-punctuation z-definition z-string">&#39;</span><span> skip_header</span><span class="z-keyword">=</span><span class="z-constant">0</span><span>);</span></span>
+<span class="giallo-l"><span>Query OK, </span><span class="z-constant">2</span><span class="z-keyword"> rows</span><span> affected (</span><span class="z-constant">1</span><span>.</span><span class="z-constant">83</span><span> sec)</span></span></code></pre>
+<blockquote>
+<p>如果你并不想直接导入数据，也可以尝试 <code>SELECT FROM STAGE</code> ，快速分析位于暂存区中的数据文件。</p>
+</blockquote>
+<h4 id="catalog-shu-ju-gua-zai">Catalog，数据挂载<a class="zola-anchor" href="#catalog-shu-ju-gua-zai" aria-label="Anchor link for: catalog-shu-ju-gua-zai" style="visibility: hidden;"></a>
+</h4>
+<p>放在对象存储中的数据加载得到了解决，还有一个值得思考的问题是，如果数据原本由其他数据分析系统所管理，该怎么办？</p>
+<p>Databend 提供多源数据目录（Multiple Catalog）的支持，允许挂载 Hive 、Iceberg 等外部数据目录。</p>
+<p>下面的示例展示如何利用配置文件挂载 Hive 数据目录。</p>
+<pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span>[</span><span class="z-entity z-name">catalogs</span><span>.</span><span class="z-entity z-name">hive</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other">type</span><span> =</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">hive</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> hive metastore address, such as 127.0.0.1:9083</span></span>
+<span class="giallo-l"><span class="z-variable z-other">address</span><span> =</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">&lt;hive-metastore-address&gt;</span><span class="z-punctuation z-definition z-string">&quot;</span></span></code></pre>
+<p>除了挂载，查询也是小菜一碟 <code>select * from hive.$db.$table limit 10;</code> 。</p>
+<p>当然，这一切也可以通过 <code>CREATE CATALOG</code> 语句轻松搞定，下面的例子展示了如何挂载 Iceberg 数据目录。</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-keyword">CREATE</span><span class="z-keyword"> CATALOG</span><span> iceberg_ctl</span></span>
+<span class="giallo-l"><span class="z-keyword">  TYPE</span><span class="z-keyword">=</span><span>ICEBERG</span></span>
+<span class="giallo-l"><span class="z-keyword">  CONNECTION</span><span class="z-keyword">=</span><span>( </span></span>
+<span class="giallo-l"><span class="z-keyword">    URL</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">s3://my_bucket/path/to/db</span><span class="z-punctuation z-definition z-string">&quot;</span><span> </span></span>
+<span class="giallo-l"><span>    AWS_KEY_ID</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">&lt;access-key&gt;</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span>    AWS_SECRET_KEY</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">&lt;secret_key&gt;</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span>    SESSION_TOKEN</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">&lt;session_token&gt;</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span>  );</span></span></code></pre>
+<blockquote>
+<p>Multiple Catalog 相关的能力还在积极开发迭代中，感兴趣的话可以保持关注。</p>
+</blockquote>
+<h4 id="zai-tan-copy-into-shu-ju-dao-chu">再探 COPY INTO，数据导出<a class="zola-anchor" href="#zai-tan-copy-into-shu-ju-dao-chu" aria-label="Anchor link for: zai-tan-copy-into-shu-ju-dao-chu" style="visibility: hidden;"></a>
+</h4>
+<p>数据导出是数据管理中的另外一个重要话题，简单来讲，就是转储查询结果以供进一步的分析和处理。</p>
+<p>这一能力同样由 <code>COPY INTO</code> 语法提供支持，当然，同样支持数十种存储服务和多种文件输出格式。下面的示例展示了如何将查询结果以 CSV 格式文件的形式导出到指定 Stage 中。</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">--</span><span class="z-comment"> Unload the data from a query into a CSV file on the stage</span></span>
+<span class="giallo-l"><span class="z-keyword">COPY</span><span class="z-keyword"> INTO</span><span> @s2</span><span class="z-keyword"> FROM</span><span> (</span><span class="z-keyword">SELECT</span><span class="z-keyword"> name</span><span>, age, id </span><span class="z-keyword">FROM</span><span> test_table </span><span class="z-keyword">LIMIT</span><span class="z-constant"> 100</span><span>) </span><span class="z-keyword">FILE_FORMAT</span><span class="z-keyword"> =</span><span> (</span><span class="z-keyword">TYPE</span><span class="z-keyword"> =</span><span> CSV);</span></span></code></pre>
+<p>这一语法同样支持导出到 External location ，真正做到数据的自由流动。</p>
+<blockquote>
+<p>Databend 还支持 <code>PRESIGN</code> ，用来为 Stage 中的文件生成预签名的 URL ，用户可以通过 Web 浏览器或 API 请求自由访问该文件。</p>
+</blockquote>
+<h3 id="shu-ju-gong-xiang">数据共享<a class="zola-anchor" href="#shu-ju-gong-xiang" aria-label="Anchor link for: shu-ju-gong-xiang" style="visibility: hidden;"></a>
+</h3>
+<p>刚才提到的 Databend 数据管理环节跨云主要是指 Databend 与外部服务之间的交互。此外，Databend 实例之间也可以经由多种云存储服务来支持数据共享。</p>
+<p>为了更好地满足多云环境下的数据库查询需求，Databend 设计并实现了一套 RESTful API 来支持数据共享。</p>
+<p><img src="https://psiace.me/zh/posts/sky-computing-the-databend-way/images/figure-06.png" alt="数据共享工作流示意图：Provider tenant 的 db 与 share 共享给两个 Consumer tenant 的共享库" />
+<em>（上图所示为数据共享的工作流）</em></p>
+<p>通过在配置文件中添加 <code>share_endpoint_address</code> 相关配置，用户可以利用预先部署好的 <code>open-sharing</code> 服务，经由熟悉的云存储服务共享 Databend 管理的数据库或表。</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-keyword">CREATE</span><span> SHARE myshare;</span></span>
+<span class="giallo-l"><span class="z-keyword">GRANT</span><span> USAGE </span><span class="z-keyword">ON</span><span class="z-keyword"> DATABASE</span><span> db1 </span><span class="z-keyword">TO</span><span> SHARE myshare;</span></span>
+<span class="giallo-l"><span class="z-keyword">GRANT</span><span class="z-keyword"> SELECT</span><span class="z-keyword"> ON</span><span class="z-keyword"> TABLE</span><span class="z-constant"> db1</span><span>.</span><span class="z-constant">table1</span><span class="z-keyword"> TO</span><span> SHARE myshare;</span></span>
+<span class="giallo-l"><span class="z-keyword">ALTER</span><span> SHARE myshare </span><span class="z-keyword">ADD</span><span> TENANTS </span><span class="z-keyword">=</span><span> vendor;</span></span></code></pre>
+<p>此时，表 <code>db1.table1</code> 将对接受方租户 <code>vendor</code> 可见，并能够进行必要的查询。</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-keyword">CREATE</span><span class="z-keyword"> DATABASE</span><span class="z-entity z-name"> db2</span><span class="z-keyword"> FROM</span><span> SHARE myshare;</span></span>
+<span class="giallo-l"><span class="z-keyword">SELECT</span><span class="z-keyword"> *</span><span class="z-keyword"> FROM</span><span class="z-constant"> db2</span><span>.</span><span class="z-constant">table1</span><span>;</span></span></code></pre><h3 id="kua-yun-de-wei-lai">跨云的未来<a class="zola-anchor" href="#kua-yun-de-wei-lai" aria-label="Anchor link for: kua-yun-de-wei-lai" style="visibility: hidden;"></a>
+</h3>
+<p>上面的几个视角，只是展示 Databend 在天空计算道路上的一个小小侧影。</p>
+<p>数据合规、隐私保护等内容同样是我们所关心的重要议题。</p>
+<p>Databend 的愿景是成为未来跨云分析的基石，让数据分析变得更加简单、快速、便捷和智能。</p>
+<h2 id="zong-jie">总结<a class="zola-anchor" href="#zong-jie" aria-label="Anchor link for: zong-jie" style="visibility: hidden;"></a>
+</h2>
+<p>本文介绍了天空计算的概念和背景，以及 Databend 的跨云数据存储和访问。</p>
+<p>天空计算是一种将公有云、私有云和边缘设备统一起来的方法，目标是提供一种无缝的 API 和生态体系，使得用户可以在不同的云之间自由地迁移应用程序和数据。</p>
+<p>Databend 是一个开源的、完全面向云架构的新式数仓，它采用存算分离的架构，并抽象出一套统一的数据访问层（OpenDAL），从而屏蔽了不同云服务之间的 API 兼容性问题。Databend 可以满足用户在不同的云之间自由地访问数据并进行查询，而不必担心兼容性和迁移成本的问题。同时，Databend 还可以提供更高效、更安全、更可靠的计算服务，从而满足用户对于云计算的不断增长的需求。</p>
+<p>欢迎部署 Databend 或者访问 Databend Cloud ，即刻探索天空计算的无尽魅力。</p>
+<h2 id="guan-yu-databend">关于 Databend<a class="zola-anchor" href="#guan-yu-databend" aria-label="Anchor link for: guan-yu-databend" style="visibility: hidden;"></a>
+</h2>
+<p>Databend 是一款开源、弹性、低成本，基于对象存储也可以做实时分析的新式数仓。期待您的关注，一起探索云原生数仓解决方案，打造新一代开源 Data Cloud。</p>
+<p>👨‍💻‍ Databend Cloud：<a rel="nofollow noreferrer external" href="https://databend.cn">databend.cn</a></p>
+<p>📖 Databend 文档：<a rel="nofollow noreferrer external" href="https://databend.rs/">databend.rs/</a></p>
+<p>💻 Wechat：Databend</p>
+<p>✨ GitHub：<a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/databend">github.com/datafuselab…</a></p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="sky-computing-the-databend-way"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

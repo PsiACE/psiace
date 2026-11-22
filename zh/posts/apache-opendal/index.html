@@ -127,6 +127,26 @@
     outline: none;
   }
 
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
   #post-info .lang-switch {
     margin-left: auto;
     margin-top: 0;
@@ -279,7 +299,7 @@
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/2023"><span>#</span>2023</a><a class="instant" href="https://psiace.me/tags/asf"><span>#</span>ASF</a><a class="instant" href="https://psiace.me/tags/opendal"><span>#</span>OpenDAL</a>
+            <a class="instant" href="https://psiace.me/zh/tags/2023/"><span>#</span>2023</a><a class="instant" href="https://psiace.me/zh/tags/asf/"><span>#</span>ASF</a><a class="instant" href="https://psiace.me/zh/tags/opendal/"><span>#</span>OpenDAL</a>
           </div>
           
 
@@ -299,8 +319,6 @@
 
 
   
-
-  
     
     
     
@@ -308,6 +326,8 @@
     
     
     
+  
+
   
 
 

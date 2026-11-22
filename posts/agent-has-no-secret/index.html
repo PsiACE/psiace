@@ -127,6 +127,26 @@
     outline: none;
   }
 
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
   #post-info .lang-switch {
     margin-left: auto;
     margin-top: 0;
@@ -305,7 +325,7 @@
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/event-driven"><span>#</span>event-driven</a><a class="instant" href="https://psiace.me/tags/huey"><span>#</span>huey</a><a class="instant" href="https://psiace.me/tags/eventure"><span>#</span>eventure</a><a class="instant" href="https://psiace.me/tags/queue"><span>#</span>queue</a><a class="instant" href="https://psiace.me/tags/crud"><span>#</span>crud</a><a class="instant" href="https://psiace.me/tags/llm"><span>#</span>llm</a><a class="instant" href="https://psiace.me/tags/architecture"><span>#</span>architecture</a>
+            <a class="instant" href="https://psiace.me/tags/agent/"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/event-driven/"><span>#</span>event-driven</a><a class="instant" href="https://psiace.me/tags/huey/"><span>#</span>huey</a><a class="instant" href="https://psiace.me/tags/eventure/"><span>#</span>eventure</a><a class="instant" href="https://psiace.me/tags/queue/"><span>#</span>queue</a><a class="instant" href="https://psiace.me/tags/crud/"><span>#</span>crud</a><a class="instant" href="https://psiace.me/tags/llm/"><span>#</span>llm</a><a class="instant" href="https://psiace.me/tags/architecture/"><span>#</span>architecture</a>
           </div>
           
 

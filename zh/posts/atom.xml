@@ -2506,6 +2506,661 @@ I’m responsible for every change that lands here.&lt;&#x2F;strong&gt;&lt;&#x2F
         
     </entry>
     <entry xml:lang="zh">
+        <title>【论文解读｜GL-Cache 】基于组级学习的缓存替换算法</title>
+        <published>2023-05-29T00:00:00+00:00</published>
+        <updated>2023-05-29T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/gl-cache-group-level-learning/"/>
+        <id>https://psiace.me/zh/posts/gl-cache-group-level-learning/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/gl-cache-group-level-learning/">&lt;blockquote&gt;
+&lt;p&gt;作者：尚卓燃（PsiACE）&lt;&#x2F;p&gt;
+&lt;p&gt;澳门科技大学在读硕士，Databend 研发工程师实习生&lt;&#x2F;p&gt;
+&lt;p&gt;Apache OpenDAL(Incubating) Committer&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&quot;&gt;github.com&#x2F;PsiACE&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-01.png&quot; alt=&quot;论文标题页：GL-Cache: Group-level learning for efficient and high-performance caching，FAST &amp;#39;23，作者 Juncheng Yang 等&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;论文原文：&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;www.usenix.org&#x2F;system&#x2F;files&#x2F;fast23-yang.pdf&quot;&gt;GL-Cache: Group-level learning for efficient and high-performance caching | FAST &#x27;23&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;源码&lt;&#x2F;strong&gt; &lt;strong&gt;地址：&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Thesys-lab&#x2F;fast23-GLCache&quot;&gt;github.com&#x2F;Thesys-lab&#x2F;…&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;论文贡献：&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;提出 Group-level Learning ，利用多对象组的特征来适应工作负荷和缓存大小，通过分组来积累更强的学习信号，学习成本均摊到对象级别。GL-Cache 不仅提供高效益的学习型缓存，还能够保证缓存系统的高吞吐量。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;abstract&quot;&gt;&lt;strong&gt;Abstract&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#abstract&quot; aria-label=&quot;Anchor link for: abstract&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;网络应用程序在很大程度上依赖于软件缓存来实现低延迟、高吞吐的服务。为了适应不断变化的工作负载，近年来设计出一些学习型缓存（学习型缓存替换策略，特别是逐出策略），大致可以分为三种：对象级别学习、从分布中学习和从简单专家（策略集）中学习。本论文认为现有方法的学习粒度要么太细（对象级别），导致计算和存储成本过大，要么太粗（工作负载或专家策略级），无法捕捉对象之间的差异，留下了相当大的效益差距。（这里的效益主要是由 hits&#x2F;miss ratio 进行评估）&lt;&#x2F;p&gt;
+&lt;p&gt;在本论文中，作者针对缓存设计了一种新的学习方法——组级别学习。该方法将相似的对象聚类成组，并按照组进行学习和逐出操作。组级学习可以积累更多的信号，能够利用更多具有自适应权重的特征，并将成本分摊到对象上，从而实现高效益和高吞吐量。&lt;&#x2F;p&gt;
+&lt;p&gt;作者使用 GL-Cache 在生产环境下演示了组级别学习，并对 118 个生产块 I&#x2F;O 和 CDN 缓存跟踪进行评估。结果显示 GL-Cache 比最先进设计具有更高命中率和更高吞吐量。与 LRB （对象级别）相比，GL-Cache 平均提升 228 倍吞吐量和 7% 命中率；对于 CDN 缓存跟踪 P90 的情况下，GL-Cache 比 LRB 提供了25% 的命中率提升；与所有其他类型最好表现者相比较，在平均值方面 GL-Cache 提升64% 吞吐量、3% 命中率，在 P90 方面提升13% 命中率。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;background&quot;&gt;&lt;strong&gt;Background&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#background&quot; aria-label=&quot;Anchor link for: background&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;在正式讨论 GL-Cache 之前，让我们先来看一下缓存和学习型缓存相关的一些内容。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;cun-chu-ceng-ci-jie-gou&quot;&gt;&lt;strong&gt;存储层次结构&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cun-chu-ceng-ci-jie-gou&quot; aria-label=&quot;Anchor link for: cun-chu-ceng-ci-jie-gou&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-02.png&quot; alt=&quot;计算机体系存储层次结构金字塔示意图：寄存器、缓存、主存、闪存盘、传统磁盘与远端二级存储，标注访问时延与容量&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;上图反映了计算机体系中的存储层次结构，可以看到明显的趋势是速度越大，容量越小。图中的缓存位于 CPU 内部，用于协调 CPU 运行速度和内存读取速度。&lt;&#x2F;p&gt;
+&lt;p&gt;一般而言，缓存是位于速度相差较大的两种存储之间，用于协调两者数据传输速度差异的结构。无论是哪一层次的缓存都面临一个同样的问题：当容量有限的缓存的空闲空间全部用完后，又有新的内容需要添加进缓存时，如何挑选并舍弃原有的部分内容，从而腾出空间放入这些新的内容。&lt;&#x2F;p&gt;
+&lt;p&gt;本论文讨论的是位于内存&#x2F;磁盘之间的缓存而不是芯片上的缓存。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;huan-cun-ping-jia-biao-zhun&quot;&gt;&lt;strong&gt;缓存评价标准&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#huan-cun-ping-jia-biao-zhun&quot; aria-label=&quot;Anchor link for: huan-cun-ping-jia-biao-zhun&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;本文主要选用以下两个方面的评价标准。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;“效益“&lt;&#x2F;strong&gt; - 根据 hits&#x2F;miss ratio 进行评估。&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;”性能“&lt;&#x2F;strong&gt; - 根据吞吐量进行评估。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;huan-cun-ti-huan-suan-fa-de-yan-jin&quot;&gt;&lt;strong&gt;缓存替换算法的演进&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#huan-cun-ti-huan-suan-fa-de-yan-jin&quot; aria-label=&quot;Anchor link for: huan-cun-ti-huan-suan-fa-de-yan-jin&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;“单一型”策略&lt;&#x2F;strong&gt;，典型的例子包括：LRU 和 CLOCK 。这一类静态策略无法适应工作负载的变化，且缺乏全面的性能表现。&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;“适应型”策略&lt;&#x2F;strong&gt;，典型的例子包括：ARC 和 2Q 。通常需要维护额外的元数据来适应工作负载，同时实现的复杂度也会随之提高。适应并不总是万无一失。&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;“学习型”策略&lt;&#x2F;strong&gt;，典型的例子包括：LeCaR 和 ACME 。可以看作是由机器学习&#x2F;深度学习驱动的适应型策略，利用学习改进决策，从而在效益上获得提高，但往往不能保证高吞吐量。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;本论文工作属于学习型策略，但得益于设计实现上的一些决策，在效益和性能上都取得了比较好的收益。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;jin-yi-bu-tao-lun-xue-xi-xing-huan-cun&quot;&gt;&lt;strong&gt;进一步讨论学习型缓存&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#jin-yi-bu-tao-lun-xue-xi-xing-huan-cun&quot; aria-label=&quot;Anchor link for: jin-yi-bu-tao-lun-xue-xi-xing-huan-cun&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;前面介绍了&lt;strong&gt;学习型缓存&lt;&#x2F;strong&gt;，这是一类结合机器学习来改善缓存适应性的方法，根据本论文的分类，大致可以分成以下几种：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;”对象级“学习&lt;&#x2F;strong&gt;，即对每个对象的特征进行学习。通过预测重用距离，可以实现类似 Belady 算法的缓存置换策略。但是，对象级学习的存储和计算成本都比较大，以 LRB 为例，可以对超过 40 种特征进行学习，如果在每次逐出元素时进行采样和预测，会极大妨害吞吐量。&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;从分布中学习&lt;&#x2F;strong&gt;，基于请求概率分布做出决策。例如，LHD 使用请求概率分布计算命中密度作为逐出的指标，相对而言较为简单高效，计算成本低。但是，LHD 命中密度的计算仅基于两个特征：age 和 size ，限制了效益的上限，而跟踪更多特征的话，计算量会呈现指数级增长。此外，由于 LHD 需要在每次逐出&#x2F;随机访问时对对象进行采样和比较，限制了其吞吐量。&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;专家策略集&lt;&#x2F;strong&gt;，与前两种对逐出算法的改进不同，专家策略集旨在学习并选出最适合工作负载的缓存替换策略。典型的例子就是 LeCaR 和其后续工作 CACHEUS 。专家策略集的缺陷主要是以下两个方面：需要维护不同缓存算法的状态或者元数据，如果要维护多个不同算法，实现复杂度和计算复杂度都会提高，且其命中率强依赖于其所选策略；另外，专家策略集存在“延迟奖励”，需要跟踪对对象的访问情况，而两次访问之间可能会存在相当长的间隔，工作负载可能会在此期间发生变化。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;guan-yu-shi-fou-yin-ru-ji-qi-xue-xi-de-yi-xie-quan-heng&quot;&gt;&lt;strong&gt;关于是否引入&lt;&#x2F;strong&gt; &lt;strong&gt;机器学习&lt;&#x2F;strong&gt; &lt;strong&gt;的一些权衡&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#guan-yu-shi-fou-yin-ru-ji-qi-xue-xi-de-yi-xie-quan-heng&quot; aria-label=&quot;Anchor link for: guan-yu-shi-fou-yin-ru-ji-qi-xue-xi-de-yi-xie-quan-heng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-03.png&quot; alt=&quot;MLOps 工作流示意图：离线阶段用特征完成优化、训练与评估得到模型，在线阶段用模型对新特征做预测&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;机器学习经常用于改进决策过程。将缓存管理和机器学习相结合的主要考虑因素是提高性能，包括如何增加吞吐量以及如何提高命中率。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;为什么要使用&lt;&#x2F;strong&gt; &lt;strong&gt;机器学习&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;机器学习近年来被广泛应用，并影响了缓存、索引的设计和实现。FAST ‘23 同期还有其他关于学习型索引和学习型缓存的论文被接收。基于机器学习的算法在真实世界场景中通常具有优势。&lt;&#x2F;li&gt;
+&lt;li&gt;可以利用机器学习来学习“最佳”缓存替换策略。LeCaR 可以归到这一类中。&lt;&#x2F;li&gt;
+&lt;li&gt;可以利用机器学习来改进现有的缓存替换策略。本论文属于此类。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;为什么不使用&lt;&#x2F;strong&gt; &lt;strong&gt;机器学习&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;实现的正确性需要进一步评估，复杂度也会增加。&lt;&#x2F;li&gt;
+&lt;li&gt;许多方案必须引入额外步骤，如模型的培训和部署等。LeCaR 引入在线学习的机制，避免了训练和部署问题。&lt;&#x2F;li&gt;
+&lt;li&gt;难以同时兼顾效益和性能。本文采用 Group-level Learning 的策略，同时在效益和性能上取得优势。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;gl-cache-group-level-learned-cache&quot;&gt;&lt;strong&gt;GL-Cache: Group-level Learned Cache&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#gl-cache-group-level-learned-cache&quot; aria-label=&quot;Anchor link for: gl-cache-group-level-learned-cache&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;前面花了大量的篇幅介绍缓存和机器学习在缓存中的应用，接下来让我们将目光转向本文的主角 GL-Cache 。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-04.png&quot; alt=&quot;GL-Cache 总览图（论文 Fig.1）：对象被分成若干组，特征跟踪、模型训练与推理都在组一级进行&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;GL-Cache 采用组级学习的思想，将对象分组，并按组聚集特征。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;与其他学习型缓存相比，GL-Cache 可以利用多个特征来辅助决策，从而提高缓存效益。此外，GL-Cache 的计算成本和存储成本由组内的对象均摊。&lt;&#x2F;li&gt;
+&lt;li&gt;大多数缓存工作负载遵循特定的分布，很多对象可能只访问零星几次，很难从单独几个对象中学到有价值的信息。而通过汇聚成组的形式，组内对象数目和访问请求得到累计，能够形成更多有助于学习和预测的信息。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;she-ji-quan-heng&quot;&gt;&lt;strong&gt;设计权衡&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#she-ji-quan-heng&quot; aria-label=&quot;Anchor link for: she-ji-quan-heng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-05.png&quot; alt=&quot;设计权衡示意图：对对象分组并定期采样形成特征快照，计算效用用于训练，再由模型预测并作出逐出决策&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;GL-Cache 将对象划分成若干组，定期跟踪每个对象组的特征，进行采样并形成特征快照，对每个特征快照计算效用并用于模型的训练，然后利用训练得到的模型进行预测并作出逐出决策。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;fen-zu-ce-lue&quot;&gt;&lt;strong&gt;分组策略&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#fen-zu-ce-lue&quot; aria-label=&quot;Anchor link for: fen-zu-ce-lue&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-06.png&quot; alt=&quot;基于插入时间的分组策略示意图：组内对象按插入先后排列&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;GL-Cache 选择了基于插入时间的分组策略，简单且有效。主要是以下几点：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;插入时间相近的对象之间，访问频率和重用距离的相似程度比随机对象之间更接近。&lt;&#x2F;li&gt;
+&lt;li&gt;简单普适，能够与其他缓存设计轻松集成。&lt;&#x2F;li&gt;
+&lt;li&gt;可以在基于段或者日志结构的存储上实现，从而利用日志结构存储的优势：低碎片化、高吞吐量、Flash 友好等。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;当然，也可以根据实际需要设计不同的分组策略，进一步适应工作负载。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;xiao-yong-ji-suan&quot;&gt;&lt;strong&gt;效用计算&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#xiao-yong-ji-suan&quot; aria-label=&quot;Anchor link for: xiao-yong-ji-suan&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;strong&gt;效用&lt;&#x2F;strong&gt;，用来度量逐出或保留对象组的后续影响。根据设计，效用较低的对象组更应该被逐出。&lt;&#x2F;p&gt;
+&lt;p&gt;对象和对象之间的比较非常容易，但是对于组与组之间，尚且缺乏有效的衡量方法。论文设计了一个新的效用函数来量化对象组的效用。&lt;&#x2F;p&gt;
+&lt;p&gt;在设计效用时主要的决策如下：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;组中主要包含的是小对象，则效用更大。&lt;&#x2F;li&gt;
+&lt;li&gt;距离下一次请求的间隔越小，则效用更大。&lt;&#x2F;li&gt;
+&lt;li&gt;如果组的大小为 1 ，即退化到对象级学习时，应该具有类似 Belady’s MIN 算法的表现。&lt;&#x2F;li&gt;
+&lt;li&gt;易于学习、能够准确反映效用，可以在线即时计算。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-07.png&quot; alt=&quot;效用函数公式：单对象效用 Uo(t) 与组效用 Ugroup(t) 均为对 Tₒ(t)×Sₒ 取倒数的求和，并说明 Tₒ(t) 与 Sₒ 的含义&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;上图第一个式子展示了对于单个对象的效用函数计算，T(o)(t) 表示下一次请求的时间，而 S(o) 表示对象的大小。而组的效用可以用对象效用的累加来计算。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;te-zheng-he-mo-xing&quot;&gt;&lt;strong&gt;特征和模型&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#te-zheng-he-mo-xing&quot; aria-label=&quot;Anchor link for: te-zheng-he-mo-xing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;GL-Cache 选用了 7 种特征进行学习，并且进行了分类。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;动态特征&lt;&#x2F;strong&gt;，也就是在访问请求时需要更新的特征：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;请求数&lt;&#x2F;li&gt;
+&lt;li&gt;活跃的对象数&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;strong&gt;静态特征&lt;&#x2F;strong&gt;，不需要实时更新，只需要计算一次：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;插入时的写速率&lt;&#x2F;li&gt;
+&lt;li&gt;插入时的未命中率&lt;&#x2F;li&gt;
+&lt;li&gt;插入时的请求速率&lt;&#x2F;li&gt;
+&lt;li&gt;平均对象大小&lt;&#x2F;li&gt;
+&lt;li&gt;组的年龄&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;其中，静态特征的前三个又被称为 &lt;strong&gt;上下文特征&lt;&#x2F;strong&gt; ，能够反映工作负载的变化情况。比如在数据备份时，可能会观测到写速率、未命中率和请求速率都在增加。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-08.png&quot; alt=&quot;梯度提升树示意图：若干决策树按投票给出预测结果，用于对对象组排序&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;模型比较简单，利用梯度提升树设计回归算法作为目标函数。感兴趣的话可以阅读 xgboost 相关论文和本论文相关源码，这里就不进行赘述。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;zhu-chu-ji-hua&quot;&gt;&lt;strong&gt;逐出计划&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#zhu-chu-ji-hua&quot; aria-label=&quot;Anchor link for: zhu-chu-ji-hua&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;GL-Cache 使用训练得到的模型来对对象组进行排序，并且预测其效用，并选择效用最低的组进行逐出。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-09.png&quot; alt=&quot;排序与合并逐出示意图（论文 Fig.4）：按效用对组排序，选出逐出对象后按 size 与 age 合并进下一组&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;但是，GL-Cache 的逐出并不是直接删除对应的组，而是采用了合并逐出（Merge Evict）的思想：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;首先，选择待逐出的组和与其插入时间接近的几个相邻组；&lt;&#x2F;li&gt;
+&lt;li&gt;然后，根据上图中的算法从这些组中删除大部分对象；&lt;&#x2F;li&gt;
+&lt;li&gt;最后，将剩下的元素合并，形成一个新的对象组。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;由于选择插入时间接近的几个相邻组作为合并对象，逐出后形成的新组仍然可以保证组内对象特征的相似性。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;xing-neng-ping-jia&quot;&gt;&lt;strong&gt;性能评价&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#xing-neng-ping-jia&quot; aria-label=&quot;Anchor link for: xing-neng-ping-jia&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;让我们略过评估相关的实验设计和结果细节，只是简单看一下基于组级学习的算法在潜在效益（命中率）和性能（吞吐量）象限上所处的位置。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;images&#x2F;figure-10.png&quot; alt=&quot;潜在效益（命中率）与吞吐量象限散点图：对象级学习、从分布学习、从简单专家学习与组级学习的位置对比&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;对象级学习具有最高的命中率，但是由于计算繁重，所以在吞吐量上表现不佳。&lt;&#x2F;li&gt;
+&lt;li&gt;专家策略集由于模型相对比较简单，可以取得更好的吞吐量，但受到简单专家算法（LRU、LFU 等）本身的限制，命中率较低。&lt;&#x2F;li&gt;
+&lt;li&gt;从分布中学习相对比较平衡，处于前两者中间的位置。&lt;&#x2F;li&gt;
+&lt;li&gt;本论文提出的 Group-level Learning 则在潜在效益和性能上都有着优秀的表现。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;zong-jie&quot;&gt;&lt;strong&gt;总结&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#zong-jie&quot; aria-label=&quot;Anchor link for: zong-jie&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;本论文提出了一种名为 “组级学习（Group-level Learning）” 的新方法，利用机器学习提高缓存效益。组级学习利用多个对象组特征预测和清除效用最低的对象组，在适应工作负载和缓存大小的同时，积累更强的信号进行学习，并将学习成本分摊到对象上。因此，它可以用极小的成本做出更好的逐出决策。作者在生产级缓存中构建 GL-Cache 来展示组级学习，并在 118 个生产块 I&#x2F;O 和 CDN 跟踪数据上进行评估。与所有其他已知缓存相比，GL-Cache 实现了显著更高的吞吐量，同时保持较高的命中率。因此，GL-Cache 为在生产系统中采用学习型缓存铺平了道路。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>多云转晴：Databend 的天空计算之路</title>
+        <published>2023-04-19T00:00:00+00:00</published>
+        <updated>2023-04-19T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/sky-computing-the-databend-way/"/>
+        <id>https://psiace.me/zh/posts/sky-computing-the-databend-way/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/sky-computing-the-databend-way/">&lt;blockquote&gt;
+&lt;p&gt;作者：尚卓燃（PsiACE）&lt;&#x2F;p&gt;
+&lt;p&gt;澳门科技大学在读硕士，Databend 研发工程师实习生&lt;&#x2F;p&gt;
+&lt;p&gt;Apache OpenDAL(Incubating) Committer&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;psiace&#x2F;&quot;&gt;github.com&#x2F;psiace&#x2F;&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;内容提要：本文将会介绍天空计算的背景，以及 Databend 是如何从数据存储、数据管理、数据共享等视角考虑跨云数据存储与访问的。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;bei-jing&quot;&gt;背景&lt;a class=&quot;zola-anchor&quot; href=&quot;#bei-jing&quot; aria-label=&quot;Anchor link for: bei-jing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;baike.baidu.com&#x2F;item&#x2F;%E4%BA%91%E8%AE%A1%E7%AE%97&#x2F;9969353&quot;&gt;云计算&lt;&#x2F;a&gt;时代的开端可以追溯到 2006 年，当时 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;aws.amazon.com&#x2F;&quot;&gt;AWS&lt;&#x2F;a&gt; 开始提供 S3 和 EC2 服务。2013 年，云原生概念刚刚被提出，甚至还没有一个完整的愿景。时间来到 2015 年 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;www.cncf.io&#x2F;&quot;&gt;CNCF&lt;&#x2F;a&gt; 成立，接下来的五年中，这一概念变得越来越流行，并且成为技术人绕不开的话题。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;根据 CNCF 对云原生的定义：云原生技术使组织能够在公共、私有和混合云这类现代、动态的环境中构建和运行可扩展的应用程序。典型示例包括：容器、服务网格、微服务、不变基础设施和声明式 API 。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;sky-computing-the-databend-way&#x2F;images&#x2F;figure-01.gif&quot; alt=&quot;「Cloud Native」动态演示图（原为 GIF 动画），蓝色背景上两朵白色云形轮廓&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;然而，无论是公有云还是私有云、无论是云计算还是云服务，在天空中都已经存在太多不同类型的“云”。每个“云”都拥有自己独特的 API 和生态系统，并且彼此之间缺乏互操作性，能够兼容的地方也是寥寥无几。云已经成为事实上的孤岛。这个孤岛不仅仅是指公有云和私有云之间的隔阂，还包括了不同公有云之间、不同私有云之间、以及公有云和私有云之间的隔阂。这种孤岛现象不仅给用户带来了很多麻烦，也限制了云计算的发展。&lt;&#x2F;p&gt;
+&lt;p&gt;2021 年 RISELab 发表了题为 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2205.07147&quot;&gt;The Sky Above The Clouds&lt;&#x2F;a&gt; 的论文，讨论关于天空计算的未来。天空计算将云原生的思想进一步扩展，从而囊括公有云、私有云和边缘设备。其目标是实现一种统一的 API 和生态体系，使得不同云之间可以无缝地协作和交互。这样一来，用户就可以在不同的云之间自由地迁移应用程序和数据，而不必担心兼容性和迁移成本的问题。同时，天空计算还可以提供更高效、更安全、更可靠的计算服务，从而满足用户对于云计算的不断增长的需求。总体上讲，天空计算致力于允许应用跨多个云厂商运行，实现多云之间的互操作性。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;sky-computing-the-databend-way&#x2F;images&#x2F;figure-02.png&quot; alt=&quot;Table 1 多云类型对比表：分区式多云、可移植式多云与天空式多云在应用一致性、云透明、统一 API 与深度 API 上的差异&quot; &#x2F;&gt;
+&lt;em&gt;(上图引自论文，展示不同类型的多云与天空的区别)&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-databend-way&quot;&gt;The Databend Way&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-databend-way&quot; aria-label=&quot;Anchor link for: the-databend-way&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;kua-yun-de-guan-jian&quot;&gt;跨云的关键&lt;a class=&quot;zola-anchor&quot; href=&quot;#kua-yun-de-guan-jian&quot; aria-label=&quot;Anchor link for: kua-yun-de-guan-jian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;Databend 能够满足用户在不同的云之间自由地访问数据并进行查询，而不必担心兼容性和迁移成本的问题。同时，Databend 还可以提供更高效、更安全、更可靠的计算服务，从而满足用户对于云计算的不断增长的需求。从这个角度来看，Databend 已经初步形成了一套天空计算的解决方案。那么，对 Databend 而言，跨云的关键到底落在哪里呢？&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;sky-computing-the-databend-way&#x2F;images&#x2F;figure-03.png&quot; alt=&quot;Databend Cloud 架构示意图：云服务、计算服务、存储服务与多云接入分层&quot; &#x2F;&gt;
+&lt;em&gt;(上图所示为 Databend Cloud 架构示意图)&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Databend 采用存算分离的架构，并完全面向云对象存储进行设计决策。得益于存储与计算分离、存储与状态分离，Databend 可以实现对资源的精细化控制，轻松部署与扩展 Query 和 Meta 节点 ，并支持多种不同的计算场景和存储场景，而无需考虑跨云数据管理与移动的问题。&lt;&#x2F;p&gt;
+&lt;p&gt;Query 节点和 Meta 节点本身都是轻量化的服务，并且对于部署环境没有严格的依赖。但数据的存储和访问管理就不一样，我们需要考虑不同云服务之间的 API 兼容性、以及如何与云服务本身的安全机制交互从而提供更安全的访问控制机制。对于 Databend 而言，跨云，或者说实现天空计算的关键，就落在数据的管理与访问之上。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;sky-computing-the-databend-way&#x2F;images&#x2F;figure-04.png&quot; alt=&quot;示意对比图：左侧各应用分别直连多种存储服务，右侧经由 OpenDAL 统一访问 S3、Azure Blob、HDFS、Redis 与本地文件系统&quot; &#x2F;&gt;
+&lt;em&gt;（OpenDAL 可以将数据访问问题从 M\N 转化为 M+N）&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;为了解决这一问题，Databend 抽象出一套统一的数据访问层（OpenDAL，现在是 Apache 软件基金会旗下的孵化项目），从而屏蔽了不同云服务之间的 API 兼容性问题。在接下来的部分，我们将会从不同的视角来观察 Databend 的无痛数据访问体验，体验真正完全云原生的天空计算的魅力。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;shu-ju-cun-chu&quot;&gt;数据存储&lt;a class=&quot;zola-anchor&quot; href=&quot;#shu-ju-cun-chu&quot; aria-label=&quot;Anchor link for: shu-ju-cun-chu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;Databend 存储后端的细节隐藏在简单的配置之下，通过修改配置文件就可以轻松地在十数种存储服务之间切换。例如，如果你想使用 AWS S3，只需要指定类型为 &lt;code&gt;s3&lt;&#x2F;code&gt; 即可，Databend 会自动尝试使用 IAM 来进行认证。如果你想使用其他与 S3 兼容的对象存储服务，也可以通过 &lt;code&gt;endpoint_url&lt;&#x2F;code&gt; 等设置来调整。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;toml&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;storage&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;type&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s3&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;storage&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;s3&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;bucket&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;databend&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;当然，仅支持 S3 兼容的对象存储服务还不够。Databend 通过 OpenDAL 实现了 Google Cloud Storage、Azure Blob、Aliyun OSS、Huawei OBS 和 HDFS 等服务的原生存储后端支持。
+这意味着 Databend 可以充分利用各种供应商提供的 API，为用户带来更优秀的体验。例如，Aliyun OSS 的原生支持使得 Databend 可以通过 Aliyun RAM 对用户进行认证和授权，无需设置静态密钥，从而大大提高安全性并降低运维负担。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;sky-computing-the-databend-way&#x2F;images&#x2F;figure-05.jpeg&quot; alt=&quot;云上访问控制示意图：项目内 Admins、Devs、Audfans 三组用户经 RAM 与用户账号权限访问云资源&quot; &#x2F;&gt;
+&lt;em&gt;(上图选自阿里云官网，访问控制场景与能力)&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;此外，原生支持还可以避免出现非预期行为，并与服务供应商提供更紧密的集成。虽然各大厂商都提供了 S3 兼容 API，但它们之间存在微妙差异，在出现非预期行为时可能会导致服务性能下降或读写数据功能异常。Google Cloud Storage 提供了 S3 兼容的 XML API，但却没有支持批量删除对象的功能。这导致用户在调用该接口时遇到意外错误。而 Google Cloud Storage 的原生支持使 Databend 不必担心 GCS 对 S3 的兼容实现问题对用户业务造成影响。&lt;&#x2F;p&gt;
+&lt;p&gt;总之，Databend 通过为各个服务实现原生支持来为用户提供高效可靠的数据分析服务。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;shu-ju-guan-li&quot;&gt;数据管理&lt;a class=&quot;zola-anchor&quot; href=&quot;#shu-ju-guan-li&quot; aria-label=&quot;Anchor link for: shu-ju-guan-li&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;前面讲过了存储后端的跨云支持，现在让我们将目光聚焦到数据的管理。更具体来说，数据在 Databend 工作流中的流入与流出。&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;copy-into-shu-ju-zai-ru&quot;&gt;COPY INTO，数据载入&lt;a class=&quot;zola-anchor&quot; href=&quot;#copy-into-shu-ju-zai-ru&quot; aria-label=&quot;Anchor link for: copy-into-shu-ju-zai-ru&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;要讲数据管理，就不得不讨论数据从哪里来。过去可能还需要考虑是否需要迁移存储服务，但现在，你可以从数十种 Databend 支持或兼容的存储服务中加载数据，一切都显得那么自然。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;COPY INTO&lt;&#x2F;code&gt; 语句是窥探 Databend 跨云能力的一个窗口，下面的示例展示了如何从 Azure Blob 加载数据到 Databend 之中。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;COPY&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; INTO&lt;&#x2F;span&gt;&lt;span&gt; mytable&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    FROM&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;azblob:&#x2F;&#x2F;mybucket&#x2F;data.csv&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    CONNECTION&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;        ENDPOINT_URL&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;https:&#x2F;&#x2F;&amp;lt;account_name&amp;gt;.blob.core.windows.net&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        ACCOUNT_NAME &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&amp;lt;account_name&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        ACCOUNT_KEY &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&amp;lt;account_key&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    )&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    FILE_FORMAT&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;type&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; CSV);&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;当然，不止是 Azure Blob ，Databend 支持的其他云对象存储服务、IPFS 以及可以经由 HTTPS 访问的文件都可以作为 External location ，通过 &lt;code&gt;COPY INTO&lt;&#x2F;code&gt; 语句加载进来。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Databend 的 &lt;code&gt;COPY INTO&lt;&#x2F;code&gt; 语句还支持进行基本的转换服务，可以减轻 ETL 工作的负担。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h4 id=&quot;stage-shu-ju-zan-cun-qu&quot;&gt;Stage ，数据暂存区&lt;a class=&quot;zola-anchor&quot; href=&quot;#stage-shu-ju-zan-cun-qu&quot; aria-label=&quot;Anchor link for: stage-shu-ju-zan-cun-qu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;刚刚提到 External location ，事实上，要加载到 Databend 中的数据文件还可以在 Stage 中暂存。Databend 同样支持 Internal stage 和 Named external stage 。&lt;&#x2F;p&gt;
+&lt;p&gt;数据文件可以经由 &lt;code&gt;PUT_INTO_STAGE API&lt;&#x2F;code&gt; 上传到 Internal Stage，由 Databend 交付当前配置的存储后端进行统一管理。而 Named external stage 则可以用于挂载其他 Databend 支持的多种存储服务之中的 bucket 。&lt;&#x2F;p&gt;
+&lt;p&gt;下面的例子展示了如何在 Databend 中创建一个名为 whdfs 的 Stage ，通过 WebHDFS 协议将 HDFS 中 data-files 目录下的数据文件导入 Databend 。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;bendsql&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; CREATE&lt;&#x2F;span&gt;&lt;span&gt; STAGE &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;IF&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; NOT&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; EXISTS&lt;&#x2F;span&gt;&lt;span&gt; whdfs &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;URL&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;webhdfs:&#x2F;&#x2F;127.0.0.1:9870&#x2F;data-files&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; CONNECTION&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;(HTTPS&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;false&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;);&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;Query OK, &lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; rows&lt;&#x2F;span&gt;&lt;span&gt; affected (&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;01&lt;&#x2F;span&gt;&lt;span&gt; sec)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;bendsql&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; COPY&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; INTO&lt;&#x2F;span&gt;&lt;span&gt; books &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;FROM&lt;&#x2F;span&gt;&lt;span&gt; @whdfs&lt;&#x2F;span&gt;&lt;span&gt; FILES&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;books.csv&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;file_format&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;type&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;CSV field_delimiter&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;  record_delimiter&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;\n&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt; skip_header&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;);&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;Query OK, &lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;2&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; rows&lt;&#x2F;span&gt;&lt;span&gt; affected (&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;83&lt;&#x2F;span&gt;&lt;span&gt; sec)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果你并不想直接导入数据，也可以尝试 &lt;code&gt;SELECT FROM STAGE&lt;&#x2F;code&gt; ，快速分析位于暂存区中的数据文件。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h4 id=&quot;catalog-shu-ju-gua-zai&quot;&gt;Catalog，数据挂载&lt;a class=&quot;zola-anchor&quot; href=&quot;#catalog-shu-ju-gua-zai&quot; aria-label=&quot;Anchor link for: catalog-shu-ju-gua-zai&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;放在对象存储中的数据加载得到了解决，还有一个值得思考的问题是，如果数据原本由其他数据分析系统所管理，该怎么办？&lt;&#x2F;p&gt;
+&lt;p&gt;Databend 提供多源数据目录（Multiple Catalog）的支持，允许挂载 Hive 、Iceberg 等外部数据目录。&lt;&#x2F;p&gt;
+&lt;p&gt;下面的示例展示如何利用配置文件挂载 Hive 数据目录。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;toml&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;catalogs&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;hive&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;type&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;hive&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;#&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; hive metastore address, such as 127.0.0.1:9083&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;address&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&amp;lt;hive-metastore-address&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;除了挂载，查询也是小菜一碟 &lt;code&gt;select * from hive.$db.$table limit 10;&lt;&#x2F;code&gt; 。&lt;&#x2F;p&gt;
+&lt;p&gt;当然，这一切也可以通过 &lt;code&gt;CREATE CATALOG&lt;&#x2F;code&gt; 语句轻松搞定，下面的例子展示了如何挂载 Iceberg 数据目录。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;CREATE&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; CATALOG&lt;&#x2F;span&gt;&lt;span&gt; iceberg_ctl&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  TYPE&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;ICEBERG&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;  CONNECTION&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;( &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;    URL&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s3:&#x2F;&#x2F;my_bucket&#x2F;path&#x2F;to&#x2F;db&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt; &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    AWS_KEY_ID&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&amp;lt;access-key&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    AWS_SECRET_KEY&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&amp;lt;secret_key&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    SESSION_TOKEN&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&amp;lt;session_token&amp;gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;  );&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Multiple Catalog 相关的能力还在积极开发迭代中，感兴趣的话可以保持关注。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h4 id=&quot;zai-tan-copy-into-shu-ju-dao-chu&quot;&gt;再探 COPY INTO，数据导出&lt;a class=&quot;zola-anchor&quot; href=&quot;#zai-tan-copy-into-shu-ju-dao-chu&quot; aria-label=&quot;Anchor link for: zai-tan-copy-into-shu-ju-dao-chu&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h4&gt;
+&lt;p&gt;数据导出是数据管理中的另外一个重要话题，简单来讲，就是转储查询结果以供进一步的分析和处理。&lt;&#x2F;p&gt;
+&lt;p&gt;这一能力同样由 &lt;code&gt;COPY INTO&lt;&#x2F;code&gt; 语法提供支持，当然，同样支持数十种存储服务和多种文件输出格式。下面的示例展示了如何将查询结果以 CSV 格式文件的形式导出到指定 Stage 中。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment&quot;&gt;--&lt;&#x2F;span&gt;&lt;span class=&quot;z-comment&quot;&gt; Unload the data from a query into a CSV file on the stage&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;COPY&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; INTO&lt;&#x2F;span&gt;&lt;span&gt; @s2&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; FROM&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;SELECT&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; name&lt;&#x2F;span&gt;&lt;span&gt;, age, id &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;FROM&lt;&#x2F;span&gt;&lt;span&gt; test_table &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;LIMIT&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; 100&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;FILE_FORMAT&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;TYPE&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; =&lt;&#x2F;span&gt;&lt;span&gt; CSV);&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;这一语法同样支持导出到 External location ，真正做到数据的自由流动。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Databend 还支持 &lt;code&gt;PRESIGN&lt;&#x2F;code&gt; ，用来为 Stage 中的文件生成预签名的 URL ，用户可以通过 Web 浏览器或 API 请求自由访问该文件。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;shu-ju-gong-xiang&quot;&gt;数据共享&lt;a class=&quot;zola-anchor&quot; href=&quot;#shu-ju-gong-xiang&quot; aria-label=&quot;Anchor link for: shu-ju-gong-xiang&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;刚才提到的 Databend 数据管理环节跨云主要是指 Databend 与外部服务之间的交互。此外，Databend 实例之间也可以经由多种云存储服务来支持数据共享。&lt;&#x2F;p&gt;
+&lt;p&gt;为了更好地满足多云环境下的数据库查询需求，Databend 设计并实现了一套 RESTful API 来支持数据共享。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;sky-computing-the-databend-way&#x2F;images&#x2F;figure-06.png&quot; alt=&quot;数据共享工作流示意图：Provider tenant 的 db 与 share 共享给两个 Consumer tenant 的共享库&quot; &#x2F;&gt;
+&lt;em&gt;（上图所示为数据共享的工作流）&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;通过在配置文件中添加 &lt;code&gt;share_endpoint_address&lt;&#x2F;code&gt; 相关配置，用户可以利用预先部署好的 &lt;code&gt;open-sharing&lt;&#x2F;code&gt; 服务，经由熟悉的云存储服务共享 Databend 管理的数据库或表。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;CREATE&lt;&#x2F;span&gt;&lt;span&gt; SHARE myshare;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;GRANT&lt;&#x2F;span&gt;&lt;span&gt; USAGE &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;ON&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; DATABASE&lt;&#x2F;span&gt;&lt;span&gt; db1 &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;TO&lt;&#x2F;span&gt;&lt;span&gt; SHARE myshare;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;GRANT&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; SELECT&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; ON&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; TABLE&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; db1&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;table1&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; TO&lt;&#x2F;span&gt;&lt;span&gt; SHARE myshare;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;ALTER&lt;&#x2F;span&gt;&lt;span&gt; SHARE myshare &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;ADD&lt;&#x2F;span&gt;&lt;span&gt; TENANTS &lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; vendor;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;此时，表 &lt;code&gt;db1.table1&lt;&#x2F;code&gt; 将对接受方租户 &lt;code&gt;vendor&lt;&#x2F;code&gt; 可见，并能够进行必要的查询。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;CREATE&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; DATABASE&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; db2&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; FROM&lt;&#x2F;span&gt;&lt;span&gt; SHARE myshare;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-keyword&quot;&gt;SELECT&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; *&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt; FROM&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; db2&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt;table1&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;kua-yun-de-wei-lai&quot;&gt;跨云的未来&lt;a class=&quot;zola-anchor&quot; href=&quot;#kua-yun-de-wei-lai&quot; aria-label=&quot;Anchor link for: kua-yun-de-wei-lai&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;上面的几个视角，只是展示 Databend 在天空计算道路上的一个小小侧影。&lt;&#x2F;p&gt;
+&lt;p&gt;数据合规、隐私保护等内容同样是我们所关心的重要议题。&lt;&#x2F;p&gt;
+&lt;p&gt;Databend 的愿景是成为未来跨云分析的基石，让数据分析变得更加简单、快速、便捷和智能。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;zong-jie&quot;&gt;总结&lt;a class=&quot;zola-anchor&quot; href=&quot;#zong-jie&quot; aria-label=&quot;Anchor link for: zong-jie&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;本文介绍了天空计算的概念和背景，以及 Databend 的跨云数据存储和访问。&lt;&#x2F;p&gt;
+&lt;p&gt;天空计算是一种将公有云、私有云和边缘设备统一起来的方法，目标是提供一种无缝的 API 和生态体系，使得用户可以在不同的云之间自由地迁移应用程序和数据。&lt;&#x2F;p&gt;
+&lt;p&gt;Databend 是一个开源的、完全面向云架构的新式数仓，它采用存算分离的架构，并抽象出一套统一的数据访问层（OpenDAL），从而屏蔽了不同云服务之间的 API 兼容性问题。Databend 可以满足用户在不同的云之间自由地访问数据并进行查询，而不必担心兼容性和迁移成本的问题。同时，Databend 还可以提供更高效、更安全、更可靠的计算服务，从而满足用户对于云计算的不断增长的需求。&lt;&#x2F;p&gt;
+&lt;p&gt;欢迎部署 Databend 或者访问 Databend Cloud ，即刻探索天空计算的无尽魅力。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;guan-yu-databend&quot;&gt;关于 Databend&lt;a class=&quot;zola-anchor&quot; href=&quot;#guan-yu-databend&quot; aria-label=&quot;Anchor link for: guan-yu-databend&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Databend 是一款开源、弹性、低成本，基于对象存储也可以做实时分析的新式数仓。期待您的关注，一起探索云原生数仓解决方案，打造新一代开源 Data Cloud。&lt;&#x2F;p&gt;
+&lt;p&gt;👨‍💻‍ Databend Cloud：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;databend.cn&quot;&gt;databend.cn&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;📖 Databend 文档：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;databend.rs&#x2F;&quot;&gt;databend.rs&#x2F;&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;💻 Wechat：Databend&lt;&#x2F;p&gt;
+&lt;p&gt;✨ GitHub：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&quot;&gt;github.com&#x2F;datafuselab…&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>Databend 中的 Rust 编译时间优化小技巧</title>
+        <published>2023-04-16T00:00:00+00:00</published>
+        <updated>2023-04-16T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/rust-compile-time-tips-in-databend/"/>
+        <id>https://psiace.me/zh/posts/rust-compile-time-tips-in-databend/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/rust-compile-time-tips-in-databend/">&lt;h2 id=&quot;bei-jing&quot;&gt;背景&lt;a class=&quot;zola-anchor&quot; href=&quot;#bei-jing&quot; aria-label=&quot;Anchor link for: bei-jing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;时至今日，Databend 已经成长为一个大型、复杂、完备的数据库系统。团队维护着数十万行代码，每次发布十几个编译产物，并且还提供基于 Docker 的一些构建工具以改善开发者 &#x2F; CI 的体验。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-01.png&quot; alt=&quot;tokei -t=Rust 的代码统计输出截图：Databend 的 Rust 文件数、代码行、注释与空行&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;之前的文章介绍过 PGO，用户可以根据自己的工作负载去调优 Databend 的编译。再早些时候，还有一篇介绍 Databend 开发环境和编译的文章。
+对于 Databend 这样的中大型 Rust 程序而言，编译实在算不上是一件轻松的事情：&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-02.png&quot; alt=&quot;两格漫画：一人喊「HEY! GET BACK TO WORK!」，另一人回答「COMPILING!」&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;一方面，在复杂的项目依赖和样板代码堆积之下，Rust 的编译时间显得不那么理想，前两年 Brian Anderson 的文章中也提到“Rust 糟糕的编译时间”这样的描述。&lt;&#x2F;li&gt;
+&lt;li&gt;另一方面，为了维护构建结果，不得不引入一些技巧来维护编译流水线的稳定，这并不是一件“一劳永逸”的事情，随着 Workflow 复杂性的提高，就不得不陷入循环之中。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;为了优化编译体验，Databend 陆陆续续做过很多优化工作，今天的文章将会和大家一同回顾 Databend 中改善编译时间的一些优化。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;ke-guan-ce-xing&quot;&gt;可观测性&lt;a class=&quot;zola-anchor&quot; href=&quot;#ke-guan-ce-xing&quot; aria-label=&quot;Anchor link for: ke-guan-ce-xing&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;可观测性并不是直接作用于编译优化的手段，但可以帮助我们识别当前编译的瓶颈在什么地方，从而对症下药。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;cargo-build-timings&quot;&gt;cargo build --timings&lt;a class=&quot;zola-anchor&quot; href=&quot;#cargo-build-timings&quot; aria-label=&quot;Anchor link for: cargo-build-timings&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;这一命令有助于可视化程序的编译过程。&lt;&#x2F;p&gt;
+&lt;p&gt;在 1.59 或更早版本时可以使用 &lt;code&gt;cargo +nightly build -Ztimings&lt;&#x2F;code&gt; 。&lt;&#x2F;p&gt;
+&lt;p&gt;在浏览器中打开结果 HTML 可以看到一个甘特图，其中展示了程序中各个 crate 之间的依赖关系，以及程序的编译并行程度和代码生成量级。
+通过观察图表，我们可以决定是否要提高某一模块的代码生成单元数目，或者要不要进一步拆解以优化整个编译流程。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-03.png&quot; alt=&quot;cargo build --timings 生成的构建耗时瀑布图，按 crate 列出编译耗时&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;cargo-depgraph&quot;&gt;cargo-depgraph&lt;a class=&quot;zola-anchor&quot; href=&quot;#cargo-depgraph&quot; aria-label=&quot;Anchor link for: cargo-depgraph&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;这个工具其实不太常用，但可以拿来分析依赖关系。有助于找到一些潜在的优化点，特别是需要替换某些同类依赖或者优化 crates 组织层次的时候。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-04.png&quot; alt=&quot;cargo-depgraph 生成的依赖关系图，可见 databend 的 crate 依赖层次&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;wu-tong-you-hua-cong-diao-zheng-pei-zhi-kai-shi&quot;&gt;无痛优化，从调整配置开始&lt;a class=&quot;zola-anchor&quot; href=&quot;#wu-tong-you-hua-cong-diao-zheng-pei-zhi-kai-shi&quot; aria-label=&quot;Anchor link for: wu-tong-you-hua-cong-diao-zheng-pei-zhi-kai-shi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;改善编译体验的第一步其实并不是直接对代码动手术，很多时候，只需要变更少数几项配置，就能够获得很大程度上的改善。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;bump-bump-booooooooom&quot;&gt;Bump, Bump, Booooooooom&lt;a class=&quot;zola-anchor&quot; href=&quot;#bump-bump-booooooooom&quot; aria-label=&quot;Anchor link for: bump-bump-booooooooom&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;前面提到过 Rust 团队的成员们也很早就意识到，编译时间目前还并不理想。所以编译器团队同样会有计划去不断进行针对性的优化。经常可以看到在版本更新说明中有列出对编译的一些改进工作。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;toml&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;toolchain&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;channel&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;nightly-2023-03-10&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;components&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;rustfmt&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;clippy&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;rust-src&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;miri&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;另外，上游项目同样可能会随着时间的推移去改善过去不合理的设计，很多时候这些改进也最终会反映在对编译的影响上。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-05.png&quot; alt=&quot;databend 仓库中跟踪 upstream first 违规问题的 Issue 截图&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;一个改善编译时间的最简单的优化方式就是始终跟进上游的变更，并且秉着“上游优先”的理念去参与到生态建设之中。Databend 团队从一开始就是 Rust nightly 的忠实簇拥，并且为更新工具链和依赖关系提供了简明的指导。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;huan-cun-zhuan-jiao-yu-dao-sccache&quot;&gt;缓存，转角遇到 sccache&lt;a class=&quot;zola-anchor&quot; href=&quot;#huan-cun-zhuan-jiao-yu-dao-sccache&quot; aria-label=&quot;Anchor link for: huan-cun-zhuan-jiao-yu-dao-sccache&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;缓存是一种常见的编译优化手段，思路也很简单，只需要把预先构建好的产物存储起来，在下次构建的时候继续拿过来用。&lt;&#x2F;p&gt;
+&lt;p&gt;早期 Databend 使用 &lt;code&gt;rust-cache&lt;&#x2F;code&gt; 这个 action 在 CI 中加速缓存，获得了不错的效果。但是很遗憾，我们不得不经常手动更新 key 来清理缓存，以避免构建时的误判。而且，Rust 早期对增量构建的支持也很差劲，有那么一段时间可能会考虑如何配置流水线来进行一些权衡。&lt;&#x2F;p&gt;
+&lt;p&gt;随着时间的推移，一切变得不同了起来。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-06.png&quot; alt=&quot;mozilla&#x2F;sccache 的 GitHub 仓库首页截图&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;首先是 Sccache 恢复了活力，而 OpenDAL 也成功打入其内部，成为支撑 Rust 编译缓存生态的重要组件，尽管在本地构建时使用它常常无法展现出真正的威力，但是放在 CI 中，还是能够带来很大惊喜的。&lt;&#x2F;p&gt;
+&lt;p&gt;另一个重要的改变是，Rust 社区意识到增量编译对于 CI 来讲并不能很好 Work。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;CI builds often are closer to from-scratch builds, as changes are typically much bigger than from a local edit-compile cycle. For from-scratch builds, incremental adds an extra dependency-tracking overhead. It also significantly increases the amount of IO and the size of .&#x2F;target, which make caching less effective.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;qing-zhuang-shang-zhen-jiang-leng-qi-chuan-di-gei-mei-yi-ge-yi-lai&quot;&gt;轻装上阵，将冷气传递给每一个依赖&lt;a class=&quot;zola-anchor&quot; href=&quot;#qing-zhuang-shang-zhen-jiang-leng-qi-chuan-di-gei-mei-yi-ge-yi-lai&quot; aria-label=&quot;Anchor link for: qing-zhuang-shang-zhen-jiang-leng-qi-chuan-di-gei-mei-yi-ge-yi-lai&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Rust 生态里面有一个很有意思的项目是 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;mTvare6&#x2F;hello-world.rs&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;mTvare6&#x2F;hello-world.rs&lt;&#x2F;a&gt;，它尽可能给你展现了如何让一个 Rust 项目变得尽可能糟糕。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-07.png&quot; alt=&quot;hello-world.rs 的 GitHub 仓库首页截图&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;特别是：&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;in a few lines of code with few(1092) dependencies&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Rust 自身是不太能很好自动处理这一点的，它需要把所有依赖一股脑下载下来编译一通。所以避免无用依赖的引入就成为一件必要的事情了。&lt;&#x2F;p&gt;
+&lt;p&gt;最开始的时候，Databend 引入 cargo-udeps 来检查无用的依赖，大多数时候都工作很良好，但最大的缺点在于，每次使用它检查依赖就相当于要编译一遍，在 CI 中无疑是不划算的。&lt;&#x2F;p&gt;
+&lt;p&gt;sundy-li 发现了另外一个快速好用的工具，叫做 cargo-machete。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-08.png&quot; alt=&quot;cargo-machete 的 GitHub 仓库首页截图&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;一个显著的优点是它很快，因为一切只需要简单的正则表达式来处理。而且也支持了自动修复，这意味着我们不再需要挨个检索文件再去编辑。&lt;&#x2F;p&gt;
+&lt;p&gt;不过 machete 并不是完美的工具，由于只是进行简单的正则处理，有一些情况无法准确识别，不过 ignore 就好了，总体上性价比还是很高的。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;xi-shu-suo-yin&quot;&gt;稀疏索引&lt;a class=&quot;zola-anchor&quot; href=&quot;#xi-shu-suo-yin&quot; aria-label=&quot;Anchor link for: xi-shu-suo-yin&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;为了确定 crates.io 上存在哪些 crates，Cargo 需要下载并读取 crates.io-index，该索引位于托管在 GitHub 上的 git 存储库中，其中列出了所有 crates 的所有版本。&lt;&#x2F;p&gt;
+&lt;p&gt;然而，随着时间推移，由于索引已经大幅增长，初始获取和更新变得很慢。RFC 2789 引入了稀疏索引来改进 Cargo 访问索引的方式，并使用 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;index.crates.io&#x2F;&quot;&gt;https:&#x2F;&#x2F;index.crates.io&#x2F;&lt;&#x2F;a&gt; 进行托管。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;toml&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;registries&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;crates-io&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;protocol&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;sparse&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;linker&quot;&gt;linker&lt;a class=&quot;zola-anchor&quot; href=&quot;#linker&quot; aria-label=&quot;Anchor link for: linker&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;如果项目比较大，而且依赖繁多，那么可能在链接时间上会比较浪费。特别是在你只改了几行代码，但编译却花了很久的时候。&lt;&#x2F;p&gt;
+&lt;p&gt;最简单的办法就是选择比默认链接器更快的链接器。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-09.png&quot; alt=&quot;链接耗时对比柱状图：GNU gold、LLVM lld 与 mold 在 Chrome、Clang、Firefox 上的表现&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;lld 或者 mold 都可以改善链接时间，Databend 最后选择使用 mold。其实在 Databend 这个量级的程序上，两个链接器的差距并不明显，但是，使用 mold 的一个潜在好处是能够节约一部分编译时候消耗的内存。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;toml&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;target&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;x86_64-unknown-linux-gnu&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;linker&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;clang&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;rustflags&lt;&#x2F;span&gt;&lt;span&gt; =&lt;&#x2F;span&gt;&lt;span&gt; [&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-C&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt; &amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;link-arg=-fuse-ld=&#x2F;path&#x2F;to&#x2F;mold&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;bian-yi-xiang-guan-pei-zhi&quot;&gt;编译相关配置&lt;a class=&quot;zola-anchor&quot; href=&quot;#bian-yi-xiang-guan-pei-zhi&quot; aria-label=&quot;Anchor link for: bian-yi-xiang-guan-pei-zhi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;先看一个常见的 split-debuginfo，在 MacOS 上，rustc 会运行一个名为 dsymutil 的工具，该工具会分析二进制文件，然后构建调试信息目录。配置 split-debuginfo，可以跳过 dsymutil，从而加快构建速度。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;split-debuginfo = &amp;quot;unpacked&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;另外的一个例子是 codegen-units，Databend 在编译时使用 codegen-units = 1 来增强优化，并且克制二进制体积大小。但是考虑到部分依赖在编译时会有特别长的代码生成时间（因为重度依赖宏），所以需要针对性放开一些限制。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;[profile.release.package]&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;arrow2 = { codegen-units = 4 }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;common-functions = { codegen-units = 16 }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;databend-query = { codegen-units = 4 }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;databend-binaries = { codegen-units = 4 }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;zhong-xin-si-kao-geng-he-li-de-dai-ma-zu-zhi&quot;&gt;重新思考，更合理的代码组织&lt;a class=&quot;zola-anchor&quot; href=&quot;#zhong-xin-si-kao-geng-he-li-de-dai-ma-zu-zhi&quot; aria-label=&quot;Anchor link for: zhong-xin-si-kao-geng-he-li-de-dai-ma-zu-zhi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;前面是一些配置上的调整，接下来将会探讨重构对代码编译时间的一些影响。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;chai-fen-dao-geng-he-li-de-crates-gui-mo&quot;&gt;拆分到更合理的 crates 规模&lt;a class=&quot;zola-anchor&quot; href=&quot;#chai-fen-dao-geng-he-li-de-crates-gui-mo&quot; aria-label=&quot;Anchor link for: chai-fen-dao-geng-he-li-de-crates-gui-mo&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;对于一个大型的 All in One 式的 Crate 而言，拆分 crates 算是一个比较有收益的重构。一方面可以显著改善并行度。另一方面，通过解耦交叉依赖&#x2F;循环依赖，可以帮助 Rust 更快地处理代码编译。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-10.png&quot; alt=&quot;将 databend-query 拆分为多个 crate 的 Pull Request 截图&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;同时，还有一个潜在的好处，就是拆分以后，由于代码的边界更为清晰，维护起来也会省力一些。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;dan-yuan-shi-ce-shi-yu-ji-cheng-shi-ce-shi-de-jie-xian&quot;&gt;单元式测试与集成式测试的界限&lt;a class=&quot;zola-anchor&quot; href=&quot;#dan-yuan-shi-ce-shi-yu-ji-cheng-shi-ce-shi-de-jie-xian&quot; aria-label=&quot;Anchor link for: dan-yuan-shi-ce-shi-yu-ji-cheng-shi-ce-shi-de-jie-xian&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;单元测试的常见组织形式包括在 src 中维护 tests mod，和在 tests 目录下维护对应的测试代码。&lt;&#x2F;p&gt;
+&lt;p&gt;根据 Delete Cargo Integration Tests 的建议，Databend 很早就从代码中剥离了所有的单元测试，并组织成类似这样的形式&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;tests&#x2F;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;  it&#x2F;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    main.rs&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    foo.rs&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    bar.rs&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;这种形式避免将 &lt;code&gt;tests&#x2F;&lt;&#x2F;code&gt; 下面的每个文件都编译成一个单独的二进制文件，从而减轻对编译时间的影响。&lt;&#x2F;p&gt;
+&lt;p&gt;另外，Rust 编译时处理 tests mod 和 docs tests 也需要花费大量时间，特别是 docs tests 还需要另外构建目标，在采用上面的组织形式之后，就可以在配置中关掉。&lt;&#x2F;p&gt;
+&lt;p&gt;但是，这种形式并不十分优雅，不得不为所有需要测试的内容设置成 public，容易破坏代码之间的模块化组织，在使用前建议进行深入评估。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;geng-you-ya-de-ce-shi-fang-fa&quot;&gt;更优雅的测试方法&lt;a class=&quot;zola-anchor&quot; href=&quot;#geng-you-ya-de-ce-shi-fang-fa&quot; aria-label=&quot;Anchor link for: geng-you-ya-de-ce-shi-fang-fa&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;对应到编译时间上，可以简单认为，单元测试里需要编译的代码越多，编译时间自然就会越慢。&lt;&#x2F;p&gt;
+&lt;p&gt;另外，对于 Databend 而言，有相当一部分测试都是对输入输出的端到端测试，如果硬编码在单元测试中需要增加更多额外的格式相关的工作，维护也会比较费力。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-11.png&quot; alt=&quot;比对输出截图：QuotedString 的 span 由 0..18 变为 0..16&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Databend 巧妙运用 golden files 测试和 SQL logic 测试，替换了大量内嵌在单元测试中的 SQL 查询测试和输出结果检查，从而进一步改善了编译时间。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;yi-zhu-zhi-han&quot;&gt;遗珠之憾&lt;a class=&quot;zola-anchor&quot; href=&quot;#yi-zhu-zhi-han&quot; aria-label=&quot;Anchor link for: yi-zhu-zhi-han&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;cargo-nextest&quot;&gt;cargo nextest&lt;a class=&quot;zola-anchor&quot; href=&quot;#cargo-nextest&quot; aria-label=&quot;Anchor link for: cargo-nextest&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;cargo nextest 让测试也可以快如闪电，并且提供更精细的统计和优雅的视图。Rust 社区中有不少项目通过引入 cargo nextest 大幅改善测试流水线的时间。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-12.png&quot; alt=&quot;cargo nextest 的运行输出截图，逐条列出通过或跳过的测试&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;但 Databend 目前还无法迁移到这个工具上。一方面，配置相关的测试暂时还不被支持，如果再针对去单独跑 cargo test 还要重新编译。另一方面，有一部分与超时相关的测试设定了执行时间，必须等待执行完成。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;cargo-hakari&quot;&gt;cargo hakari&lt;a class=&quot;zola-anchor&quot; href=&quot;#cargo-hakari&quot; aria-label=&quot;Anchor link for: cargo-hakari&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;改善依赖项的编译，典型的例子其实是 workspace-hack，将重要的公共依赖放在一个目录下，这样这些依赖就不需要反复编译了。Rust 社区中的 cargo-hakari，可以用来自动化管理 workspace-hack。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;images&#x2F;figure-13.png&quot; alt=&quot;cargo hakari init workspace-hack 的命令行输出截图&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Databend 这边则是由于有大量的 common 组件，主要二进制程序都建立在 common 组件上，暗中符合这一优化思路。另外，随着 workspace 支持依赖继承之后，维护压力也得到减轻。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;zong-jie&quot;&gt;总结&lt;a class=&quot;zola-anchor&quot; href=&quot;#zong-jie&quot; aria-label=&quot;Anchor link for: zong-jie&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;这篇文章介绍了 Databend 团队在改善 Rust 项目编译时间上做的一些探索和努力，从配置优化和代码重构这两个角度，提供了一些能够优化编译时间的一些建议。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;can-kao-zi-liao&quot;&gt;参考资料&lt;a class=&quot;zola-anchor&quot; href=&quot;#can-kao-zi-liao&quot; aria-label=&quot;Anchor link for: can-kao-zi-liao&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;matklad.github.io&#x2F;2021&#x2F;09&#x2F;04&#x2F;fast-rust-builds.html&quot;&gt;Fast Rust Builds&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;matklad.github.io&#x2F;2021&#x2F;02&#x2F;27&#x2F;delete-cargo-integration-tests.html&quot;&gt;Delete Cargo Integration Tests&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;hackmd.io&#x2F;@kobzol&#x2F;S17NS71bh&quot;&gt;Better support of Docker layer caching in Cargo&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;xuanwo.io&#x2F;reports&#x2F;2023-04&#x2F;&quot;&gt;2023-04: 为什么你该试试 Sccache？&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;nnethercote.github.io&#x2F;perf-book&#x2F;compile-times.html&quot;&gt;The Rust Performance Book - Compile Times&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;blog.dcjanus.com&#x2F;posts&#x2F;cargo-registry-index-in-http&#x2F;&quot;&gt;Cargo Registry 稀疏索引的一些介绍&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>官宣：OpenDAL 成功进入 Apache 孵化器</title>
+        <published>2023-03-17T00:00:00+00:00</published>
+        <updated>2023-03-17T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/opendal-enters-apache-incubator/"/>
+        <id>https://psiace.me/zh/posts/opendal-enters-apache-incubator/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/opendal-enters-apache-incubator/">&lt;blockquote&gt;
+&lt;p&gt;作者：PsiACE&lt;&#x2F;p&gt;
+&lt;p&gt;Databend 研发工程师 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&quot;&gt;github.com&#x2F;PsiACE&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;2023 年 2 月 27 日，&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;incubator-opendal&quot;&gt;OpenDAL&lt;&#x2F;a&gt; 项目顺利通过投票，正式进入全球顶级开源软件基金会 —— &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;www.apache.org&#x2F;&quot;&gt;Apache 软件基金会&lt;&#x2F;a&gt;（ASF）的孵化器（Incubator），成为 ASF 的一个孵化项目（podling）。在 3 月 15 日，OpenDAL项目正式移交到 Apache 软件基金会名下。&lt;&#x2F;p&gt;
+&lt;p&gt;这是 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&quot;&gt;Databend&lt;&#x2F;a&gt; 团队在开源社区的一个重要里程碑，也是开源社区对 OpenDAL 的技术和理念的一次认可和支持。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Apache 孵化器成立于 2002 年10月，为那些意图成为 Apache 基金会努力的一部分的项目和代码库，提供一个进入到 Apache 软件基金会的路径。孵化器项目需要践行 ASF 的治理和运营方式，并使用 ASF 提供的基础设施和资源。孵化器项目需要经过一系列的阶段和评估，才能最终毕业成为 ASF 的顶级项目（TLP）。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;opendal-enters-apache-incubator&#x2F;images&#x2F;figure-01.png&quot; alt=&quot;Apache 孵化器 OpenDAL 项目状态页截图，News 一栏记录 2023-02-27 项目进入孵化&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;incubator.apache.org&#x2F;projects&#x2F;opendal.html&quot;&gt;incubator.apache.org&#x2F;projects&#x2F;op…&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;shen-me-shi-opendal&quot;&gt;什么是 OpenDAL&lt;a class=&quot;zola-anchor&quot; href=&quot;#shen-me-shi-opendal&quot; aria-label=&quot;Anchor link for: shen-me-shi-opendal&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;数据是未来最重要的资产之一，而数据访问是数据价值实现的关键环节。&lt;&#x2F;p&gt;
+&lt;p&gt;市场上存在着各种各样的存储服务，每个服务都有自己独特的接口和特性，给数据访问带来了很多复杂性和不便。&lt;&#x2F;p&gt;
+&lt;p&gt;OpenDAL 提供一个统一、简单、高效、可靠、可观察的数据访问层，让开发者可以无缝地使用不同的存储服务，并享受到最佳的用户体验。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;opendal-enters-apache-incubator&#x2F;images&#x2F;figure-02.png&quot; alt=&quot;示意对比图：左侧各应用分别直连多种存储服务，右侧经由 OpenDAL 统一访问 S3、Azure Blob、HDFS、Redis 与本地文件系统&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;OpenDAL 不仅简化了不同存储服务的接口，还提供自动重试、请求优化和可观察性等特性。开发者只需要使用 OpenDAL 就可以无痛访问数十种存储服务，而无需了解和掌握特定 SDK 的细节。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;OpenDAL 的特性包括但不限于：&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;支持多种存储服务，包括本地文件系统、HDFS、S3、OSS 数十种服务等。&lt;&#x2F;li&gt;
+&lt;li&gt;提供统一的数据访问接口，无需关心底层存储细节。&lt;&#x2F;li&gt;
+&lt;li&gt;支持多种常用数据操作，包括 &lt;code&gt;read&lt;&#x2F;code&gt; 、&lt;code&gt;write&lt;&#x2F;code&gt; 、&lt;code&gt;list&lt;&#x2F;code&gt; 等。&lt;&#x2F;li&gt;
+&lt;li&gt;支持自动重试、请求优化、可观察性机制。&lt;&#x2F;li&gt;
+&lt;li&gt;零成本，直接映射到 API 调用。&lt;&#x2F;li&gt;
+&lt;li&gt;跨语言 bindings: Python, Node.js, C (working on) 等&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;opendal-de-li-shi-fa-zhan-yu-xian-zhuang&quot;&gt;OpenDAL 的历史、发展与现状&lt;a class=&quot;zola-anchor&quot; href=&quot;#opendal-de-li-shi-fa-zhan-yu-xian-zhuang&quot; aria-label=&quot;Anchor link for: opendal-de-li-shi-fa-zhan-yu-xian-zhuang&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;li-shi-cong-dal2-dao-opendal&quot;&gt;&lt;em&gt;历史：从 dal2 到 OpenDAL&lt;&#x2F;em&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#li-shi-cong-dal2-dao-opendal&quot; aria-label=&quot;Anchor link for: li-shi-cong-dal2-dao-opendal&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;OpenDAL 的初衷是打造一个通用、统一、易用的数据访问层，它诞生于 2021 年末，最开始是作为 Databend 项目的一部分进行开发的。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;2021 年 12 月 21 日，&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;http:&#x2F;&#x2F;github.com&#x2F;Xuanwo&quot;&gt;Xuanwo&lt;&#x2F;a&gt; 开始着手构想 Databend 存储访问层的设计与实现，&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&#x2F;pull&#x2F;3575&quot;&gt;dal2: Add basic operations of read, write, stat, delete&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;2021 年 12 月 27 日，开始对 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&#x2F;discussions&#x2F;3662&quot;&gt;proposal: Vision of Databend DAL&lt;&#x2F;a&gt; 这一提案的讨论。29 日，dal2 的实现被合并到 Databend 中。&lt;&#x2F;li&gt;
+&lt;li&gt;2022 年 2 月 14 日，dal2 正式从 Databend 的代码仓库中迁出，成为独立维护的顶级项目，并正式更名为 OpenDAL 。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;fa-zhan-cong-1-dao-1&quot;&gt;&lt;em&gt;发展：从 1 到 +1&lt;&#x2F;em&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#fa-zhan-cong-1-dao-1&quot; aria-label=&quot;Anchor link for: fa-zhan-cong-1-dao-1&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;在 Xuanwo 、&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ClSlaid&quot;&gt;ClSlaid&lt;&#x2F;a&gt; 和其他众多贡献者的推动下，OpenDAL 很快就成为了支持 AWS S3 &#x2F; Azure Blob &#x2F; GCS &#x2F; HDFS 等主流国内外存储服务的数据访问层，并为 Databend 的 &lt;code&gt;COPY INTO&lt;&#x2F;code&gt;、Stage、Storage 提供真正的跨多云云原生存储与访问支持。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;GreptimeTeam&#x2F;greptimedb&quot;&gt;GreptimeDB&lt;&#x2F;a&gt; 是 Databend 之后第一个主动使用 OpenDAL 的大型 Rust 数据库项目，之后，在 Xuanwo 的努力下，Mozilla 基金会旗下的 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;mozilla&#x2F;sccache&quot;&gt;sccache&lt;&#x2F;a&gt; 也尝试使用 OpenDAL 来接管存储层，为了提供更全面的支持，OpenDAL 很快上线了对 GitHub Action Cache 的支持。&lt;&#x2F;p&gt;
+&lt;p&gt;随后是 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;risingwavelabs&#x2F;risingwave&quot;&gt;RisingWave&lt;&#x2F;a&gt; 和 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;vectordotdev&#x2F;vector&quot;&gt;Vector &lt;&#x2F;a&gt;，OpenDAL 的用户阵营开始实现从 1 到不断 +1 的转变。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;xian-zhuang-xiang-xing-chen-da-hai-qian-jin&quot;&gt;&lt;em&gt;现状：向星辰大海前进&lt;&#x2F;em&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#xian-zhuang-xiang-xing-chen-da-hai-qian-jin&quot; aria-label=&quot;Anchor link for: xian-zhuang-xiang-xing-chen-da-hai-qian-jin&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h3&gt;
+&lt;p&gt;目前 OpenDAL 已初步建立起了一个小型社区并形成产品矩阵，除 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;opendal&quot;&gt;Rust&lt;&#x2F;a&gt; 主代码以外，目前还提供有 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;opendal&#x2F;&quot;&gt;Python&lt;&#x2F;a&gt; 和 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;www.npmjs.com&#x2F;package&#x2F;opendal&quot;&gt;Nodejs&lt;&#x2F;a&gt; 绑定。&lt;&#x2F;p&gt;
+&lt;p&gt;OpenDAL 自开源以来累计发版 99 次，Github Star 700+, 累计下载次数 349 K, 累计开发者共计 48 位，项目一直处于活跃更新状态，由衷感谢每位贡献者的努力和付出。&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;opendal-enters-apache-incubator&#x2F;images&#x2F;figure-03.png&quot; alt=&quot;apache&#x2F;incubator-opendal 的 GitHub Star 历史曲线，星标数随时间持续上升&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;加入 Apache 孵化器是 OpenDAL 发展历程中的一个重要里程碑，我们希望能够借助 ASF 的平台和资源，让 OpenDAL 专注于提供中立、无供应商锁定、自由、无痛、高效的存储访问层，更好地为广大开发者服务。&lt;&#x2F;p&gt;
+&lt;p&gt;我们期待 OpenDAL 能够在以下几个应用场景得到更广泛的应用：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;数据分析：OpenDAL 可以帮助数据分析师快速地从不同的存储服务中读取或写入数据，并进行各种格式转换和操作。&lt;&#x2F;li&gt;
+&lt;li&gt;数据科学：OpenDAL 可以帮助数据科学家轻松地从不同的存储服务中获取或保存数据，并进行各种预处理和后处理。&lt;&#x2F;li&gt;
+&lt;li&gt;数据工程：OpenDAL 可以帮助数据工程师高效地构建和管理不同的存储服务之间的数据流水线，并进行各种监控和调优。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;zhi-xie&quot;&gt;致谢&lt;a class=&quot;zola-anchor&quot; href=&quot;#zhi-xie&quot; aria-label=&quot;Anchor link for: zhi-xie&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;em&gt;From Xuanwo&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;大家好，我是 Apache OpenDAL Committer Xuanwo。&lt;&#x2F;p&gt;
+&lt;p&gt;OpenDAL 项目凝聚着我个人一直以来的梦想，如今在社区的通力协作下走进了 Apache 孵化器，我此刻感到非常的幸福。感谢所有贡献者的付出，感谢 Databend Labs 的支持，感谢 Champion tison 的指引，感谢各位 Mentor ningjiang, wusheng, tedliu 和 hexiaoqiao 的指导。&lt;&#x2F;p&gt;
+&lt;p&gt;让我们遵循 Apache Way 的指引，共同构建社区并创造价值，为用户提供自由、无痛和高效的数据访问体验！&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;jia-ru-wo-men&quot;&gt;加入我们&lt;a class=&quot;zola-anchor&quot; href=&quot;#jia-ru-wo-men&quot; aria-label=&quot;Anchor link for: jia-ru-wo-men&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;欢迎有兴趣参与 OpenDAL 项目的开发者和用户加入 OpenDAL 社区，并关注 OpenDAL 的最新动态。你可以通过以下方式获取更多信息：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;访问 OpenDAL 官方网站：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;opendal.apache.org&#x2F;&quot;&gt;opendal.apache.org&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;探索 OpenDAL GitHub 仓库：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;incubator-opendal&quot;&gt;github.com&#x2F;apache&#x2F;incu…&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;加入 OpenDAL Discord 频道：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;discord.gg&#x2F;XQy8yGR2dg&quot;&gt;discord.gg&#x2F;XQy8yGR2dg&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;订阅 OpenDAL 邮件列表：&lt;a href=&quot;mailto:dev@opendal.apache.org&quot;&gt;dev@opendal.apache.org&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
+        <title>使用 PGO 优化 Databend 二进制构建</title>
+        <published>2023-02-27T00:00:00+00:00</published>
+        <updated>2023-02-27T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/pgo-optimizing-databend-binary-builds/"/>
+        <id>https://psiace.me/zh/posts/pgo-optimizing-databend-binary-builds/</id>
+        
+        <content type="html" xml:base="https://psiace.me/zh/posts/pgo-optimizing-databend-binary-builds/">&lt;blockquote&gt;
+&lt;p&gt;作者：尚卓燃&lt;&#x2F;p&gt;
+&lt;p&gt;澳门科技大学在读硕士，Databend 研发工程师实习生&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;PsiACE&quot;&gt;github.com&#x2F;PsiACE&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;在最近的一个 Issue 中 &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&#x2F;issues&#x2F;9387&quot;&gt;#9387&lt;&#x2F;a&gt;，Databend 社区的朋友希望能够利用 PGO 技术构建性能优化的可执行文件。让我们一起来看一下如何使用 Rust 构建 PGO 优化后的 Databend 吧！&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;bei-jing-zhi-shi&quot;&gt;&lt;strong&gt;背景知识&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#bei-jing-zhi-shi&quot; aria-label=&quot;Anchor link for: bei-jing-zhi-shi&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;Profile-guided optimization&lt;&#x2F;strong&gt; 是一种编译器优化技术，它会收集程序运行过程中的典型执行数据（可能执行的分支），然后针对内联、条件分支、机器代码布局、寄存器分配等进行优化。&lt;&#x2F;p&gt;
+&lt;p&gt;引入这一技术的背景是：编译器中的静态分析技术能够在不执行代码的情况下考虑代码优化，从而提高编译产物的性能；但是这些优化并不一定能够完全有效，在缺乏运行时信息的情况下，编译器无法考虑到程序的实际执行情况。&lt;&#x2F;p&gt;
+&lt;p&gt;PGO 可以基于应用程序在生产环境中的场景收集数据，从而允许优化器针对较热的代码路径优化速度并针对较冷的代码路径优化大小，为应用程序生成更快和更小的代码。&lt;&#x2F;p&gt;
+&lt;p&gt;rustc 支持 PGO ，允许创建内置数据收集的二进制文件，然后在运行过程中收集数据，从而为最终的编译优化做准备。其实现完全依赖 LLVM 。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;dian-xing-guo-cheng&quot;&gt;&lt;strong&gt;典型过程&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#dian-xing-guo-cheng&quot; aria-label=&quot;Anchor link for: dian-xing-guo-cheng&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;构建 PGO 优化的二进制文件通常需要进行以下几步工作：&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;构建内置数据收集的二进制文件&lt;&#x2F;li&gt;
+&lt;li&gt;运行并收集数据，数据会以 &lt;code&gt;.proraw&lt;&#x2F;code&gt; 的形式存在&lt;&#x2F;li&gt;
+&lt;li&gt;将 &lt;code&gt;.proraw&lt;&#x2F;code&gt; 文件转换为 &lt;code&gt;.prodata&lt;&#x2F;code&gt; 文件&lt;&#x2F;li&gt;
+&lt;li&gt;根据 &lt;code&gt;.prodata&lt;&#x2F;code&gt; 文件进行构建优化&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;qian-zhi-zhun-bei&quot;&gt;&lt;strong&gt;前置准备&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#qian-zhi-zhun-bei&quot; aria-label=&quot;Anchor link for: qian-zhi-zhun-bei&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;运行过程中的收集到的数据最终需要使用 &lt;code&gt;llvm-profdata&lt;&#x2F;code&gt; 进行转换，经由 &lt;code&gt;rustup&lt;&#x2F;code&gt; 安装 &lt;code&gt;llvm-tools-preview&lt;&#x2F;code&gt; 组件可以提供 &lt;code&gt;llvm-profdata&lt;&#x2F;code&gt; ，或者也可以考虑使用最近版本的 LLVM 和 Clang 提供的这一程序。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;rustup component add llvm-tools-preview&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;安装之后的 &lt;code&gt;llvm-profdata&lt;&#x2F;code&gt; 可能需要被添加到 &lt;code&gt;PATH&lt;&#x2F;code&gt; ，路径如下：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;~&#x2F;.rustup&#x2F;toolchains&#x2F;&amp;lt;toolchain&amp;gt;&#x2F;lib&#x2F;rustlib&#x2F;&amp;lt;target-triple&amp;gt;&#x2F;bin&#x2F;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;ju-ti-bu-zou&quot;&gt;&lt;strong&gt;具体步骤&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#ju-ti-bu-zou&quot; aria-label=&quot;Anchor link for: ju-ti-bu-zou&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;这里并没有选用某个具体生产环境的工作负载，而是使用 Databend 的 SQL 逻辑测试作为一个示范。在性能上可能并不具有积极意义，但可以帮助我们了解如何进行这一过程。&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;特别提示：&lt;&#x2F;strong&gt;&lt;&#x2F;em&gt; 提供给程序的数据样本必须在统计学上代表典型的使用场景; 否则，反馈有可能损害最终构建的整体性能。&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;1. 清除旧数据&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;rm -rf &#x2F;tmp&#x2F;pgo-data&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;2. 编译支持收集 profile 数据的 release ，使用 &lt;code&gt;RUSTFLAGS&lt;&#x2F;code&gt; 可以将 PGO 编译标志应用到所有 crates 的编译中。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;RUSTFLAGS&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-Cprofile-generate=&#x2F;tmp&#x2F;pgo-data&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; \ &lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;   &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;cargo build --release --target&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;x&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;8&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;6&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;_&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;6&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;4&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;u&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;k&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;w&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;l&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;i&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;u&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;x&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;g&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;u&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;3.运行编译好的程序，实际情况下推荐使用符合生产环境典型工作负载的数据集和查询。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;a.   通过脚本启动 Databend 单机节点，考虑到生产环境更多是以集群模式运行，也可以启动 Databend 集群。&lt;&#x2F;p&gt;
+&lt;p&gt;b.  导入数据集并运行典型的查询工作负载。&lt;&#x2F;p&gt;
+&lt;p&gt;示例中选择执行 SQL 逻辑测试，仅供参考。&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;BUILD_PROFILE&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;r&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;l&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; .&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;c&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;r&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;i&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;p&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;t&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;c&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;i&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;p&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;l&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;y&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;t&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;b&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;q&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;u&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;r&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;y&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;t&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;l&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;h&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;ulimit&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;span class=&quot;z-support&quot;&gt;ulimit&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;6&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;3&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;8&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;4&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; cargo run -p sqllogictests --release -- --enable_sandbox --parallel 16 --no-fail-fast&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;4. 使用 &lt;code&gt;llvm-profdata&lt;&#x2F;code&gt; 合并 profile 数据&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;llvm-profdata merge -o &#x2F;tmp&#x2F;pgo-data&#x2F;merged.profdata &#x2F;tmp&#x2F;pgo-data&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;5. 在 profile 数据指导下进行编译，其实可以注意到，两次编译都使用 &lt;code&gt;--release&lt;&#x2F;code&gt; 标志，因为实际运行情况下，我们总是使用 release 构建的二进制。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;RUSTFLAGS&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-Cprofile-use=&#x2F;tmp&#x2F;pgo-data&#x2F;merged.profdata -Cllvm-args=-pgo-warn-missing-function&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-definition z-string&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span class=&quot;z-constant&quot;&gt; \ &lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;   &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-entity z-name&quot;&gt;cargo build --release --target&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;x&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;8&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;6&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;_&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;6&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;4&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;u&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;k&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;w&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;l&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;i&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;u&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;x&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;g&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;u&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;6. 再次运行编译好的程序，运行之前的工作负载以检查性能。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo z-code&quot;&gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-variable z-other&quot;&gt;BUILD_PROFILE&lt;&#x2F;span&gt;&lt;span class=&quot;z-keyword&quot;&gt;=&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;r&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;l&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; .&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;c&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;r&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;i&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;p&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;t&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;c&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;i&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;p&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;l&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;y&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;t&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;b&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;q&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;u&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;r&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;y&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;-&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;t&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;d&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;a&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;l&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;o&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;e&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;.&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;h&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-support&quot;&gt;ulimit&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;n&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;0&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;span class=&quot;z-support&quot;&gt;ulimit&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; -&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;s&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt; 1&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;6&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;3&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;8&lt;&#x2F;span&gt;&lt;span class=&quot;z-string&quot;&gt;4&lt;&#x2F;span&gt;&lt;span&gt;;&lt;&#x2F;span&gt;&lt;span class=&quot;z-entity z-name&quot;&gt; cargo run -p sqllogictests --release -- --enable_sandbox --parallel 16 --no-fail-fast&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;can-kao-zi-liao&quot;&gt;&lt;strong&gt;参考资料&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#can-kao-zi-liao&quot; aria-label=&quot;Anchor link for: can-kao-zi-liao&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;rustc&#x2F;profile-guided-optimization.html&quot;&gt;doc.rust-lang.org&#x2F;rustc&#x2F;profi…&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Profile-guided_optimization&quot;&gt;en.wikipedia.org&#x2F;wiki&#x2F;Profil…&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;learn.microsoft.com&#x2F;en-us&#x2F;cpp&#x2F;build&#x2F;profile-guided-optimizations?view=msvc-170&quot;&gt;learn.microsoft.com&#x2F;en-us&#x2F;cpp&#x2F;b…&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;clang.llvm.org&#x2F;docs&#x2F;UsersManual.html#profile-guided-optimization&quot;&gt;clang.llvm.org&#x2F;docs&#x2F;UsersM…&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;guan-yu-databend&quot;&gt;&lt;strong&gt;关于 Databend&lt;&#x2F;strong&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#guan-yu-databend&quot; aria-label=&quot;Anchor link for: guan-yu-databend&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Databend 是一款开源、弹性、低成本，基于对象存储也可以做实时分析的新式数仓。期待您的关注，一起探索云原生数仓解决方案，打造新一代开源 Data Cloud。&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Databend Cloud：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;databend.cn&quot;&gt;databend.cn&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Databend 文档：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;databend.rs&#x2F;&quot;&gt;databend.rs&#x2F;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Twitter：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;Datafuse_Labs&quot;&gt;twitter.com&#x2F;Datafuse_La…&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Slack：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;datafusecloud.slack.com&#x2F;&quot;&gt;datafusecloud.slack.com&#x2F;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Wechat：Databend&lt;&#x2F;li&gt;
+&lt;li&gt;GitHub：&lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;datafuselabs&#x2F;databend&quot;&gt;github.com&#x2F;datafuselab…&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="zh">
         <title>我永远讨厌 Python Fibonacci</title>
         <published>2022-09-30T00:00:00+00:00</published>
         <updated>2022-09-30T00:00:00+00:00</updated>

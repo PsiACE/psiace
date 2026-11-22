@@ -126,6 +126,26 @@ en">
     outline: none;
   }
 
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
   #post-info .lang-switch {
     margin-left: auto;
     margin-top: 0;
@@ -186,6 +206,16 @@ en">
       <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;apache-opendal&#x2F;">
         <span>Apache OpenDAL (Incubating) ：无痛数据访问新体验</span>
         <span class="date">Jul 5, 2023</span>
+      </a>
+      
+      <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;sky-computing-the-databend-way&#x2F;">
+        <span>多云转晴：Databend 的天空计算之路</span>
+        <span class="date">Apr 19, 2023</span>
+      </a>
+      
+      <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;posts&#x2F;opendal-enters-apache-incubator&#x2F;">
+        <span>官宣：OpenDAL 成功进入 Apache 孵化器</span>
+        <span class="date">Mar 17, 2023</span>
       </a>
       
     </div>

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="A walkthrough of the FAST &#x27;23 GL-Cache paper: group-level learning, grouping strategy, utility, features, and merge eviction.">
+
+  <title>Paper Walkthrough: GL-Cache, a Cache Replacement Algorithm Based on Group-level Learning</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#abstract">Abstract</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#background">Background</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#storage-hierarchy">Storage hierarchy</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#cache-evaluation-criteria">Cache evaluation criteria</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#evolution-of-cache-replacement-algorithms">Evolution of cache replacement algorithms</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#further-discussion-of-learned-caches">Further discussion of learned caches</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#some-trade-offs-about-whether-to-introduce-machine-learning">Some trade-offs about whether to introduce machine learning</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#gl-cache-group-level-learned-cache">GL-Cache: Group-level Learned Cache</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#design-trade-offs">Design trade-offs</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#grouping-strategy">Grouping strategy</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#utility-computation">Utility computation</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#features-and-model">Features and model</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#eviction-plan">Eviction plan</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#performance-evaluation">Performance evaluation</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#summary">Summary</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Paper Walkthrough: GL-Cache, a Cache Replacement Algorithm Based on Group-level Learning</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">May 29, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/2023/"><span>#</span>2023</a><a class="instant" href="https://psiace.me/tags/paper/"><span>#</span>Paper</a><a class="instant" href="https://psiace.me/tags/cache/"><span>#</span>Cache</a><a class="instant" href="https://psiace.me/tags/databend/"><span>#</span>Databend</a><a class="instant" href="https://psiace.me/tags/archive/"><span>#</span>Archive</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/gl-cache-group-level-learning/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+        
+        <p id="source-note">English translation of the Chinese original, first published on 2023-05-29. Source: <a href="https:&#x2F;&#x2F;juejin.cn&#x2F;post&#x2F;7238274120881717304" rel="noreferrer">Juejin original</a>. This translation was prepared for this archive.</p>
+
+        <blockquote>
+<p>Author: Chojan Shang (PsiACE)</p>
+<p>Master's student at Macau University of Science and Technology, R&amp;D Engineer Intern at Databend</p>
+<p>Apache OpenDAL(Incubating) Committer</p>
+<p><a rel="nofollow noreferrer external" href="https://github.com/PsiACE">github.com/PsiACE</a></p>
+</blockquote>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-01.png" alt="Paper title slide: GL-Cache: Group-level learning for efficient and high-performance caching, FAST &#39;23, by Juncheng Yang et al." /></p>
+<blockquote>
+<p><strong>Original paper:</strong></p>
+<p><a rel="nofollow noreferrer external" href="https://www.usenix.org/system/files/fast23-yang.pdf">GL-Cache: Group-level learning for efficient and high-performance caching | FAST '23</a></p>
+<p><strong>Source code</strong> <strong>address:</strong></p>
+<p><a rel="nofollow noreferrer external" href="https://github.com/Thesys-lab/fast23-GLCache">github.com/Thesys-lab/…</a></p>
+<p><strong>Paper contributions:</strong></p>
+<p>It proposes Group-level Learning , which uses the characteristics of multi-object groups to adapt to the workload and cache size, accumulates stronger learning signals through grouping, and amortizes the learning cost to the object level. GL-Cache not only provides an efficient learned cache, but also guarantees high throughput of the cache system.</p>
+</blockquote>
+<h2 id="abstract"><strong>Abstract</strong><a class="zola-anchor" href="#abstract" aria-label="Anchor link for: abstract" style="visibility: hidden;"></a>
+</h2>
+<p>Web applications rely heavily on software caches to achieve low-latency, high-throughput service. To adapt to constantly changing workloads, several learned caches (learned cache replacement policies, especially eviction policies) have been designed in recent years, and they can be roughly divided into three kinds: object-level learning, learning from a distribution, and learning from simple experts (a policy set). This paper argues that the learning granularity of existing approaches is either too fine (object level), which makes computation and storage costs too high, or too coarse (workload or expert-policy level), which cannot capture the differences between objects, leaving a considerable efficiency gap. (Here efficiency is mainly evaluated by the hits/miss ratio.)</p>
+<p>In this paper, the authors design a new learning method for caching — group-level learning. This method clusters similar objects into groups, and performs learning and eviction on a per-group basis. Group-level learning can accumulate more signals, is able to use more features with adaptive weights, and amortizes the cost across objects, thereby achieving high efficiency and high throughput.</p>
+<p>The authors demonstrate group-level learning with GL-Cache in a production environment, and evaluate it on 118 production block I/O and CDN cache traces. The results show that GL-Cache has a higher hit ratio and higher throughput than state-of-the-art designs. Compared with LRB (object level), GL-Cache improves throughput by 228 times and hit ratio by 7% on average; for CDN cache traces at P90, GL-Cache provides a 25% hit ratio improvement over LRB; compared with the best performer of all other types, GL-Cache improves throughput by 64% and hit ratio by 3% on average, and improves hit ratio by 13% at P90.</p>
+<h2 id="background"><strong>Background</strong><a class="zola-anchor" href="#background" aria-label="Anchor link for: background" style="visibility: hidden;"></a>
+</h2>
+<p>Before formally discussing GL-Cache, let us first look at some background on caching and learned caching.</p>
+<h3 id="storage-hierarchy"><strong>Storage hierarchy</strong><a class="zola-anchor" href="#storage-hierarchy" aria-label="Anchor link for: storage-hierarchy" style="visibility: hidden;"></a>
+</h3>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-02.png" alt="The memory hierarchy pyramid: registers, caches, main memory, flash disk, traditional disk and remote secondary storage, annotated with latency and capacity" /></p>
+<p>The figure above reflects the storage hierarchy in computer architecture; an obvious trend is that the greater the speed, the smaller the capacity. The cache in the figure sits inside the CPU, and is used to reconcile the CPU's running speed with the memory's read speed.</p>
+<p>Generally speaking, a cache sits between two kinds of storage whose speeds differ greatly, and is used to reconcile the difference in data transfer speed between them. No matter which level of cache it is, all of them face the same problem: once the free space of a capacity-limited cache is fully used up and new content needs to be added to the cache, how do we select and discard part of the existing content, so as to free up space for the new content?</p>
+<p>This paper discusses the cache located between memory and disk, not the cache on the chip.</p>
+<h3 id="cache-evaluation-criteria"><strong>Cache evaluation criteria</strong><a class="zola-anchor" href="#cache-evaluation-criteria" aria-label="Anchor link for: cache-evaluation-criteria" style="visibility: hidden;"></a>
+</h3>
+<p>This article mainly adopts the following two evaluation criteria.</p>
+<ul>
+<li>"Efficiency"
+<ul>
+<li>Evaluated by the hits/miss ratio.</li>
+</ul>
+</li>
+<li>"Performance"
+<ul>
+<li>Evaluated by throughput.</li>
+</ul>
+</li>
+</ul>
+<h3 id="evolution-of-cache-replacement-algorithms"><strong>Evolution of cache replacement algorithms</strong><a class="zola-anchor" href="#evolution-of-cache-replacement-algorithms" aria-label="Anchor link for: evolution-of-cache-replacement-algorithms" style="visibility: hidden;"></a>
+</h3>
+<ul>
+<li>"Single-type" policies
+, typical examples include LRU and CLOCK . This kind of static policy cannot adapt to changes in the workload, and lacks comprehensive performance.</li>
+<li>"Adaptive" policies
+, typical examples include ARC and 2Q . They usually need to maintain extra metadata to adapt to the workload, and the implementation complexity increases accordingly. Adaptation is not always foolproof.</li>
+<li>"Learned" policies
+, typical examples include LeCaR and ACME . They can be regarded as adaptive policies driven by machine learning/deep learning, using learning to improve decisions and thereby gaining in efficiency, but they often cannot guarantee high throughput.</li>
+</ul>
+<p>The work in this paper belongs to the learned policies, but thanks to some decisions in the design and implementation, it achieves fairly good gains in both efficiency and performance.</p>
+<h3 id="further-discussion-of-learned-caches"><strong>Further discussion of learned caches</strong><a class="zola-anchor" href="#further-discussion-of-learned-caches" aria-label="Anchor link for: further-discussion-of-learned-caches" style="visibility: hidden;"></a>
+</h3>
+<p>The preceding section introduced <strong>learned caches</strong>, a class of methods that combine machine learning to improve cache adaptivity. According to this paper's classification, they can be roughly divided into the following kinds:</p>
+<ul>
+<li>"Object-level" learning
+, that is, learning the features of each individual object. By predicting the reuse distance, a cache replacement policy similar to Belady's algorithm can be realized. However, the storage and computation costs of object-level learning are both relatively large. Taking LRB as an example, it can learn more than 40 features; if sampling and prediction are performed on every eviction, throughput will be greatly harmed.</li>
+<li>Learning from a distribution
+, making decisions based on the request probability distribution. For example, LHD uses the request probability distribution to compute hit density as the eviction metric, which is relatively simple and efficient with low computational cost. However, LHD's hit density computation is based on only two features: age and size , which limits the ceiling of efficiency, while tracking more features would make the computation grow exponentially. In addition, because LHD needs to sample and compare objects on every eviction/random access, its throughput is limited.</li>
+<li>Expert policy sets
+, unlike the previous two, which improve the eviction algorithm itself, expert policy sets aim to learn and select the cache replacement policy that best suits the workload. Typical examples are LeCaR and its follow-up work CACHEUS . The drawbacks of expert policy sets are mainly the following two aspects: they need to maintain the state or metadata of different caching algorithms, and the implementation and computational complexity both increase if multiple different algorithms are maintained, while their hit ratio depends strongly on the policy they select; in addition, expert policy sets suffer from "delayed reward" and need to track accesses to objects, while there may be a fairly long interval between two accesses, during which the workload may change.</li>
+</ul>
+<h3 id="some-trade-offs-about-whether-to-introduce-machine-learning"><strong>Some trade-offs about whether to introduce</strong> <strong>machine learning</strong><a class="zola-anchor" href="#some-trade-offs-about-whether-to-introduce-machine-learning" aria-label="Anchor link for: some-trade-offs-about-whether-to-introduce-machine-learning" style="visibility: hidden;"></a>
+</h3>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-03.png" alt="MLOps workflow: offline, features feed optimisation, training and evaluation to produce a model; online, the model turns features into predictions" /></p>
+<p>Machine learning is often used to improve decision-making processes. The main consideration in combining cache management with machine learning is to improve performance, including how to increase throughput and how to improve the hit ratio.</p>
+<p><strong>Why use</strong> <strong>machine learning</strong></p>
+<ul>
+<li>In recent years machine learning has been widely applied and has influenced the design and implementation of caches and indexes. At FAST '23 there were other papers on learned indexes and learned caches accepted in the same period. Algorithms based on machine learning usually have advantages in real-world scenarios.</li>
+<li>Machine learning can be used to learn the "best" cache replacement policy. LeCaR can be categorized into this class.</li>
+<li>Machine learning can be used to improve existing cache replacement policies. This paper belongs to this class.</li>
+</ul>
+<p><strong>Why not use</strong> <strong>machine learning</strong></p>
+<ul>
+<li>The correctness of the implementation needs further evaluation, and the complexity also increases.</li>
+<li>Many schemes must introduce extra steps, such as model training and deployment. LeCaR introduces an online learning mechanism, avoiding the training and deployment problems.</li>
+<li>It is hard to take both efficiency and performance into account at the same time. This paper adopts the Group-level Learning strategy and achieves advantages in both efficiency and performance.</li>
+</ul>
+<h2 id="gl-cache-group-level-learned-cache"><strong>GL-Cache: Group-level Learned Cache</strong><a class="zola-anchor" href="#gl-cache-group-level-learned-cache" aria-label="Anchor link for: gl-cache-group-level-learned-cache" style="visibility: hidden;"></a>
+</h2>
+<p>The previous sections spent a lot of space introducing caches and the application of machine learning in caching. Next, let us turn our attention to the protagonist of this article, GL-Cache .</p>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-04.png" alt="GL-Cache overview (paper Fig. 1): objects are clustered into groups, and feature tracking, model training and inference all happen at the group level" /></p>
+<p>GL-Cache adopts the idea of group-level learning, grouping objects and aggregating features by group.</p>
+<ul>
+<li>Compared with other learned caches, GL-Cache can use multiple features to assist decision-making, thereby improving cache efficiency. In addition, GL-Cache's computation and storage costs are amortized across the objects within a group.</li>
+<li>Most cache workloads follow a specific distribution, and many objects may be accessed only a handful of times, so it is hard to learn valuable information from a few individual objects. By aggregating them into groups, the number of objects and access requests within a group accumulate, forming more information that helps learning and prediction.</li>
+</ul>
+<h3 id="design-trade-offs"><strong>Design trade-offs</strong><a class="zola-anchor" href="#design-trade-offs" aria-label="Anchor link for: design-trade-offs" style="visibility: hidden;"></a>
+</h3>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-05.png" alt="Design-tradeoff diagram: objects are grouped, features are sampled into snapshots, utilities are computed for training, and the model predicts eviction decisions" /></p>
+<p>GL-Cache divides objects into a number of groups, periodically tracks the features of each object group, samples and forms feature snapshots, computes the utility of each feature snapshot and uses it for model training, and then uses the trained model to predict and make eviction decisions.</p>
+<h3 id="grouping-strategy"><strong>Grouping strategy</strong><a class="zola-anchor" href="#grouping-strategy" aria-label="Anchor link for: grouping-strategy" style="visibility: hidden;"></a>
+</h3>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-06.png" alt="Insertion-time grouping strategy: objects within a group are ordered by insertion time" /></p>
+<p>GL-Cache chooses a grouping strategy based on insertion time, which is simple and effective. It is mainly for the following reasons:</p>
+<ul>
+<li>Between objects with similar insertion times, the similarity of access frequency and reuse distance is closer than between random objects.</li>
+<li>It is simple and general, and can be easily integrated with other cache designs.</li>
+<li>It can be implemented on segment-based or log-structured storage, thereby exploiting the advantages of log-structured storage: low fragmentation, high throughput, Flash-friendliness, and so on.</li>
+</ul>
+<p>Of course, different grouping strategies can also be designed according to actual needs to further adapt to the workload.</p>
+<h3 id="utility-computation"><strong>Utility computation</strong><a class="zola-anchor" href="#utility-computation" aria-label="Anchor link for: utility-computation" style="visibility: hidden;"></a>
+</h3>
+<p><strong>Utility</strong> is used to measure the subsequent impact of evicting or retaining an object group. By design, object groups with lower utility should be evicted preferentially.</p>
+<p>Comparison between individual objects is very easy, but between groups there is still a lack of an effective measure. The paper designs a new utility function to quantify the utility of an object group.</p>
+<p>The main decisions in designing utility are as follows:</p>
+<ul>
+<li>If a group mainly contains small objects, its utility is greater.</li>
+<li>The smaller the interval to the next request, the greater the utility.</li>
+<li>If the group size is 1 , that is, when it degenerates to object-level learning, it should behave like Belady's MIN algorithm.</li>
+<li>It is easy to learn, can accurately reflect utility, and can be computed online in real time.</li>
+</ul>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-07.png" alt="Utility formulas: object utility Uo(t) and group utility Ugroup(t) are sums of 1/(Tₒ(t)×Sₒ), with Tₒ(t) and Sₒ defined below" /></p>
+<p>The first formula in the figure above shows the computation of the utility function for a single object, where T(o)(t) represents the time of the next request and S(o) represents the size of the object. The utility of a group can be computed as the sum of the utilities of its objects.</p>
+<h3 id="features-and-model"><strong>Features and model</strong><a class="zola-anchor" href="#features-and-model" aria-label="Anchor link for: features-and-model" style="visibility: hidden;"></a>
+</h3>
+<p>GL-Cache selects 7 features for learning, and classifies them.</p>
+<p><strong>Dynamic features</strong>, that is, features that need to be updated on access requests:</p>
+<ul>
+<li>Number of requests</li>
+<li>Number of active objects</li>
+</ul>
+<p><strong>Static features</strong>, which do not need real-time updates and only need to be computed once:</p>
+<ul>
+<li>Write rate at insertion time</li>
+<li>Miss ratio at insertion time</li>
+<li>Request rate at insertion time</li>
+<li>Average object size</li>
+<li>Age of the group</li>
+</ul>
+<p>Among them, the first three static features are also called <strong>context features</strong> , and can reflect changes in the workload. For example, during data backup, one may observe that the write rate, miss ratio, and request rate are all increasing.</p>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-08.png" alt="Gradient-boosted trees: several decision trees whose votes produce the prediction used to rank object groups" /></p>
+<p>The model is fairly simple: it uses gradient boosted trees to design a regression algorithm as the objective function. If you are interested, you can read the relevant xgboost papers and the paper's relevant source code; we will not go into detail here.</p>
+<h3 id="eviction-plan"><strong>Eviction plan</strong><a class="zola-anchor" href="#eviction-plan" aria-label="Anchor link for: eviction-plan" style="visibility: hidden;"></a>
+</h3>
+<p>GL-Cache uses the trained model to rank object groups, predict their utility, and select the group with the lowest utility for eviction.</p>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-09.png" alt="Ranking and merge eviction (paper Fig. 4): groups are ranked by utility, and evicted objects are merged into the next group by size and age" /></p>
+<p>However, GL-Cache's eviction does not directly delete the corresponding group; instead, it adopts the idea of Merge Evict :</p>
+<ul>
+<li>First, select the group to be evicted together with several adjacent groups whose insertion times are close to it;</li>
+<li>Then, delete most of the objects from these groups according to the algorithm in the figure above;</li>
+<li>Finally, merge the remaining elements to form a new object group.</li>
+</ul>
+<p>Because several adjacent groups with close insertion times are chosen as the merge targets, the new group formed after eviction can still guarantee the similarity of the features of the objects within the group.</p>
+<h3 id="performance-evaluation"><strong>Performance evaluation</strong><a class="zola-anchor" href="#performance-evaluation" aria-label="Anchor link for: performance-evaluation" style="visibility: hidden;"></a>
+</h3>
+<p>Let us skip the experiment design and result details of the evaluation, and just briefly look at where the group-level learning based algorithm stands in the quadrant of potential efficiency (hit ratio) and performance (throughput).</p>
+<p><img src="https://psiace.me/posts/gl-cache-group-level-learning/images/figure-10.png" alt="Quadrant plot of potential efficiency (hit ratio) against throughput, positioning object-level learning, learning from distribution, learning from simple experts and group-level learning" /></p>
+<ul>
+<li>Object-level learning has the highest hit ratio, but because of its heavy computation it performs poorly in throughput.</li>
+<li>Expert policy sets, because their models are relatively simple, can achieve better throughput, but they are limited by the simple expert algorithms themselves (LRU, LFU, and so on) and have a lower hit ratio.</li>
+<li>Learning from a distribution is relatively balanced, sitting between the former two.</li>
+<li>The Group-level Learning proposed in this paper performs excellently in both potential efficiency and performance.</li>
+</ul>
+<h2 id="summary"><strong>Summary</strong><a class="zola-anchor" href="#summary" aria-label="Anchor link for: summary" style="visibility: hidden;"></a>
+</h2>
+<p>This paper proposes a new method called "group-level learning (Group-level Learning)", which uses machine learning to improve cache efficiency. Group-level learning uses features of multiple object groups to predict and evict the object group with the lowest utility; it adapts to the workload and cache size while accumulating stronger signals for learning, and amortizes the learning cost across objects. Therefore, it can make better eviction decisions at an extremely small cost. The authors build GL-Cache in a production-grade cache to demonstrate group-level learning, and evaluate it on 118 production block I/O and CDN traces. Compared with all other known caches, GL-Cache achieves significantly higher throughput while maintaining a high hit ratio. Therefore, GL-Cache paves the way for adopting learned caches in production systems.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="gl-cache-group-level-learning"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

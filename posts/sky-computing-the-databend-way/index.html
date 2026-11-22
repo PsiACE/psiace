@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Sky computing background and how Databend approaches cross-cloud data storage, management, and sharing.">
+
+  <title>From Overcast to Clear: Databend&#x27;s Road to Sky Computing</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#background">Background</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#the-databend-way">The Databend Way</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#the-key-to-crossing-clouds">The key to crossing clouds</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#data-storage">Data storage</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#data-management">Data management</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#data-sharing">Data sharing</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#the-future-of-crossing-clouds">The future of crossing clouds</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#summary">Summary</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#about-databend">About Databend</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>From Overcast to Clear: Databend&#x27;s Road to Sky Computing</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Apr 19, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/tags/2023/"><span>#</span>2023</a><a class="instant" href="https://psiace.me/tags/databend/"><span>#</span>Databend</a><a class="instant" href="https://psiace.me/tags/cloud/"><span>#</span>Cloud</a><a class="instant" href="https://psiace.me/tags/opendal/"><span>#</span>OpenDAL</a><a class="instant" href="https://psiace.me/tags/archive/"><span>#</span>Archive</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="Language">
+    <span class="lang-switch__label">Language:</span>
+    <span class="lang-switch__current">English</span>
+    <a class="lang-switch__link" href="https://psiace.me/zh/posts/sky-computing-the-databend-way/">中文</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+        
+        <p id="source-note">English translation of the Chinese original, first published on 2023-04-19. Source: <a href="https:&#x2F;&#x2F;juejin.cn&#x2F;post&#x2F;7223602277210325051" rel="noreferrer">Juejin original</a>. This translation was prepared for this archive.</p>
+
+        <blockquote>
+<p>Author: Chojan Shang (PsiACE)</p>
+<p>Master's student at Macau University of Science and Technology, R&amp;D Engineer Intern at Databend</p>
+<p>Apache OpenDAL(Incubating) Committer</p>
+<p><a rel="nofollow noreferrer external" href="https://github.com/psiace/">github.com/psiace/</a></p>
+</blockquote>
+<p>Synopsis: This article introduces the background of sky computing, and how Databend considers cross-cloud data storage and access from the perspectives of data storage, data management, and data sharing.</p>
+<h2 id="background">Background<a class="zola-anchor" href="#background" aria-label="Anchor link for: background" style="visibility: hidden;"></a>
+</h2>
+<p>The beginning of the <a rel="nofollow noreferrer external" href="https://baike.baidu.com/item/%E4%BA%91%E8%AE%A1%E7%AE%97/9969353">cloud computing</a> era can be traced back to 2006, when <a rel="nofollow noreferrer external" href="https://aws.amazon.com/">AWS</a> began to offer S3 and EC2 services. In 2013, the concept of cloud native had just been proposed, and there was not even a complete vision for it yet. By 2015, when <a rel="nofollow noreferrer external" href="https://www.cncf.io/">CNCF</a> was founded, this concept became more and more popular over the next five years and became a topic that technologists could not avoid.</p>
+<blockquote>
+<p>According to CNCF's definition of cloud native: cloud-native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds. Typical examples include: containers, service meshes, microservices, immutable infrastructure, and declarative APIs .</p>
+</blockquote>
+<p><img src="https://psiace.me/posts/sky-computing-the-databend-way/images/figure-01.gif" alt="Animated &quot;Cloud Native&quot; illustration (originally a GIF), showing two white cloud outlines on a blue field" /></p>
+<p>However, whether public cloud or private cloud, whether cloud computing or cloud service, there already exist far too many different types of "clouds" in the sky. Each "cloud" has its own unique API and ecosystem, they lack interoperability with each other, and there are very few places where they can be compatible. Clouds have become de facto islands. These islands are not only the separation between public clouds and private clouds, but also include the separation between different public clouds, between different private clouds, and between public clouds and private clouds. This island phenomenon not only brings users a lot of trouble, but also limits the development of cloud computing.</p>
+<p>In 2021, RISELab published a paper titled <a rel="nofollow noreferrer external" href="https://arxiv.org/abs/2205.07147">The Sky Above The Clouds</a>, discussing the future of sky computing. Sky computing further extends the idea of cloud native to encompass public clouds, private clouds, and edge devices. Its goal is to realize a unified API and ecosystem, so that different clouds can collaborate and interact seamlessly. In this way, users can freely migrate applications and data between different clouds without worrying about compatibility and migration costs. At the same time, sky computing can also provide more efficient, more secure, and more reliable computing services, thereby satisfying users' growing demands for cloud computing. Overall, sky computing is committed to allowing applications to run across multiple cloud providers and to achieving interoperability between multiple clouds.</p>
+<p><img src="https://psiace.me/posts/sky-computing-the-databend-way/images/figure-02.png" alt="Table 1 comparing partitioned multi-cloud, portable multi-cloud and sky (transparent multi-cloud) on same app across clouds, cloud transparency, universal APIs and deep APIs" />
+<em>(The figure above is cited from the paper, showing the difference between different types of multi-cloud and sky computing)</em></p>
+<h2 id="the-databend-way">The Databend Way<a class="zola-anchor" href="#the-databend-way" aria-label="Anchor link for: the-databend-way" style="visibility: hidden;"></a>
+</h2>
+<h3 id="the-key-to-crossing-clouds">The key to crossing clouds<a class="zola-anchor" href="#the-key-to-crossing-clouds" aria-label="Anchor link for: the-key-to-crossing-clouds" style="visibility: hidden;"></a>
+</h3>
+<p>Databend can satisfy users' needs to freely access data and query it across different clouds without worrying about compatibility and migration costs. At the same time, Databend can also provide more efficient, more secure, and more reliable computing services, thereby satisfying users' growing demands for cloud computing. From this perspective, Databend has already initially formed a sky computing solution. So, for Databend, where exactly does the key to crossing clouds lie?</p>
+<p><img src="https://psiace.me/posts/sky-computing-the-databend-way/images/figure-03.png" alt="Databend Cloud architecture: cloud services, computing services, storage services and multi-cloud access" />
+<em>(The figure above shows the architecture of Databend Cloud)</em></p>
+<p>Databend adopts a storage-compute separation architecture and makes design decisions entirely oriented toward cloud object storage. Thanks to the separation of storage and compute, and the separation of storage and state, Databend can achieve fine-grained control over resources, easily deploy and scale Query and Meta nodes , and support a variety of different computing scenarios and storage scenarios without having to consider cross-cloud data management and movement.</p>
+<p>Query nodes and Meta nodes are themselves lightweight services, and have no strict dependencies on the deployment environment. But the storage and access management of data is a different matter: we need to consider the API compatibility between different cloud services, and how to interact with the security mechanisms of the cloud services themselves so as to provide a more secure access control mechanism. For Databend, the key to crossing clouds — or to realizing sky computing — lies in the management and access of data.</p>
+<p><img src="https://psiace.me/posts/sky-computing-the-databend-way/images/figure-04.png" alt="Side-by-side diagram: on the left each application connects directly to several storage services; on the right OpenDAL fronts them all" />
+<em>（OpenDAL can turn the data access problem from M\N into M+N）</em></p>
+<p>To solve this problem, Databend abstracts a unified data access layer (OpenDAL, now an incubating project under the Apache Software Foundation), thereby shielding the API compatibility issues between different cloud services. In the following sections, we will observe Databend's painless data access experience from different perspectives, and experience the charm of truly fully cloud-native sky computing.</p>
+<h3 id="data-storage">Data storage<a class="zola-anchor" href="#data-storage" aria-label="Anchor link for: data-storage" style="visibility: hidden;"></a>
+</h3>
+<p>The details of Databend's storage backend are hidden behind simple configuration; by modifying the configuration file you can easily switch between a dozen or so storage services. For example, if you want to use AWS S3, you only need to specify the type as <code>s3</code> , and Databend will automatically try to authenticate using IAM. If you want to use other S3-compatible object storage services, you can also adjust settings such as <code>endpoint_url</code> .</p>
+<pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span>[</span><span class="z-entity z-name">storage</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other">type</span><span> =</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">s3</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">storage</span><span>.</span><span class="z-entity z-name">s3</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other">bucket</span><span> =</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">databend</span><span class="z-punctuation z-definition z-string">&quot;</span></span></code></pre>
+<p>Of course, supporting only S3-compatible object storage services is not enough. Through OpenDAL, Databend implements native storage backend support for services such as Google Cloud Storage, Azure Blob, Aliyun OSS, Huawei OBS, and HDFS.
+This means Databend can make full use of the APIs provided by various vendors to bring users a better experience. For example, native support for Aliyun OSS allows Databend to authenticate and authorize users through Aliyun RAM without setting static keys, thereby greatly improving security and reducing operational burden.</p>
+<p><img src="https://psiace.me/posts/sky-computing-the-databend-way/images/figure-05.jpeg" alt="Cloud access-control diagram: Admins, Devs and Audfans groups in a project reach cloud resources through RAM and user account permissions" />
+<em>(The figure above is selected from the Aliyun official website, showing access control scenarios and capabilities)</em></p>
+<p>In addition, native support can also avoid unexpected behavior and provide tighter integration with service providers. Although the major vendors all provide S3-compatible APIs, there are subtle differences between them, which may lead to degraded service performance or abnormal data read/write functionality when unexpected behavior occurs. Google Cloud Storage provides an S3-compatible XML API, but does not support the ability to delete objects in bulk. This caused users to encounter unexpected errors when calling that interface. Native support for Google Cloud Storage means Databend does not have to worry about the impact of GCS's S3-compatible implementation on users' business.</p>
+<p>In short, Databend provides users with efficient and reliable data analysis services by implementing native support for each service.</p>
+<h3 id="data-management">Data management<a class="zola-anchor" href="#data-management" aria-label="Anchor link for: data-management" style="visibility: hidden;"></a>
+</h3>
+<p>We have discussed cross-cloud support for storage backends; now let us focus on data management. More specifically, the inflow and outflow of data in Databend's workflow.</p>
+<h4 id="copy-into-data-loading">COPY INTO, data loading<a class="zola-anchor" href="#copy-into-data-loading" aria-label="Anchor link for: copy-into-data-loading" style="visibility: hidden;"></a>
+</h4>
+<p>To talk about data management, we have to discuss where the data comes from. In the past, you might have needed to consider whether to migrate storage services, but now you can load data from dozens of storage services supported or compatible with Databend, and everything feels so natural.</p>
+<p>The <code>COPY INTO</code> statement is a window into Databend's cross-cloud capabilities. The example below shows how to load data from Azure Blob into Databend.</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-keyword">COPY</span><span class="z-keyword"> INTO</span><span> mytable</span></span>
+<span class="giallo-l"><span class="z-keyword">    FROM</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">azblob://mybucket/data.csv</span><span class="z-punctuation z-definition z-string">&#39;</span></span>
+<span class="giallo-l"><span class="z-keyword">    CONNECTION</span><span class="z-keyword"> =</span><span> (</span></span>
+<span class="giallo-l"><span class="z-keyword">        ENDPOINT_URL</span><span class="z-keyword"> =</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">https://&lt;account_name&gt;.blob.core.windows.net</span><span class="z-punctuation z-definition z-string">&#39;</span></span>
+<span class="giallo-l"><span>        ACCOUNT_NAME </span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">&lt;account_name&gt;</span><span class="z-punctuation z-definition z-string">&#39;</span></span>
+<span class="giallo-l"><span>        ACCOUNT_KEY </span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">&lt;account_key&gt;</span><span class="z-punctuation z-definition z-string">&#39;</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span class="z-keyword">    FILE_FORMAT</span><span class="z-keyword"> =</span><span> (</span><span class="z-keyword">type</span><span class="z-keyword"> =</span><span> CSV);</span></span></code></pre>
+<p>Of course, it is not only Azure Blob : the other cloud object storage services supported by Databend, IPFS, and files accessible via HTTPS can all serve as External locations and be loaded through the <code>COPY INTO</code> statement.</p>
+<blockquote>
+<p>Databend's <code>COPY INTO</code> statement also supports basic transformation services, which can lighten the burden of ETL work.</p>
+</blockquote>
+<h4 id="stage-data-staging-area">Stage , data staging area<a class="zola-anchor" href="#stage-data-staging-area" aria-label="Anchor link for: stage-data-staging-area" style="visibility: hidden;"></a>
+</h4>
+<p>Just now we mentioned External locations ; in fact, the data files to be loaded into Databend can also be staged in a Stage . Databend likewise supports Internal stage and Named external stage .</p>
+<p>Data files can be uploaded to an Internal Stage via the <code>PUT_INTO_STAGE API</code> , and Databend hands them to the currently configured storage backend for unified management. A Named external stage , on the other hand, can be used to mount buckets from the various storage services supported by Databend .</p>
+<p>The example below shows how to create a Stage named whdfs in Databend, importing data files from the data-files directory in HDFS into Databend through the WebHDFS protocol.</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span>bendsql</span><span class="z-keyword">&gt;</span><span class="z-keyword"> CREATE</span><span> STAGE </span><span class="z-keyword">IF</span><span class="z-keyword"> NOT</span><span class="z-keyword"> EXISTS</span><span> whdfs </span><span class="z-keyword">URL</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">webhdfs://127.0.0.1:9870/data-files/</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-keyword"> CONNECTION</span><span class="z-keyword">=</span><span>(HTTPS</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">false</span><span class="z-punctuation z-definition z-string">&#39;</span><span>);</span></span>
+<span class="giallo-l"><span>Query OK, </span><span class="z-constant">0</span><span class="z-keyword"> rows</span><span> affected (</span><span class="z-constant">0</span><span>.</span><span class="z-constant">01</span><span> sec)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>bendsql</span><span class="z-keyword">&gt;</span><span class="z-keyword"> COPY</span><span class="z-keyword"> INTO</span><span> books </span><span class="z-keyword">FROM</span><span> @whdfs</span><span> FILES</span><span class="z-keyword">=</span><span>(</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">books.csv</span><span class="z-punctuation z-definition z-string">&#39;</span><span>) </span><span class="z-keyword">file_format</span><span class="z-keyword">=</span><span>(</span><span class="z-keyword">type</span><span class="z-keyword">=</span><span>CSV field_delimiter</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">,</span><span class="z-punctuation z-definition z-string">&#39;</span><span>  record_delimiter</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">\n</span><span class="z-punctuation z-definition z-string">&#39;</span><span> skip_header</span><span class="z-keyword">=</span><span class="z-constant">0</span><span>);</span></span>
+<span class="giallo-l"><span>Query OK, </span><span class="z-constant">2</span><span class="z-keyword"> rows</span><span> affected (</span><span class="z-constant">1</span><span>.</span><span class="z-constant">83</span><span> sec)</span></span></code></pre>
+<blockquote>
+<p>If you do not want to import the data directly, you can also try <code>SELECT FROM STAGE</code> to quickly analyze the data files located in the staging area.</p>
+</blockquote>
+<h4 id="catalog-data-mounting">Catalog, data mounting<a class="zola-anchor" href="#catalog-data-mounting" aria-label="Anchor link for: catalog-data-mounting" style="visibility: hidden;"></a>
+</h4>
+<p>Loading data placed in object storage has been solved, but there is another question worth thinking about: what if the data is originally managed by another data analysis system?</p>
+<p>Databend provides support for multiple source data catalogs (Multiple Catalog), allowing you to mount external data catalogs such as Hive and Iceberg .</p>
+<p>The example below shows how to mount a Hive data catalog using the configuration file.</p>
+<pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span>[</span><span class="z-entity z-name">catalogs</span><span>.</span><span class="z-entity z-name">hive</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other">type</span><span> =</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">hive</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> hive metastore address, such as 127.0.0.1:9083</span></span>
+<span class="giallo-l"><span class="z-variable z-other">address</span><span> =</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">&lt;hive-metastore-address&gt;</span><span class="z-punctuation z-definition z-string">&quot;</span></span></code></pre>
+<p>Besides mounting, querying is also a piece of cake <code>select * from hive.$db.$table limit 10;</code> .</p>
+<p>Of course, all of this can also be easily done through the <code>CREATE CATALOG</code> statement; the example below shows how to mount an Iceberg data catalog.</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-keyword">CREATE</span><span class="z-keyword"> CATALOG</span><span> iceberg_ctl</span></span>
+<span class="giallo-l"><span class="z-keyword">  TYPE</span><span class="z-keyword">=</span><span>ICEBERG</span></span>
+<span class="giallo-l"><span class="z-keyword">  CONNECTION</span><span class="z-keyword">=</span><span>( </span></span>
+<span class="giallo-l"><span class="z-keyword">    URL</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">s3://my_bucket/path/to/db</span><span class="z-punctuation z-definition z-string">&quot;</span><span> </span></span>
+<span class="giallo-l"><span>    AWS_KEY_ID</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">&lt;access-key&gt;</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span>    AWS_SECRET_KEY</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">&lt;secret_key&gt;</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span>    SESSION_TOKEN</span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string">&quot;</span><span class="z-string">&lt;session_token&gt;</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"><span>  );</span></span></code></pre>
+<blockquote>
+<p>Capabilities related to Multiple Catalog are still being actively developed and iterated; if you are interested, stay tuned.</p>
+</blockquote>
+<h4 id="revisiting-copy-into-data-export">Revisiting COPY INTO, data export<a class="zola-anchor" href="#revisiting-copy-into-data-export" aria-label="Anchor link for: revisiting-copy-into-data-export" style="visibility: hidden;"></a>
+</h4>
+<p>Data export is another important topic in data management. Simply put, it means dumping query results for further analysis and processing.</p>
+<p>This capability is likewise supported by the <code>COPY INTO</code> syntax, and of course likewise supports dozens of storage services and multiple file output formats. The example below shows how to export query results to a specified Stage in the form of a CSV file.</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">--</span><span class="z-comment"> Unload the data from a query into a CSV file on the stage</span></span>
+<span class="giallo-l"><span class="z-keyword">COPY</span><span class="z-keyword"> INTO</span><span> @s2</span><span class="z-keyword"> FROM</span><span> (</span><span class="z-keyword">SELECT</span><span class="z-keyword"> name</span><span>, age, id </span><span class="z-keyword">FROM</span><span> test_table </span><span class="z-keyword">LIMIT</span><span class="z-constant"> 100</span><span>) </span><span class="z-keyword">FILE_FORMAT</span><span class="z-keyword"> =</span><span> (</span><span class="z-keyword">TYPE</span><span class="z-keyword"> =</span><span> CSV);</span></span></code></pre>
+<p>This syntax also supports exporting to External locations , truly enabling the free flow of data.</p>
+<blockquote>
+<p>Databend also supports <code>PRESIGN</code> , which is used to generate a pre-signed URL for a file in a Stage, and users can freely access that file through a web browser or an API request.</p>
+</blockquote>
+<h3 id="data-sharing">Data sharing<a class="zola-anchor" href="#data-sharing" aria-label="Anchor link for: data-sharing" style="visibility: hidden;"></a>
+</h3>
+<p>The cross-cloud nature of the Databend data management described above mainly refers to the interaction between Databend and external services. In addition, Databend instances can also share data through a variety of cloud storage services.</p>
+<p>To better meet database query needs in multi-cloud environments, Databend designed and implemented a set of RESTful APIs to support data sharing.</p>
+<p><img src="https://psiace.me/posts/sky-computing-the-databend-way/images/figure-06.png" alt="Data-sharing workflow: a provider tenant shares db 1 and db 2, surfacing as read-only shared databases in two consumer tenants" />
+<em>（The figure above shows the workflow of data sharing）</em></p>
+<p>By adding the relevant <code>share_endpoint_address</code> configuration to the configuration file, users can use a pre-deployed <code>open-sharing</code> service to share databases or tables managed by Databend through familiar cloud storage services.</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-keyword">CREATE</span><span> SHARE myshare;</span></span>
+<span class="giallo-l"><span class="z-keyword">GRANT</span><span> USAGE </span><span class="z-keyword">ON</span><span class="z-keyword"> DATABASE</span><span> db1 </span><span class="z-keyword">TO</span><span> SHARE myshare;</span></span>
+<span class="giallo-l"><span class="z-keyword">GRANT</span><span class="z-keyword"> SELECT</span><span class="z-keyword"> ON</span><span class="z-keyword"> TABLE</span><span class="z-constant"> db1</span><span>.</span><span class="z-constant">table1</span><span class="z-keyword"> TO</span><span> SHARE myshare;</span></span>
+<span class="giallo-l"><span class="z-keyword">ALTER</span><span> SHARE myshare </span><span class="z-keyword">ADD</span><span> TENANTS </span><span class="z-keyword">=</span><span> vendor;</span></span></code></pre>
+<p>At this point, the table <code>db1.table1</code> will be visible to the recipient tenant <code>vendor</code> and can be queried as needed.</p>
+<pre class="giallo z-code"><code data-lang="sql"><span class="giallo-l"><span class="z-keyword">CREATE</span><span class="z-keyword"> DATABASE</span><span class="z-entity z-name"> db2</span><span class="z-keyword"> FROM</span><span> SHARE myshare;</span></span>
+<span class="giallo-l"><span class="z-keyword">SELECT</span><span class="z-keyword"> *</span><span class="z-keyword"> FROM</span><span class="z-constant"> db2</span><span>.</span><span class="z-constant">table1</span><span>;</span></span></code></pre><h3 id="the-future-of-crossing-clouds">The future of crossing clouds<a class="zola-anchor" href="#the-future-of-crossing-clouds" aria-label="Anchor link for: the-future-of-crossing-clouds" style="visibility: hidden;"></a>
+</h3>
+<p>The several perspectives above are only a small cross-section of Databend on the road to sky computing.</p>
+<p>Data compliance, privacy protection, and other topics are also important issues that we care about.</p>
+<p>Databend's vision is to become the cornerstone of future cross-cloud analytics, making data analysis simpler, faster, more convenient, and more intelligent.</p>
+<h2 id="summary">Summary<a class="zola-anchor" href="#summary" aria-label="Anchor link for: summary" style="visibility: hidden;"></a>
+</h2>
+<p>This article introduced the concept and background of sky computing, as well as Databend's cross-cloud data storage and access.</p>
+<p>Sky computing is a method that unifies public clouds, private clouds, and edge devices, with the goal of providing a seamless API and ecosystem so that users can freely migrate applications and data between different clouds.</p>
+<p>Databend is an open-source modern data warehouse fully oriented toward cloud architecture. It adopts a storage-compute separation architecture and abstracts a unified data access layer (OpenDAL), thereby shielding the API compatibility issues between different cloud services. Databend can satisfy users' needs to freely access data and query it across different clouds without worrying about compatibility and migration costs. At the same time, Databend can also provide more efficient, more secure, and more reliable computing services, thereby satisfying users' growing demands for cloud computing.</p>
+<p>You are welcome to deploy Databend or visit Databend Cloud , and explore the endless charm of sky computing right away.</p>
+<h2 id="about-databend">About Databend<a class="zola-anchor" href="#about-databend" aria-label="Anchor link for: about-databend" style="visibility: hidden;"></a>
+</h2>
+<p>Databend is an open-source, elastic, low-cost modern data warehouse built on object storage that can also do real-time analytics. We look forward to your attention as we explore cloud-native data warehouse solutions together and build a new generation of open-source Data Cloud.</p>
+<p>👨‍💻‍ Databend Cloud: <a rel="nofollow noreferrer external" href="https://databend.cn">databend.cn</a></p>
+<p>📖 Databend Docs: <a rel="nofollow noreferrer external" href="https://databend.rs/">databend.rs/</a></p>
+<p>💻 Wechat: Databend</p>
+<p>✨ GitHub: <a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/databend">github.com/datafuselab…</a></p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="sky-computing-the-databend-way"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="en"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

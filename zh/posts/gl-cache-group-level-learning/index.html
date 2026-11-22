@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="FAST &#x27;23 GL-Cache 论文解读：组级学习、分组策略、效用计算、特征与合并逐出。">
+
+  <title>【论文解读｜GL-Cache 】基于组级学习的缓存替换算法</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#abstract">Abstract</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#background">Background</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#cun-chu-ceng-ci-jie-gou">存储层次结构</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#huan-cun-ping-jia-biao-zhun">缓存评价标准</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#huan-cun-ti-huan-suan-fa-de-yan-jin">缓存替换算法的演进</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#jin-yi-bu-tao-lun-xue-xi-xing-huan-cun">进一步讨论学习型缓存</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#guan-yu-shi-fou-yin-ru-ji-qi-xue-xi-de-yi-xie-quan-heng">关于是否引入 机器学习 的一些权衡</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#gl-cache-group-level-learned-cache">GL-Cache: Group-level Learned Cache</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#she-ji-quan-heng">设计权衡</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#fen-zu-ce-lue">分组策略</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#xiao-yong-ji-suan">效用计算</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#te-zheng-he-mo-xing">特征和模型</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#zhu-chu-ji-hua">逐出计划</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#xing-neng-ping-jia">性能评价</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#zong-jie">总结</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>【论文解读｜GL-Cache 】基于组级学习的缓存替换算法</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">May 29, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/zh/tags/2023/"><span>#</span>2023</a><a class="instant" href="https://psiace.me/zh/tags/lun-wen/"><span>#</span>论文</a><a class="instant" href="https://psiace.me/zh/tags/huan-cun/"><span>#</span>缓存</a><a class="instant" href="https://psiace.me/zh/tags/databend/"><span>#</span>Databend</a><a class="instant" href="https://psiace.me/zh/tags/gui-dang/"><span>#</span>归档</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/gl-cache-group-level-learning/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+        
+        <p id="source-note">本文原发于 2023-05-29：<a href="https:&#x2F;&#x2F;juejin.cn&#x2F;post&#x2F;7238274120881717304" rel="noreferrer">掘金原文</a>。此处为存档版本，正文按原文照录。</p>
+
+        <blockquote>
+<p>作者：尚卓燃（PsiACE）</p>
+<p>澳门科技大学在读硕士，Databend 研发工程师实习生</p>
+<p>Apache OpenDAL(Incubating) Committer</p>
+<p><a rel="nofollow noreferrer external" href="https://github.com/PsiACE">github.com/PsiACE</a></p>
+</blockquote>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-01.png" alt="论文标题页：GL-Cache: Group-level learning for efficient and high-performance caching，FAST &#39;23，作者 Juncheng Yang 等" /></p>
+<blockquote>
+<p><strong>论文原文：</strong></p>
+<p><a rel="nofollow noreferrer external" href="https://www.usenix.org/system/files/fast23-yang.pdf">GL-Cache: Group-level learning for efficient and high-performance caching | FAST '23</a></p>
+<p><strong>源码</strong> <strong>地址：</strong></p>
+<p><a rel="nofollow noreferrer external" href="https://github.com/Thesys-lab/fast23-GLCache">github.com/Thesys-lab/…</a></p>
+<p><strong>论文贡献：</strong></p>
+<p>提出 Group-level Learning ，利用多对象组的特征来适应工作负荷和缓存大小，通过分组来积累更强的学习信号，学习成本均摊到对象级别。GL-Cache 不仅提供高效益的学习型缓存，还能够保证缓存系统的高吞吐量。</p>
+</blockquote>
+<h2 id="abstract"><strong>Abstract</strong><a class="zola-anchor" href="#abstract" aria-label="Anchor link for: abstract" style="visibility: hidden;"></a>
+</h2>
+<p>网络应用程序在很大程度上依赖于软件缓存来实现低延迟、高吞吐的服务。为了适应不断变化的工作负载，近年来设计出一些学习型缓存（学习型缓存替换策略，特别是逐出策略），大致可以分为三种：对象级别学习、从分布中学习和从简单专家（策略集）中学习。本论文认为现有方法的学习粒度要么太细（对象级别），导致计算和存储成本过大，要么太粗（工作负载或专家策略级），无法捕捉对象之间的差异，留下了相当大的效益差距。（这里的效益主要是由 hits/miss ratio 进行评估）</p>
+<p>在本论文中，作者针对缓存设计了一种新的学习方法——组级别学习。该方法将相似的对象聚类成组，并按照组进行学习和逐出操作。组级学习可以积累更多的信号，能够利用更多具有自适应权重的特征，并将成本分摊到对象上，从而实现高效益和高吞吐量。</p>
+<p>作者使用 GL-Cache 在生产环境下演示了组级别学习，并对 118 个生产块 I/O 和 CDN 缓存跟踪进行评估。结果显示 GL-Cache 比最先进设计具有更高命中率和更高吞吐量。与 LRB （对象级别）相比，GL-Cache 平均提升 228 倍吞吐量和 7% 命中率；对于 CDN 缓存跟踪 P90 的情况下，GL-Cache 比 LRB 提供了25% 的命中率提升；与所有其他类型最好表现者相比较，在平均值方面 GL-Cache 提升64% 吞吐量、3% 命中率，在 P90 方面提升13% 命中率。</p>
+<h2 id="background"><strong>Background</strong><a class="zola-anchor" href="#background" aria-label="Anchor link for: background" style="visibility: hidden;"></a>
+</h2>
+<p>在正式讨论 GL-Cache 之前，让我们先来看一下缓存和学习型缓存相关的一些内容。</p>
+<h3 id="cun-chu-ceng-ci-jie-gou"><strong>存储层次结构</strong><a class="zola-anchor" href="#cun-chu-ceng-ci-jie-gou" aria-label="Anchor link for: cun-chu-ceng-ci-jie-gou" style="visibility: hidden;"></a>
+</h3>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-02.png" alt="计算机体系存储层次结构金字塔示意图：寄存器、缓存、主存、闪存盘、传统磁盘与远端二级存储，标注访问时延与容量" /></p>
+<p>上图反映了计算机体系中的存储层次结构，可以看到明显的趋势是速度越大，容量越小。图中的缓存位于 CPU 内部，用于协调 CPU 运行速度和内存读取速度。</p>
+<p>一般而言，缓存是位于速度相差较大的两种存储之间，用于协调两者数据传输速度差异的结构。无论是哪一层次的缓存都面临一个同样的问题：当容量有限的缓存的空闲空间全部用完后，又有新的内容需要添加进缓存时，如何挑选并舍弃原有的部分内容，从而腾出空间放入这些新的内容。</p>
+<p>本论文讨论的是位于内存/磁盘之间的缓存而不是芯片上的缓存。</p>
+<h3 id="huan-cun-ping-jia-biao-zhun"><strong>缓存评价标准</strong><a class="zola-anchor" href="#huan-cun-ping-jia-biao-zhun" aria-label="Anchor link for: huan-cun-ping-jia-biao-zhun" style="visibility: hidden;"></a>
+</h3>
+<p>本文主要选用以下两个方面的评价标准。</p>
+<ul>
+<li><strong>“效益“</strong> - 根据 hits/miss ratio 进行评估。</li>
+<li><strong>”性能“</strong> - 根据吞吐量进行评估。</li>
+</ul>
+<h3 id="huan-cun-ti-huan-suan-fa-de-yan-jin"><strong>缓存替换算法的演进</strong><a class="zola-anchor" href="#huan-cun-ti-huan-suan-fa-de-yan-jin" aria-label="Anchor link for: huan-cun-ti-huan-suan-fa-de-yan-jin" style="visibility: hidden;"></a>
+</h3>
+<ul>
+<li><strong>“单一型”策略</strong>，典型的例子包括：LRU 和 CLOCK 。这一类静态策略无法适应工作负载的变化，且缺乏全面的性能表现。</li>
+<li><strong>“适应型”策略</strong>，典型的例子包括：ARC 和 2Q 。通常需要维护额外的元数据来适应工作负载，同时实现的复杂度也会随之提高。适应并不总是万无一失。</li>
+<li><strong>“学习型”策略</strong>，典型的例子包括：LeCaR 和 ACME 。可以看作是由机器学习/深度学习驱动的适应型策略，利用学习改进决策，从而在效益上获得提高，但往往不能保证高吞吐量。</li>
+</ul>
+<p>本论文工作属于学习型策略，但得益于设计实现上的一些决策，在效益和性能上都取得了比较好的收益。</p>
+<h3 id="jin-yi-bu-tao-lun-xue-xi-xing-huan-cun"><strong>进一步讨论学习型缓存</strong><a class="zola-anchor" href="#jin-yi-bu-tao-lun-xue-xi-xing-huan-cun" aria-label="Anchor link for: jin-yi-bu-tao-lun-xue-xi-xing-huan-cun" style="visibility: hidden;"></a>
+</h3>
+<p>前面介绍了<strong>学习型缓存</strong>，这是一类结合机器学习来改善缓存适应性的方法，根据本论文的分类，大致可以分成以下几种：</p>
+<ul>
+<li><strong>”对象级“学习</strong>，即对每个对象的特征进行学习。通过预测重用距离，可以实现类似 Belady 算法的缓存置换策略。但是，对象级学习的存储和计算成本都比较大，以 LRB 为例，可以对超过 40 种特征进行学习，如果在每次逐出元素时进行采样和预测，会极大妨害吞吐量。</li>
+<li><strong>从分布中学习</strong>，基于请求概率分布做出决策。例如，LHD 使用请求概率分布计算命中密度作为逐出的指标，相对而言较为简单高效，计算成本低。但是，LHD 命中密度的计算仅基于两个特征：age 和 size ，限制了效益的上限，而跟踪更多特征的话，计算量会呈现指数级增长。此外，由于 LHD 需要在每次逐出/随机访问时对对象进行采样和比较，限制了其吞吐量。</li>
+<li><strong>专家策略集</strong>，与前两种对逐出算法的改进不同，专家策略集旨在学习并选出最适合工作负载的缓存替换策略。典型的例子就是 LeCaR 和其后续工作 CACHEUS 。专家策略集的缺陷主要是以下两个方面：需要维护不同缓存算法的状态或者元数据，如果要维护多个不同算法，实现复杂度和计算复杂度都会提高，且其命中率强依赖于其所选策略；另外，专家策略集存在“延迟奖励”，需要跟踪对对象的访问情况，而两次访问之间可能会存在相当长的间隔，工作负载可能会在此期间发生变化。</li>
+</ul>
+<h3 id="guan-yu-shi-fou-yin-ru-ji-qi-xue-xi-de-yi-xie-quan-heng"><strong>关于是否引入</strong> <strong>机器学习</strong> <strong>的一些权衡</strong><a class="zola-anchor" href="#guan-yu-shi-fou-yin-ru-ji-qi-xue-xi-de-yi-xie-quan-heng" aria-label="Anchor link for: guan-yu-shi-fou-yin-ru-ji-qi-xue-xi-de-yi-xie-quan-heng" style="visibility: hidden;"></a>
+</h3>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-03.png" alt="MLOps 工作流示意图：离线阶段用特征完成优化、训练与评估得到模型，在线阶段用模型对新特征做预测" /></p>
+<p>机器学习经常用于改进决策过程。将缓存管理和机器学习相结合的主要考虑因素是提高性能，包括如何增加吞吐量以及如何提高命中率。</p>
+<p><strong>为什么要使用</strong> <strong>机器学习</strong></p>
+<ul>
+<li>机器学习近年来被广泛应用，并影响了缓存、索引的设计和实现。FAST ‘23 同期还有其他关于学习型索引和学习型缓存的论文被接收。基于机器学习的算法在真实世界场景中通常具有优势。</li>
+<li>可以利用机器学习来学习“最佳”缓存替换策略。LeCaR 可以归到这一类中。</li>
+<li>可以利用机器学习来改进现有的缓存替换策略。本论文属于此类。</li>
+</ul>
+<p><strong>为什么不使用</strong> <strong>机器学习</strong></p>
+<ul>
+<li>实现的正确性需要进一步评估，复杂度也会增加。</li>
+<li>许多方案必须引入额外步骤，如模型的培训和部署等。LeCaR 引入在线学习的机制，避免了训练和部署问题。</li>
+<li>难以同时兼顾效益和性能。本文采用 Group-level Learning 的策略，同时在效益和性能上取得优势。</li>
+</ul>
+<h2 id="gl-cache-group-level-learned-cache"><strong>GL-Cache: Group-level Learned Cache</strong><a class="zola-anchor" href="#gl-cache-group-level-learned-cache" aria-label="Anchor link for: gl-cache-group-level-learned-cache" style="visibility: hidden;"></a>
+</h2>
+<p>前面花了大量的篇幅介绍缓存和机器学习在缓存中的应用，接下来让我们将目光转向本文的主角 GL-Cache 。</p>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-04.png" alt="GL-Cache 总览图（论文 Fig.1）：对象被分成若干组，特征跟踪、模型训练与推理都在组一级进行" /></p>
+<p>GL-Cache 采用组级学习的思想，将对象分组，并按组聚集特征。</p>
+<ul>
+<li>与其他学习型缓存相比，GL-Cache 可以利用多个特征来辅助决策，从而提高缓存效益。此外，GL-Cache 的计算成本和存储成本由组内的对象均摊。</li>
+<li>大多数缓存工作负载遵循特定的分布，很多对象可能只访问零星几次，很难从单独几个对象中学到有价值的信息。而通过汇聚成组的形式，组内对象数目和访问请求得到累计，能够形成更多有助于学习和预测的信息。</li>
+</ul>
+<h3 id="she-ji-quan-heng"><strong>设计权衡</strong><a class="zola-anchor" href="#she-ji-quan-heng" aria-label="Anchor link for: she-ji-quan-heng" style="visibility: hidden;"></a>
+</h3>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-05.png" alt="设计权衡示意图：对对象分组并定期采样形成特征快照，计算效用用于训练，再由模型预测并作出逐出决策" /></p>
+<p>GL-Cache 将对象划分成若干组，定期跟踪每个对象组的特征，进行采样并形成特征快照，对每个特征快照计算效用并用于模型的训练，然后利用训练得到的模型进行预测并作出逐出决策。</p>
+<h3 id="fen-zu-ce-lue"><strong>分组策略</strong><a class="zola-anchor" href="#fen-zu-ce-lue" aria-label="Anchor link for: fen-zu-ce-lue" style="visibility: hidden;"></a>
+</h3>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-06.png" alt="基于插入时间的分组策略示意图：组内对象按插入先后排列" /></p>
+<p>GL-Cache 选择了基于插入时间的分组策略，简单且有效。主要是以下几点：</p>
+<ul>
+<li>插入时间相近的对象之间，访问频率和重用距离的相似程度比随机对象之间更接近。</li>
+<li>简单普适，能够与其他缓存设计轻松集成。</li>
+<li>可以在基于段或者日志结构的存储上实现，从而利用日志结构存储的优势：低碎片化、高吞吐量、Flash 友好等。</li>
+</ul>
+<p>当然，也可以根据实际需要设计不同的分组策略，进一步适应工作负载。</p>
+<h3 id="xiao-yong-ji-suan"><strong>效用计算</strong><a class="zola-anchor" href="#xiao-yong-ji-suan" aria-label="Anchor link for: xiao-yong-ji-suan" style="visibility: hidden;"></a>
+</h3>
+<p><strong>效用</strong>，用来度量逐出或保留对象组的后续影响。根据设计，效用较低的对象组更应该被逐出。</p>
+<p>对象和对象之间的比较非常容易，但是对于组与组之间，尚且缺乏有效的衡量方法。论文设计了一个新的效用函数来量化对象组的效用。</p>
+<p>在设计效用时主要的决策如下：</p>
+<ul>
+<li>组中主要包含的是小对象，则效用更大。</li>
+<li>距离下一次请求的间隔越小，则效用更大。</li>
+<li>如果组的大小为 1 ，即退化到对象级学习时，应该具有类似 Belady’s MIN 算法的表现。</li>
+<li>易于学习、能够准确反映效用，可以在线即时计算。</li>
+</ul>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-07.png" alt="效用函数公式：单对象效用 Uo(t) 与组效用 Ugroup(t) 均为对 Tₒ(t)×Sₒ 取倒数的求和，并说明 Tₒ(t) 与 Sₒ 的含义" /></p>
+<p>上图第一个式子展示了对于单个对象的效用函数计算，T(o)(t) 表示下一次请求的时间，而 S(o) 表示对象的大小。而组的效用可以用对象效用的累加来计算。</p>
+<h3 id="te-zheng-he-mo-xing"><strong>特征和模型</strong><a class="zola-anchor" href="#te-zheng-he-mo-xing" aria-label="Anchor link for: te-zheng-he-mo-xing" style="visibility: hidden;"></a>
+</h3>
+<p>GL-Cache 选用了 7 种特征进行学习，并且进行了分类。</p>
+<p><strong>动态特征</strong>，也就是在访问请求时需要更新的特征：</p>
+<ul>
+<li>请求数</li>
+<li>活跃的对象数</li>
+</ul>
+<p><strong>静态特征</strong>，不需要实时更新，只需要计算一次：</p>
+<ul>
+<li>插入时的写速率</li>
+<li>插入时的未命中率</li>
+<li>插入时的请求速率</li>
+<li>平均对象大小</li>
+<li>组的年龄</li>
+</ul>
+<p>其中，静态特征的前三个又被称为 <strong>上下文特征</strong> ，能够反映工作负载的变化情况。比如在数据备份时，可能会观测到写速率、未命中率和请求速率都在增加。</p>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-08.png" alt="梯度提升树示意图：若干决策树按投票给出预测结果，用于对对象组排序" /></p>
+<p>模型比较简单，利用梯度提升树设计回归算法作为目标函数。感兴趣的话可以阅读 xgboost 相关论文和本论文相关源码，这里就不进行赘述。</p>
+<h3 id="zhu-chu-ji-hua"><strong>逐出计划</strong><a class="zola-anchor" href="#zhu-chu-ji-hua" aria-label="Anchor link for: zhu-chu-ji-hua" style="visibility: hidden;"></a>
+</h3>
+<p>GL-Cache 使用训练得到的模型来对对象组进行排序，并且预测其效用，并选择效用最低的组进行逐出。</p>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-09.png" alt="排序与合并逐出示意图（论文 Fig.4）：按效用对组排序，选出逐出对象后按 size 与 age 合并进下一组" /></p>
+<p>但是，GL-Cache 的逐出并不是直接删除对应的组，而是采用了合并逐出（Merge Evict）的思想：</p>
+<ul>
+<li>首先，选择待逐出的组和与其插入时间接近的几个相邻组；</li>
+<li>然后，根据上图中的算法从这些组中删除大部分对象；</li>
+<li>最后，将剩下的元素合并，形成一个新的对象组。</li>
+</ul>
+<p>由于选择插入时间接近的几个相邻组作为合并对象，逐出后形成的新组仍然可以保证组内对象特征的相似性。</p>
+<h3 id="xing-neng-ping-jia"><strong>性能评价</strong><a class="zola-anchor" href="#xing-neng-ping-jia" aria-label="Anchor link for: xing-neng-ping-jia" style="visibility: hidden;"></a>
+</h3>
+<p>让我们略过评估相关的实验设计和结果细节，只是简单看一下基于组级学习的算法在潜在效益（命中率）和性能（吞吐量）象限上所处的位置。</p>
+<p><img src="https://psiace.me/zh/posts/gl-cache-group-level-learning/images/figure-10.png" alt="潜在效益（命中率）与吞吐量象限散点图：对象级学习、从分布学习、从简单专家学习与组级学习的位置对比" /></p>
+<ul>
+<li>对象级学习具有最高的命中率，但是由于计算繁重，所以在吞吐量上表现不佳。</li>
+<li>专家策略集由于模型相对比较简单，可以取得更好的吞吐量，但受到简单专家算法（LRU、LFU 等）本身的限制，命中率较低。</li>
+<li>从分布中学习相对比较平衡，处于前两者中间的位置。</li>
+<li>本论文提出的 Group-level Learning 则在潜在效益和性能上都有着优秀的表现。</li>
+</ul>
+<h2 id="zong-jie"><strong>总结</strong><a class="zola-anchor" href="#zong-jie" aria-label="Anchor link for: zong-jie" style="visibility: hidden;"></a>
+</h2>
+<p>本论文提出了一种名为 “组级学习（Group-level Learning）” 的新方法，利用机器学习提高缓存效益。组级学习利用多个对象组特征预测和清除效用最低的对象组，在适应工作负载和缓存大小的同时，积累更强的信号进行学习，并将学习成本分摊到对象上。因此，它可以用极小的成本做出更好的逐出决策。作者在生产级缓存中构建 GL-Cache 来展示组级学习，并在 118 个生产块 I/O 和 CDN 跟踪数据上进行评估。与所有其他已知缓存相比，GL-Cache 实现了显著更高的吞吐量，同时保持较高的命中率。因此，GL-Cache 为在生产系统中采用学习型缓存铺平了道路。</p>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="gl-cache-group-level-learning"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>

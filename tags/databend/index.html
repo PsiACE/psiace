@@ -126,6 +126,26 @@ en">
     outline: none;
   }
 
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
   #post-info .lang-switch {
     margin-left: auto;
     margin-top: 0;
@@ -182,6 +202,26 @@ en">
       <span># Databend</span>
     </div>
     <div class="post-list">
+      
+      <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;gl-cache-group-level-learning&#x2F;">
+        <span>Paper Walkthrough: GL-Cache, a Cache Replacement Algorithm Based on Group-level Learning</span>
+        <span class="date">May 29, 2023</span>
+      </a>
+      
+      <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;sky-computing-the-databend-way&#x2F;">
+        <span>From Overcast to Clear: Databend&#x27;s Road to Sky Computing</span>
+        <span class="date">Apr 19, 2023</span>
+      </a>
+      
+      <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;rust-compile-time-tips-in-databend&#x2F;">
+        <span>Tips for Optimizing Rust Compile Time in Databend</span>
+        <span class="date">Apr 16, 2023</span>
+      </a>
+      
+      <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;pgo-optimizing-databend-binary-builds&#x2F;">
+        <span>Optimizing Databend Binary Builds with PGO</span>
+        <span class="date">Feb 27, 2023</span>
+      </a>
       
       <a class="post instant " href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;escape-oom-at-build-time&#x2F;">
         <span>Escaping Out of Memory at Build Time</span>

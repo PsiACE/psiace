@@ -127,6 +127,26 @@
     outline: none;
   }
 
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
   #post-info .lang-switch {
     margin-left: auto;
     margin-top: 0;
@@ -258,7 +278,7 @@
 
           
           <div id="tags">
-            <a class="instant" href="https://psiace.me/tags/agent"><span>#</span>agent</a><a class="instant" href="https://psiace.me/tags/bub"><span>#</span>bub</a><a class="instant" href="https://psiace.me/tags/coding-agent"><span>#</span>coding-agent</a><a class="instant" href="https://psiace.me/tags/rag"><span>#</span>rag</a><a class="instant" href="https://psiace.me/tags/context"><span>#</span>context</a><a class="instant" href="https://psiace.me/tags/memory"><span>#</span>memory</a><a class="instant" href="https://psiace.me/tags/openclaw"><span>#</span>openclaw</a>
+            <a class="instant" href="https://psiace.me/zh/tags/agent/"><span>#</span>agent</a><a class="instant" href="https://psiace.me/zh/tags/bub/"><span>#</span>bub</a><a class="instant" href="https://psiace.me/zh/tags/coding-agent/"><span>#</span>coding-agent</a><a class="instant" href="https://psiace.me/zh/tags/rag/"><span>#</span>rag</a><a class="instant" href="https://psiace.me/zh/tags/context/"><span>#</span>context</a><a class="instant" href="https://psiace.me/zh/tags/memory/"><span>#</span>memory</a><a class="instant" href="https://psiace.me/zh/tags/openclaw/"><span>#</span>openclaw</a>
           </div>
           
 
@@ -278,8 +298,6 @@
 
 
   
-
-  
     
     
     
@@ -287,6 +305,8 @@
     
     
     
+  
+
   
 
 

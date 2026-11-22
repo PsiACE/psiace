@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="OpenDAL 于 2023 年 2 月 27 日通过投票，正式进入 Apache 孵化器。本文为掘金原文归档。">
+
+  <title>官宣：OpenDAL 成功进入 Apache 孵化器</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://psiace.me/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://psiace.me/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://psiace.me/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+  /* language switch */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    color: var(--text-pale-color);
+  }
+
+  .lang-switch__current {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--primary-decoration-color);
+    border: 1px solid transparent;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .dark .lang-switch__current {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+  }
+
+  .lang-switch__link {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--text-decoration-color);
+    font-size: 0.8rem;
+    color: var(--text-pale-color);
+    text-decoration: none;
+    transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .lang-switch__link:hover,
+  .lang-switch__link:focus-visible {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--primary-pale-color);
+    outline: none;
+  }
+
+  /* archive provenance note (only rendered when a page sets extra.source_note) */
+  #source-note {
+    margin: 0 0 1.5em;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-pale-color);
+  }
+
+  #source-note a {
+    color: var(--text-pale-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--text-decoration-color);
+  }
+
+  #source-note a:hover,
+  #source-note a:focus-visible {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+  }
+
+  #post-info .lang-switch {
+    margin-left: auto;
+    margin-top: 0;
+    gap: 0.3rem;
+  }
+
+  #post-info .lang-switch__label {
+    display: none;
+  }
+
+  .homepage .lang-switch {
+    margin-top: 1rem;
+  }
+</style>
+
+  <link rel="stylesheet" href="https://psiace.me/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://psiace.me/giallo-dark.css';
+    }
+  </script>
+  
+  
+
+
+
+
+
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#shen-me-shi-opendal">什么是 OpenDAL</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#opendal-de-li-shi-fa-zhan-yu-xian-zhuang">OpenDAL 的历史、发展与现状</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#li-shi-cong-dal2-dao-opendal">历史：从 dal2 到 OpenDAL</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#fa-zhan-cong-1-dao-1">发展：从 1 到 +1</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#xian-zhuang-xiang-xing-chen-da-hai-qian-jin">现状：向星辰大海前进</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#zhi-xie">致谢</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#jia-ru-wo-men">加入我们</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+
+  
+
+
+
+  
+
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;psiace.me&#x2F;zh&#x2F;&#x2F;posts">← 返回</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>官宣：OpenDAL 成功进入 Apache 孵化器</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Mar 17, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://psiace.me/zh/tags/2023/"><span>#</span>2023</a><a class="instant" href="https://psiace.me/zh/tags/asf/"><span>#</span>ASF</a><a class="instant" href="https://psiace.me/zh/tags/opendal/"><span>#</span>OpenDAL</a><a class="instant" href="https://psiace.me/zh/tags/gui-dang/"><span>#</span>归档</a>
+          </div>
+          
+
+          
+          
+          
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+    
+    
+    
+      
+    
+    
+    
+  
+
+  
+
+
+  <div class="lang-switch" role="navigation" aria-label="语言">
+    <span class="lang-switch__label">语言:</span>
+    <span class="lang-switch__current">中文</span>
+    <a class="lang-switch__link" href="https://psiace.me/posts/opendal-enters-apache-incubator/">English</a> 
+  </div>
+
+
+        </div>
+
+        
+        
+
+        
+        
+        <p id="source-note">本文原发于 2023-03-17：<a href="https:&#x2F;&#x2F;juejin.cn&#x2F;post&#x2F;7211327163702018104" rel="noreferrer">掘金原文</a>。此处为存档版本，正文按原文照录。</p>
+
+        <blockquote>
+<p>作者：PsiACE</p>
+<p>Databend 研发工程师 <a rel="nofollow noreferrer external" href="https://github.com/PsiACE">github.com/PsiACE</a></p>
+</blockquote>
+<p>2023 年 2 月 27 日，<a rel="nofollow noreferrer external" href="https://github.com/apache/incubator-opendal">OpenDAL</a> 项目顺利通过投票，正式进入全球顶级开源软件基金会 —— <a rel="nofollow noreferrer external" href="https://www.apache.org/">Apache 软件基金会</a>（ASF）的孵化器（Incubator），成为 ASF 的一个孵化项目（podling）。在 3 月 15 日，OpenDAL项目正式移交到 Apache 软件基金会名下。</p>
+<p>这是 <a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/databend">Databend</a> 团队在开源社区的一个重要里程碑，也是开源社区对 OpenDAL 的技术和理念的一次认可和支持。</p>
+<blockquote>
+<p>Apache 孵化器成立于 2002 年10月，为那些意图成为 Apache 基金会努力的一部分的项目和代码库，提供一个进入到 Apache 软件基金会的路径。孵化器项目需要践行 ASF 的治理和运营方式，并使用 ASF 提供的基础设施和资源。孵化器项目需要经过一系列的阶段和评估，才能最终毕业成为 ASF 的顶级项目（TLP）。</p>
+</blockquote>
+<p><img src="https://psiace.me/zh/posts/opendal-enters-apache-incubator/images/figure-01.png" alt="Apache 孵化器 OpenDAL 项目状态页截图，News 一栏记录 2023-02-27 项目进入孵化" /></p>
+<p><a rel="nofollow noreferrer external" href="https://incubator.apache.org/projects/opendal.html">incubator.apache.org/projects/op…</a></p>
+<h2 id="shen-me-shi-opendal">什么是 OpenDAL<a class="zola-anchor" href="#shen-me-shi-opendal" aria-label="Anchor link for: shen-me-shi-opendal" style="visibility: hidden;"></a>
+</h2>
+<p>数据是未来最重要的资产之一，而数据访问是数据价值实现的关键环节。</p>
+<p>市场上存在着各种各样的存储服务，每个服务都有自己独特的接口和特性，给数据访问带来了很多复杂性和不便。</p>
+<p>OpenDAL 提供一个统一、简单、高效、可靠、可观察的数据访问层，让开发者可以无缝地使用不同的存储服务，并享受到最佳的用户体验。</p>
+<p><img src="https://psiace.me/zh/posts/opendal-enters-apache-incubator/images/figure-02.png" alt="示意对比图：左侧各应用分别直连多种存储服务，右侧经由 OpenDAL 统一访问 S3、Azure Blob、HDFS、Redis 与本地文件系统" /></p>
+<p>OpenDAL 不仅简化了不同存储服务的接口，还提供自动重试、请求优化和可观察性等特性。开发者只需要使用 OpenDAL 就可以无痛访问数十种存储服务，而无需了解和掌握特定 SDK 的细节。</p>
+<p><strong>OpenDAL 的特性包括但不限于：</strong></p>
+<ul>
+<li>支持多种存储服务，包括本地文件系统、HDFS、S3、OSS 数十种服务等。</li>
+<li>提供统一的数据访问接口，无需关心底层存储细节。</li>
+<li>支持多种常用数据操作，包括 <code>read</code> 、<code>write</code> 、<code>list</code> 等。</li>
+<li>支持自动重试、请求优化、可观察性机制。</li>
+<li>零成本，直接映射到 API 调用。</li>
+<li>跨语言 bindings: Python, Node.js, C (working on) 等</li>
+</ul>
+<h2 id="opendal-de-li-shi-fa-zhan-yu-xian-zhuang">OpenDAL 的历史、发展与现状<a class="zola-anchor" href="#opendal-de-li-shi-fa-zhan-yu-xian-zhuang" aria-label="Anchor link for: opendal-de-li-shi-fa-zhan-yu-xian-zhuang" style="visibility: hidden;"></a>
+</h2>
+<h3 id="li-shi-cong-dal2-dao-opendal"><em>历史：从 dal2 到 OpenDAL</em><a class="zola-anchor" href="#li-shi-cong-dal2-dao-opendal" aria-label="Anchor link for: li-shi-cong-dal2-dao-opendal" style="visibility: hidden;"></a>
+</h3>
+<p>OpenDAL 的初衷是打造一个通用、统一、易用的数据访问层，它诞生于 2021 年末，最开始是作为 Databend 项目的一部分进行开发的。</p>
+<ul>
+<li>2021 年 12 月 21 日，<a rel="nofollow noreferrer external" href="http://github.com/Xuanwo">Xuanwo</a> 开始着手构想 Databend 存储访问层的设计与实现，<a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/databend/pull/3575">dal2: Add basic operations of read, write, stat, delete</a></li>
+<li>2021 年 12 月 27 日，开始对 <a rel="nofollow noreferrer external" href="https://github.com/datafuselabs/databend/discussions/3662">proposal: Vision of Databend DAL</a> 这一提案的讨论。29 日，dal2 的实现被合并到 Databend 中。</li>
+<li>2022 年 2 月 14 日，dal2 正式从 Databend 的代码仓库中迁出，成为独立维护的顶级项目，并正式更名为 OpenDAL 。</li>
+</ul>
+<h3 id="fa-zhan-cong-1-dao-1"><em>发展：从 1 到 +1</em><a class="zola-anchor" href="#fa-zhan-cong-1-dao-1" aria-label="Anchor link for: fa-zhan-cong-1-dao-1" style="visibility: hidden;"></a>
+</h3>
+<p>在 Xuanwo 、<a rel="nofollow noreferrer external" href="https://github.com/ClSlaid">ClSlaid</a> 和其他众多贡献者的推动下，OpenDAL 很快就成为了支持 AWS S3 / Azure Blob / GCS / HDFS 等主流国内外存储服务的数据访问层，并为 Databend 的 <code>COPY INTO</code>、Stage、Storage 提供真正的跨多云云原生存储与访问支持。</p>
+<p><a rel="nofollow noreferrer external" href="https://github.com/GreptimeTeam/greptimedb">GreptimeDB</a> 是 Databend 之后第一个主动使用 OpenDAL 的大型 Rust 数据库项目，之后，在 Xuanwo 的努力下，Mozilla 基金会旗下的 <a rel="nofollow noreferrer external" href="https://github.com/mozilla/sccache">sccache</a> 也尝试使用 OpenDAL 来接管存储层，为了提供更全面的支持，OpenDAL 很快上线了对 GitHub Action Cache 的支持。</p>
+<p>随后是 <a rel="nofollow noreferrer external" href="https://github.com/risingwavelabs/risingwave">RisingWave</a> 和 <a rel="nofollow noreferrer external" href="https://github.com/vectordotdev/vector">Vector </a>，OpenDAL 的用户阵营开始实现从 1 到不断 +1 的转变。</p>
+<h3 id="xian-zhuang-xiang-xing-chen-da-hai-qian-jin"><em>现状：向星辰大海前进</em><a class="zola-anchor" href="#xian-zhuang-xiang-xing-chen-da-hai-qian-jin" aria-label="Anchor link for: xian-zhuang-xiang-xing-chen-da-hai-qian-jin" style="visibility: hidden;"></a>
+</h3>
+<p>目前 OpenDAL 已初步建立起了一个小型社区并形成产品矩阵，除 <a rel="nofollow noreferrer external" href="https://crates.io/crates/opendal">Rust</a> 主代码以外，目前还提供有 <a rel="nofollow noreferrer external" href="https://pypi.org/project/opendal/">Python</a> 和 <a rel="nofollow noreferrer external" href="https://www.npmjs.com/package/opendal">Nodejs</a> 绑定。</p>
+<p>OpenDAL 自开源以来累计发版 99 次，Github Star 700+, 累计下载次数 349 K, 累计开发者共计 48 位，项目一直处于活跃更新状态，由衷感谢每位贡献者的努力和付出。</p>
+<p><img src="https://psiace.me/zh/posts/opendal-enters-apache-incubator/images/figure-03.png" alt="apache/incubator-opendal 的 GitHub Star 历史曲线，星标数随时间持续上升" /></p>
+<p>加入 Apache 孵化器是 OpenDAL 发展历程中的一个重要里程碑，我们希望能够借助 ASF 的平台和资源，让 OpenDAL 专注于提供中立、无供应商锁定、自由、无痛、高效的存储访问层，更好地为广大开发者服务。</p>
+<p>我们期待 OpenDAL 能够在以下几个应用场景得到更广泛的应用：</p>
+<ul>
+<li>数据分析：OpenDAL 可以帮助数据分析师快速地从不同的存储服务中读取或写入数据，并进行各种格式转换和操作。</li>
+<li>数据科学：OpenDAL 可以帮助数据科学家轻松地从不同的存储服务中获取或保存数据，并进行各种预处理和后处理。</li>
+<li>数据工程：OpenDAL 可以帮助数据工程师高效地构建和管理不同的存储服务之间的数据流水线，并进行各种监控和调优。</li>
+</ul>
+<h2 id="zhi-xie">致谢<a class="zola-anchor" href="#zhi-xie" aria-label="Anchor link for: zhi-xie" style="visibility: hidden;"></a>
+</h2>
+<p><em>From Xuanwo</em></p>
+<p>大家好，我是 Apache OpenDAL Committer Xuanwo。</p>
+<p>OpenDAL 项目凝聚着我个人一直以来的梦想，如今在社区的通力协作下走进了 Apache 孵化器，我此刻感到非常的幸福。感谢所有贡献者的付出，感谢 Databend Labs 的支持，感谢 Champion tison 的指引，感谢各位 Mentor ningjiang, wusheng, tedliu 和 hexiaoqiao 的指导。</p>
+<p>让我们遵循 Apache Way 的指引，共同构建社区并创造价值，为用户提供自由、无痛和高效的数据访问体验！</p>
+<h2 id="jia-ru-wo-men">加入我们<a class="zola-anchor" href="#jia-ru-wo-men" aria-label="Anchor link for: jia-ru-wo-men" style="visibility: hidden;"></a>
+</h2>
+<p>欢迎有兴趣参与 OpenDAL 项目的开发者和用户加入 OpenDAL 社区，并关注 OpenDAL 的最新动态。你可以通过以下方式获取更多信息：</p>
+<ul>
+<li>访问 OpenDAL 官方网站：<a rel="nofollow noreferrer external" href="https://opendal.apache.org/">opendal.apache.org</a></li>
+<li>探索 OpenDAL GitHub 仓库：<a rel="nofollow noreferrer external" href="https://github.com/apache/incubator-opendal">github.com/apache/incu…</a></li>
+<li>加入 OpenDAL Discord 频道：<a rel="nofollow noreferrer external" href="https://discord.gg/XQy8yGR2dg">discord.gg/XQy8yGR2dg</a></li>
+<li>订阅 OpenDAL 邮件列表：<a href="mailto:dev@opendal.apache.org">dev@opendal.apache.org</a></li>
+</ul>
+
+      </article>
+
+      
+      
+
+      
+      
+      <div class="giscus"></div>
+      
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+
+
+<script
+  src="https://giscus.app/client.js"
+  data-repo="PsiACE/psiace"
+  data-repo-id="R_kgDOKYGbpA"
+  data-category="General"
+  data-category-id="DIC_kwDOKYGbpM4CZxPW"
+  data-mapping="specific"
+  
+    data-term="opendal-enters-apache-incubator"
+  
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="top"
+  data-theme="https://psiace.me/giscus_light.css"
+  data-lang="zh-CN"
+  data-loading="lazy"
+  crossorigin="anonymous"
+  async
+></script>
+
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2025 Chojan Shang
+      
+      <span>|</span>
+      Built with <a href="https://www.getzola.org" rel="noreferrer" target="_blank">zola</a> and <a href="https://github.com/isunjn/serene" rel="noreferrer" target="_blank">serene</a>
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://psiace.me/posts/atom.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml">https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;psiace.me&#x2F;posts&#x2F;atom.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://psiace.me/js/main.js"></script>
+</body>
+
+</html>
