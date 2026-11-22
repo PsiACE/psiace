@@ -90,6 +90,11 @@
         </blockquote>
         {% endif %}
 
+        {%- if page.extra.source_note %}
+        {# Archive-only block: shows where an archived post was first published. #}
+        <p id="source-note">{{ page.extra.source_note }}{% if page.extra.source_url %}<a href="{{ page.extra.source_url }}" rel="noreferrer">{{ page.extra.source_label | default(value=page.extra.source_url) }}</a>{% endif %}{{ page.extra.source_tail | default(value="") }}</p>
+        {%- endif %}
+
         {{ page.content | safe }}
       </article>
 
