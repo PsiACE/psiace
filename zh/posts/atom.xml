@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh">
     <title>尚卓燃 · PsiACE - 文章</title>
-    <subtitle>开源工程师，构建 AI 系统之下的结构层：数据、上下文、能力与生态。</subtitle>
+    <subtitle>构建开放、高效、以人为本的 Agent 基础设施。</subtitle>
     <link rel="self" type="application/atom+xml" href="https://psiace.me/zh/posts/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://psiace.me/zh/posts/"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
