@@ -7,7 +7,7 @@
 
 base_url = "https://psiace.me"
 title = "Chojan Shang · PsiACE"
-description = "Open-source engineer building the structure layer beneath AI systems: data, context, capability, and ecosystem."
+description = "Building open, efficient, human-centered agent infra."
 default_language = "en"
 theme = "serene"
 output_dir = "public"
@@ -20,7 +20,7 @@ taxonomies = [{ name = "tags" }, { name = "categories" }]
 
 [languages.zh]
 title = "尚卓燃 · PsiACE"
-description = "开源工程师，构建 AI 系统之下的结构层：数据、上下文、能力与生态。"
+description = "构建开放、高效、以人为本的 Agent 基础设施。"
 taxonomies = [{ name = "tags" }, { name = "categories" }]
 
 [markdown]

@@ -1,19 +1,18 @@
-## Hi, I'm PsiACE 👋
+# Hi, I'm PsiACE
 
-ASF Member and open source engineer,
-working at the intersection of data infrastructure and generative AI.
+I'm Chojan Shang, building **open, efficient, human-centered agent infra**.
 
-### Currently
+[Blog](https://psiace.me) · [X](https://x.com/psiace) · [LinkedIn](https://www.linkedin.com/in/psiace/) · [Email](mailto:psiace@apache.org)
 
-- **Senior Engineer @ OceanBase (Ant Group)** — database-native agent capabilities and open source tooling around the OceanBase ecosystem.
-- **ASF Member** — Committer / contributor across multiple Apache projects; helped take Apache OpenDAL from incubation to graduation.
+## Working on
 
-### Selected work
+- [ACP Python SDK](https://github.com/agentclientprotocol/python-sdk): Official Python SDK for the Agent Client Protocol.
+- [Bub](https://github.com/bubbuild/bub): A tiny, plugin-composable agent runtime.
+- [Tape](https://tape.systems/): Explicit context and handoff for human-agent collaboration.
 
-- **[ACP Python SDK](https://github.com/agentclientprotocol/python-sdk)** — Agent Client Protocol SDK, ~10M monthly downloads; used by Kimi, Mistral, and others.
-- **[bub](https://github.com/bubbuild/bub)** — open source agent framework for real-world multi-party collaboration; core maintainer.
-- **[Apache OpenDAL](https://opendal.apache.org/)** — unified data access layer, adopted at scale by LanceDB, Milvus, and others.
+## ASF & Open Source
 
----
+- [Apache Software Foundation](https://www.apache.org/): ASF Member, [OpenDAL](https://opendal.apache.org/) & [DataSketches](https://datasketches.apache.org/) PMC, [Libcloud](https://libcloud.apache.org/) Committer, [Maka](https://github.com/apache/maka) Mentor, and contributor across Apache projects.
+- [Databend](https://github.com/databendlabs/databend): Cloud-native data warehouse in Rust.
 
-> Build trustworthy open source — connect communities, users, and commercial teams.
+If our work overlaps, feel free to reach out.

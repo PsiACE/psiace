@@ -9,11 +9,11 @@ footer = false
 
 name = "尚卓燃"
 id = "psiace"
-bio = "ASF Member · Senior Engineer @ OceanBase (Ant Group)"
+bio = "ASF Member · OceanBase"
 avatar = "img/avatar.png"
 links = [
     { name = "GitHub", icon = "github", url = "https://github.com/psiace" },
-    { name = "Twitter", icon = "twitter", url = "https://twitter.com/repsiace" },
+    { name = "Twitter", icon = "twitter", url = "https://x.com/psiace" },
     { name = "LinkedIn", icon = "linkedin", url = "https://www.linkedin.com/in/psiace" }
 ]
 
@@ -24,12 +24,6 @@ recent_more_text = "更多 »"
 date_format = "%Y年%m月%d日"
 +++
 
-你好，我是 PsiACE，一名开源工程师，
-关注数据基础设施与生成式 AI 的结合。
+你好，我是 PsiACE。
 
-我在做 [bub](https://github.com/bubbuild/bub)，
-一个让 Agent 与人一起工作的 hook-first runtime；
-也在推动 [tape.systems](https://tape.systems) 成为上下文构造的基础模型。
-
-我是 Apache 软件基金会 Member ，
-也是包括 [Apache OpenDAL](https://github.com/apache/opendal) 在内的多个 Apache 项目的贡献者。
+正在构建**开放、高效、以人为本的 Agent 基础设施**：[ACP Python SDK](https://github.com/agentclientprotocol/python-sdk)、[Bub](https://github.com/bubbuild/bub) 和 [Tape](https://tape.systems/)。
